@@ -1,0 +1,25 @@
+import { Platform } from "react-native";
+
+export const Colors = {
+    white: '#FFFFFF',
+    black: '#000000',
+    blackSecond:'#262626',
+    blackThird:'#4A4A4A',
+    primaryColor: '#124682',
+    primary70: '#1668E3',
+    secondaryColor: '#0BC7D3',
+    Headings: '#000000',
+    ParagraphAndShortTexts: '#888888',
+    BluePrimaryColor: '#124682',
+    InputText: '#606060',
+    InputStroke: '#BEBEBE',
+    backgroundCOlor: '#3F6B9B',
+    frameBgColor: "#3F6B9B",
+    red: 'red',
+    homeCardBgColor: 'rgba(12, 64, 111, 0.05)',
+    homeCardBoxStoke: 'rgba(12, 64, 111, 0.19)',
+    homeNotificationInnerBgColor:'#F3F5F8',
+    gray:'rgba(1, 54, 105, 0.13)',
+    lightThemeBlue:'#E3F2FF'
+}
+
