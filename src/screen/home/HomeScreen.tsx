@@ -116,11 +116,12 @@ const HomeScreen = ({ navigation }) => {
 
     return (
         <View style={styles.mainContainer}>
-            <StatusBar backgroundColor={Colors.primaryColor} barStyle={'light-content'}/>
+            {/* <StatusBar backgroundColor="transparent"
+                barStyle={'light-content'} /> */}
             <View style={{ paddingTop: insets.top, backgroundColor: Colors.primaryColor }}>
 
-                <StatusBar barStyle={'light-content'} backgroundColor={Colors.primaryColor} />
-                <AppHeader title="Paper Fast" leftIcon={Icons.drawer}  onBackPress={() => navigation.openDrawer()} discriptionText='(For Teacher)' rightIcon={Icons.notification} />  </View>
+                <StatusBar barStyle={'light-content'} backgroundColor="transparent" />
+                <AppHeader title="Paper Fast" leftIcon={Icons.drawer} onBackPress={() => navigation.openDrawer()} discriptionText='(For Teacher)' rightIcon={Icons.notification} />  </View>
             <View style={styles.ContantantRaper}>
                 <View style={styles.innerMainContainer}>
 
@@ -146,22 +147,22 @@ const HomeScreen = ({ navigation }) => {
                                                 <Image source={Icons.downArrow} style={styles.downIcon} />
                                             </View>
                                         </TouchableOpacity>
-                                        <View style={styles.boardBox}>
+                                        <TouchableOpacity style={styles.boardBox}>
                                             <Image source={Icons.board} style={styles.bordIcon} />
                                             <Text style={styles.boardText}>Medium</Text>
                                             <View style={styles.rajasthanBox}>
                                                 <Text style={styles.boardTextStyl}>English...</Text>
                                                 <Image source={Icons.downArrow} style={styles.downIcon} />
                                             </View>
-                                        </View>
-                                        <View style={styles.boardBox}>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity style={styles.boardBox}>
                                             <Image source={Icons.board} style={styles.bordIcon} />
                                             <Text style={styles.boardText}>Standard</Text>
                                             <View style={styles.rajasthanBox}>
                                                 <Text style={styles.boardTextStyl}>STD 6</Text>
                                                 <Image source={Icons.downArrow} style={styles.downIcon} />
                                             </View>
-                                        </View>
+                                        </TouchableOpacity>
                                     </View>
 
                                     <Text style={styles.allSubText}>All Subjects</Text>
@@ -188,12 +189,10 @@ const HomeScreen = ({ navigation }) => {
                                         })}
                                     </View>
                                     <HomeBannerSlider />
-
                                 </View>
                             )
                         }}
                     />
-
 
                     {/* board */}
                     <AppModal visible={visible} onClose={handleBordCloseModal}>

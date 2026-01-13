@@ -1,20 +1,3 @@
-
-// import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-// import HomeStack from './stacks/HomeStack';
-// const Tab = createBottomTabNavigator();
-
-// const MainTabs = () => {
-//     return (
-//         <Tab.Navigator screenOptions={{ headerShown: false }}>
-//             <Tab.Screen name="HomeTab" component={HomeStack} />
-//             {/* <Tab.Screen name="OrdersTab" component={OrdersStack} />
-//             <Tab.Screen name="ProfileTab" component={ProfileStack} /> */}
-//         </Tab.Navigator>
-//     );
-// }
-
-// export default MainTabs
-
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Image, Text, View } from 'react-native';
@@ -22,27 +5,34 @@ import HomeStack from './stacks/HomeStack';
 import { Colors } from '../theme/color';
 import { Icons } from '../assets/icons';
 import { moderateScale } from '../utlis/responsiveSize';
+import { Fonts } from '../theme';
 
 const Tab = createBottomTabNavigator();
 
 const TabIcon = ({ focused, icon, label }) => {
   return (
-    <View style={{ alignItems: 'center' }}>
+    <View style={{ alignItems: 'center',marginTop:moderateScale(10)}}>
       <Image
         source={icon}
         resizeMode="contain"
         style={{
-          width: moderateScale(22),
-          height: moderateScale(22),
-          tintColor: focused ? Colors.primaryColor : '#BDBDBD',
+          width: moderateScale(30),
+          height: moderateScale(30),
+          tintColor: focused ? Colors.primaryColor : '#CCCCCC',
+
         }}
       />
       <Text
         style={{
-          fontSize: moderateScale(11),
+          fontSize: moderateScale(10),
           marginTop: moderateScale(4),
-          color: focused ? Colors.primaryColor : '#BDBDBD',
+          width:moderateScale(50),
+          color: focused ? Colors.primaryColor : '#CCCCCC',
+          alignSelf:"center",
+          textAlign:'center',
+          fontFamily:Fonts.InterMedium
         }}
+        numberOfLines={1}
       >
         {label}
       </Text>
@@ -57,10 +47,14 @@ const MainTabs = () => {
         headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: {
-          height: moderateScale(64),
+          height: moderateScale(100),
           backgroundColor: Colors.white,
-          borderTopWidth: 0.5,
-          borderTopColor: '#E5E5E5',
+          paddingTop:moderateScale(6),
+          elevation:10
+          // borderTopWidth: 1,
+          // borderColor:"#000",
+          // alignSelf:"center"
+          // borderTopColor: '#E5E5E5',
         },
       }}
     >
@@ -106,6 +100,5 @@ const MainTabs = () => {
     </Tab.Navigator>
   );
 };
-
 export default MainTabs;
 

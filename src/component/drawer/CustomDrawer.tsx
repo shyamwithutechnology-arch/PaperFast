@@ -5,14 +5,16 @@ import {
     Image,
     TouchableOpacity,
     StyleSheet,
+    StatusBar,
 } from 'react-native';
-import { DrawerContentScrollView } from '@react-navigation/drawer';
+import { DrawerContent, DrawerContentScrollView } from '@react-navigation/drawer';
 import { Colors } from '../../theme/color';
 import { Fonts } from '../../theme/fonts';
 import { moderateScale } from '../../utlis/responsiveSize';
 import { styles } from './styles';
 import { Icons } from '../../assets/icons';
 import { Images } from '../../assets/images';
+import { WorkletsModule } from 'react-native-worklets';
 
 const MENU = [
     { id: 1, title: 'My Profile', icon: Icons.profile },
@@ -29,23 +31,32 @@ const MENU = [
 
 const CustomDrawer = ({ navigation }) => {
     const [role, setRole] = React.useState<'Teacher' | 'Student'>('Teacher');
-
     return (
         <View style={styles.container}>
-            <DrawerContentScrollView showsVerticalScrollIndicator={false} style={styles.container}>
+            {/* <StatusBar backgroundColor={Colors.primaryColor} barStyle={'light-content'}/> */}
+            {/* ===== FIXED HEADER ===== */}
+           <View style={{backgroundColor:Colors.primaryColor,height:moderateScale(35)}}/>
+            <View style={styles.profileBox}>
+                <Image
+                    source={Icons.withoutBgLogo}
+                    style={styles.avatar}
+                    resizeMode='contain'
+                />
+                <TouchableOpacity style={styles.cancelButton} onPress={() => navigation.closeDrawer()}>
+                    <Image source={Icons.drawerCancel} style={{ height: moderateScale(11), width: moderateScale(11) }} />
+                </TouchableOpacity>
+            </View>
+            {/* ===== FIXED HEADER ===== */}
+            {/* <View style={styles.profileBox}>
+        <Image source={Icons.withoutBgLogo} style={styles.avatar} resizeMode='contain' />
+      </View> */}
 
-                {/* ===== Profile Section ===== */}
-                <View style={styles.profileBox}>
-                    <Image
-                        source={Icons.withoutBgLogo}
-                        style={styles.avatar}
-                        resizeMode='contain'
-                    />
-                    <TouchableOpacity style={styles.cancelButton} onPress={() => navigation.closeDrawer()}>
-                        <Image source={Icons.drawerCancel} style={{ height: moderateScale(11), width: moderateScale(11) }} />
-                    </TouchableOpacity>
-                </View>
 
+            {/* ===== SCROLLABLE MENU ONLY ===== */}
+            <DrawerContentScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.menuScrollContent}
+            >
                 {/* ===== Menu List ===== */}
                 {MENU.map((item, index) => {
                     const isSwitchRole = item.title === 'Switch Role';
@@ -74,7 +85,7 @@ const CustomDrawer = ({ navigation }) => {
                         //     <View style={{ height: moderateScale(1), backgroundColor: 'rgba(12, 64, 111, 0.14)', marginHorizontal: moderateScale(20) }} />
                         // </View>
                         <View key={item.id}>
-                            <View style={styles.menuItem}>
+                            <TouchableOpacity style={styles.menuItem}>
                                 {/* Left icon + text */}
                                 <View style={styles.iconTextContainer}>
                                     <View style={styles.iconBox}>
@@ -85,45 +96,35 @@ const CustomDrawer = ({ navigation }) => {
 
                                 {/* Right side */}
                                 {isSwitchRole ? (
-                                    <View style={styles.roleSwitch}>
+
+                                    <View style={styles.container1}>
                                         <TouchableOpacity
-                                            style={[
-                                                styles.roleItem,
-                                                role === 'Teacher' && styles.roleActive,
-                                            ]}
+                                            style={[styles.button, role === 'Teacher' && styles.active]}
                                             onPress={() => setRole('Teacher')}
                                         >
                                             <Text
-                                                style={[
-                                                    styles.roleText,
-                                                    role === 'Teacher' && styles.roleTextActive,
-                                                ]}
+                                                style={[styles.text, role === 'Teacher' && styles.activeText]}
                                             >
                                                 Teacher
                                             </Text>
                                         </TouchableOpacity>
 
                                         <TouchableOpacity
-                                            style={[
-                                                styles.roleItem,
-                                                role === 'Student' && styles.roleActive,
-                                            ]}
+                                            style={[styles.button, role === 'Student' && styles.active]}
                                             onPress={() => setRole('Student')}
                                         >
                                             <Text
-                                                style={[
-                                                    styles.roleText,
-                                                    role === 'Student' && styles.roleTextActive,
-                                                ]}
+                                                style={[styles.text, role === 'Student' && styles.activeText]}
                                             >
                                                 Student
                                             </Text>
                                         </TouchableOpacity>
                                     </View>
+
                                 ) : (
                                     <Image source={Icons.next} style={styles.nextSty} />
                                 )}
-                            </View>
+                            </TouchableOpacity>
 
                             {/* Divider */}
                             <View
@@ -131,13 +132,13 @@ const CustomDrawer = ({ navigation }) => {
                                     height: moderateScale(1),
                                     backgroundColor: 'rgba(12, 64, 111, 0.14)',
                                     marginHorizontal: moderateScale(20),
+                                    marginVertical: moderateScale(4)
                                 }}
                             />
                         </View>
                     )
                 })}
             </DrawerContentScrollView>
-
             {/* <View style={{height:moderateScale(50),width:moderateScale(50), backgroundColor:'#FB6464', borderRadius:moderateScale(40)}}> */}
 
 
@@ -147,10 +148,10 @@ const CustomDrawer = ({ navigation }) => {
                 <Text style={styles.supportText}>Support</Text>
                 <Text style={styles.phone}>+91-87099-52350</Text>
             </View> */}
-            <View style={styles.logOutMainBox}>
+            <TouchableOpacity style={styles.logOutMainBox}>
                 <Image source={Icons.logout} style={styles.logoutSty} resizeMode='contain' />
                 <Text style={styles.logoutText}>Logout My Account</Text>
-            </View>
+            </TouchableOpacity>
 
             <View style={styles.mainMaskView}>
                 <Image source={Icons.MaskGroup} style={styles.maskGroupImag} />

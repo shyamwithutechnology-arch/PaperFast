@@ -1,7 +1,11 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StatusBar, StyleSheet } from 'react-native';
 import { moderateScale } from '../../utlis/responsiveSize';
 import { Colors } from '../../theme/color';
 import { Fonts } from '../../theme/fonts';
+
+
+const STATUS_BAR_HEIGHT =
+  Platform.OS === 'android' ? StatusBar.currentHeight ?? 0 : 0;
 
 export const styles = StyleSheet.create({
     // container: {
@@ -10,7 +14,7 @@ export const styles = StyleSheet.create({
     // },
     headerImg: {
         width: "100%",
-        height: moderateScale(160),
+        height: moderateScale(160) ,
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: moderateScale(16),
