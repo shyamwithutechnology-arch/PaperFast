@@ -8,7 +8,7 @@ const Stack = createNativeStackNavigator();
 const PdfStack = () => {
     return (
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="HomeScreen" component={HomeScreen} />
+            {/* <Stack.Screen name="HomeScreen" component={HomeScreen} /> */}
             {/* <Stack.Screen name="HomeDetails" component={HomeDetails} /> */}
         </Stack.Navigator>
     );

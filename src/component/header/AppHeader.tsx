@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ImageBackground, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ImageBackground, Image, Platform, StatusBar } from 'react-native';
 import { styles } from "../header/styles";
 import { moderateScale } from "../../utlis/responsiveSize";
 

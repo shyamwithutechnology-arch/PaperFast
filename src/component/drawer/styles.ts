@@ -6,21 +6,31 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.white,
-    marginBottom: 'auto'
+    // marginBottom: 'auto'
   },
-
+  menuScrollContent: {
+    paddingBottom: moderateScale(20), // allows last item fully visible
+    marginTop:moderateScale(-32),
+    // borderWidth:1/
+  },
   profileBox: {
     alignItems: 'center',
     backgroundColor: Colors.lightThemeBlue,
     flexDirection: 'row',
     justifyContent: "space-between",
-    paddingHorizontal: moderateScale(15),
-    width:'100%'
+    paddingHorizontal: moderateScale(18),
+    width: '100%',
+    // marginTop: moderateScale(20),
+    paddingVertical: moderateScale(4)
+  },
+
+  menuContainer: {
+    flex: 1, // fills middle space
   },
   avatar: {
-    width: moderateScale(200),
-    height: moderateScale(120),
-    marginBottom: moderateScale(10),
+    width: moderateScale(160),
+    height: moderateScale(100),
+    // marginBottom: moderateScale(10),
   },
   name: {
     fontFamily: Fonts.InterBold,
@@ -34,11 +44,14 @@ export const styles = StyleSheet.create({
   },
 
   menuItem: {
-    paddingVertical: moderateScale(14),
+    paddingVertical: moderateScale(5),
     paddingHorizontal: moderateScale(20),
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    // marginVertical: moderateScale(3),
+    // backgroundColor:'#000',
+    // borderWidth:1
   },
 
   menuText: {
@@ -68,8 +81,8 @@ export const styles = StyleSheet.create({
     marginTop: moderateScale(5),
   },
   iconBox: {
-    height: moderateScale(45),
-    width: moderateScale(45),
+    height: moderateScale(40),
+    width: moderateScale(40),
     // borderWidth:1,
     borderRadius: moderateScale(50),
     backgroundColor: 'rgba(1, 54, 105, 0.13)',
@@ -88,18 +101,15 @@ export const styles = StyleSheet.create({
   nextSty: {
     height: moderateScale(20),
     width: moderateScale(20),
-    // borderRadius:moderateScale(30)
   },
   cancelButton: {
-    height: moderateScale(35),
-    width: moderateScale(35),
+    height: moderateScale(31),
+    width: moderateScale(31),
     backgroundColor: Colors.primaryColor,
     borderRadius: moderateScale(30),
     alignItems: 'center',
     justifyContent: "center",
-    marginTop: moderateScale(-70)
-    // position:'absolute',
-    // alignSelf:'flex-end',
+    marginTop: moderateScale(-40)
   },
   logoutSty: {
     height: moderateScale(50),
@@ -116,18 +126,21 @@ export const styles = StyleSheet.create({
   logOutMainBox: {
     flexDirection: 'row',
     alignItems: "center",
-    marginTop:moderateScale(10)
+    marginTop: moderateScale(14),
+    // borderWidth:1
   },
 
   ///////
   mainMaskView: {
     backgroundColor: "rgba(12, 64, 111, 0.07)",
-    paddingVertical: moderateScale(20),
+    paddingVertical: moderateScale(10),
     alignItems: 'center',
     flexDirection: 'row',
     width: '100%',
     paddingHorizontal: moderateScale(18),
-    marginBottom: moderateScale(30)
+    marginBottom: moderateScale(30),
+    // marginBottom:'auto',
+    // borderWidth: 1
   },
   havingText: {
     color: Colors.ParagraphAndShortTexts,
@@ -175,34 +188,66 @@ export const styles = StyleSheet.create({
 
   ////
   roleSwitch: {
-  flexDirection: 'row',
-  backgroundColor: 'rgba(0,0,0,0.05)',
-  borderRadius: moderateScale(20),
-  // padding: moderateScale(3),
-},
+    flexDirection: 'row',
+    backgroundColor: 'rgba(0,0,0,0.05)',
+    borderRadius: moderateScale(20),
+    alignItems:'center',
+    // padding: moderateScale(3),
+    borderWidth:1
+  },
 
-roleItem: {
-  paddingVertical: moderateScale(5),
-  paddingHorizontal: moderateScale(10),
-  borderRadius: moderateScale(16),
-  backgroundColor:'#EEEDED'
-},
+  roleItem: {
+    paddingVertical: moderateScale(5),
+    paddingHorizontal: moderateScale(10),
+    borderRadius: moderateScale(16),
+    backgroundColor: '#EEEDED'
+  },
 
-roleActive: {
-  backgroundColor: Colors.primaryColor,
-},
+  roleActive: {
+    backgroundColor: Colors.primaryColor,
+  },
 
-roleText: {
-  fontFamily: Fonts.InterMedium,
-  fontSize: moderateScale(12),
-  color: "#9A9A9A",
-},
+  roleText: {
+    fontFamily: Fonts.InterMedium,
+    fontSize: moderateScale(12),
+    color: "#9A9A9A",
+  },
 
-roleTextActive: {
-  color: Colors.white,
-  fontFamily:Fonts.InstrumentSansRegular,
-fontSize:moderateScale(13)
+  roleTextActive: {
+    color: Colors.white,
+    fontFamily: Fonts.InstrumentSansRegular,
+    fontSize: moderateScale(13)
 
-},
+  },
 
+  ///////
+   container1: {
+    flexDirection: 'row',
+    backgroundColor: '#EEF1F5', // light grey background
+    borderRadius: moderateScale(20),
+    // padding: moderateScale(3),
+    // borderWidth:1
+  },
+
+  button: {
+    paddingVertical: moderateScale(6),
+    paddingHorizontal: moderateScale(13),
+    borderRadius: moderateScale(16),
+    // borderWidth:1
+  },
+
+  active: {
+    backgroundColor: '#124682', // primary blue
+  },
+
+  text: {
+    fontSize: moderateScale(13),
+    color: '#9A9A9A',
+    fontWeight: '500',
+  },
+
+  activeText: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+  },
 });
