@@ -10,7 +10,7 @@ import AppTextInput from '../../../component/apptextinput/AppTextInput';
 import { moderateScale } from '../../../utlis/responsiveSize';
 import { Icons } from '../../../assets/icons'
 
-const LoginScreenRole = ({ navigation }) => {
+const LoginScreenRole = () => {
     const [otp, setOtp] = useState('');
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
@@ -59,7 +59,7 @@ const LoginScreenRole = ({ navigation }) => {
                         </TouchableOpacity>
                     </View>
 
-                    <AppButton title='Agree and Continue' />
+                    <AppButton title='Agree and Continue' style={{paddingHorizontal:moderateScale(89)}}/>
 
                     <Text style={styles.versionText}>Version 1.0</Text>
 

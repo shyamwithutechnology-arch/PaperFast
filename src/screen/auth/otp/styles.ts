@@ -5,7 +5,7 @@ import { moderateScale, verticalScale } from "../../../utlis/responsiveSize"
 export const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
-        backgroundColor: Colors.primaryColor
+        backgroundColor: Colors.white
     },
     innerMainContainer: {
         flex: 1,

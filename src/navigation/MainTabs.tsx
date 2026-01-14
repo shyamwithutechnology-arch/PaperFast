@@ -16,8 +16,8 @@ const TabIcon = ({ focused, icon, label }) => {
         source={icon}
         resizeMode="contain"
         style={{
-          width: moderateScale(30),
-          height: moderateScale(30),
+          width: moderateScale(25),
+          height: moderateScale(25),
           tintColor: focused ? Colors.primaryColor : '#CCCCCC',
 
         }}
@@ -47,7 +47,7 @@ const MainTabs = () => {
         headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: {
-          height: moderateScale(100),
+          height: moderateScale(80),
           backgroundColor: Colors.white,
           paddingTop:moderateScale(6),
           elevation:10

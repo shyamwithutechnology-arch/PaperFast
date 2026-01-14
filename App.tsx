@@ -6,11 +6,14 @@ import OtpRequestScreen from "./src/screen/auth/otp/OtpRequestScreen";
 import LoginScreenRole from "./src/screen/auth/loginRole/LoginScreenRole";
 import SplashScreen from "./src/screen/auth/splash/SplashScreen";
 import RootNavigator from "./src/navigation/RootNavigator";
+import PaperTypeScreen from "./src/screen/papermodule/papertype/PaperTypeScreen";
+import PaperSelect from "./src/screen/papermodule/paperselect/PaperSelect";
 
 const App = () => {
   return (
     <SafeAreaProvider style={styles.mainBox}>
-     <RootNavigator/>
+     {/* <RootNavigator/> */}
+     <PaperSelect/>
     </SafeAreaProvider>)
 }
 
