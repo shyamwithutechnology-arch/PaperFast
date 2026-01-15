@@ -8,12 +8,13 @@ import SplashScreen from "./src/screen/auth/splash/SplashScreen";
 import RootNavigator from "./src/navigation/RootNavigator";
 import PaperTypeScreen from "./src/screen/papermodule/papertype/PaperTypeScreen";
 import PaperSelect from "./src/screen/papermodule/paperselect/PaperSelect";
+import QuestionScreen from "./src/screen/papermodule/questionModule/QuestionScreen";
 
 const App = () => {
   return (
     <SafeAreaProvider style={styles.mainBox}>
      {/* <RootNavigator/> */}
-     <PaperSelect/>
+     <QuestionScreen/>
     </SafeAreaProvider>)
 }
 

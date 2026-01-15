@@ -13,19 +13,30 @@
 
 // export default Headerpapermodule
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { styles } from "./styles";
 import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
 import { moderateScale } from "../../utlis/responsiveSize";
 interface HeaderpapermoduleProp {
-    title:string
+    title: string,
+    rightPress: () => void
 }
-const HeaderPaperModule: React.FC = ({title} : HeaderpapermoduleProp)  => {
+const HeaderPaperModule: React.FC = ({ title, rightPress }: HeaderpapermoduleProp) => {
     return (
         <View style={styles.headerContainer}>
-            <FontAwesome6 name="arrow-left" size={moderateScale(20)} color="#000"
-            />
-            <Text style={styles.title}>{title}</Text>
+            <View style={{
+                flexDirection: 'row',
+                // paddingLeft: moderateScale(15),
+                alignItems: "center",
+                // borderWidth:1,
+                // marginBottom:moderateScale(-80)
+            }}>
+                <FontAwesome6 name="arrow-left" size={moderateScale(20)} color="#000"
+                />
+                <Text style={styles.title}>{title}</Text>
+            </View>
+            {rightPress && <TouchableOpacity style={styles.saveDraftBox}><Text style={styles.saveDraftText}>Save Draft</Text></TouchableOpacity>
+            }
         </View>
     );
 };

@@ -34,4 +34,5 @@ textPaper:require('./textPaper.png'),
 randomPaper:require('./randomPaper.png'),
 rightArrow:require('./rightArrow.png'),
 paperFile:require('./paperFile.png'),
+filter:require('./filter.png'),
 };
