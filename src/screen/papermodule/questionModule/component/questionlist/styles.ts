@@ -42,6 +42,7 @@ export const styles = StyleSheet.create({
     borderRadius:moderateScale(2),  
     alignItems:'center',
     justifyContent:'center'
+    
   },
   optionsRow: {
     flexDirection: 'row',
