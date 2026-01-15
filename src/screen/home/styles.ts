@@ -67,6 +67,8 @@ export const styles = StyleSheet.create({
         fontSize: moderateScale(12),
         fontFamily: Fonts.InterRegular,
         color: Colors.black,
+        // borderWidth:1,
+        width:moderateScale(72)
     },
     rajasthanBox: {
         flexDirection: "row",
@@ -112,6 +114,8 @@ export const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         paddingLeft: moderateScale(10),
         marginVertical: moderateScale(3),
+        borderBottomWidth:1,
+        borderColor:'rgba(12, 64, 111, 0.1)'
     },
     notificationdec: {
         fontSize: moderateScale(11),

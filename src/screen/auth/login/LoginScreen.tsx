@@ -47,7 +47,7 @@ const LoginScreen = ({navigation}) => {
                     </View>
 
                     {/* // button */}
-                    <AppButton title="Send Verification OTP"  onPress={() => navigation.navigate('OtpRequestScreen')}/>
+                    <AppButton title="Send Verification OTP"  onPress={() => navigation.navigate('OtpRequestScreen')} style={{paddingHorizontal:moderateScale(82)}}/>
 
                     <View style={styles.privacyBox}>
                         <Text style={styles.byRegisterText}>By registering, you agree to the
@@ -81,7 +81,7 @@ export default LoginScreen
 const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
-        backgroundColor: Colors.primaryColor
+        backgroundColor: Colors.white
     },
     innerMainContainer: {
         flex: 1,

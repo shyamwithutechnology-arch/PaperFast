@@ -39,6 +39,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
+    // marginTop:moderateScale(-250)
   },
   text: {
     color: Colors.white,

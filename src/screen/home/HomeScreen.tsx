@@ -18,7 +18,6 @@ const HomeScreen = ({ navigation }) => {
     const [selectedSubject, setSelectedSubject] = useState<null | string>(null)
     const insets = useSafeAreaInsets();
 
-
     const [visible, setVisible] = useState(false);
     const [selectedBoard, setSelectedBoard] = useState<null | string>(null)
     const [visibleMedium, setVisibleMedium] = useState(false);
@@ -143,23 +142,23 @@ const HomeScreen = ({ navigation }) => {
                                             <Image source={Icons.board} style={styles.bordIcon} />
                                             <Text style={styles.boardText}>Board</Text>
                                             <View style={styles.rajasthanBox}>
-                                                <Text style={styles.boardTextStyl}>Rajasthan...</Text>
+                                                <Text style={styles.boardTextStyl}>{selectedBoard }</Text>
                                                 <Image source={Icons.downArrow} style={styles.downIcon} />
                                             </View>
                                         </TouchableOpacity>
-                                        <TouchableOpacity style={styles.boardBox}>
+                                        <TouchableOpacity style={styles.boardBox} onPress={handleMediumOpenModal}>
                                             <Image source={Icons.board} style={styles.bordIcon} />
                                             <Text style={styles.boardText}>Medium</Text>
                                             <View style={styles.rajasthanBox}>
-                                                <Text style={styles.boardTextStyl}>English...</Text>
+                                                <Text style={styles.boardTextStyl}>{selectMedium}</Text>
                                                 <Image source={Icons.downArrow} style={styles.downIcon} />
                                             </View>
                                         </TouchableOpacity>
-                                        <TouchableOpacity style={styles.boardBox}>
+                                        <TouchableOpacity style={styles.boardBox} onPress={handleStandardOpenModal}>
                                             <Image source={Icons.board} style={styles.bordIcon} />
                                             <Text style={styles.boardText}>Standard</Text>
                                             <View style={styles.rajasthanBox}>
-                                                <Text style={styles.boardTextStyl}>STD 6</Text>
+                                                <Text style={styles.boardTextStyl}>{selectStandard}</Text>
                                                 <Image source={Icons.downArrow} style={styles.downIcon} />
                                             </View>
                                         </TouchableOpacity>
@@ -183,7 +182,7 @@ const HomeScreen = ({ navigation }) => {
                                             return (
                                                 <View style={styles.boxNotification} key={item?.id}>
                                                     <Image source={Icons.notificationSpace} style={styles.notificationIcon} />
-                                                    <Text style={styles.notificationdec}>{""} {item?.label}</Text>
+                                                    <Text style={styles.notificationdec}> {item?.label}</Text>
                                                 </View>
                                             )
                                         })}
@@ -262,11 +261,11 @@ const HomeScreen = ({ navigation }) => {
                         </View>
 
                         <Text style={styles.selectModal}>Select Medium</Text>
-                        <TouchableOpacity style={[styles.englishMediumBox, { backgroundColor: selectMedium === 'english' ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)', borderColor: selectedBoard === 'english' ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)' }]} onPress={() => handleSelectMedium('english')} >
-                            <Text style={[styles.englishText, { color: selectMedium === 'english' ? Colors.primaryColor : Colors.InputText }]}>{selectedBoard} - English Medium</Text>
+                        <TouchableOpacity style={[styles.englishMediumBox, { backgroundColor: selectMedium === 'English' ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)', borderColor: selectedBoard === 'English' ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)' }]} onPress={() => handleSelectMedium('English')} >
+                            <Text style={[styles.englishText, { color: selectMedium === 'English' ? Colors.primaryColor : Colors.InputText }]}>{selectedBoard} - English Medium</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={[styles.englishMediumBox, { backgroundColor: selectMedium === 'hindi' ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)', borderColor: selectedBoard === 'hindi' ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)' }]} onPress={() => handleSelectMedium('hindi')}>
-                            <Text style={[styles.englishText, { color: selectMedium === 'hindi' ? Colors.primaryColor : Colors.InputText }]}>{selectedBoard} -Hindi Medium</Text>
+                        <TouchableOpacity style={[styles.englishMediumBox, { backgroundColor: selectMedium === 'Hindi' ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)', borderColor: selectedBoard === 'Hindi' ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)' }]} onPress={() => handleSelectMedium('Hindi')}>
+                            <Text style={[styles.englishText, { color: selectMedium === 'Hindi' ? Colors.primaryColor : Colors.InputText }]}>{selectedBoard} -Hindi Medium</Text>
                         </TouchableOpacity>
 
                         <AppButton title='Submit' onPress={handleStandardOpenModal} style={{
@@ -316,7 +315,7 @@ const HomeScreen = ({ navigation }) => {
                             )}
                         />
 
-                        <AppButton title='Submit' onPress={() => { }} style={{
+                        <AppButton title='Submit' onPress={handleStandardCloseModal} style={{
                             width: "96%",
                             marginTop: moderateScale(15),
                             marginBottom: moderateScale(40)

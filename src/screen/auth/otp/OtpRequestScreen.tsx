@@ -6,6 +6,7 @@ import { Colors } from '../../../theme';
 import AppHeader from '../../../component/header/AppHeader';
 import { OtpInput, OtpTimer } from '../../auth/otp/component';
 import AppButton from '../../../component/button/AppButton';
+import { moderateScale } from '../../../utlis/responsiveSize';
 
 
 const OtpRequestScreen = ({navigation}) => {
@@ -31,7 +32,7 @@ const OtpRequestScreen = ({navigation}) => {
                     <OtpTimer />
 
                     <View style={styles.buttonBox}>
-                        <AppButton title='Verification' onPress={() => navigation.navigate('LoginScreenRole')}/>
+                        <AppButton title='Verification' onPress={() => navigation.navigate('LoginScreenRole')} style={{paddingHorizontal:moderateScale(123)}}/>
                     </View>
                     <Text style={styles.versionText}>Version 1.0</Text>
                 </View>
