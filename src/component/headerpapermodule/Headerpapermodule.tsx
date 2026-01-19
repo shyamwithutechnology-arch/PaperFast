@@ -19,9 +19,10 @@ import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
 import { moderateScale } from "../../utlis/responsiveSize";
 interface HeaderpapermoduleProp {
     title: string,
-    rightPress: () => void
+    rightPress: () => void,
+    leftIconPress:() => void,
 }
-const HeaderPaperModule: React.FC = ({ title, rightPress }: HeaderpapermoduleProp) => {
+const HeaderPaperModule: React.FC = ({ title, rightPress ,leftIconPress}: HeaderpapermoduleProp) => {
     return (
         <View style={styles.headerContainer}>
             <View style={{
@@ -31,8 +32,10 @@ const HeaderPaperModule: React.FC = ({ title, rightPress }: HeaderpapermodulePro
                 // borderWidth:1,
                 // marginBottom:moderateScale(-80)
             }}>
+                <TouchableOpacity onPress={leftIconPress}>
                 <FontAwesome6 name="arrow-left" size={moderateScale(20)} color="#000"
                 />
+                </TouchableOpacity>
                 <Text style={styles.title}>{title}</Text>
             </View>
             {rightPress && <TouchableOpacity style={styles.saveDraftBox}><Text style={styles.saveDraftText}>Save Draft</Text></TouchableOpacity>

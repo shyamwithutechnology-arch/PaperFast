@@ -1,29 +1,31 @@
-import React, { use, useCallback, useState } from 'react';
-import { View, Text, StatusBar, Image, FlatList, TouchableOpacity, } from 'react-native';
+import React, { use, useCallback, useEffect, useRef, useState } from 'react';
+import { View, Text, StatusBar, Image, FlatList, TouchableOpacity, Platform, BackHandler, } from 'react-native';
 import { styles } from './styles';
 import AppHeader from '../../component/header/AppHeader';
 import { Icons } from '../../assets/icons/index'
 import SubjectItem from './component/SubjectItem';
 import { Colors } from '../../theme';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { moderateScale } from '../../utlis/responsiveSize';
 import HomeBannerSlider from './component/homebanner/HomeBannerSlider';
 import AppModal from '../../component/modal/AppModal';
 import AppButton from '../../component/button/AppButton';
 import { BoardModal } from './component/boardmodal/BoardModal';
+import { useNavigation } from '@react-navigation/native';
+import { localStorage, reduxStorage, storage, storageKey, storageKeys } from '../../storage';
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = () => {
     const [otp, setOtp] = useState('');
     const [firstName, setFirstName] = useState('')
     const [selectedSubject, setSelectedSubject] = useState<null | string>(null)
     const insets = useSafeAreaInsets();
-
+    const navigation = useNavigation();
     const [visible, setVisible] = useState(false);
     const [selectedBoard, setSelectedBoard] = useState<null | string>(null)
     const [visibleMedium, setVisibleMedium] = useState(false);
-    const [selectMedium, setSelectMedium] = useState('');
+    const [selectMedium, setSelectMedium] = useState<null | string>(null);
     const [visibleStandard, setVisibleStandard] = useState(false);
-    const [selectStandard, setSelectStandard] = useState('');
+    const [selectStandard, setSelectStandard] = useState<null | string>(null);
 
     // board
     const handleBordOpenModal = () => {
@@ -32,9 +34,11 @@ const HomeScreen = ({ navigation }) => {
     const handleBordCloseModal = () => {
         setVisible(false)
     }
-    const handleSelectedBoard = (item: string) => {
+    const handleSelectedBoard = async (item: string) => {
         setSelectedBoard(item);
-    }
+        await localStorage.setItem(storageKeys.selectedBoard, item);
+        //   setVisible(false);
+    };
 
 
     // medium 
@@ -45,8 +49,9 @@ const HomeScreen = ({ navigation }) => {
     const handleMediumCloseModal = () => {
         setVisibleMedium(false)
     }
-    const handleSelectMedium = (item: string) => {
+    const handleSelectMedium = async (item: string) => {
         setSelectMedium(item)
+        await localStorage.setItem(storageKeys.selectedMedium, item)
     }
 
     const handleStandardOpenModal = () => {
@@ -57,8 +62,9 @@ const HomeScreen = ({ navigation }) => {
     const handleStandardCloseModal = () => {
         setVisibleStandard(false)
     }
-    const handleSelectStandard = (item: string) => {
+    const handleSelectStandard = async (item: string) => {
         setSelectStandard(item)
+        await localStorage.setItem(storageKeys.selectedStandard, item)
     }
 
     const SUBJECTS = [
@@ -104,229 +110,257 @@ const HomeScreen = ({ navigation }) => {
         { id: 11, standard: 'STD 12 Arts' },
     ]
 
+    const handleSelect = (id: string) => {
+        setSelectedSubject(id),
+            navigation.navigate('PaperTypeScreen');
+    }
     const renderItem = useCallback(({ item }) => {
         return (
             <SubjectItem
                 item={item}
                 selected={selectedSubject === item.id}
-                onPress={setSelectedSubject} />
+                onPress={handleSelect} />
+            // onPress={setSelectedSubject} />
         )
     }, [selectedSubject])
 
+    useEffect(() => {
+        const loadBoard = async () => {
+            const savedBoard = await localStorage.getItem(storageKeys.selectedBoard);
+            const savedMedium = await localStorage.getItem(storageKeys.selectedMedium);
+            const savedStandard = await localStorage.getItem(storageKeys.selectedStandard);
+            if (savedBoard || savedMedium || savedStandard) {
+                setSelectedBoard(savedBoard);
+                setSelectMedium(savedMedium);
+                setSelectStandard(savedStandard);
+            } else {
+                setVisible(true);
+            }
+        };
+        loadBoard();
+    }, []);
+
     return (
-        <View style={styles.mainContainer}>
-            {/* <StatusBar backgroundColor="transparent"
-                barStyle={'light-content'} /> */}
-            <View style={{ paddingTop: insets.top, backgroundColor: Colors.primaryColor }}>
+        // <View style={styles.mainContainer}>
 
-                <StatusBar barStyle={'light-content'} backgroundColor="transparent" />
-                <AppHeader title="Paper Fast" leftIcon={Icons.drawer} onBackPress={() => navigation.openDrawer()} discriptionText='(For Teacher)' rightIcon={Icons.notification} />  </View>
-            <View style={styles.ContantantRaper}>
-                <View style={styles.innerMainContainer}>
+        <SafeAreaView
+            style={styles.mainContainer}
+            edges={['left', 'right', 'bottom']}
+        >
+            <AppHeader title="Paper Fast" leftIcon={Icons.drawer} onBackPress={() => navigation.openDrawer()} discriptionText='(For Teacher)' rightIcon={Icons.notification} />
+            <View style={styles.innerMainContainer}>
 
-                    <FlatList
-                        data={SUBJECTS}
-                        keyExtractor={(item) => item.id}
-                        renderItem={renderItem}
-                        extraData={selectedSubject}
-                        showsVerticalScrollIndicator={false}
-                        removeClippedSubviews
-                        initialNumToRender={6}
-                        windowSize={5}
-                        numColumns={2}
-                        ListHeaderComponent={() => {
-                            return (
-                                <View>
-                                    <View style={styles.cardMainBox}>
-                                        <TouchableOpacity style={styles.boardBox} onPress={handleBordOpenModal}>
-                                            <Image source={Icons.board} style={styles.bordIcon} />
-                                            <Text style={styles.boardText}>Board</Text>
-                                            <View style={styles.rajasthanBox}>
-                                                <Text style={styles.boardTextStyl}>{selectedBoard }</Text>
-                                                <Image source={Icons.downArrow} style={styles.downIcon} />
-                                            </View>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity style={styles.boardBox} onPress={handleMediumOpenModal}>
-                                            <Image source={Icons.board} style={styles.bordIcon} />
-                                            <Text style={styles.boardText}>Medium</Text>
-                                            <View style={styles.rajasthanBox}>
-                                                <Text style={styles.boardTextStyl}>{selectMedium}</Text>
-                                                <Image source={Icons.downArrow} style={styles.downIcon} />
-                                            </View>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity style={styles.boardBox} onPress={handleStandardOpenModal}>
-                                            <Image source={Icons.board} style={styles.bordIcon} />
-                                            <Text style={styles.boardText}>Standard</Text>
-                                            <View style={styles.rajasthanBox}>
-                                                <Text style={styles.boardTextStyl}>{selectStandard}</Text>
-                                                <Image source={Icons.downArrow} style={styles.downIcon} />
-                                            </View>
-                                        </TouchableOpacity>
-                                    </View>
-
-                                    <Text style={styles.allSubText}>All Subjects</Text>
-                                </View>
-                            )
-                        }}
-                        ListFooterComponent={() => {
-                            return (
-                                <View>
-                                    <View style={styles.notificationBox}>
-                                        <View style={styles.notificationInnerBox}>
-                                            <Image source={Icons.NotificationDashBord} style={styles.notificationIcon} />
-                                            <Text style={[styles.allSubText, {
-                                                marginTop: moderateScale(0), marginBottom: moderateScale(0)
-                                            }]}>Notifications</Text>
+                <FlatList
+                    data={SUBJECTS}
+                    keyExtractor={(item) => item.id}
+                    renderItem={renderItem}
+                    extraData={selectedSubject}
+                    showsVerticalScrollIndicator={false}
+                    removeClippedSubviews
+                    initialNumToRender={6}
+                    windowSize={5}
+                    numColumns={2}
+                    ListHeaderComponent={() => {
+                        return (
+                            <View>
+                                <View style={styles.cardMainBox}>
+                                    <TouchableOpacity style={styles.boardBox} onPress={handleBordOpenModal}>
+                                        <Image source={Icons.board} style={styles.bordIcon} />
+                                        <Text style={styles.boardText}>Board</Text>
+                                        <View style={styles.rajasthanBox}>
+                                            <Text style={styles.boardTextStyl}>{selectedBoard}</Text>
+                                            <Image source={Icons.downArrow} style={styles.downIcon} />
                                         </View>
-                                        {Notification.map(item => {
-                                            return (
-                                                <View style={styles.boxNotification} key={item?.id}>
-                                                    <Image source={Icons.notificationSpace} style={styles.notificationIcon} />
-                                                    <Text style={styles.notificationdec}> {item?.label}</Text>
-                                                </View>
-                                            )
-                                        })}
-                                    </View>
-                                    <HomeBannerSlider />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.boardBox} onPress={handleMediumOpenModal}>
+                                        <Image source={Icons.board} style={styles.bordIcon} />
+                                        <Text style={styles.boardText}>Medium</Text>
+                                        <View style={styles.rajasthanBox}>
+                                            <Text style={styles.boardTextStyl}>{selectMedium}</Text>
+                                            <Image source={Icons.downArrow} style={styles.downIcon} />
+                                        </View>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.boardBox} onPress={handleStandardOpenModal}>
+                                        <Image source={Icons.board} style={styles.bordIcon} />
+                                        <Text style={styles.boardText}>Standard</Text>
+                                        <View style={styles.rajasthanBox}>
+                                            <Text style={styles.boardTextStyl}>{selectStandard}</Text>
+                                            <Image source={Icons.downArrow} style={styles.downIcon} />
+                                        </View>
+                                    </TouchableOpacity>
                                 </View>
-                            )
-                        }}
-                    />
 
-                    {/* board */}
-                    <AppModal visible={visible} onClose={handleBordCloseModal}>
-                        {/* <View style={styles.lineMainBox}>
+                                <Text style={styles.allSubText}>All Subjects</Text>
+                            </View>
+                        )
+                    }}
+                    ListFooterComponent={() => {
+                        return (
+                            <View>
+                                <View style={styles.notificationBox}>
+                                    <View style={styles.notificationInnerBox}>
+                                        <Image source={Icons.NotificationDashBord} style={styles.notificationIcon} />
+                                        <Text style={[styles.allSubText, {
+                                            marginTop: moderateScale(0), marginBottom: moderateScale(0)
+                                        }]}>Notifications</Text>
+                                    </View>
+                                    {Notification.map(item => {
+                                        return (
+                                            <View style={styles.boxNotification} key={item?.id}>
+                                                <Image source={Icons.notificationSpace} style={styles.notificationIcon} />
+                                                <Text style={styles.notificationdec}> {item?.label}</Text>
+                                            </View>
+                                        )
+                                    })}
+                                </View>
+                                <HomeBannerSlider />
+                            </View>
+                        )
+                    }}
+                />
+
+                {/* board */}
+                <AppModal visible={visible} onClose={handleBordCloseModal}>
+                    {/* <View style={styles.lineMainBox}>
                             <View style={styles.lineBox}/>
                             <TouchableOpacity style={styles.cancleBox}>
                                 <Image source={Icons.cancel} style={styles.cancleIcon} resizeMode='contain' />
                             </TouchableOpacity>
                         </View> */}
-                        <View style={styles.lineMainBox}>
-                            <View style={styles.lineCenterWrapper}>
-                                <View style={styles.lineBox} />
-                            </View>
-
-                            <TouchableOpacity style={styles.cancleBox} onPress={handleBordCloseModal}>
-                                <Image
-                                    source={Icons.cancel}
-                                    style={styles.cancleIcon}
-                                    resizeMode="contain"
-                                />
-                            </TouchableOpacity>
+                    <View style={styles.lineMainBox}>
+                        <View style={styles.lineCenterWrapper}>
+                            <View style={styles.lineBox} />
                         </View>
 
-                        <Text style={styles.selectModal}>Select Board</Text>
-
-                        <FlatList
-                            data={BordsData}
-                            numColumns={2}
-                            keyExtractor={(item) => item.id.toString()}
-                            showsVerticalScrollIndicator={false}
-                            columnWrapperStyle={styles.row}
-                            contentContainerStyle={styles.listContainer}
-                            renderItem={({ item }) => (
-                                <TouchableOpacity style={[styles.boardItem,
-                                {
-                                    backgroundColor: selectedBoard == item?.board ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)',
-                                    borderColor: selectedBoard === item?.board ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)'
-                                }]}
-                                    onPress={() => handleSelectedBoard(item?.board)}>
-                                    <Text style={styles.boardModalText}>{item.board}</Text>
-                                </TouchableOpacity>
-                            )}
-                        />
-
-                        <AppButton title='Submit' onPress={handleMediumOpenModal} style={{
-                            width: "96%",
-                            marginTop: moderateScale(15),
-                            marginBottom: moderateScale(40)
-                        }} />
-                    </AppModal>
-
-
-                    {/*  medium */}
-                    <AppModal visible={visibleMedium} onClose={handleMediumCloseModal}>
-                        <View style={styles.lineMainBox}>
-                            <View style={styles.lineCenterWrapper}>
-                                <View style={styles.lineBox} />
-                            </View>
-
-                            <TouchableOpacity style={styles.cancleBox} onPress={handleMediumCloseModal}>
-                                <Image
-                                    source={Icons.cancel}
-                                    style={styles.cancleIcon}
-                                    resizeMode="contain"
-                                />
-                            </TouchableOpacity>
-                        </View>
-
-                        <Text style={styles.selectModal}>Select Medium</Text>
-                        <TouchableOpacity style={[styles.englishMediumBox, { backgroundColor: selectMedium === 'English' ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)', borderColor: selectedBoard === 'English' ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)' }]} onPress={() => handleSelectMedium('English')} >
-                            <Text style={[styles.englishText, { color: selectMedium === 'English' ? Colors.primaryColor : Colors.InputText }]}>{selectedBoard} - English Medium</Text>
+                        <TouchableOpacity style={styles.cancleBox} onPress={handleBordCloseModal}>
+                            <Image
+                                source={Icons.cancel}
+                                style={styles.cancleIcon}
+                                resizeMode="contain"
+                            />
                         </TouchableOpacity>
-                        <TouchableOpacity style={[styles.englishMediumBox, { backgroundColor: selectMedium === 'Hindi' ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)', borderColor: selectedBoard === 'Hindi' ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)' }]} onPress={() => handleSelectMedium('Hindi')}>
-                            <Text style={[styles.englishText, { color: selectMedium === 'Hindi' ? Colors.primaryColor : Colors.InputText }]}>{selectedBoard} -Hindi Medium</Text>
-                        </TouchableOpacity>
+                    </View>
 
-                        <AppButton title='Submit' onPress={handleStandardOpenModal} style={{
-                            width: "100%",
-                            marginTop: moderateScale(15),
-                            marginBottom: moderateScale(40),
-                            // borderRadius:0,
-                            // marginTop:moderateScale(-40)
-                        }} />
-                    </AppModal>
+                    <Text style={styles.selectModal}>Select Board</Text>
 
-
-                    {/* standard */}
-                    <AppModal visible={visibleStandard} onClose={handleStandardCloseModal}>
-                        <View style={styles.lineMainBox}>
-                            <View style={styles.lineCenterWrapper}>
-                                <View style={styles.lineBox} />
-                            </View>
-
-                            <TouchableOpacity style={styles.cancleBox} onPress={handleStandardCloseModal}>
-                                <Image
-                                    source={Icons.cancel}
-                                    style={styles.cancleIcon}
-                                    resizeMode="contain"
-                                />
+                    <FlatList
+                        data={BordsData}
+                        numColumns={2}
+                        keyExtractor={(item) => item.id.toString()}
+                        showsVerticalScrollIndicator={false}
+                        columnWrapperStyle={styles.row}
+                        contentContainerStyle={styles.listContainer}
+                        renderItem={({ item }) => (
+                            <TouchableOpacity style={[styles.boardItem,
+                            {
+                                backgroundColor: selectedBoard == item?.board ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)',
+                                borderColor: selectedBoard === item?.board ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)'
+                            }]}
+                                onPress={() => handleSelectedBoard(item?.board)}>
+                                <Text style={styles.boardModalText}>{item.board}</Text>
                             </TouchableOpacity>
+                        )}
+                    />
+
+                    <AppButton title='Submit' onPress={handleMediumOpenModal} style={{
+                        width: "96%",
+                        marginTop: moderateScale(15),
+                        marginBottom: moderateScale(40)
+                    }} />
+                </AppModal>
+
+
+                {/*  medium */}
+                <AppModal visible={visibleMedium} onClose={handleMediumCloseModal}>
+                    <View style={styles.lineMainBox}>
+                        <View style={styles.lineCenterWrapper}>
+                            <View style={styles.lineBox} />
                         </View>
 
-                        <Text style={styles.selectModal}>Select Standard</Text>
+                        <TouchableOpacity style={styles.cancleBox} onPress={handleMediumCloseModal}>
+                            <Image
+                                source={Icons.cancel}
+                                style={styles.cancleIcon}
+                                resizeMode="contain"
+                            />
+                        </TouchableOpacity>
+                    </View>
 
-                        <FlatList
-                            data={Standard}
-                            numColumns={2}
-                            keyExtractor={(item) => item.id.toString()}
-                            showsVerticalScrollIndicator={false}
-                            columnWrapperStyle={styles.row}
-                            contentContainerStyle={styles.listContainer}
-                            renderItem={({ item }) => (
+                    <Text style={styles.selectModal}>Select Medium</Text>
+                    <TouchableOpacity style={[styles.englishMediumBox, { backgroundColor: selectMedium === 'English' ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)', borderColor: selectedBoard === 'English' ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)' }]} onPress={() => handleSelectMedium('English')} >
+                        <Text style={[styles.englishText, { color: selectMedium === 'English' ? Colors.primaryColor : Colors.InputText }]}>{selectedBoard} - English Medium</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.englishMediumBox, { backgroundColor: selectMedium === 'Hindi' ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)', borderColor: selectedBoard === 'Hindi' ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)' }]} onPress={() => handleSelectMedium('Hindi')}>
+                        <Text style={[styles.englishText, { color: selectMedium === 'Hindi' ? Colors.primaryColor : Colors.InputText }]}>{selectedBoard} - हिंदी माध्यम</Text>
+                    </TouchableOpacity>
 
-                                <TouchableOpacity
-                                    style={[styles.boardItem, {
-                                        backgroundColor: selectStandard === item?.standard ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)',
-                                        borderColor: selectStandard === item?.standard ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)'
-                                    }]} onPress={() => handleSelectStandard(item?.standard)}>
-                                    <Text style={styles.boardModalText}>{item.standard}</Text>
-                                </TouchableOpacity>
-                            )}
-                        />
-
-                        <AppButton title='Submit' onPress={handleStandardCloseModal} style={{
-                            width: "96%",
-                            marginTop: moderateScale(15),
-                            marginBottom: moderateScale(40)
-                        }} />
-                    </AppModal>
-                </View>
+                    <AppButton title='Submit' onPress={handleStandardOpenModal} style={{
+                        width: "100%",
+                        marginTop: moderateScale(15),
+                        marginBottom: moderateScale(40),
+                        // borderRadius:0,
+                        // marginTop:moderateScale(-40)
+                    }} />
+                </AppModal>
 
 
+                {/* standard */}
+                <AppModal visible={visibleStandard} onClose={handleStandardCloseModal}>
+                    <View style={styles.lineMainBox}>
+                        <View style={styles.lineCenterWrapper}>
+                            <View style={styles.lineBox} />
+                        </View>
+
+                        <TouchableOpacity style={styles.cancleBox} onPress={handleStandardCloseModal}>
+                            <Image
+                                source={Icons.cancel}
+                                style={styles.cancleIcon}
+                                resizeMode="contain"
+                            />
+                        </TouchableOpacity>
+                    </View>
+
+                    <Text style={styles.selectModal}>Select Standard</Text>
+
+                    <FlatList
+                        data={Standard}
+                        numColumns={2}
+                        keyExtractor={(item) => item.id.toString()}
+                        showsVerticalScrollIndicator={false}
+                        columnWrapperStyle={styles.row}
+                        contentContainerStyle={styles.listContainer}
+                        renderItem={({ item }) => (
+
+                            <TouchableOpacity
+                                style={[styles.boardItem, {
+                                    backgroundColor: selectStandard === item?.standard ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)',
+                                    borderColor: selectStandard === item?.standard ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)'
+                                }]} onPress={() => handleSelectStandard(item?.standard)}>
+                                <Text style={styles.boardModalText}>{item.standard}</Text>
+                            </TouchableOpacity>
+                        )}
+                    />
+
+                    <AppButton title='Submit' onPress={handleStandardCloseModal} style={{
+                        width: "96%",
+                        marginTop: moderateScale(15),
+                        marginBottom: moderateScale(40)
+                    }} />
+                </AppModal>
             </View>
 
-        </View>
+
+            {/* </View> */}
+
+        </SafeAreaView>
     )
 }
 export default HomeScreen
+
+
+{/* <StatusBar backgroundColor="transparent"
+                barStyle={'light-content'} /> */}
+{/* <View style={{ paddingTop: insets.top, backgroundColor: Colors.primaryColor }}>
+ <StatusBar barStyle={'light-content'} backgroundColor="transparent" />
+<AppHeader title="Paper Fast" leftIcon={Icons.drawer} onBackPress={() => navigation.openDrawer()} discriptionText='(For Teacher)' rightIcon={Icons.notification} />  </View>
+<View style={styles.ContantantRaper}> */}

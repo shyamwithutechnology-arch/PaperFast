@@ -62,35 +62,43 @@ import HeaderPaperModule from "../../../component/headerpapermodule/Headerpaperm
 import { styles } from "./styles";
 import { Icons } from "../../../assets/icons";
 import { moderateScale } from "../../../utlis/responsiveSize";
+import { useNavigation } from "@react-navigation/native";
 
 const PaperTypeScreen = () => {
+  const navigation = useNavigation()
+  const handleSelectPaperType = (payload) => {
+    navigation.navigate('PaperSelect', { 'paperType': payload })
+  }
+  const handleBack = () => {
+    navigation.navigate('HomeScreen')
+  }
   return (
     <View style={{ flex: 1, backgroundColor: Colors.white }}>
 
       {/* STATUS BAR */}
       <StatusBar
-        translucent
+        // translucent
         backgroundColor={Colors.lightThemeBlue}
         barStyle="dark-content"
       />
 
       {/* HEADER + STATUS BAR SHARE SAME BACKGROUND */}
-      <View style={{ backgroundColor: Colors.primaryColor }}>
+      <View style={{ backgroundColor: Colors.lightThemeBlue }}>
         <SafeAreaView edges={["top"]}>
-          <HeaderPaperModule  title='Create Exam Paper - Maths'/>
+          <HeaderPaperModule title='Create Exam Paper - Maths' leftIconPress={handleBack} />
         </SafeAreaView>
       </View>
 
       {/* SCREEN CONTENT */}
       <SafeAreaView style={{ flex: 1 }} edges={["left", "right", "bottom"]}>
-        <CustomPaperCard />
+        <CustomPaperCard onPress={handleSelectPaperType} />
 
         <View style={styles.draftBox}>
           <Text style={styles.draftText}>Draft  Paper</Text>
 
-          <View style={{ alignSelf: 'center', marginTop:moderateScale(30)}}>
-            <Image source={Icons.paperFile} resizeMode="contain" style={{ height: moderateScale(30), width: moderateScale(30) , alignSelf:"center"}} />
-            <Text style={{ fontSize: moderateScale(13), fontFamily: Fonts.InstrumentSansRegular, color: Colors.ParagraphAndShortTexts, marginTop:moderateScale(10) }}>No Draft Paper Avaliable</Text>
+          <View style={{ alignSelf: 'center', marginTop: moderateScale(30) }}>
+            <Image source={Icons.paperFile} resizeMode="contain" style={{ height: moderateScale(30), width: moderateScale(30), alignSelf: "center" }} />
+            <Text style={{ fontSize: moderateScale(13), fontFamily: Fonts.InstrumentSansRegular, color: Colors.ParagraphAndShortTexts, marginTop: moderateScale(10) }}>No Draft Paper Avaliable</Text>
           </View>
         </View>
       </SafeAreaView>

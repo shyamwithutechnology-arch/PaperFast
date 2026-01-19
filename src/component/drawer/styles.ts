@@ -3,9 +3,9 @@ import { Colors, Fonts } from "../../theme";
 import { moderateScale } from "../../utlis/responsiveSize";
 
 export const styles = StyleSheet.create({
-  container: {
+  mainContainer: {
     flex: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.primaryColor,
     // marginBottom: 'auto'
   },
   menuScrollContent: {
@@ -126,7 +126,7 @@ export const styles = StyleSheet.create({
   logOutMainBox: {
     flexDirection: 'row',
     alignItems: "center",
-    marginTop: moderateScale(14),
+    marginVertical: moderateScale(7),
     // borderWidth:1
   },
 

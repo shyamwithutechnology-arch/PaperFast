@@ -47,7 +47,7 @@ const MainTabs = () => {
         headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: {
-          height: moderateScale(80),
+          height: moderateScale(80), // 80
           backgroundColor: Colors.white,
           paddingTop:moderateScale(6),
           elevation:10

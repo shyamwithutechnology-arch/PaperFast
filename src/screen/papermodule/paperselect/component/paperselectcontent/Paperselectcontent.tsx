@@ -94,7 +94,7 @@
 
 // const Paperselectcontent = ({DATA}) => {
 //     console.log('daaaaaa', DATA);
-    
+
 //     const [activeId, setActiveId] = useState<number | null>(null);
 
 //     const toggle = (id: number) => {
@@ -236,7 +236,9 @@
 // };
 
 // export default Paperselectcontent;
-import React, { useState } from "react";
+
+
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -270,13 +272,35 @@ interface Chapter {
   questions: Question[];
 }
 
+type SelectedSummary = {
+  chapterId: number;
+  questionId: string;
+  questionMarks: string;
+  selectedQuestions: number[];
+};
+
 interface Props {
   data: Chapter[];
+  // handleNavigate: () => void
+  handleNavigate: (payload: {
+    chapterId: number;
+    questionId: string;
+    questionMarks: string;
+    label: string;
+  }) => void;
+  activeChapterId: number | null;
+  selectedSummary?: SelectedSummary;
 }
 
 /* ===== COMPONENT ===== */
-const Paperselectcontent: React.FC<Props> = ({ data }) => {
-  const [activeId, setActiveId] = useState<number | null>(null);
+const Paperselectcontent: React.FC<Props> = ({ data, handleNavigate, activeChapterId, selectedSummary }) => {
+
+  // const [activeId, setActiveId] = useState<number | null>(null);
+  const [activeId, setActiveId] = useState<number | null>(activeChapterId); 
+
+  useEffect(() => {
+    setActiveId(activeChapterId);
+  }, [activeChapterId]);
 
   const toggle = (id: number) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -284,14 +308,14 @@ const Paperselectcontent: React.FC<Props> = ({ data }) => {
   };
 
   if (!data?.length) {
-    return <Text style={{ textAlign: "center" , fontSize:moderateScale(14),color:Colors.black}}>No Data</Text>;
+    return <Text style={{ textAlign: "center", fontSize: moderateScale(14), color: Colors.black }}>No Data</Text>;
   }
 
+  console.log('selectedSummary', selectedSummary)
   return (
     <ScrollView style={{ flex: 1, backgroundColor: Colors.white }}>
       {data.map(item => {
         const isOpen = activeId === item.id;
-
         return (
           <View key={item.id} style={styles.wrapper}>
             {/* TITLE */}
@@ -319,6 +343,7 @@ const Paperselectcontent: React.FC<Props> = ({ data }) => {
               <View style={styles.contentBox}>
                 {item.questions.map((question, index) => {
                   const isLast = index === item.questions.length - 1;
+                  // console.log('maaaaaaaaa', question)
 
                   return (
                     <View key={question.id}>
@@ -328,20 +353,47 @@ const Paperselectcontent: React.FC<Props> = ({ data }) => {
                           justifyContent: "space-between",
                           alignItems: "center",
                         }}
+                        // onPress={handleNavigate}
+                        onPress={() =>
+                          handleNavigate({
+                            chapterId: item.id,
+                            questionId: question.id,
+                            questionMarks: question.questionMarks,
+                            label: question.label,
+                          })
+                        }
                       >
                         <Text style={styles.itemText}>
-                          {question.label}
+                          {question?.id}. {question.label}
                         </Text>
-
-                        <Text style={styles.questionSelectText}>2</Text>
+                        {/* {question.id === selectedSummary.questionId ? } */}
+                        <Text style={styles.questionSelectText}>{selectedSummary && selectedSummary?.chapterId === item.id && question.id === selectedSummary.questionId ? selectedSummary?.selectedQuestions?.length ?? 0 : 0}
+                        </Text>
                       </TouchableOpacity>
-
+                      {/* 
+                    <View style={{flexDirection:"row", borderWidth:1}}>
+                      {question.id === selectedSummary.questionId && 
                       <View style={styles.mcqBox}>
-                        <View style={styles.powerRow}>
-                          <Text style={styles.baseText}>2</Text>
-                          <SupPower>4</SupPower>
-                        </View>
+                        {selectedSummary?.selectedQuestions.map(item => {
+                          return (
+                            <View style={styles.powerRow} key={item}>
+                              <Text style={styles.baseText}>{item}</Text>
+                              <SupPower>{selectedSummary?.questionMarks}</SupPower>
+                            </View>
+                          )
+                        })}
                       </View>
+                      }</View> */}
+                      {question.id === selectedSummary?.questionId && selectedSummary?.chapterId === item.id && (
+                        <View style={styles.mcqBox}>
+                          {selectedSummary?.selectedQuestions?.map(item => (
+                            <View key={item} style={styles.powerRow}>
+                              <Text style={styles.baseText}>{item}</Text>
+                              <SupPower>{selectedSummary.questionMarks}</SupPower>
+                            </View>
+                          ))}
+                        </View>
+                      )}
 
                       {!isLast && (
                         <View

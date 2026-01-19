@@ -7,19 +7,31 @@ import AppHeader from '../../../component/header/AppHeader';
 import { OtpInput, OtpTimer } from '../../auth/otp/component';
 import AppButton from '../../../component/button/AppButton';
 import { moderateScale } from '../../../utlis/responsiveSize';
+import { useRoute } from '@react-navigation/native';
 
 
-const OtpRequestScreen = ({navigation}) => {
+const OtpRequestScreen = ({ navigation }) => {
+    const route = useRoute()
+    const{phoneNumber} = route.params
+    // console.log('route.paramsssss', route.params)
     const [otp, setOtp] = useState('');
-    return (
-        <SafeAreaView style={styles.mainContainer}>
-            <StatusBar barStyle="light-content" backgroundColor={Colors.primaryColor} />
-            <AppHeader title="Paper Fast" discriptionText='Paper Generate In Minute' />
 
+    const maskPhoneNumber = (phone) => {
+        if (!phone) return;
+        const phoneStr = phone.toString();
+        const last3 = phoneStr?.slice(-3);
+        return `+91-*******${last3}`
+    }
+    return (
+        <SafeAreaView
+            style={styles.mainContainer}
+            edges={['left', 'right', 'bottom']} // 🔥 IMPORTANT
+        >
+            <AppHeader title="Paper Fast" discriptionText='Paper Generate In Minute' />
             <View style={styles.innerMainContainer}>
-                <View style={styles.innerSecondMainContainer}>
+                <View style={styles.innerSecondMainContainer}>  
                     <Text style={styles.loginText}>OTP Request</Text>
-                    <Text style={styles.subHeading}>We’ll sent an OTP to your +91-*****-**350 number.</Text>
+                    <Text style={styles.subHeading}>We’ll sent an OTP to your {maskPhoneNumber(phoneNumber)} number.</Text>
 
                     <OtpInput
                         value={otp}
@@ -32,7 +44,7 @@ const OtpRequestScreen = ({navigation}) => {
                     <OtpTimer />
 
                     <View style={styles.buttonBox}>
-                        <AppButton title='Verification' onPress={() => navigation.navigate('LoginScreenRole')} style={{paddingHorizontal:moderateScale(123)}}/>
+                        <AppButton title='Verification' onPress={() => navigation.navigate('LoginScreenRole')} style={{ paddingHorizontal: moderateScale(123) }} />
                     </View>
                     <Text style={styles.versionText}>Version 1.0</Text>
                 </View>

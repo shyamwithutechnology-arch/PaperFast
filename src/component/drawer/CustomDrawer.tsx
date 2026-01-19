@@ -15,6 +15,11 @@ import { styles } from './styles';
 import { Icons } from '../../assets/icons';
 import { Images } from '../../assets/images';
 import { WorkletsModule } from 'react-native-worklets';
+import { logout } from '../../redux/slices/authSlice';
+import { useDispatch } from 'react-redux';
+import { reduxStorage } from '../../storage';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import AppHeader from '../header/AppHeader';
 
 const MENU = [
     { id: 1, title: 'My Profile', icon: Icons.profile },
@@ -31,11 +36,26 @@ const MENU = [
 
 const CustomDrawer = ({ navigation }) => {
     const [role, setRole] = React.useState<'Teacher' | 'Student'>('Teacher');
+    
+    const dispatch = useDispatch()
+    const handleLoggeOut = () => {
+        //    const token = '1234';
+        //    reduxStorage.de()
+        reduxStorage.removeItem('token')
+           dispatch(logout());
+           // ✅ Don't navigate here - let RootStack handle it automatically
+           // The auth state change will trigger RootStack to re-render
+       };
     return (
-        <View style={styles.container}>
-            {/* <StatusBar backgroundColor={Colors.primaryColor} barStyle={'light-content'}/> */}
+       <SafeAreaView
+             style={styles.mainContainer}
+            //  edges={['left', 'right', 'bottom']}
+         >
+            {/* <AppHeader title=''/> */}
+            {/* <StatusBar backgroundColor={Colors.primaryColor} barStyle={'dark-content'}/> */}
             {/* ===== FIXED HEADER ===== */}
-           <View style={{backgroundColor:Colors.primaryColor,height:moderateScale(35)}}/>
+           {/* <View style={{backgroundColor:Colors.primaryColor,height:moderateScale(35)}}/> */}
+           <View style={{flex:1, backgroundColor:'#fff'}}>
             <View style={styles.profileBox}>
                 <Image
                     source={Icons.withoutBgLogo}
@@ -46,11 +66,6 @@ const CustomDrawer = ({ navigation }) => {
                     <Image source={Icons.drawerCancel} style={{ height: moderateScale(11), width: moderateScale(11) }} />
                 </TouchableOpacity>
             </View>
-            {/* ===== FIXED HEADER ===== */}
-            {/* <View style={styles.profileBox}>
-        <Image source={Icons.withoutBgLogo} style={styles.avatar} resizeMode='contain' />
-      </View> */}
-
 
             {/* ===== SCROLLABLE MENU ONLY ===== */}
             <DrawerContentScrollView
@@ -148,7 +163,7 @@ const CustomDrawer = ({ navigation }) => {
                 <Text style={styles.supportText}>Support</Text>
                 <Text style={styles.phone}>+91-87099-52350</Text>
             </View> */}
-            <TouchableOpacity style={styles.logOutMainBox}>
+            <TouchableOpacity style={styles.logOutMainBox} onPress={handleLoggeOut}>
                 <Image source={Icons.logout} style={styles.logoutSty} resizeMode='contain' />
                 <Text style={styles.logoutText}>Logout My Account</Text>
             </TouchableOpacity>
@@ -169,8 +184,8 @@ const CustomDrawer = ({ navigation }) => {
                     </View>
                 </View>
             </View>
-
-        </View>
+</View>
+        </SafeAreaView>
     );
 };
 

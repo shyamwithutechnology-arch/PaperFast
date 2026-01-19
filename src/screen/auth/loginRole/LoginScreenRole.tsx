@@ -9,8 +9,12 @@ import AppButton from '../../../component/button/AppButton';
 import AppTextInput from '../../../component/apptextinput/AppTextInput';
 import { moderateScale } from '../../../utlis/responsiveSize';
 import { Icons } from '../../../assets/icons'
+import { useDispatch } from "react-redux";
+import { loginSuccess } from '../../../redux/slices/authSlice';
+import { reduxStorage } from '../../../storage';
 
 const LoginScreenRole = () => {
+    const dispatch = useDispatch()
     const [otp, setOtp] = useState('');
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
@@ -23,8 +27,21 @@ const LoginScreenRole = () => {
             setSelectedRole(status)
         }
     }
+    // LoginScreen.tsx
+    const handleLoggedIn = () => {
+        const token = '1234';
+        reduxStorage.setItem('token', '123456')
+        dispatch(loginSuccess(token));
+
+        // ✅ Don't navigate here - let RootStack handle it automatically
+        // The auth state change will trigger RootStack to re-render
+    };
+
     return (
-        <SafeAreaView style={styles.mainContainer}>
+        <SafeAreaView
+            style={styles.mainContainer}
+            edges={['left', 'right', 'bottom']}
+        >
             <AppHeader title="Paper Fast" discriptionText='Paper Generate In Minute' />
             <View style={styles.innerMainContainer}>
                 <View style={styles.innerSecondMainContainer}>
@@ -59,7 +76,7 @@ const LoginScreenRole = () => {
                         </TouchableOpacity>
                     </View>
 
-                    <AppButton title='Agree and Continue' style={{paddingHorizontal:moderateScale(89)}}/>
+                    <AppButton title='Agree and Continue' style={{ paddingHorizontal: moderateScale(89) }} onPress={handleLoggedIn} />
 
                     <Text style={styles.versionText}>Version 1.0</Text>
 

@@ -16,9 +16,9 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     elevation: 1,
     marginHorizontal: moderateScale(14),
-    borderColor:'rgba(0, 140, 227, 0.11)',
-    borderWidth:1,
-    shadowColor:''
+    borderColor: 'rgba(0, 140, 227, 0.11)',
+    borderWidth: 1,
+    shadowColor: ''
   },
 
   title: {
@@ -65,15 +65,23 @@ export const styles = StyleSheet.create({
     color: '#2A2A2A'
   },
   mcqBox: {
-    width: moderateScale(28),
-    height: moderateScale(28),
-    borderRadius: moderateScale(3),
-    // borderWidth:1, 
-    backgroundColor: 'rgba(0, 140, 227, 0.1)',
-    alignItems: 'center',
-    justifyContent: "center",
-    marginBottom:moderateScale(10)
+    // width: moderateScale(28),
+    // height: moderateScale(28),
+    // borderRadius: moderateScale(3),
+    // // borderWidth:1, 
+    // backgroundColor: 'rgba(0, 140, 227, 0.1)',
+    // alignItems: 'center',
+    // justifyContent: "center",
+    // marginBottom:moderateScale(10),
+    flexDirection: 'row',
+    flexWrap: 'wrap',           // ✅ makes row responsive
+    // alignItems: 'center',
+    marginTop: moderateScale(6),
+    gap: moderateScale(8),
+    // paddingHorizontal:moderateScale(10),
+    // borderWidth:1
   },
+
   questionText: {
     fontSize: moderateScale(12),
     fontFamily: Fonts.InterRegular,
@@ -82,6 +90,17 @@ export const styles = StyleSheet.create({
   powerRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
+    //    flexDirection: 'row',
+    // alignItems: 'center',
+    backgroundColor: '#EBF6FF',
+    paddingHorizontal: moderateScale(8),
+    paddingVertical: moderateScale(4),
+    borderRadius: moderateScale(4),
+    // width: moderateScale(28),
+    // height: moderateScale(28),
+    // borderWidth:1,
+    elevation: 1
+
   },
 
   baseText: {

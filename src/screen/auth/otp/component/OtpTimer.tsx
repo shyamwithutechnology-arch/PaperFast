@@ -7,7 +7,7 @@ const OtpTimer = () => {
   const { formatTime, isExpired, resetTimer } = useOtpTimer(120);
 
   return (
-    <View style={{ marginTop: moderateScale(20), alignItems: 'center' }}>
+    <View style={{ marginTop: moderateScale(7), alignItems: 'center' }}>
       {!isExpired ? (
         <Text style={{
           fontSize: moderateScale(14),

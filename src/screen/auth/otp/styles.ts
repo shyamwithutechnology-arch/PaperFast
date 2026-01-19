@@ -56,7 +56,7 @@ export const styles = StyleSheet.create({
         fontFamily: Fonts.InterRegular,
         alignSelf: 'center',
         marginTop: 'auto',
-        paddingVertical: moderateScale(30)
+        paddingVertical: moderateScale(10)
 
     }
 })

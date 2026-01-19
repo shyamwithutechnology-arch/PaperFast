@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { View, StatusBar, TouchableOpacity, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "../../../theme";
@@ -8,37 +8,51 @@ import Paperselectcontent from "./component/paperselectcontent/Paperselectconten
 import { styles } from "./styles";
 import { moderateScale } from "react-native-size-matters";
 import Icon from "react-native-vector-icons/FontAwesome6";
+import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
+type SelectedSummary = {
+    chapterId: number;
+    questionId: string;
+    questionMarks: string;
+    selectedQuestions: number[];
+};
+
 
 const PaperSelect = () => {
+    const navigation = useNavigation()
+    const route = useRoute();
+    console.log('routewwwww',route);
+    
+    const selectedSummary = route.params?.selectedSummary as
+        | SelectedSummary
+        | undefined;
+
+
+    const [activeChapterId, setActiveChapterId] = useState<number | null>(
+        selectedSummary?.chapterId ?? null
+    );
+
+    const handleBack = () => {
+        navigation.navigate('PaperTypeScreen')
+    }
     type PaperType = 'NCERT' | 'EXEMPLAR' | 'RD_SHARMA';
 
     const [selectedPaper, setSelectedPaper] = useState<PaperType>('NCERT');
+
     const handleSelectPaper = (id: string) => {
         setSelectedPaper(id);
 
     }
-    // const selectBtn = [
-    //     {
-    //         id: 1,
-    //         title: "NCERT",
-    //     },
-    //     {
-    //         id: 2,
-    //         title: "Exempler",
-    //         content: ["Chapter 1", "Chapter 2"],
-    //     },
-    //     {
-    //         id: 3,
-    //         title: "RD Sharma",
-    //     },
-    // ];
+    const handleQuestionSelect = (payload) => {
+        // navigation.navigate('QuestionScreen')
+        navigation.navigate('QuestionScreen', {
+            ...payload,
+        });
+    }
     const selectBtn = [
         { id: 1, title: "NCERT", key: "NCERT" },
         { id: 2, title: "Exemplar", key: "EXEMPLAR" },
         { id: 3, title: "RD Sharma", key: "RD_SHARMA" },
     ];
-
-
     const PAPER_DATA = {
         NCERT: [
             {
@@ -46,10 +60,10 @@ const PaperSelect = () => {
                 title: "Number System",
                 chapterName: "Chap 01",
                 questions: [
-                    { id: "A", label: "M.C.Q" },
-                    { id: "B", label: "Very short answer type" },
-                    { id: "C", label: "Ques-Ans (Each of 2 Mark)" },
-                    { id: "D", label: "Ques-Ans (Each of 3 Mark)" },
+                    { id: "A", label: "M.C.Q (1 Marks)", questionMarks: '1' },
+                    { id: "B", label: "Very short answer type  (2 Marks)", questionMarks: '2' },
+                    { id: "C", label: "Ques-Ans (Each of 3 Mark)", questionMarks: '3' },
+                    { id: "D", label: "Ques-Ans (Each of 4 Mark)", questionMarks: '4' },
                 ],
             },
             {
@@ -57,10 +71,10 @@ const PaperSelect = () => {
                 title: "Polynomials",
                 chapterName: "Chap 02",
                 questions: [
-                    { id: "A", label: "M.C.Q" },
-                    { id: "B", label: "Very short answer type" },
-                    { id: "C", label: "Ques-Ans (Each of 2 Mark)" },
-                    { id: "D", label: "Ques-Ans (Each of 3 Mark)" },
+                    { id: "A", label: "M.C.Q (1 Marks)", questionMarks: '1' },
+                    { id: "B", label: "Very short answer type  (2 Marks)", questionMarks: '2' },
+                    { id: "C", label: "Ques-Ans (Each of 3 Mark)", questionMarks: '3' },
+                    { id: "D", label: "Ques-Ans (Each of 4 Mark)", questionMarks: '4' },
                 ],
             },
         ],
@@ -71,7 +85,7 @@ const PaperSelect = () => {
                 title: "Number System (Exemplar)",
                 chapterName: "Unit 01",
                 questions: [
-                    { id: "A", label: "Objective Questions" },
+                    { id: "A", label: "Objective Questions ( 3 Mark)" },
                     { id: "B", label: "Short Answer" },
                     { id: "C", label: "Numerical Problems" },
                 ],
@@ -81,7 +95,7 @@ const PaperSelect = () => {
                 title: "Polynomials (Exemplar)",
                 chapterName: "Unit 02",
                 questions: [
-                    { id: "A", label: "Objective Questions" },
+                    { id: "A", label: "Objective Questions ( 3 Mark)" },
                     { id: "B", label: "Short Answer" },
                     { id: "C", label: "Numerical Problems" },
                 ],
@@ -94,7 +108,7 @@ const PaperSelect = () => {
                 title: "Number System",
                 chapterName: "Chapter 1",
                 questions: [
-                    { id: "A", label: "Exercise 1A" },
+                    { id: "A", label: "Exercise 1A ( 3 Mark)" },
                     { id: "B", label: "Exercise 1B" },
                     { id: "C", label: "MCQ" },
                     { id: "D", label: "Practice Set" },
@@ -113,28 +127,38 @@ const PaperSelect = () => {
         ],
     };
 
+    useFocusEffect(
+        useCallback(() => {
+            navigation.getParent()?.setOptions({
+                tabBarStyle: { display: 'none' },
+            });
 
+            return () => {
+                navigation.getParent()?.setOptions({
+                    tabBarStyle: { display: 'flex' },
+                });
+            };
+        }, []))
 
     return (
         <View style={{ flex: 1, backgroundColor: Colors.white }}>
             {/* STATUS BAR */}
             <StatusBar
-                backgroundColor={'red'}
+                backgroundColor={Colors.primaryColor}
                 barStyle="dark-content"
             />
 
             {/* HEADER + STATUS BAR SAME BACKGROUND */}
             <View style={{ backgroundColor: Colors.lightThemeBlue }}>
                 <SafeAreaView edges={["top"]}>
-                    <HeaderPaperModule title="Regular Paper" rightPress={() => {}} />
+                    <HeaderPaperModule title={route?.params?.paperType} rightPress={() => { }} leftIconPress={handleBack} />
                 </SafeAreaView>
             </View>
 
             {/* MAIN CONTENT */}
             <SafeAreaView
                 style={{ flex: 1, backgroundColor: Colors.white }}
-                edges={["left", "right", "bottom"]}
-            >
+                edges={["left", "right", "bottom"]}>
                 {/* <View style={styles.rowContainer}>
                     {selectBtn.map((item, index) => (
                         <TouchableOpacity key={item.id} style={[styles.selectBtnBox, { backgroundColor: selectedPaper === item?.title ? Colors.primaryColor : Colors.white, borderColor: selectedPaper === item?.title ? Colors.primaryColor : '#AFAFAF' }]} onPress={() => handleSelectPaper(item?.title)}>
@@ -145,7 +169,6 @@ const PaperSelect = () => {
                 <View style={styles.rowContainer}>
                     {selectBtn.map(item => {
                         const isActive = selectedPaper === item.key;
-
                         return (
                             <TouchableOpacity
                                 key={item.id}
@@ -162,8 +185,7 @@ const PaperSelect = () => {
                                     style={[
                                         styles.selectBtnText,
                                         { color: isActive ? Colors.white : "#AFAFAF" },
-                                    ]}
-                                >
+                                    ]}>
                                     {item.title}
                                 </Text>
                             </TouchableOpacity>
@@ -172,7 +194,7 @@ const PaperSelect = () => {
                 </View>
 
                 {/* question list topic wise */}
-                <Paperselectcontent data={PAPER_DATA[selectedPaper]} />
+                <Paperselectcontent data={PAPER_DATA[selectedPaper]} handleNavigate={handleQuestionSelect} activeChapterId={activeChapterId} selectedSummary={selectedSummary}/>
 
                 <View style={styles.totalWrapper}>
                     {/* TOP SHADOW */}

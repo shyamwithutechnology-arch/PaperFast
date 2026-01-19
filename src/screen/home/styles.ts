@@ -6,7 +6,7 @@ import { scale, verticalScale } from "react-native-size-matters"
 export const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
-        backgroundColor: Colors.primaryColor
+        backgroundColor: Colors.white
     },
     innerMainContainer: {
         flex: 1,
@@ -29,7 +29,7 @@ export const styles = StyleSheet.create({
         marginBottom: moderateScale(4)
     },
     boardBox: {
-        height: verticalScale(85),
+        height: verticalScale(88),
         width: scale(102),
         borderWidth: 1,
         marginHorizontal: moderateScale(5.5),

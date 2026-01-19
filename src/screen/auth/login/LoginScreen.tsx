@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, Image, TextInput, Pressable, StatusBar, StyleSheet, Platform } from "react-native";
+import { View, Text, Image, TextInput, Pressable, StatusBar, StyleSheet, Platform, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AppHeader from "../../../component/header/AppHeader";
 import AppButton from "../../../component/button/AppButton";
@@ -8,7 +8,7 @@ import { Icons } from "../../../assets/icons";
 import { moderateScale } from "../../../utlis/responsiveSize";
 import { Colors, Fonts } from "../../../theme";
 
-const LoginScreen = ({navigation}) => {
+const LoginScreen = ({ navigation }) => {
     // const [phone, setPhone] = useState<string>("");
     const [phone, setPhone] = useState<string>("");
     const [phoneInput, setPhoneInput] = useState<string>("");
@@ -22,11 +22,17 @@ const LoginScreen = ({navigation}) => {
         }
         setPhoneInput(formatted);
     };
+    
+    const handleOtpRequest = () => {
+         navigation.navigate('OtpRequestScreen', {phoneNumber:phoneInput});
+    }
     return (
-        <SafeAreaView style={styles.mainContainer}>
-            <StatusBar barStyle="light-content" backgroundColor={Colors.primaryColor} />
+        <SafeAreaView
+            style={styles.mainContainer}
+            edges={['left', 'right', 'bottom']} // 🔥 IMPORTANT
+        >
+            {/* <StatusBar barStyle="dark-content" backgroundColor={Colors.primaryColor} /> */}
             <AppHeader title="Paper Fast" discriptionText='Paper Generate In Minute' />
-
             <View style={styles.innerMainContainer}>
                 <View style={styles.innerSecondMainContainer}>
                     <Text style={styles.loginText}>Login with Mobile Number</Text>
@@ -47,12 +53,14 @@ const LoginScreen = ({navigation}) => {
                     </View>
 
                     {/* // button */}
-                    <AppButton title="Send Verification OTP"  onPress={() => navigation.navigate('OtpRequestScreen')} style={{paddingHorizontal:moderateScale(82)}}/>
+                    <AppButton title="Send Verification OTP" onPress={handleOtpRequest} style={{ paddingHorizontal: moderateScale(82) }} />
 
                     <View style={styles.privacyBox}>
                         <Text style={styles.byRegisterText}>By registering, you agree to the
                             <Text style={[styles.byRegisterText, { fontFamily: Fonts.InterSemiBold }]}>Terms of Service,{`\n`}
-                                Privacy Policy </Text> and <Text style={[styles.byRegisterText, { fontFamily: Fonts.InterSemiBold }]}>Cookie Policy.</Text></Text>
+                                <Text style={[styles.byRegisterText, { fontFamily: Fonts.InterSemiBold }]} onPress={() => { console.log('this for those') }}>
+                                    Privacy Policy </Text>
+                            </Text> and <Text style={[styles.byRegisterText, { fontFamily: Fonts.InterSemiBold }]}>Cookie Policy.</Text></Text>
                     </View>
                     <View style={styles.mainMaskView}>
                         <Image source={Icons.MaskGroup} style={styles.maskGroupImag} />
@@ -62,9 +70,9 @@ const LoginScreen = ({navigation}) => {
                                 <View style={styles.scrachLine} />
                                 <View style={[styles.supportBox, { flexDirection: 'column', alignItems: 'flex-start' }]}>
                                     <Text style={styles.supportText}>Support</Text>
-                                    <View style={styles.numberTextBox} >
+                                    <View style={styles.numberTextBox}>
                                         <Image source={Icons.plus} style={styles.plusImg} />
-                                        <Text style={styles.supportNumberText}>91{phoneInput}</Text>
+                                        <Text style={styles.supportNumberText}>91 7685785976</Text>
                                     </View>
                                 </View>
                             </View>
@@ -134,7 +142,7 @@ const styles = StyleSheet.create({
 
     // phoneInput static 
     phoneInput: {
-        fontSize: moderateScale(14),
+        fontSize: moderateScale(15),
         fontFamily: Fonts.InterMedium,
         color: Colors.InputText,
         flex: 1,
@@ -142,7 +150,7 @@ const styles = StyleSheet.create({
     },
 
     prefix: {
-        fontSize: moderateScale(14),
+        fontSize: moderateScale(15),
         fontFamily: Fonts.InterMedium,
         color: Colors.InputText,
         // marginLeft: moderateScale(10)
@@ -230,7 +238,7 @@ const styles = StyleSheet.create({
         fontFamily: Fonts.InterRegular,
         alignSelf: 'center',
         // marginBottom: 'auto'
-        marginVertical: moderateScale(30)
+        marginVertical: moderateScale(10)
     }
 }
 )
