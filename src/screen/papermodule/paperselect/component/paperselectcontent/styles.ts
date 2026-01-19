@@ -14,13 +14,16 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    elevation: 3,
-    marginHorizontal:moderateScale(14)
+    elevation: 1,
+    marginHorizontal: moderateScale(14),
+    borderColor:'rgba(0, 140, 227, 0.11)',
+    borderWidth:1,
+    shadowColor:''
   },
 
   title: {
-    fontFamily: Fonts.InstrumentSansSemiBold,
-    fontSize: moderateScale(16),
+    fontFamily: Fonts.InstrumentSansMedium,
+    fontSize: moderateScale(15),
     color: Colors.black,
   },
 
@@ -41,17 +44,57 @@ export const styles = StyleSheet.create({
     marginTop: moderateScale(12), // 🔥 space between title & content
     backgroundColor: Colors.white,
     borderRadius: moderateScale(7),
-    padding: moderateScale(16),
+    padding: moderateScale(10),
     elevation: 2,
     borderWidth: 1,
     borderColor: "rgba(0, 140, 227, 0.11)",
-    marginHorizontal:moderateScale(10)
+    marginHorizontal: moderateScale(10)
   },
 
   itemText: {
     fontFamily: Fonts.InterRegular,
-    fontSize: moderateScale(14),
-    color: Colors.ParagraphAndShortTexts,
-    marginTop: moderateScale(8),
+    fontSize: moderateScale(12),
+    color: '#2A2A2A',
+    // marginTop: moderateScale(8),
+    marginVertical: moderateScale(13),
+    // borderWidth:1
+  },
+  questionSelectText: {
+    fontSize: moderateScale(12),
+    fontFamily: Fonts.InterSemiBold,
+    color: '#2A2A2A'
+  },
+  mcqBox: {
+    width: moderateScale(28),
+    height: moderateScale(28),
+    borderRadius: moderateScale(3),
+    // borderWidth:1, 
+    backgroundColor: 'rgba(0, 140, 227, 0.1)',
+    alignItems: 'center',
+    justifyContent: "center",
+    marginBottom:moderateScale(10)
+  },
+  questionText: {
+    fontSize: moderateScale(12),
+    fontFamily: Fonts.InterRegular,
+    color: Colors.black
+  },
+  powerRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+
+  baseText: {
+    fontSize: moderateScale(12),
+    fontFamily: Fonts.InterRegular,
+    color: Colors.black,
+    // lineHeight: moderateScale(14),
+  },
+
+  supText: {
+    fontSize: moderateScale(10),
+    fontFamily: Fonts.InterRegular,
+    color: Colors.black,
+    marginTop: moderateScale(-4),
   },
 });
