@@ -6,13 +6,16 @@ import { Colors } from '../../../theme';
 import AppHeader from '../../../component/header/AppHeader';
 import { OtpInput, OtpTimer } from '../../auth/otp/component';
 import AppButton from '../../../component/button/AppButton';
-import { moderateScale } from '../../../utlis/responsiveSize';
+import { moderateScale } from '../../../utils/responsiveSize';
 import { useRoute } from '@react-navigation/native';
+import { showSnackbar } from '../../../utils/snackbar';
 
 
 const OtpRequestScreen = ({ navigation }) => {
     const route = useRoute()
-    const{phoneNumber} = route.params
+    const { phoneNumber, otpResult } = route.params
+    console.log('phoneNumber', phoneNumber);
+
     // console.log('route.paramsssss', route.params)
     const [otp, setOtp] = useState('');
 
@@ -22,6 +25,18 @@ const OtpRequestScreen = ({ navigation }) => {
         const last3 = phoneStr?.slice(-3);
         return `+91-*******${last3}`
     }
+    const handleOtp = () => {
+        console.log('opttttt ', otp);
+        let otpResultToString = otpResult.toString()
+        if (otp?.trim() === '') {
+            showSnackbar('Please fill the Otp', 'errro',)
+        } else if (otp?.trim() !== otpResultToString) {
+            showSnackbar('Otp Does not match', 'errro',)
+        } else if (otp.trim() === otpResultToString.trim()) {
+            navigation.navigate('LoginScreenRole', { 'phoneNumber': phoneNumber });
+            showSnackbar('Otp Verify Successfully', 'success',)
+        }
+    }
     return (
         <SafeAreaView
             style={styles.mainContainer}
@@ -29,7 +44,7 @@ const OtpRequestScreen = ({ navigation }) => {
         >
             <AppHeader title="Paper Fast" discriptionText='Paper Generate In Minute' />
             <View style={styles.innerMainContainer}>
-                <View style={styles.innerSecondMainContainer}>  
+                <View style={styles.innerSecondMainContainer}>
                     <Text style={styles.loginText}>OTP Request</Text>
                     <Text style={styles.subHeading}>We’ll sent an OTP to your {maskPhoneNumber(phoneNumber)} number.</Text>
 
@@ -44,7 +59,7 @@ const OtpRequestScreen = ({ navigation }) => {
                     <OtpTimer />
 
                     <View style={styles.buttonBox}>
-                        <AppButton title='Verification' onPress={() => navigation.navigate('LoginScreenRole')} style={{ paddingHorizontal: moderateScale(123) }} />
+                        <AppButton title='Verification' onPress={handleOtp} style={{ paddingHorizontal: moderateScale(123) }} />
                     </View>
                     <Text style={styles.versionText}>Version 1.0</Text>
                 </View>

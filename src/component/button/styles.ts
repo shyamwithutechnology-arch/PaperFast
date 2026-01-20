@@ -27,7 +27,7 @@
 
 import { StyleSheet } from "react-native";
 import { Colors } from "../../theme/color";
-import { moderateScale } from "../../utlis/responsiveSize";
+import { moderateScale } from "../../utils/responsiveSize";
 import { Fonts } from "../../theme/fonts";
 
 export const styles = StyleSheet.create({

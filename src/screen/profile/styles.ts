@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 import { Colors, Fonts } from "../../theme";
-import { moderateScale } from "../../utlis/responsiveSize";
+import { moderateScale } from "../../utils/responsiveSize";
 
 export const styles = StyleSheet.create({
     mainContainer: {
@@ -46,7 +46,8 @@ export const styles = StyleSheet.create({
         color: Colors.ParagraphAndShortTexts,
         fontFamily: Fonts.InterRegular,
         marginLeft: moderateScale(20),
-        marginTop: moderateScale(8),
+        marginTop: moderateScale(4),
+        marginBottom: moderateScale(16)
     },
     byRegisterText: {
         fontSize: moderateScale(10),
@@ -82,7 +83,7 @@ export const styles = StyleSheet.create({
         paddingLeft: moderateScale(10),
         flexDirection: 'row',
         alignItems: 'center',
-        marginVertical: moderateScale(15),
+        marginVertical: moderateScale(14),
     }
     ,
     countryImgStyle: {
@@ -145,8 +146,6 @@ export const styles = StyleSheet.create({
     numberTextBox: {
         flexDirection: 'row',
         alignItems: 'center',
-        // borderWidth:1,
-        // alignSelf: 'flex-start'
     },
     versionText: {
         fontSize: moderateScale(14),
@@ -154,7 +153,8 @@ export const styles = StyleSheet.create({
         fontFamily: Fonts.InterRegular,
         alignSelf: 'center',
         // marginBottom: 'auto'
-        marginVertical: moderateScale(10)
+        // marginVertical: moderateScale(10)
+        marginTop: 'auto'
     }
 }
 )

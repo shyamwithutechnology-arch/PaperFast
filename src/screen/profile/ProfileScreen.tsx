@@ -28,9 +28,9 @@ const ProfileScreen = ({ navigation }) => {
         setPhoneInput(formatted);
     };
 
-    const handleOtpRequest = () => {
-        navigation.navigate('OtpRequestScreen', { phoneNumber: phoneInput });
-    }
+    // const handleOtpRequest = () => {
+    //     navigation.navigate('OtpRequestScreen', { phoneNumber: phoneInput });
+    // }
     return (
         <SafeAreaView
             style={styles.mainContainer}
@@ -44,7 +44,7 @@ const ProfileScreen = ({ navigation }) => {
                     <Text style={styles.subHeading}>Update your personal details</Text>
 
                     <View style={{ marginTop: moderateScale(4) }}>
-                        <AppTextInput placeHolderText={'Enter Name'} value={name} onChangeText={setName} />
+                        <AppTextInput placeHolderText={'Enter Name'} value={name} onChangeText={setName} containerStyle={{ marginBottom: moderateScale(15) }} />
                         <AppTextInput placeHolderText={'Enter Last'} value={lastName} onChangeText={setLastName} />
 
                         <View style={styles.phoneInputBox}>
@@ -56,35 +56,10 @@ const ProfileScreen = ({ navigation }) => {
                             </View>
                         </View>
 
-                        <AppTextInput placeHolderText={'DD/MM/YY'} value={dob} onChangeText={setDob} />
-                        <AppTextInput placeHolderText={'Enter Name'} value={email} onChangeText={setEmail} />
+                        <AppTextInput placeHolderText={'DD/MM/YY'} value={dob} onChangeText={setDob} containerStyle={{ marginBottom: moderateScale(15) }} />
+                        <AppTextInput placeHolderText={'Enter Name'} value={email} onChangeText={setEmail} containerStyle={{ marginBottom: moderateScale(15) }} />
                     </View>
-                    <AppButton title="Send Verification OTP" onPress={handleOtpRequest} style={{ paddingHorizontal: moderateScale(82) }} />
-
-                    <View style={styles.privacyBox}>
-                        <Text style={styles.byRegisterText}>By registering, you agree to the
-                            <Text style={[styles.byRegisterText, { fontFamily: Fonts.InterSemiBold }]}>Terms of Service,{`\n`}
-                                <Text style={[styles.byRegisterText, { fontFamily: Fonts.InterSemiBold }]} onPress={() => { console.log('this for those') }}>
-                                    Privacy Policy </Text>
-                            </Text> and <Text style={[styles.byRegisterText, { fontFamily: Fonts.InterSemiBold }]}>Cookie Policy.</Text></Text>
-                    </View>
-                    <View style={styles.mainMaskView}>
-                        <Image source={Icons.MaskGroup} style={styles.maskGroupImag} />
-
-                        <View style={{}}>
-                            <View style={[styles.supportBox, { marginHorizontal: moderateScale(0) }]}>
-                                <View style={styles.scrachLine} />
-                                <View style={[styles.supportBox, { flexDirection: 'column', alignItems: 'flex-start' }]}>
-                                    <Text style={styles.supportText}>Support</Text>
-                                    <View style={styles.numberTextBox}>
-                                        <Image source={Icons.plus} style={styles.plusImg} />
-                                        <Text style={styles.supportNumberText}>91 7685785976</Text>
-                                    </View>
-                                </View>
-                            </View>
-                        </View>
-                    </View>
-                    <Text style={styles.versionText}>Version 1.0</Text>
+                    <AppButton title="Submit" style={{ paddingHorizontal: moderateScale(133), marginTop: moderateScale(14), }} />
                 </View>
             </View>
             {/* <Text>dsfasff</Text> */}

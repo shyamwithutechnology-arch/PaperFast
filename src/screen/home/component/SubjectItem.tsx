@@ -1,6 +1,6 @@
 import React from 'react'
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native'
-import { moderateScale, scale, verticalScale } from '../../../utlis/responsiveSize'
+import { moderateScale, scale, verticalScale } from '../../../utils/responsiveSize'
 import { Colors, Fonts } from '../../../theme'
 interface Props {
     item: { id: string, label: string },

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { moderateScale } from "../../utlis/responsiveSize";
+import { moderateScale } from "../../utils/responsiveSize";
 import { Colors } from "../../theme/color";
 import { Fonts } from "../../theme/fonts";
 

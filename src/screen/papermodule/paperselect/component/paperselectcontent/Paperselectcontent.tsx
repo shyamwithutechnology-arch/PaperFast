@@ -251,7 +251,7 @@ import {
 } from "react-native";
 import { styles } from "./styles";
 import { Icons } from "../../../../../assets/icons";
-import { moderateScale } from "../../../../../utlis/responsiveSize";
+import { moderateScale } from "../../../../../utils/responsiveSize";
 import { Colors } from "../../../../../theme";
 import SupPower from "../../../../../component/SupPower";
 

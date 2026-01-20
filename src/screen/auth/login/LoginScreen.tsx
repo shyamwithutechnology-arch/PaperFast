@@ -1,39 +1,229 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, Image, TextInput, Pressable, StatusBar, StyleSheet, Platform, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AppHeader from "../../../component/header/AppHeader";
 import AppButton from "../../../component/button/AppButton";
 import PhoneInput from "react-native-international-phone-number";
 import { Icons } from "../../../assets/icons";
-import { moderateScale } from "../../../utlis/responsiveSize";
+import { moderateScale } from "../../../utils/responsiveSize";
 import { Colors, Fonts } from "../../../theme";
+import api from "../../../api/axios";
+import { ApiEndPoint } from "../../../api/endPoints";
+import Loader from "../../../component/loader/Loader";
+import { showSnackbar } from "../../../utils/snackbar";
+import { localStorage, storageKeys } from "../../../storage/storage";
+import { useNavigation } from "@react-navigation/native";
 
-const LoginScreen = ({ navigation }) => {
+const LoginScreen = () => {
     // const [phone, setPhone] = useState<string>("");
     const [phone, setPhone] = useState<string>("");
     const [phoneInput, setPhoneInput] = useState<string>("");
+    const [loading, setLoading] = useState<boolean>(false);
+    const [errors, setErrors] = useState({});
+    const navigation = useNavigation()
+    console.log('errors', errors);
 
     const handlePhoneChange = (text: string) => {
         const digitsOnly = text.replace(/\D/g, '');
 
-        let formatted = digitsOnly;
-        if (digitsOnly.length > 5) {
-            formatted = `${digitsOnly.slice(0, 5)}-${digitsOnly.slice(5, 10)}`;
+        // let formatted = digitsOnly;
+        // if (digitsOnly.length > 5) {
+        //     formatted = `${digitsOnly.slice(0, 5)}-${digitsOnly.slice(5, 10)}`;
+        // }
+        setPhoneInput(digitsOnly);
+
+        // Clear phone error when user starts typing
+        if (errors.phone) {
+            setErrors(prev => ({ ...prev, phone: '' }));
         }
-        setPhoneInput(formatted);
     };
-    
-    const handleOtpRequest = () => {
-         navigation.navigate('OtpRequestScreen', {phoneNumber:phoneInput});
-    }
+
+    // const handleOtpRequest = async () => {
+    //     setLoading(false)
+    //     try {
+    //         const data = {
+    //             usr_phone: phoneInput
+    //         }
+    //         const res = await api.post(ApiEndPoint.LoGIN, data)
+    //         console.log('ressssssss', res)
+    //         showSnackbar('success')
+    //     } catch (error) {
+    //         console.log('errrrrrr', error)
+    //     }
+    //     navigation.navigate('OtpRequestScreen', { phoneNumber: phoneInput });
+    // }
+
+    // const handleOtpRequest = async () => {
+    //     console.log('Phone input for validation:', phoneInput);
+
+    //     // Direct validation without regex replace since phoneInput already has digits only
+    //     const validatePhone = (phone) => {
+    //         console.log('phoneee', phone);
+
+    //         const errors = {};
+
+    //         // Check if empty
+    //         if (phone.trim() === '') {
+    //             errors.phone = 'Phone number is required';
+    //             console.log('phoneee1', phone);
+    //         }
+    //         // Check if not exactly 10 digits
+    //         else if (phone.length !== 10) {
+    //             errors.phone = 'Please enter a valid 10-digit phone number';
+    //             console.log('phoneee2', phone);
+    //         }
+
+    //         console.log('Validation result:', errors);
+    //         return errors;
+    //     };
+
+    //     const validationErrors = validatePhone(phoneInput);
+    //     setErrors(validationErrors);
+
+    //     if (Object.keys(validationErrors).length > 0) {
+    //         // showSnackbar('Please check your phone number');
+    //         return;
+    //     }
+
+    //     setLoading(true);
+
+    //     try {
+
+    //         const payload = {
+    //             usr_phone: phoneInput,
+    //         };
+
+    //         const res = await api.post(ApiEndPoint.LoGIN, payload)
+    //         console.log('reeeeeeeee', res)
+    //         console.log('res?.data.status === 200', res?.data.status === 200)
+    //         console.log('res?.data.staturesult', res?.data.result)
+
+    //         // ✅ API success check (depends on backend)
+    //         if (res && res?.data.status === 200) {
+    //             console.log('ressssssdata', res?.data)
+    //                     setLoading(true);
+    //               showSnackbar('Otp send Successfully')
+    //             //   navigation.navigate('OtpRequestScreen', {
+    //             //     phoneNumber: phoneInput,
+    //             //   });
+    //             await localStorage.setItem(storageKeys.user_exist, res?.data?.user_exist)
+    //         } else {
+    //             showSnackbar(res?.message || 'Something went wrong');
+    //         }
+
+    //     } catch (error: any) {
+    //         console.log('errorddd', error);
+    //         // ✅ Offline handled by interceptor
+    //         if (error?.offline) return;
+    //         // ✅ API error
+    //         const message =
+    //             error?.response?.data?.message ||
+    //             error?.message ||
+    //             'Login failed';
+
+    //         showSnackbar(message);
+    //         console.log('errorddd', error);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+    const handleOtpRequest = async () => {
+        console.log('Phone input for validation:', phoneInput);
+
+        // Clear previous errors
+        setErrors({});
+
+        // Validate phone number
+        const validatePhone = (phone) => {
+            const errors = {};
+
+            if (!phone || phone.trim() === '') {
+                errors.phone = 'Phone number is required';
+            } else if (phone.length !== 10) {
+                errors.phone = 'Please enter a valid 10-digit phone number';
+            } else if (!/^\d+$/.test(phone)) {
+                errors.phone = 'Phone number should contain only digits';
+            }
+
+            return errors;
+        };
+
+        const validationErrors = validatePhone(phoneInput);
+
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            showSnackbar('error', 'Please check your phone number');
+            return;
+        }
+                navigation.navigate('OtpRequestScreen', { 'otpResult': '1234', 'phoneNumber': '9358692040' })
+
+        // setLoading(true);
+
+        // try {
+        //     const payload = {
+        //         usr_phone: phoneInput,
+        //     };
+
+        //     const res = await api.post(ApiEndPoint.LoGIN, payload);
+        //     console.log('API Response:', res);
+        //     console.log('Response data:', res?.data);
+
+        //     // ✅ API success check
+        //     if (res && res.data && res.data.status === 200) {
+        //         console.log('Success:', res.data);
+
+        //         // Store user_exist in local storage
+        //         if (res.data.user_exist !== undefined) {
+        //             await localStorage.setItem(storageKeys.user_exist, res.data.user_exist.toString());
+        //         }
+
+        //         // Show success message
+        //         showSnackbar('OTP sent successfully', 'success',);
+        //         navigation.navigate('OtpRequestScreen', { 'otpResult': res?.data.result, 'phoneNumber': phoneInput })
+        //         // Navigate to OTP screen (uncomment when ready)
+        //         // navigation.navigate('OtpRequestScreen', {
+        //         //     phoneNumber: phoneInput,
+        //         // });
+
+        //     } else {
+        //         // Show error from API response
+        //         const errorMessage = res?.data?.message ||
+        //             res?.message ||
+        //             'Failed to send OTP. Please try again.';
+        //         showSnackbar(errorMessage, 'error');
+        //     }
+
+        // } catch (error: any) {
+        //     console.log('API Error:', error);
+
+        //     // Handle offline errors
+        //     if (error?.offline) {
+        //         showSnackbar('No internet connection. Please check your network.', 'error');
+        //         return;
+        //     }
+
+        //     // Handle API errors
+        //     const errorMessage = error?.response?.data?.message ||
+        //         error?.message ||
+        //         'Something went wrong. Please try again.';
+
+        //     showSnackbar(errorMessage, 'error');
+
+        // } finally {
+        //     // Always stop loading
+        //     setLoading(false);
+        // }
+    };
+
     return (
         <SafeAreaView
             style={styles.mainContainer}
             edges={['left', 'right', 'bottom']} // 🔥 IMPORTANT
         >
-            {/* <StatusBar barStyle="dark-content" backgroundColor={Colors.primaryColor} /> */}
-            <AppHeader title="Paper Fast" discriptionText='Paper Generate In Minute' />
-            <View style={styles.innerMainContainer}>
+            <Loader visible={loading} />
+            <>
+                <AppHeader title="Paper Fast" discriptionText='Paper Generate In Minute' />
+                {/* {loading ? <Loader visible={true} /> : <View style={styles.innerMainContainer}> */}
                 <View style={styles.innerSecondMainContainer}>
                     <Text style={styles.loginText}>Login with Mobile Number</Text>
                     <Text style={styles.subHeading}>We’ll send an OTP to verify your number.</Text>
@@ -43,13 +233,19 @@ const LoginScreen = ({ navigation }) => {
                         onChange={setPhone}
                     /> */}
 
-                    <View style={styles.phoneInputBox}>
-                        <Image source={Icons.country} style={styles.countryImgStyle} />
-                        <View style={{ marginLeft: moderateScale(10), alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}>
-                            <View style={{ height: moderateScale(18), width: moderateScale(2), backgroundColor: 'rgba(0, 140, 227, 0.31)', }} />
-                            <Text style={styles.prefix}>{'  '}+91</Text>
-                            <TextInput style={styles.phoneInput} maxLength={11} keyboardType="phone-pad" onChangeText={handlePhoneChange} value={phoneInput} />
+                    <View style={{
+                        marginVertical: moderateScale(30),
+                    }}>
+                        <View style={styles.phoneInputBox}>
+                            <Image source={Icons.country} style={styles.countryImgStyle} />
+                            <View style={{ marginLeft: moderateScale(10), alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}>
+                                <View style={{ height: moderateScale(18), width: moderateScale(2), backgroundColor: 'rgba(0, 140, 227, 0.31)', }} />
+                                <Text style={styles.prefix}>{'  '}+91</Text>
+                                <TextInput style={styles.phoneInput} maxLength={10} keyboardType="phone-pad" onChangeText={handlePhoneChange} value={phoneInput} />
+                            </View>
                         </View>
+                        {errors.phone && <Text style={{ fontSize: moderateScale(12), color: Colors.red, fontFamily: Fonts.InterMedium, marginLeft: moderateScale(20) }}>{errors.phone}</Text>
+                        }
                     </View>
 
                     {/* // button */}
@@ -80,7 +276,9 @@ const LoginScreen = ({ navigation }) => {
                     </View>
                     <Text style={styles.versionText}>Version 1.0</Text>
                 </View>
-            </View>
+
+            </>
+
         </SafeAreaView>
     )
 }
@@ -166,7 +364,6 @@ const styles = StyleSheet.create({
         paddingLeft: moderateScale(10),
         flexDirection: 'row',
         alignItems: 'center',
-        marginVertical: moderateScale(30),
     }
     ,
     countryImgStyle: {

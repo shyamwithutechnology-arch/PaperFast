@@ -4,8 +4,9 @@ import { Image, Text, View } from 'react-native';
 import HomeStack from './stacks/HomeStack';
 import { Colors } from '../theme/color';
 import { Icons } from '../assets/icons';
-import { moderateScale } from '../utlis/responsiveSize';
+import { moderateScale } from '../utils/responsiveSize';
 import { Fonts } from '../theme';
+import ProfileStack from './stacks/ProfileStack';
 
 const Tab = createBottomTabNavigator();
 
@@ -90,7 +91,7 @@ const MainTabs = () => {
 
       <Tab.Screen
         name="ProfileTab"
-        component={HomeStack}
+        component={ProfileStack}
         options={{
           tabBarIcon: ({ focused }) => (
             <TabIcon focused={focused} icon={Icons.profileFooter} label="Profile" />

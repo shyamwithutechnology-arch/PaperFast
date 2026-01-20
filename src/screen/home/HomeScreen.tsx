@@ -6,7 +6,7 @@ import { Icons } from '../../assets/icons/index'
 import SubjectItem from './component/SubjectItem';
 import { Colors } from '../../theme';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { moderateScale } from '../../utlis/responsiveSize';
+import { moderateScale } from '../../utils/responsiveSize';
 import HomeBannerSlider from './component/homebanner/HomeBannerSlider';
 import AppModal from '../../component/modal/AppModal';
 import AppButton from '../../component/button/AppButton';

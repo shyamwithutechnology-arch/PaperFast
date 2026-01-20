@@ -61,7 +61,7 @@ import CustomPaperCard from "../component/CustomPaperCard/CustomPaperCard";
 import HeaderPaperModule from "../../../component/headerpapermodule/Headerpapermodule";
 import { styles } from "./styles";
 import { Icons } from "../../../assets/icons";
-import { moderateScale } from "../../../utlis/responsiveSize";
+import { moderateScale } from "../../../utils/responsiveSize";
 import { useNavigation } from "@react-navigation/native";
 
 const PaperTypeScreen = () => {
