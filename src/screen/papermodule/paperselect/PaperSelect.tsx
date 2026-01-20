@@ -20,8 +20,8 @@ type SelectedSummary = {
 const PaperSelect = () => {
     const navigation = useNavigation()
     const route = useRoute();
-    console.log('routewwwww',route);
-    
+    console.log('routewwwww', route);
+
     const selectedSummary = route.params?.selectedSummary as
         | SelectedSummary
         | undefined;
@@ -149,12 +149,9 @@ const PaperSelect = () => {
             />
 
             {/* HEADER + STATUS BAR SAME BACKGROUND */}
-            <View style={{ backgroundColor: Colors.lightThemeBlue }}>
-                <SafeAreaView edges={["top"]}>
-                    <HeaderPaperModule title={route?.params?.paperType} rightPress={() => { }} leftIconPress={handleBack} />
-                </SafeAreaView>
-            </View>
-
+            <SafeAreaView edges={["top"]} style={{ backgroundColor: Colors.lightThemeBlue }}>
+                <HeaderPaperModule title={route?.params?.paperType} rightPress={() => { navigation.navigate('DraftPaperScreen') }} leftIconPress={handleBack} />
+            </SafeAreaView>
             {/* MAIN CONTENT */}
             <SafeAreaView
                 style={{ flex: 1, backgroundColor: Colors.white }}
@@ -194,7 +191,7 @@ const PaperSelect = () => {
                 </View>
 
                 {/* question list topic wise */}
-                <Paperselectcontent data={PAPER_DATA[selectedPaper]} handleNavigate={handleQuestionSelect} activeChapterId={activeChapterId} selectedSummary={selectedSummary}/>
+                <Paperselectcontent data={PAPER_DATA[selectedPaper]} handleNavigate={handleQuestionSelect} activeChapterId={activeChapterId} selectedSummary={selectedSummary} />
 
                 <View style={styles.totalWrapper}>
                     {/* TOP SHADOW */}

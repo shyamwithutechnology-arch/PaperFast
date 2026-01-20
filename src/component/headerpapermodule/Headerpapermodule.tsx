@@ -38,7 +38,7 @@ const HeaderPaperModule: React.FC = ({ title, rightPress ,leftIconPress}: Header
                 </TouchableOpacity>
                 <Text style={styles.title}>{title}</Text>
             </View>
-            {rightPress && <TouchableOpacity style={styles.saveDraftBox}><Text style={styles.saveDraftText}>Save Draft</Text></TouchableOpacity>
+            {rightPress && <TouchableOpacity style={styles.saveDraftBox} onPress={rightPress}><Text style={styles.saveDraftText}>Save Draft</Text></TouchableOpacity>
             }
         </View>
     );

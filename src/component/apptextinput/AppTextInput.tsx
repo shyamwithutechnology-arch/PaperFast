@@ -16,7 +16,8 @@ interface AppTextInputProps {
   rightIcon?: React.ReactNode;
   value?: string,
   onChangeText: () => void;
-  style: object
+  style: object,
+  placeHolderText:string
 }
 const AppTextInput: React.FC<AppTextInputProps> = ({
   containerStyle,
@@ -24,6 +25,7 @@ const AppTextInput: React.FC<AppTextInputProps> = ({
   rightIcon,
   style,
   value,
+  placeHolderText,
   onChangeText,
   ...rest
 }) => {
@@ -37,6 +39,7 @@ const AppTextInput: React.FC<AppTextInputProps> = ({
         {...rest}
         value={value}
         onChangeText={onChangeText}
+        placeholder={placeHolderText}
       />
 
       {rightIcon && <View style={styles.iconRight}>{rightIcon}</View>}

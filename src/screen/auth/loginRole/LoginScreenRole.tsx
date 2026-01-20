@@ -11,7 +11,7 @@ import { moderateScale } from '../../../utlis/responsiveSize';
 import { Icons } from '../../../assets/icons'
 import { useDispatch } from "react-redux";
 import { loginSuccess } from '../../../redux/slices/authSlice';
-import { reduxStorage } from '../../../storage';
+import { reduxStorage } from '../../../storage/storage';
 
 const LoginScreenRole = () => {
     const dispatch = useDispatch()

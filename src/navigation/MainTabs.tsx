@@ -11,7 +11,7 @@ const Tab = createBottomTabNavigator();
 
 const TabIcon = ({ focused, icon, label }) => {
   return (
-    <View style={{ alignItems: 'center',marginTop:moderateScale(10)}}>
+    <View style={{ alignItems: 'center', marginTop: moderateScale(10) }}>
       <Image
         source={icon}
         resizeMode="contain"
@@ -26,11 +26,11 @@ const TabIcon = ({ focused, icon, label }) => {
         style={{
           fontSize: moderateScale(10),
           marginTop: moderateScale(4),
-          width:moderateScale(50),
+          width: moderateScale(50),
           color: focused ? Colors.primaryColor : '#CCCCCC',
-          alignSelf:"center",
-          textAlign:'center',
-          fontFamily:Fonts.InterMedium
+          alignSelf: "center",
+          textAlign: 'center',
+          fontFamily: Fonts.InterMedium
         }}
         numberOfLines={1}
       >
@@ -49,8 +49,8 @@ const MainTabs = () => {
         tabBarStyle: {
           height: moderateScale(80), // 80
           backgroundColor: Colors.white,
-          paddingTop:moderateScale(6),
-          elevation:10
+          paddingTop: moderateScale(6),
+          elevation: 10
           // borderTopWidth: 1,
           // borderColor:"#000",
           // alignSelf:"center"

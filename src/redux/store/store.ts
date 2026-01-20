@@ -84,7 +84,7 @@ import {
   REGISTER 
 } from 'redux-persist'
 import authReducer from '../slices/authSlice'
-import { reduxStorage } from '../../storage'
+import { reduxStorage } from '../../storage/storage'
 import rootReducer from '../rootReducer/rootReducer'
 
 
