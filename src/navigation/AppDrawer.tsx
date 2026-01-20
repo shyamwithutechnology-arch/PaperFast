@@ -2,6 +2,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import MainTabs from './MainTabs';
 import CustomDrawer from '../component/drawer/CustomDrawer';
 import { Dimensions } from 'react-native';
+import ProfileScreen from '../screen/profile/ProfileScreen';
 
 const Drawer = createDrawerNavigator();
 const { width } = Dimensions.get('window');
@@ -18,6 +19,7 @@ const AppDrawer = () => {
       }}
       drawerContent={(props) => <CustomDrawer {...props} />}>
       <Drawer.Screen name="MainTabs" component={MainTabs} />
+      <Drawer.Screen name='ProfileScreen' component={ProfileScreen}/>
     </Drawer.Navigator>
   );
 }

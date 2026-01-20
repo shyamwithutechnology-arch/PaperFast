@@ -4,7 +4,7 @@ import { Colors, Fonts } from "../../theme";
 
 export const styles = StyleSheet.create({
     headerContainer: {
-        paddingVertical: moderateScale(14),
+        paddingVertical: moderateScale(16),
         paddingHorizontal: moderateScale(16),
         // borderWidth: 1,
         flexDirection: 'row',

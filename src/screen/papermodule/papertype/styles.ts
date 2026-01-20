@@ -3,6 +3,10 @@ import { moderateScale } from "../../../utlis/responsiveSize";
 import { Colors, Fonts } from "../../../theme";
 
 export const styles = StyleSheet.create({
+    container:{
+        flex:1,
+        backgroundColor:Colors.white
+    },
     draftBox: {
         paddingVertical: moderateScale(10),
         paddingHorizontal: moderateScale(10),
