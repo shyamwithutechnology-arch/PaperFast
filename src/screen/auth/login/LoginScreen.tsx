@@ -13,6 +13,7 @@ import Loader from "../../../component/loader/Loader";
 import { showSnackbar } from "../../../utils/snackbar";
 import { localStorage, storageKeys } from "../../../storage/storage";
 import { useNavigation } from "@react-navigation/native";
+import { POST_FORM } from "../../../api/request";
 
 const LoginScreen = () => {
     // const [phone, setPhone] = useState<string>("");
@@ -127,10 +128,98 @@ const LoginScreen = () => {
     //         setLoading(false);
     //     }
     // };
-    const handleOtpRequest = async () => {
-        console.log('Phone input for validation:', phoneInput);
+    // const handleOtpRequest = async () => {
+    // console.log('Phone input for validation:', phoneInput);
 
-        // Clear previous errors
+    // // Clear previous errors
+    // setErrors({});
+
+    // // Validate phone number
+    // const validatePhone = (phone) => {
+    //     const errors = {};
+
+    //     if (!phone || phone.trim() === '') {
+    //         errors.phone = 'Phone number is required';
+    //     } else if (phone.length !== 10) {
+    //         errors.phone = 'Please enter a valid 10-digit phone number';
+    //     } else if (!/^\d+$/.test(phone)) {
+    //         errors.phone = 'Phone number should contain only digits';
+    //     }
+
+    //     return errors;
+    // };
+
+    // const validationErrors = validatePhone(phoneInput);
+
+    // if (Object.keys(validationErrors).length > 0) {
+    //     setErrors(validationErrors);
+    //     showSnackbar('Please check your phone number', 'error',);
+    //     return;
+    // }
+    // // navigation.navigate('OtpRequestScreen', { 'otpResult': '1234', 'phoneNumber': '9358692040' })
+
+    // setLoading(true);
+
+    //     try {
+    //         const payload = {
+    //             usr_phone: phoneInput,
+    //         };
+
+    //         const res = await api.post(ApiEndPoint.LoGIN, payload);
+    //         console.log('API Response:', res);
+    //         console.log('Response data:', res?.data);
+    //         console.log('Response status:', res.data.status);
+
+    //         // ✅ API success check
+    //         if (res && res.data && res.data.status === 200) {
+    //             console.log('Success:', res.data);
+
+    //             // Store user_exist in local storage
+    //             if (res.data.user_exist !== undefined) {
+    //                 await localStorage.setItem(storageKeys.user_exist, res.data.user_exist.toString());
+    //             }
+
+    //             // Show success message
+    // showSnackbar('OTP sent successfully', 'success');
+    // navigation.navigate('OtpRequestScreen', { 'otpResult': res?.data.result, 'phoneNumber': phoneInput })
+    // Navigate to OTP screen (uncomment when ready)
+    // navigation.navigate('OtpRequestScreen', {
+    //     phoneNumber: phoneInput,
+    // });
+
+    //         } else {
+    //             // Show error from API response
+    //             const errorMessage = res?.data?.message ||
+    //                 res?.message ||
+    //                 'Failed to send OTP. Please try again.';
+    //             showSnackbar(errorMessage, 'error');
+    //         }
+
+    //     } catch (error: any) {
+    //         console.log('API Error:', error);
+
+    //         // Handle offline errors
+    //         if (error?.offline) {
+    //             showSnackbar('No internet connection. Please check your network.', 'error');
+    //             return;
+    //         }
+
+    //         // Handle API errors
+    //         const errorMessage = error?.response?.data?.message ||
+    //             error?.message ||
+    //             'Something went wrong. Please try again.';
+
+    //         showSnackbar(errorMessage, 'error');
+
+    //     } finally {
+    //         // Always stop loading
+    //         setLoading(false);
+    //     }
+    // };
+
+
+    const handleOtpRequest = async () => {
+
         setErrors({});
 
         // Validate phone number
@@ -152,67 +241,77 @@ const LoginScreen = () => {
 
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
-            showSnackbar('error', 'Please check your phone number');
+            showSnackbar('Please check your phone number', 'error',);
             return;
         }
-                navigation.navigate('OtpRequestScreen', { 'otpResult': '1234', 'phoneNumber': '9358692040' })
+        setErrors({});
 
-        // setLoading(true);
+        setLoading(true);
 
-        // try {
-        //     const payload = {
-        //         usr_phone: phoneInput,
-        //     };
+        try {
+            // Create FormData exactly like Postman
+            const formData = new FormData();
 
-        //     const res = await api.post(ApiEndPoint.LoGIN, payload);
-        //     console.log('API Response:', res);
-        //     console.log('Response data:', res?.data);
+            formData.append('usr_phone', phoneInput);
+            const response = await fetch('https://www.papers.withupartners.in/api/login-otp', {
+                method: 'POST',
+                // headers: {
+                //     'Accept': 'application/json',
+                //     'Cookie': 'ci_session=ee5f5e885a10559417733c3aae4ec3e9cb3587e6'
+                // },
+                body: formData
+            });
 
-        //     // ✅ API success check
-        //     if (res && res.data && res.data.status === 200) {
-        //         console.log('Success:', res.data);
+            console.log('Response status:rr', response);
 
-        //         // Store user_exist in local storage
-        //         if (res.data.user_exist !== undefined) {
-        //             await localStorage.setItem(storageKeys.user_exist, res.data.user_exist.toString());
-        //         }
+            // Get response text first to see what's returned
+            const newRes = await response.json();
+            console.log('newRes:', newRes);
 
-        //         // Show success message
-        //         showSnackbar('OTP sent successfully', 'success',);
-        //         navigation.navigate('OtpRequestScreen', { 'otpResult': res?.data.result, 'phoneNumber': phoneInput })
-        //         // Navigate to OTP screen (uncomment when ready)
-        //         // navigation.navigate('OtpRequestScreen', {
-        //         //     phoneNumber: phoneInput,
-        //         // });
+            // // Try to parse as JSON
+            // let responseData;
+            // try {
+            //     responseData = JSON.parse(responseText);
+            // } catch (e) {
+            //     console.log('Response is not JSON:', responseText);
+            //     throw new Error('Invalid response format');
+            // }
 
-        //     } else {
-        //         // Show error from API response
-        //         const errorMessage = res?.data?.message ||
-        //             res?.message ||
-        //             'Failed to send OTP. Please try again.';
-        //         showSnackbar(errorMessage, 'error');
-        //     }
+            // console.log('Parsed response:', responseData);
 
-        // } catch (error: any) {
-        //     console.log('API Error:', error);
+            if (response.ok) {
+                //     // Check your API's success condition
+                //     if (newRes.status === 200 || responseData.success) {
+                //         showSnackbar('Registration successful!', 'success');
+                //     } else {
+                //         showSnackbar(responseData.message || 'Registration failed', 'error');
+                //     }
+                // } else {
+                //     throw new Error(`HTTP ${response.status}: ${responseData.message || 'Request failed'}`);
+                console.log('newRes.status', newRes.status === '1')
 
-        //     // Handle offline errors
-        //     if (error?.offline) {
-        //         showSnackbar('No internet connection. Please check your network.', 'error');
-        //         return;
-        //     }
+                if (newRes.status === 200) {
+                    // showSnackbar(newRes?.msg || 'Registration successful!', 'success');
+                    // reduxStorage.setItem('token', '123456')
+                    // dispatch(loginSuccess('123456'));
+                    showSnackbar(newRes?.msg, 'success');
+                    navigation.navigate('OtpRequestScreen', { 'otpResult': newRes?.result, 'phoneNumber': phoneInput })
+                } else {
+                    showSnackbar(newRes?.msg || 'OTP Failed', 'error');
+                }
+            }
 
-        //     // Handle API errors
-        //     const errorMessage = error?.response?.data?.message ||
-        //         error?.message ||
-        //         'Something went wrong. Please try again.';
+        } catch (error) {
+            // console.error('API Error:', error);
+            if (error.message?.includes('Network')) {
+                showSnackbar('No internet connection', 'error');
+            } else {
+                showSnackbar(error.message, 'error');
+            }
 
-        //     showSnackbar(errorMessage, 'error');
-
-        // } finally {
-        //     // Always stop loading
-        //     setLoading(false);
-        // }
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -220,10 +319,9 @@ const LoginScreen = () => {
             style={styles.mainContainer}
             edges={['left', 'right', 'bottom']} // 🔥 IMPORTANT
         >
-            <Loader visible={loading} />
-            <>
-                <AppHeader title="Paper Fast" discriptionText='Paper Generate In Minute' />
-                {/* {loading ? <Loader visible={true} /> : <View style={styles.innerMainContainer}> */}
+            {/* <StatusBar barStyle="dark-content" backgroundColor={Colors.primaryColor} /> */}
+            <AppHeader title="Paper Fast" discriptionText='Paper Generate In Minute' />
+            <View style={styles.innerMainContainer}>
                 <View style={styles.innerSecondMainContainer}>
                     <Text style={styles.loginText}>Login with Mobile Number</Text>
                     <Text style={styles.subHeading}>We’ll send an OTP to verify your number.</Text>
@@ -233,23 +331,18 @@ const LoginScreen = () => {
                         onChange={setPhone}
                     /> */}
 
-                    <View style={{
-                        marginVertical: moderateScale(30),
-                    }}>
-                        <View style={styles.phoneInputBox}>
-                            <Image source={Icons.country} style={styles.countryImgStyle} />
-                            <View style={{ marginLeft: moderateScale(10), alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}>
-                                <View style={{ height: moderateScale(18), width: moderateScale(2), backgroundColor: 'rgba(0, 140, 227, 0.31)', }} />
-                                <Text style={styles.prefix}>{'  '}+91</Text>
-                                <TextInput style={styles.phoneInput} maxLength={10} keyboardType="phone-pad" onChangeText={handlePhoneChange} value={phoneInput} />
-                            </View>
+                    <View style={styles.phoneInputBox}>
+                        <Image source={Icons.country} style={styles.countryImgStyle} />
+                        <View style={{ marginLeft: moderateScale(10), alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}>
+                            <View style={{ height: moderateScale(18), width: moderateScale(2), backgroundColor: 'rgba(0, 140, 227, 0.31)', }} />
+                            <Text style={styles.prefix}>{'  '}+91</Text>
+                            <TextInput style={styles.phoneInput} maxLength={10} keyboardType="phone-pad" onChangeText={handlePhoneChange} value={phoneInput} />
                         </View>
-                        {errors.phone && <Text style={{ fontSize: moderateScale(12), color: Colors.red, fontFamily: Fonts.InterMedium, marginLeft: moderateScale(20) }}>{errors.phone}</Text>
-                        }
                     </View>
+                    {errors?.phone && <Text style={{ fontSize: moderateScale(12), color: Colors.red, fontFamily: Fonts.InterMedium, marginLeft: moderateScale(20) }}>{errors?.phone}</Text>}
 
                     {/* // button */}
-                    <AppButton title="Send Verification OTP" onPress={handleOtpRequest} style={{ paddingHorizontal: moderateScale(82) }} />
+                    <AppButton title="Send Verification OTP" onPress={handleOtpRequest} style={{ paddingHorizontal: moderateScale(82), marginTop: moderateScale(20) }} />
 
                     <View style={styles.privacyBox}>
                         <Text style={styles.byRegisterText}>By registering, you agree to the
@@ -277,9 +370,9 @@ const LoginScreen = () => {
                     <Text style={styles.versionText}>Version 1.0</Text>
                 </View>
 
-            </>
-
-        </SafeAreaView>
+            </View>
+            {/* // </View> */}
+        </SafeAreaView >
     )
 }
 
@@ -364,6 +457,7 @@ const styles = StyleSheet.create({
         paddingLeft: moderateScale(10),
         flexDirection: 'row',
         alignItems: 'center',
+        marginTop: moderateScale(24)
     }
     ,
     countryImgStyle: {

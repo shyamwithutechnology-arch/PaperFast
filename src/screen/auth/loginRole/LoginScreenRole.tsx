@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StatusBar, Image, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from './styles';
@@ -11,7 +11,7 @@ import { moderateScale } from '../../../utils/responsiveSize';
 import { Icons } from '../../../assets/icons'
 import { useDispatch } from "react-redux";
 import { loginSuccess } from '../../../redux/slices/authSlice';
-import { reduxStorage } from '../../../storage/storage';
+import { localStorage, reduxStorage, storageKeys } from '../../../storage/storage';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { showSnackbar } from '../../../utils/snackbar';
 import Loader from '../../../component/loader/Loader'
@@ -29,6 +29,7 @@ const LoginScreenRole = () => {
     const [otp, setOtp] = useState('');
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
+    const [mobileNumber, setMobileNumber] = useState<string | number>('')
     // const[input,setInput] = {
     //     firstName:'',
     //     lastName:''
@@ -66,20 +67,20 @@ const LoginScreenRole = () => {
     //     console.log('Phone input for validation:');
 
     //     // Clear previous errors
-        // setErrors({});
+    // setErrors({});
 
-        // // Validate phone number
-        // const validatePhone = (name) => {
-        //     console.log('eeeeeeeeeeeeee', name?.firstName)
-        //     const errors = {};
+    // // Validate phone number
+    // const validatePhone = (name) => {
+    //     console.log('eeeeeeeeeeeeee', name?.firstName)
+    //     const errors = {};
 
-        //     if (!name?.firstName || name?.firstName.trim() === '') {
-        //         errors.firstName = 'Pease Enter Fist Name';
-        //     } else if (!name?.lastName || name?.lastName.trim() === '') {
-        //         errors.lastName = 'Please Enter Last Name';
-        //     }
-        //     return errors;
-        // };
+    //     if (!name?.firstName || name?.firstName.trim() === '') {
+    //         errors.firstName = 'Pease Enter Fist Name';
+    //     } else if (!name?.lastName || name?.lastName.trim() === '') {
+    //         errors.lastName = 'Please Enter Last Name';
+    //     }
+    //     return errors;
+    // };
 
     //     const validationErrors = validatePhone(input);
 
@@ -241,10 +242,10 @@ const LoginScreenRole = () => {
     // }
     // };
 
-    const handleLoginVerify = async () => {
+    const handleLoginVerify = async() => {
 
         // Clear previous errors
-      setErrors({});
+        setErrors({});
 
         // Validate phone number
         const validateForm = (name) => {
@@ -259,12 +260,15 @@ const LoginScreenRole = () => {
             return errors;
         };
 
-
         const validationErrors = validateForm(input);
 
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
             showSnackbar('Please fill all required fields', 'error');
+            return;
+        }
+        if (!selectedRole) {
+            showSnackbar('Please Select Your Role', 'error');
             return;
         }
 
@@ -291,7 +295,7 @@ const LoginScreenRole = () => {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
-                    'Cookie': 'ci_session=ee5f5e885a10559417733c3aae4ec3e9cb3587e6'
+                    // 'Cookie': 'ci_session=ee5f5e885a10559417733c3aae4ec3e9cb3587e6'
                 },
                 body: formData
             });
@@ -322,11 +326,14 @@ const LoginScreenRole = () => {
                 //     }
                 // } else {
                 //     throw new Error(`HTTP ${response.status}: ${responseData.message || 'Request failed'}`);
-                console.log('newRes.status', newRes.status === '1')
+                console.log('newRes.status',newRes.status == '1')
 
-                if (newRes.status === '1') {
+                if (newRes.status == '1') {                    
                     showSnackbar(newRes?.msg || 'Registration successful!', 'success');
-                    reduxStorage.setItem('token', '123456')
+                    console.log(' newRes?.result?.usr_id', newRes?.result?.usr_id);
+                    
+                    await localStorage.setItem(storageKeys.userId, String(newRes?.result?.usr_id))
+                    await reduxStorage.setItem('token', '123456')
                     dispatch(loginSuccess('123456'));
                 } else {
                     showSnackbar(newRes?.msg || 'Registration failed', 'error');
@@ -345,6 +352,73 @@ const LoginScreenRole = () => {
             setLoading(false);
         }
     };
+    useEffect(() => {
+        const getData = async () => {
+            let mobile = await localStorage.getItem(storageKeys.mobileNumber)
+            setMobileNumber(mobile)
+        }
+        getData()
+    }, [])
+
+    // const handleLoginVerify = async () => {
+    //     setErrors({});
+
+    //     if (!input?.firstName?.trim()) {
+    //         setErrors({ firstName: 'Please Enter First Name' });
+    //         showSnackbar('Please Fill All Required Fields', 'error');
+    //         return;
+    //     }
+
+    //     if (!input?.lastName?.trim()) {
+    //         setErrors({ lastName: 'Please Enter Last Name' });
+    //         showSnackbar('Please Fill All Required Fields', 'error');
+    //         return;
+    //     }
+
+    // if (!selectedRole) {
+    //     showSnackbar('Please Select Your Role', 'error');
+    //     return;
+    // }
+
+    //     setLoading(true);
+    //     // mobileNumber
+    //     try {
+    //         const params = {
+    //             usr_first_name: input.firstName,
+    //             usr_last_name: input.lastName,
+    //             usr_phone: mobileNumber,
+    //             usr_role: selectedRole === 'male' ? 'tutor' : 'student',
+    //             usr_device_token: 'abc123xyz',
+    //         };
+
+    //         const res = await POST_FORM<any>(ApiEndPoint.LoGINROlE, params);
+
+    //         console.log('API RESPONSE:', res);
+
+    //         // 🔥 BACKEND RETURNS status as STRING ("1")
+    //         if (res?.status === '1') {
+    //             showSnackbar(res?.msg || 'Login successful', 'success');
+
+    //             // await reduxStorage.setItem('token', String(res.token ?? ''));
+    //             // dispatch(loginSuccess(res.token ?? ''));
+
+    //         } else {
+    //             showSnackbar(res?.msg || 'Login failed', 'error');
+    //         }
+    //     } catch (error: any) {
+    //         if (error?.offline) return;
+
+    //         showSnackbar(
+    //             error?.response?.data?.msg ||
+    //             error?.message ||
+    //             'Something went wrong',
+    //             'error'
+    //         );
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+
 
     // Alternative: Create separate handler for each field
     const handleFirstNameChange = (text) => {
