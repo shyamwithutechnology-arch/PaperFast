@@ -3,6 +3,13 @@ import MainTabs from './MainTabs';
 import CustomDrawer from '../component/drawer/CustomDrawer';
 import { Dimensions } from 'react-native';
 import ProfileScreen from '../screen/profile/ProfileScreen';
+import DeleteAccountScreen from '../screen/deleteaccount/DeleteAccountScreen';
+import PrivacyPolicyScreen from '../screen/privacy/PrivacyPolicyScreen';
+import TermandconditionScreen from '../screen/termandcondition/TermandconditionScreen';
+import AboutUsScreen from '../screen/aboutus/AboutUsScreen';
+import DraftPaperScreen from '../screen/papermodule/draftpaper/DraftPaperScreen';
+import MyPdfScreen from '../screen/mypdf/MyPdfScreen';
+import SubscriptionScreen from '../screen/subscription/SubscriptionScreen';
 
 const Drawer = createDrawerNavigator();
 const { width } = Dimensions.get('window');
@@ -20,6 +27,13 @@ const AppDrawer = () => {
       drawerContent={(props) => <CustomDrawer {...props} />}>
       <Drawer.Screen name="MainTabs" component={MainTabs} />
       <Drawer.Screen name='ProfileScreen' component={ProfileScreen}/>
+      <Drawer.Screen name='DeleteAccountScreen' component={DeleteAccountScreen}/>
+      <Drawer.Screen name='PrivacyPolicyScreen' component={PrivacyPolicyScreen}/>
+      <Drawer.Screen name='TermandconditionScreen' component={TermandconditionScreen}/>
+      <Drawer.Screen name='AboutUsScreen' component={AboutUsScreen}/>
+      <Drawer.Screen name='DraftPaperScreen' component={DraftPaperScreen}/>
+      <Drawer.Screen name='MyPdfScreen' component={MyPdfScreen}/>
+      <Drawer.Screen name='SubscriptionScreen' component={SubscriptionScreen}/>
     </Drawer.Navigator>
   );
 }

@@ -64,6 +64,19 @@ export const localStorage = {
       resolve();
     });
   },
+
+   // Add clearAll method
+  clearAll: (): Promise<void> => {
+    return new Promise((resolve) => {
+      // Get all keys first
+      const keys = appMMKV.getAllKeys();
+      // Remove each key
+      keys.forEach(key => {
+        appMMKV.remove(key);
+      });
+      resolve();
+    });
+  },
 };
 
 

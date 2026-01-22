@@ -94,5 +94,9 @@ export const styles = StyleSheet.create({
     fontFamily: Fonts.InterMedium,
     color: Colors.secondaryColor,
   },
+  leftImg:{
+     width: moderateScale(40),
+      height: moderateScale(40)
+  }
 })
 

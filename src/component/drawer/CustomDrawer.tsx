@@ -17,7 +17,7 @@ import { Images } from '../../assets/images';
 import { WorkletsModule } from 'react-native-worklets';
 import { logout } from '../../redux/slices/authSlice';
 import { useDispatch } from 'react-redux';
-import { reduxStorage } from '../../storage/storage';
+import { localStorage, reduxStorage } from '../../storage/storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AppHeader from '../header/AppHeader';
 import { useNavigation } from '@react-navigation/native';
@@ -25,27 +25,43 @@ import { useNavigation } from '@react-navigation/native';
 const MENU = [
     { id: 1, title: 'My Profile', icon: Icons.profile, route: 'ProfileScreen' },
     { id: 2, title: 'Switch Role', icon: Icons.switchRole, route: 'ProfileScreen' },
-    { id: 3, title: 'My Draft Paper', icon: Icons.draft, route: 'ProfileScreen' },
-    { id: 4, title: 'My PDFs', icon: Icons.pdf, route: 'ProfileScreen' },
-    { id: 5, title: 'Subscription', icon: Icons.subscription, route: 'ProfileScreen' },
-    { id: 6, title: 'About Us', icon: Icons.about, route: 'ProfileScreen' },
-    { id: 7, title: 'Terms & Conditions', icon: Icons.termAndService, route: 'ProfileScreen' },
-    { id: 8, title: 'Privacy Policy', icon: Icons.privacy, route: 'ProfileScreen' },
-    { id: 9, title: 'Support', icon: Icons.support, route: 'ProfileScreen' },
-    { id: 10, title: 'Delete Account', icon: Icons.delete, route: 'ProfileScreen' },
+    { id: 3, title: 'My Draft Paper', icon: Icons.draft, route: 'DraftPaperScreen' },
+    { id: 4, title: 'My PDFs', icon: Icons.pdf, route: 'MyPdfScreen' },
+    { id: 5, title: 'Subscription', icon: Icons.subscription, route: 'SubscriptionScreen' },
+    { id: 6, title: 'About Us', icon: Icons.about, route: 'AboutUsScreen' },
+    { id: 7, title: 'Terms & Conditions', icon: Icons.termAndService, route: 'TermandconditionScreen' },
+    { id: 8, title: 'Privacy Policy', icon: Icons.privacy, route: 'PrivacyPolicyScreen' },
+    { id: 9, title: 'Support', icon: Icons.support, route: 'SubscriptionScreen' },
+    { id: 10, title: 'Delete Account', icon: Icons.delete, route: 'DeleteAccountScreen' },
 ];
 
 const CustomDrawer = ({navigation}) => {
     const [role, setRole] = React.useState<'Teacher' | 'Student'>('Teacher');
     // const navigation = useNavigation()
     const dispatch = useDispatch()
-    const handleLoggeOut = () => {
+    const handleLoggeOut = async() => {
         //    const token = '1234';
         //    reduxStorage.de()
-        reduxStorage.removeItem('token')
-        dispatch(logout());
-        // ✅ Don't navigate here - let RootStack handle it automatically
-        // The auth state change will trigger RootStack to re-render
+    //    await reduxStorage.removeItem('token')
+    //     await localStorage.removeItem('')
+    //     dispatch(logout());
+
+
+            // 1. Remove redux storage token
+            await reduxStorage.removeItem('token');
+            
+            // 2. Clear ALL local storage items
+            await localStorage.clearAll();
+            
+            // 3. Dispatch logout action to clear redux state
+            dispatch(logout());
+            // 4. Navigate to login or initial screen
+            // navigation.reset({
+            //     index: 0,
+            //     routes: [{ name: 'LoginScreen' }],
+            // });
+
+
     };
     return (
         <SafeAreaView

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StatusBar } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StatusBar, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from './styles';
 import { Colors } from '../../../theme';
@@ -7,7 +7,7 @@ import AppHeader from '../../../component/header/AppHeader';
 import { OtpInput, OtpTimer } from '../../auth/otp/component';
 import AppButton from '../../../component/button/AppButton';
 import { moderateScale } from '../../../utils/responsiveSize';
-import { useRoute } from '@react-navigation/native';
+import { useFocusEffect, useRoute } from '@react-navigation/native';
 import { showSnackbar } from '../../../utils/snackbar';
 
 
@@ -37,6 +37,17 @@ const OtpRequestScreen = ({ navigation }) => {
             showSnackbar('Otp Verify Successfully', 'success',)
         }
     }
+    useFocusEffect(
+        React.useCallback(() => {
+            if (otpResult && otpResult !== '') {
+                const timer = setTimeout(() => {
+                    Alert.alert('OTP', `Your OTP is: ${otpResult}`);
+                }, 300);
+
+                return () => clearTimeout(timer);
+            }
+        }, [otpResult])
+    );
     return (
         <SafeAreaView
             style={styles.mainContainer}

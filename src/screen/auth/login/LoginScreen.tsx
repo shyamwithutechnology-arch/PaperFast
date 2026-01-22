@@ -11,11 +11,14 @@ import api from "../../../api/axios";
 import { ApiEndPoint } from "../../../api/endPoints";
 import Loader from "../../../component/loader/Loader";
 import { showSnackbar } from "../../../utils/snackbar";
-import { localStorage, storageKeys } from "../../../storage/storage";
+import { localStorage, reduxStorage, storageKeys } from "../../../storage/storage";
 import { useNavigation } from "@react-navigation/native";
 import { POST_FORM } from "../../../api/request";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "../../../redux/slices/authSlice";
 
 const LoginScreen = () => {
+    const dispatch = useDispatch()
     // const [phone, setPhone] = useState<string>("");
     const [phone, setPhone] = useState<string>("");
     const [phoneInput, setPhoneInput] = useState<string>("");
@@ -218,6 +221,46 @@ const LoginScreen = () => {
     // };
 
 
+    const handleLoginVerify = async () => {
+        setLoading(true);
+
+        try {
+            // Create FormData exactly like Postman
+            const formData = new FormData();
+
+            formData.append('usr_phone', phoneInput);
+
+            const response = await fetch('https://www.papers.withupartners.in/api/login', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    // 'Cookie': 'ci_session=ee5f5e885a10559417733c3aae4ec3e9cb3587e6'
+                },
+                body: formData
+            });
+            // Get response text first to see what's returned
+            const newRes = await response.json();
+            // console.log('newRes:', newRes);
+            if (response.ok) {
+                if (newRes.status === 200) {
+                    await localStorage.setItem(storageKeys.userId, String(newRes?.result?.usr_id))
+                } else {
+                    showSnackbar(newRes?.msg || 'Registration failed', 'error');
+                }
+            }
+
+        } catch (error) {
+            console.error('API Error:', error);
+            // if (error.message?.includes('Network')) {
+            //     showSnackbar('No internet connection', 'error');
+            // } else {
+            //     showSnackbar(error.message, 'error');
+            // }
+
+        } finally {
+            setLoading(false);
+        }
+    };
     const handleOtpRequest = async () => {
 
         setErrors({});
@@ -288,14 +331,24 @@ const LoginScreen = () => {
                 //     }
                 // } else {
                 //     throw new Error(`HTTP ${response.status}: ${responseData.message || 'Request failed'}`);
-                console.log('newRes.status', newRes.status === '1')
 
                 if (newRes.status === 200) {
+                    console.log('newRes?.user_exist d', newRes?.user_exist === 0)
                     // showSnackbar(newRes?.msg || 'Registration successful!', 'success');
                     // reduxStorage.setItem('token', '123456')
                     // dispatch(loginSuccess('123456'));
-                    showSnackbar(newRes?.msg, 'success');
-                    navigation.navigate('OtpRequestScreen', { 'otpResult': newRes?.result, 'phoneNumber': phoneInput })
+
+                    if (newRes?.user_exist === 1) {
+                        showSnackbar('Login Successfully', 'success');
+                        const token = '1234';
+                        reduxStorage.setItem('token', '123456')
+                        handleLoginVerify();
+                        dispatch(loginSuccess(token));
+                    } else {
+                        showSnackbar(newRes?.msg, 'success');
+                        await localStorage.setItem(storageKeys.mobileNumber, phoneInput)
+                        navigation.navigate('OtpRequestScreen', { 'otpResult': String(newRes?.result), 'phoneNumber': phoneInput })
+                    }
                 } else {
                     showSnackbar(newRes?.msg || 'OTP Failed', 'error');
                 }
@@ -317,15 +370,13 @@ const LoginScreen = () => {
     return (
         <SafeAreaView
             style={styles.mainContainer}
-            edges={['left', 'right', 'bottom']} // 🔥 IMPORTANT
-        >
+            edges={['left', 'right', 'bottom']}>
             {/* <StatusBar barStyle="dark-content" backgroundColor={Colors.primaryColor} /> */}
             <AppHeader title="Paper Fast" discriptionText='Paper Generate In Minute' />
             <View style={styles.innerMainContainer}>
                 <View style={styles.innerSecondMainContainer}>
                     <Text style={styles.loginText}>Login with Mobile Number</Text>
                     <Text style={styles.subHeading}>We’ll send an OTP to verify your number.</Text>
-
                     {/* <AppPhoneInput
                         value={phone}
                         onChange={setPhone}
@@ -371,7 +422,6 @@ const LoginScreen = () => {
                 </View>
 
             </View>
-            {/* // </View> */}
         </SafeAreaView >
     )
 }

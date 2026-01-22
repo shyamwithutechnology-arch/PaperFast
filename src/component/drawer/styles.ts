@@ -45,7 +45,7 @@ export const styles = StyleSheet.create({
 
   menuItem: {
     paddingVertical: moderateScale(5),
-    paddingHorizontal: moderateScale(20),
+    paddingHorizontal: moderateScale(9),
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
