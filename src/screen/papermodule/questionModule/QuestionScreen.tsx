@@ -30,9 +30,9 @@ const QuestionScreen = () => {
     /** 🔑 MULTI SELECT STATE */
     const [selectedMap, setSelectedMap] = useState<Record<string, boolean>>({});
     // console.log('selectedMap', selectedMap);
-//     const totalQuestions = Object.values(selectedMap)
-//   .flatMap(chapter => Object.values(chapter || {}))
-//   .reduce((sum, q) => sum + (q.selectedQuestions?.length || 0), 0);
+    //     const totalQuestions = Object.values(selectedMap)
+    //   .flatMap(chapter => Object.values(chapter || {}))
+    //   .reduce((sum, q) => sum + (q.selectedQuestions?.length || 0), 0);
 
     const handleCheck = (item: string) => {
         setSelectedCheck(item)
@@ -91,30 +91,15 @@ const QuestionScreen = () => {
             {/* HEADER + STATUS BAR SAME BACKGROUND */}
             <View style={{ backgroundColor: Colors.lightThemeBlue }}>
                 <SafeAreaView edges={["top"]}>
-                    <HeaderPaperModule title="Numer System" rightPress={() => { }} leftIconPress={handleBack} />
+                    <HeaderPaperModule title="Numer System" rightPress={() => navigation?.navigate('DraftPaperScreen')} leftIconPress={handleBack} />
                 </SafeAreaView>
             </View>
 
             {/* MAIN CONTENT */}
             <SafeAreaView
                 style={{ flex: 1, backgroundColor: Colors.white }}
-                edges={["left", "right", "bottom"]}
-            >
+                edges={["left", "right", "bottom"]}>
                 <View style={{ flexDirection: 'row', justifyContent: "space-between", alignItems: 'center', marginHorizontal: moderateScale(16), marginTop: moderateScale(10), marginBottom: moderateScale(15) }}>
-                    {/* <View style={{ flexDirection: "row", alignItems: "center", }}>
-                        <TouchableOpacity style={{ flexDirection: "row", alignItems: "center" }} onPress={() => handleCheck('Options')}>
-                            <TouchableOpacity style={[styles.chackBox, { backgroundColor: selectCheck === 'Options' ? '#4292FA' : Colors.white }]} onPress={() => handleCheck('Solutions')}>
-                                <Icon name="check" size={moderateScale(16)} color={Colors.white} />
-                            </TouchableOpacity>
-                            <Text style={styles.optionsText}>Options</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", marginLeft: moderateScale(15) }} onPress={() => handleCheck('Solutions')}>
-                            <TouchableOpacity style={[styles.chackBox, { backgroundColor: selectCheck === 'Solutions' ? '#4292FA' : Colors.white }]} onPress={() => handleCheck('Solutions')}>
-                                <Icon name="check" size={moderateScale(16)} color={Colors.white} />
-                            </TouchableOpacity>
-                            <Text style={styles.optionsText}>Solutions</Text>
-                        </TouchableOpacity>
-                    </View> */}
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         {/* OPTIONS */}
                         <TouchableOpacity
@@ -172,6 +157,7 @@ const QuestionScreen = () => {
                     </View>
                 </View>
 
+                {/*  question list */}
                 <QuestionListData selectCheck={selectCheck} selectedMap={selectedMap}
                     setSelectedMap={setSelectedMap} />
             </SafeAreaView>

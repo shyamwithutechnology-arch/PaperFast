@@ -8,7 +8,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: moderateScale(12),
     marginHorizontal: moderateScale(40),
-    marginVertical:moderateScale(30)
+    marginVertical: moderateScale(30)
   },
 
   box: {
@@ -35,5 +35,10 @@ export const styles = StyleSheet.create({
   hiddenInput: {
     position: 'absolute',
     opacity: 0,
+    width: '100%',
+    height: '100%',
+    fontSize: 1,
+    borderWidth:1,
+    borderColor:'red'
   },
 });

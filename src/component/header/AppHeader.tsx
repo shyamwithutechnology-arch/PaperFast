@@ -96,7 +96,8 @@ interface AppHeaderProps {
   onBackPress?: () => void
   leftIcon?: any
   rightIcon?: any
-  onRightPress?: () => void
+  onRightPress?: () => void,
+  leftIconStyle: Object
 }
 
 const STATUS_BAR_HEIGHT =
@@ -109,6 +110,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
   leftIcon,
   rightIcon,
   onRightPress,
+  leftIconStyle,
 }) => {
   return (
     <>
@@ -131,7 +133,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
             <TouchableOpacity onPress={onBackPress}>
               <Image
                 source={leftIcon}
-                style={{ width: moderateScale(40), height: moderateScale(40) }}
+                style={[styles.leftImg, leftIconStyle]} // If leftIconStyle is array
               />
             </TouchableOpacity>
           )}

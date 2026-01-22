@@ -64,8 +64,8 @@ export const styles = StyleSheet.create({
         marginTop: moderateScale(10)
     },
     maleImg: {
-        width: moderateScale(70),
-        height: moderateScale(70),
+        width: moderateScale(35),
+        height: moderateScale(35),
         resizeMode: 'contain',
         // marginLeft: moderateScale(20)
     },
@@ -90,6 +90,10 @@ export const styles = StyleSheet.create({
     studentImgBox:{
         borderWidth:.1,
         borderRadius:moderateScale(60),
-        borderColor:Colors.InputStroke
+        borderColor:Colors.InputStroke,
+        height:moderateScale(60),
+        width:moderateScale(60),
+        alignItems:'center',
+        justifyContent:'center'
     }
 })

@@ -17,7 +17,8 @@ interface AppTextInputProps {
   value?: string,
   onChangeText: () => void;
   style: object,
-  placeHolderText:string
+  placeHolderText: string
+  keyboardTypeText: string
 }
 const AppTextInput: React.FC<AppTextInputProps> = ({
   containerStyle,
@@ -27,7 +28,9 @@ const AppTextInput: React.FC<AppTextInputProps> = ({
   value,
   placeHolderText,
   onChangeText,
+  keyboardTypeText,
   ...rest
+
 }) => {
   return (
     <View style={[styles.wrapper, containerStyle]}>
@@ -40,6 +43,8 @@ const AppTextInput: React.FC<AppTextInputProps> = ({
         value={value}
         onChangeText={onChangeText}
         placeholder={placeHolderText}
+        keyboardType={keyboardTypeText}
+        // keyboardType='email-address'
       />
 
       {rightIcon && <View style={styles.iconRight}>{rightIcon}</View>}

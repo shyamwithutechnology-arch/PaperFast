@@ -20,9 +20,9 @@ import { moderateScale } from "../../utils/responsiveSize";
 interface HeaderpapermoduleProp {
     title: string,
     rightPress: () => void,
-    leftIconPress:() => void,
+    leftIconPress: () => void,
 }
-const HeaderPaperModule: React.FC = ({ title, rightPress ,leftIconPress}: HeaderpapermoduleProp) => {
+const HeaderPaperModule: React.FC = ({ title, rightPress, leftIconPress }: HeaderpapermoduleProp) => {
     return (
         <View style={styles.headerContainer}>
             <View style={{
@@ -33,12 +33,14 @@ const HeaderPaperModule: React.FC = ({ title, rightPress ,leftIconPress}: Header
                 // marginBottom:moderateScale(-80)
             }}>
                 <TouchableOpacity onPress={leftIconPress}>
-                <FontAwesome6 name="arrow-left" size={moderateScale(20)} color="#000"
-                />
+                    <FontAwesome6 name="arrow-left" size={moderateScale(20)} color="#000"
+                    />
                 </TouchableOpacity>
                 <Text style={styles.title}>{title}</Text>
             </View>
-            {rightPress && <TouchableOpacity style={styles.saveDraftBox} onPress={rightPress}><Text style={styles.saveDraftText}>Save Draft</Text></TouchableOpacity>
+            {rightPress && <TouchableOpacity style={styles.saveDraftBox} onPress={rightPress}>
+                <Text style={styles.saveDraftText}>Save Draft</Text>
+            </TouchableOpacity>
             }
         </View>
     );

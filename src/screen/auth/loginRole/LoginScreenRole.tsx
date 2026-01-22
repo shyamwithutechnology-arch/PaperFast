@@ -271,6 +271,7 @@ const LoginScreenRole = () => {
             showSnackbar('Please Select Your Role', 'error');
             return;
         }
+        setErrors({});
 
         setLoading(true);
 
@@ -278,18 +279,24 @@ const LoginScreenRole = () => {
             // Create FormData exactly like Postman
             const formData = new FormData();
 
-            formData.append('usr_first_name', 'Nidhi');
-            formData.append('usr_last_name', 'Sharma');
-            formData.append('usr_phone', '9414359663');
-            formData.append('usr_role', 'tutor');
+            formData.append('usr_first_name', input?.firstName);
+            formData.append('usr_last_name', input?.lastName);
+            formData.append('usr_phone', mobileNumber);
+            formData.append('usr_role', selectedRole === 'Male' ? 'Student' : 'tutor');
             formData.append('usr_device_token', 'abc123xyz');
+            
+            // formData.append('usr_first_name', 'Nidhi');
+            // formData.append('usr_last_name','Sharma' );
+            // formData.append('usr_phone', '9414359663');
+            // formData.append('usr_role', 'tutor');
+            // formData.append('usr_device_token', 'abc123xyz');
 
-            console.log('Sending FormData exactly like Postman:');
-            console.log('usr_first_name: Nidhi');
-            console.log('usr_last_name: Sharma');
-            console.log('usr_phone: 9414359663');
-            console.log('usr_role: tutor');
-            console.log('usr_device_token: abc123xyz');
+            // console.log('Sending FormData exactly like Postman:');
+            // console.log('usr_first_name: Nidhi');
+            // console.log('usr_last_name: Sharma');
+            // console.log('usr_phone: 9414359663');
+            // console.log('usr_role: tutor');
+            // console.log('udddd',formData);
 
             const response = await fetch('https://www.papers.withupartners.in/api/login', {
                 method: 'POST',
@@ -328,7 +335,7 @@ const LoginScreenRole = () => {
                 //     throw new Error(`HTTP ${response.status}: ${responseData.message || 'Request failed'}`);
                 console.log('newRes.status',newRes.status == '1')
 
-                if (newRes.status == '1') {                    
+                if (newRes.status === 200) {                    
                     showSnackbar(newRes?.msg || 'Registration successful!', 'success');
                     console.log(' newRes?.result?.usr_id', newRes?.result?.usr_id);
                     
@@ -355,6 +362,8 @@ const LoginScreenRole = () => {
     useEffect(() => {
         const getData = async () => {
             let mobile = await localStorage.getItem(storageKeys.mobileNumber)
+            console.log('mobile', mobile);
+            
             setMobileNumber(mobile)
         }
         getData()
@@ -426,7 +435,6 @@ const LoginScreenRole = () => {
         if (errors.firstName) {
             setErrors(prev => ({ ...prev, firstName: '' }));
         }
-
     };
 
     const handleLastNameChange = (text) => {
@@ -467,17 +475,18 @@ const LoginScreenRole = () => {
                         <Text style={styles.forText}>For</Text>
 
                         <View style={styles.selectionBox}>
-                            <TouchableOpacity style={styles.studentBox} onPress={() => handleRoleSelect('male')}>
-                                <View style={[styles.studentImgBox, { borderWidth: selectedRole === 'male' ? 1 : 0.1 }]}>
-                                    <Image source={Icons.male} style={styles.maleImg} />
+                            <TouchableOpacity style={[styles.studentBox,]} onPress={() => handleRoleSelect('male')}>
+                                <View style={[styles.studentImgBox, { borderWidth: selectedRole === 'male' ? 1 : 0.1 ,backgroundColor: selectedRole === 'male' ? '#EBF6FD':'#F3F3F3', borderColor:selectedRole === 'male' ? 'rgba(18, 70, 130, 0.47)' : Colors.InputStroke}]}>
+                                    <Image source={Icons.male} style={[styles.maleImg, {tintColor : selectedRole === 'male' ? Colors?.primaryColor : 'rgba(169, 169, 169, 0.56)'}]}/>
                                 </View>
-                                <Text style={[styles.studentText, { fontFamily: selectedRole === 'male' ? Fonts.InstrumentSansBold : Fonts.InstrumentSansRegular }]}>Student</Text>
+                                <Text style={[styles.studentText, {fontFamily: selectedRole === 'male' ? Fonts.InstrumentSansBold : Fonts.InstrumentSansRegular, color : selectedRole === 'male' ? Colors?.primaryColor : Colors?.InputText }]}>Student</Text>
                             </TouchableOpacity>
+
                             <TouchableOpacity style={[styles.studentBox, { marginLeft: moderateScale(30) }]} onPress={() => handleRoleSelect('female')}>
-                                <View style={[styles.studentImgBox, { borderWidth: selectedRole === 'female' ? 1 : 0.1 }]}>
-                                    <Image source={Icons.female} style={styles.maleImg} />
+                                <View style={[styles.studentImgBox, { borderWidth: selectedRole === 'female' ? 1 : 0.1,backgroundColor: selectedRole === 'female' ? '#EBF6FD':'#F3F3F3', borderColor:selectedRole === 'female' ? 'rgba(18, 70, 130, 0.47)' : Colors.InputStroke }]}>
+                                    <Image source={Icons.female} style={[styles.maleImg,{tintColor : selectedRole === 'female' ? Colors?.primaryColor : 'rgba(169, 169, 169, 0.56)'}]} />
                                 </View>
-                                <Text style={[styles.studentText, { fontFamily: selectedRole === 'female' ? Fonts.InstrumentSansBold : Fonts.InstrumentSansRegular }]}>Teacher</Text>
+                                <Text style={[styles.studentText, { fontFamily: selectedRole === 'female' ? Fonts.InstrumentSansBold : Fonts.InstrumentSansRegular , color : selectedRole === 'female' ? Colors?.primaryColor : Colors?.InputText }]}>Teacher</Text>
                             </TouchableOpacity>
                         </View>
 

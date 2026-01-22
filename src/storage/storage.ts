@@ -43,6 +43,8 @@ export const storageKeys = {
   mobileNumber: 'mobileNumber',
   userId: 'userId',
 };
+
+
 export const localStorage = {
   setItem: (key: string, value: string): Promise<void> => {
     return new Promise((resolve) => {
@@ -61,6 +63,19 @@ export const localStorage = {
   removeItem: (key: string): Promise<void> => {
     return new Promise((resolve) => {
       appMMKV.remove(key);
+      resolve();
+    });
+  },
+
+   // Add clearAll method
+  clearAll: (): Promise<void> => {
+    return new Promise((resolve) => {
+      // Get all keys first
+      const keys = appMMKV.getAllKeys();
+      // Remove each key
+      keys.forEach(key => {
+        appMMKV.remove(key);
+      });
       resolve();
     });
   },
