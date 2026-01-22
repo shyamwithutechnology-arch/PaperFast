@@ -112,22 +112,26 @@ type Props = {
 };
 
 const QuestionListData: React.FC<Props> = ({ selectCheck, selectedMap, setSelectedMap }) => {
-  /** 🔁 TOGGLE SELECT / UNSELECT */
-  const toggleSelect = useCallback((id: string) => {
-    setSelectedMap(prev => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
-  }, []);
 
-  console.log('ddddddddddd', selectedMap)
-  {Object.keys(selectedMap).map(Number).length ?? 0}
+  const toggleSelect = useCallback((id: string) => {
+    setSelectedMap(pre => {
+      const newMap = { ...pre };
+      if (newMap[id]) {
+        delete newMap[id]
+      } else {
+        newMap[id] = true
+      }
+      return newMap
+    })
+  }, [])
+
+  // console.log('ddddddddddd', selectedMap)
+  // { Object.keys(selectedMap).map(Number).length ?? 0 }
 
   /** 🧱 RENDER ITEM */
   const renderItem = useCallback(
     ({ item, index }: { item: Question; index: number }) => {
       const isSelected = !!selectedMap[item.id];
-
       return (
         <TouchableOpacity
           activeOpacity={0.85}
@@ -149,7 +153,6 @@ const QuestionListData: React.FC<Props> = ({ selectCheck, selectedMap, setSelect
           <View style={styles.optionsRow}>
             <>
               {isSelected && (
-                // <Icon name="check-box" size={moderateScale(20)} color="#1E88E5" />
                 <TouchableOpacity style={[styles.chackBox, { backgroundColor: '#1E88E5', borderWidth: 0 }]}>
                   <Icon name="check" size={moderateScale(16)} color={Colors.white} />
                 </TouchableOpacity>
@@ -171,9 +174,7 @@ const QuestionListData: React.FC<Props> = ({ selectCheck, selectedMap, setSelect
           {selectCheck === 'Solutions' && (
             <View style={styles.solutionBox}>
               <Text style={styles.solutionTitle}>Solution :</Text>
-
               <Text style={styles.solutionText}>{item.solutionDetails}</Text>
-
               <Text style={styles.answerText}>
                 <Text style={{ fontWeight: '600' }}>Answer: </Text>
                 {item.shortAnswer}
@@ -188,12 +189,11 @@ const QuestionListData: React.FC<Props> = ({ selectCheck, selectedMap, setSelect
 
   return (
     <View style={styles.container}>
-      {/* <StatusBar barStyle="dark-content" /> */}
       <FlatList
         data={QUESTIONS}
         keyExtractor={item => item.id}
         renderItem={renderItem}
-        extraData={{ selectedMap, selectCheck }}   // ⭐ REQUIRED
+        extraData={{ selectedMap, selectCheck}}
         initialNumToRender={5}
         windowSize={7}
         removeClippedSubviews

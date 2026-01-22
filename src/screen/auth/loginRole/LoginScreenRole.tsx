@@ -475,17 +475,18 @@ const LoginScreenRole = () => {
                         <Text style={styles.forText}>For</Text>
 
                         <View style={styles.selectionBox}>
-                            <TouchableOpacity style={styles.studentBox} onPress={() => handleRoleSelect('male')}>
-                                <View style={[styles.studentImgBox, { borderWidth: selectedRole === 'male' ? 1 : 0.1 }]}>
-                                    <Image source={Icons.male} style={styles.maleImg} />
+                            <TouchableOpacity style={[styles.studentBox,]} onPress={() => handleRoleSelect('male')}>
+                                <View style={[styles.studentImgBox, { borderWidth: selectedRole === 'male' ? 1 : 0.1 ,backgroundColor: selectedRole === 'male' ? '#EBF6FD':'#F3F3F3', borderColor:selectedRole === 'male' ? 'rgba(18, 70, 130, 0.47)' : Colors.InputStroke}]}>
+                                    <Image source={Icons.male} style={[styles.maleImg, {tintColor : selectedRole === 'male' ? Colors?.primaryColor : 'rgba(169, 169, 169, 0.56)'}]}/>
                                 </View>
-                                <Text style={[styles.studentText, { fontFamily: selectedRole === 'male' ? Fonts.InstrumentSansBold : Fonts.InstrumentSansRegular }]}>Student</Text>
+                                <Text style={[styles.studentText, {fontFamily: selectedRole === 'male' ? Fonts.InstrumentSansBold : Fonts.InstrumentSansRegular, color : selectedRole === 'male' ? Colors?.primaryColor : Colors?.InputText }]}>Student</Text>
                             </TouchableOpacity>
+
                             <TouchableOpacity style={[styles.studentBox, { marginLeft: moderateScale(30) }]} onPress={() => handleRoleSelect('female')}>
-                                <View style={[styles.studentImgBox, { borderWidth: selectedRole === 'female' ? 1 : 0.1 }]}>
-                                    <Image source={Icons.female} style={styles.maleImg} />
+                                <View style={[styles.studentImgBox, { borderWidth: selectedRole === 'female' ? 1 : 0.1,backgroundColor: selectedRole === 'female' ? '#EBF6FD':'#F3F3F3', borderColor:selectedRole === 'female' ? 'rgba(18, 70, 130, 0.47)' : Colors.InputStroke }]}>
+                                    <Image source={Icons.female} style={[styles.maleImg,{tintColor : selectedRole === 'female' ? Colors?.primaryColor : 'rgba(169, 169, 169, 0.56)'}]} />
                                 </View>
-                                <Text style={[styles.studentText, { fontFamily: selectedRole === 'female' ? Fonts.InstrumentSansBold : Fonts.InstrumentSansRegular }]}>Teacher</Text>
+                                <Text style={[styles.studentText, { fontFamily: selectedRole === 'female' ? Fonts.InstrumentSansBold : Fonts.InstrumentSansRegular , color : selectedRole === 'female' ? Colors?.primaryColor : Colors?.InputText }]}>Teacher</Text>
                             </TouchableOpacity>
                         </View>
 

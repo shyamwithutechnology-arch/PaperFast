@@ -1,24 +1,21 @@
-import React, { use, useCallback, useEffect, useRef, useState } from 'react';
-import { View, Text, StatusBar, Image, FlatList, TouchableOpacity, Platform, BackHandler, } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { View, Text, Image, FlatList, TouchableOpacity } from 'react-native';
 import { styles } from './styles';
 import AppHeader from '../../component/header/AppHeader';
 import { Icons } from '../../assets/icons/index'
 import SubjectItem from './component/SubjectItem';
-import { Colors } from '../../theme';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { moderateScale } from '../../utils/responsiveSize';
 import HomeBannerSlider from './component/homebanner/HomeBannerSlider';
 import AppModal from '../../component/modal/AppModal';
 import AppButton from '../../component/button/AppButton';
-import { BoardModal } from './component/boardmodal/BoardModal';
 import { useNavigation } from '@react-navigation/native';
-import { localStorage, reduxStorage, storage, storageKey, storageKeys } from '../../storage/storage';
+import { localStorage, storageKeys } from '../../storage/storage';
+import { showSnackbar } from '../../utils/snackbar';
+import Loader from '../../component/loader/Loader';
 
 const HomeScreen = () => {
-    const [otp, setOtp] = useState('');
-    const [firstName, setFirstName] = useState('')
     const [selectedSubject, setSelectedSubject] = useState<null | string>(null)
-    const insets = useSafeAreaInsets();
     const navigation = useNavigation();
     const [visible, setVisible] = useState(false);
     const [selectedBoard, setSelectedBoard] = useState<null | string>(null)
@@ -26,13 +23,27 @@ const HomeScreen = () => {
     const [selectMedium, setSelectMedium] = useState<null | string>(null);
     const [visibleStandard, setVisibleStandard] = useState(false);
     const [selectStandard, setSelectStandard] = useState<null | string>(null);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [boardData, setBoardData] = useState([]);
+    const [medium, setMedium] = useState([]);
+    const [standard, setStandard] = useState([]);
+    const [banners, setBanners] = useState([]);
 
     // board
-    const handleBordOpenModal = () => {
-        setVisible(true)
+    const handleBordOpenModal = async () => {
+        if (handleBoardDataGet) {
+            await handleBoardDataGet();
+            setVisible(true);
+        }
     }
     const handleBordCloseModal = () => {
-        setVisible(false)
+        if (selectedBoard === null) {
+            showSnackbar('Please Select Board', 'error')
+            return false
+        }
+        if (selectedBoard !== null) {
+            setVisible(false)
+        }
     }
     const handleSelectedBoard = async (item: string) => {
         setSelectedBoard(item);
@@ -40,27 +51,57 @@ const HomeScreen = () => {
         //   setVisible(false);
     };
 
-
     // medium 
-    const handleMediumOpenModal = () => {
-        setVisible(false)
-        setVisibleMedium(true)
+    const handleMediumOpenModal = async () => {
+
+        if (selectedBoard === null) {
+            showSnackbar('Please Select Board', 'error')
+            return false
+        }
+        if (selectedBoard !== null) {
+            setVisible(false);
+            await handleMediumDataFetch();
+            setVisibleMedium(true)
+        }
     }
     const handleMediumCloseModal = () => {
-        setVisibleMedium(false)
+        if (selectMedium === null) {
+            showSnackbar('Please Select Medium', 'error')
+            return false
+        }
+        if (selectMedium !== null) {
+            setVisibleMedium(false)
+        }
     }
     const handleSelectMedium = async (item: string) => {
         setSelectMedium(item)
         await localStorage.setItem(storageKeys.selectedMedium, item)
     }
 
-    const handleStandardOpenModal = () => {
-        setVisible(false)
-        setVisibleMedium(false)
-        setVisibleStandard(true)
+    const handleStandardOpenModal = async () => {
+        if (selectedBoard === null) {
+            showSnackbar('Please Select Board', 'error')
+            return false
+        }
+        if (selectMedium === null) {
+            showSnackbar('Please Select Medium', 'error')
+            return false
+        }
+        if (selectedBoard !== null && selectMedium !== null) {
+            setVisible(false)
+            setVisibleMedium(false)
+            await handleStandardFetch()
+            setVisibleStandard(true)
+        }
     }
     const handleStandardCloseModal = () => {
-        setVisibleStandard(false)
+        if (selectStandard === null) {
+            showSnackbar('Please Select Standard', 'error');
+            return false
+        }
+        if (selectStandard !== null) {
+            setVisibleStandard(false)
+        }
     }
     const handleSelectStandard = async (item: string) => {
         setSelectStandard(item)
@@ -83,37 +124,130 @@ const HomeScreen = () => {
         { id: '4', label: 'JEE Mains level Physics & Chemistry question bank updated.' },
     ]
 
-    const BordsData = [
-        { id: 1, board: 'Rajasthan Board' },
-        { id: 2, board: 'CBSE Board' },
-        { id: 3, board: 'JEE/NEET' },
-        { id: 4, board: 'Bihar Board' },
-        { id: 5, board: 'UP Board' },
-        { id: 6, board: 'Haryana Board' },
-        { id: 7, board: 'Chattisgarh Board' },
-        { id: 8, board: 'ICSE Board' },
-        { id: 9, board: 'Jharkhand Board' },
-        { id: 10, board: 'Maharashtra Board' },
-    ]
-
-    const Standard = [
-        { id: 1, standard: 'STD 6' },
-        { id: 2, standard: 'STD 7' },
-        { id: 3, standard: 'STD 8' },
-        { id: 4, standard: 'STD 9' },
-        { id: 5, standard: 'STD 10' },
-        { id: 6, standard: 'STD 11 Science' },
-        { id: 7, standard: 'STD 11 Commerce' },
-        { id: 8, standard: 'STD 11 Arts' },
-        { id: 9, standard: 'STD 12 Science' },
-        { id: 10, standard: 'STD 12 Commerce' },
-        { id: 11, standard: 'STD 12 Arts' },
-    ]
+    const handleRefreshBanners = async () => {
+        await fetchBanners();
+    };
 
     const handleSelect = (id: string) => {
         setSelectedSubject(id),
             navigation.navigate('PaperTypeScreen');
     }
+
+    const handleBoardDataGet = async () => {
+        setLoading(true);
+        try {
+            const response = await fetch('https://www.papers.withupartners.in/api/boards')
+            console.log('Response status:rr', response);
+
+            const newRes = await response.json();
+            console.log('newRes:', newRes);
+
+            if (response.ok) {
+                if (newRes.status === '1') {
+                    // setProfileData(new)
+                    // console.log('newRes.statusss', newRes.result)
+                    setBoardData(newRes.result)
+                } else {
+                    showSnackbar(newRes?.msg || 'OTP Failed', 'error');
+                }
+            }
+        } catch (error) {
+            console.error('API Error:', error);
+            if (error.message?.includes('Network')) {
+                showSnackbar('No internet connection', 'error');
+            } else {
+                showSnackbar(error.message, 'error');
+            }
+
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleMediumDataFetch = async () => {
+        setLoading(true);
+        try {
+            const response = await fetch('https://www.papers.withupartners.in/api/medium')
+            console.log('Response status:rr', response);
+            const newRes = await response.json();
+            console.log('newRes:', newRes);
+
+            if (response.ok) {
+                if (newRes.status === '1') {
+                    // setProfileData(new)
+                    // console.log('newRes.statusss', newRes.result)
+                    setMedium(newRes.result)
+                } else {
+                    showSnackbar(newRes?.msg || 'OTP Failed', 'error');
+                }
+            }
+        } catch (error) {
+            console.error('API Error:', error);
+            if (error.message?.includes('Network')) {
+                showSnackbar('No internet connection', 'error');
+            } else {
+                showSnackbar(error.message, 'error');
+            }
+
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleStandardFetch = async () => {
+        setLoading(true);
+        try {
+            const response = await fetch('https://www.papers.withupartners.in/api/classes')
+            console.log('Response status:rr', response);
+            const newRes = await response.json();
+            console.log('newRes:', newRes);
+
+            if (response.ok) {
+                if (newRes.status === '1') {
+                    // setProfileData(new)
+                    // console.log('newRes.statusss', newRes.result)
+                    setStandard(newRes.result)
+                } else {
+                    showSnackbar(newRes?.msg || 'OTP Failed', 'error');
+                }
+            }
+        } catch (error) {
+            console.error('API Error:', error);
+            if (error.message?.includes('Network')) {
+                showSnackbar('No internet connection', 'error');
+            } else {
+                showSnackbar(error.message, 'error');
+            }
+
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchBanners = async () => {
+        setLoading(true)
+        try {
+            const response = await fetch('https://www.papers.withupartners.in/api/banner');
+            const newRes = await response.json();
+
+            if (newRes?.status === 200) {
+                console.log('responseassssss', response);
+                setBanners(newRes?.result || []);
+            } else {
+                showSnackbar(newRes?.msg || 'Failed to load banners', 'error');
+                // Fallback to local images if API fails
+                setBanners([]);
+            }
+        } catch (error) {
+            console.error('Banner fetch error:', error);
+            showSnackbar('Network error', 'error');
+            // Fallback to local images
+            setBanners([]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const renderItem = useCallback(({ item }) => {
         return (
             <SubjectItem
@@ -124,7 +258,7 @@ const HomeScreen = () => {
         )
     }, [selectedSubject])
 
-    useEffect(() => {   
+    useEffect(() => {
         const loadBoard = async () => {
             const savedBoard = await localStorage.getItem(storageKeys.selectedBoard);
             const savedMedium = await localStorage.getItem(storageKeys.selectedMedium);
@@ -134,27 +268,31 @@ const HomeScreen = () => {
                 setSelectMedium(savedMedium);
                 setSelectStandard(savedStandard);
             } else {
-                setVisible(true);
+                if (handleBoardDataGet) {
+                    await handleBoardDataGet();
+                    setVisible(true);
+                }
             }
         };
         loadBoard();
     }, []);
 
-    return (
-        // <View style={styles.mainContainer}>
+    useEffect(() => {
+        fetchBanners();
+    }, []);
 
+    return (
         <SafeAreaView
             style={styles.mainContainer}
-            edges={['left', 'right', 'bottom']}
-        >
+            edges={['left', 'right', 'bottom']}>
+            <Loader visible={loading} />
             <AppHeader title="Paper Fast" leftIcon={Icons.drawer} onBackPress={() => navigation.openDrawer()} discriptionText='(For Teacher)' rightIcon={Icons.notification} />
             <View style={styles.innerMainContainer}>
-
                 <FlatList
                     data={SUBJECTS}
                     keyExtractor={(item) => item.id}
                     renderItem={renderItem}
-                    extraData={selectedSubject}
+                    // extraData={selectedSubject}
                     showsVerticalScrollIndicator={false}
                     removeClippedSubviews
                     initialNumToRender={6}
@@ -213,7 +351,12 @@ const HomeScreen = () => {
                                         )
                                     })}
                                 </View>
-                                <HomeBannerSlider />
+                                {/* <HomeBannerSlider /> */}
+                                <HomeBannerSlider
+                                    banners={banners}
+                                    loading={loading}
+                                    onRefresh={handleRefreshBanners}
+                                />
                             </View>
                         )
                     }}
@@ -244,20 +387,20 @@ const HomeScreen = () => {
                     <Text style={styles.selectModal}>Select Board</Text>
 
                     <FlatList
-                        data={BordsData}
+                        data={boardData}
                         numColumns={2}
-                        keyExtractor={(item) => item.id.toString()}
+                        keyExtractor={(item) => item?.board_name?.toString()}
                         showsVerticalScrollIndicator={false}
                         columnWrapperStyle={styles.row}
                         contentContainerStyle={styles.listContainer}
                         renderItem={({ item }) => (
                             <TouchableOpacity style={[styles.boardItem,
                             {
-                                backgroundColor: selectedBoard == item?.board ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)',
-                                borderColor: selectedBoard === item?.board ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)'
+                                backgroundColor: selectedBoard == item?.board_name ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)',
+                                borderColor: selectedBoard === item?.board_name ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)'
                             }]}
-                                onPress={() => handleSelectedBoard(item?.board)}>
-                                <Text style={styles.boardModalText}>{item.board}</Text>
+                                onPress={() => handleSelectedBoard(item?.board_name)} key={item?.board_name}>
+                                <Text style={styles.boardModalText}>{item?.board_name}</Text>
                             </TouchableOpacity>
                         )}
                     />
@@ -268,7 +411,6 @@ const HomeScreen = () => {
                         marginBottom: moderateScale(40)
                     }} />
                 </AppModal>
-
 
                 {/*  medium */}
                 <AppModal visible={visibleMedium} onClose={handleMediumCloseModal}>
@@ -286,23 +428,43 @@ const HomeScreen = () => {
                         </TouchableOpacity>
                     </View>
 
-                    <Text style={styles.selectModal}>Select Medium</Text>
-                    <TouchableOpacity style={[styles.englishMediumBox, { backgroundColor: selectMedium === 'English' ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)', borderColor: selectedBoard === 'English' ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)' }]} onPress={() => handleSelectMedium('English')} >
+                    <Text style={[styles.selectModal, { marginBottom: moderateScale(20) }]}>Select Medium</Text>
+                    {/* <TouchableOpacity style={[styles.englishMediumBox, { backgroundColor: selectMedium === 'English' ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)', borderColor: selectedBoard === 'English' ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)' }]} onPress={() => handleSelectMedium('English')} >
                         <Text style={[styles.englishText, { color: selectMedium === 'English' ? Colors.primaryColor : Colors.InputText }]}>{selectedBoard} - English Medium</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[styles.englishMediumBox, { backgroundColor: selectMedium === 'Hindi' ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)', borderColor: selectedBoard === 'Hindi' ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)' }]} onPress={() => handleSelectMedium('Hindi')}>
                         <Text style={[styles.englishText, { color: selectMedium === 'Hindi' ? Colors.primaryColor : Colors.InputText }]}>{selectedBoard} - हिंदी माध्यम</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
+                    <FlatList
+                        data={medium}
+                        // numColumns={2}
+                        keyExtractor={(item) => item?.medium_name?.toString()}
+                        showsVerticalScrollIndicator={false}
+                        // columnWrapperStyle={styles.row}
+                        contentContainerStyle={styles.listContainer}
+                        renderItem={({ item }) => (
+                            <TouchableOpacity style={[styles.boardItem,
+                            {
+                                backgroundColor: selectMedium == item?.medium_name ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)',
+                                borderColor: selectMedium === item?.medium_name ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)',
+                                marginBottom: moderateScale(15)
+                            }]}
+                                // onPress={() => handleSelectedBoard(item?.board_name)} 
+                                onPress={() => handleSelectMedium(item?.medium_name)}
+                                key={item?.medium_name}>
+                                <Text style={styles.boardModalText}>{selectedBoard}-{item?.medium_name}</Text>
+                            </TouchableOpacity>
+                        )}
+                    />
 
                     <AppButton title='Submit' onPress={handleStandardOpenModal} style={{
                         width: "100%",
-                        marginTop: moderateScale(15),
-                        marginBottom: moderateScale(40),
+                        marginTop: moderateScale(25),
+                        marginBottom: moderateScale(20),
                         // borderRadius:0,
                         // marginTop:moderateScale(-40)
                     }} />
                 </AppModal>
-
 
                 {/* standard */}
                 <AppModal visible={visibleStandard} onClose={handleStandardCloseModal}>
@@ -323,20 +485,19 @@ const HomeScreen = () => {
                     <Text style={styles.selectModal}>Select Standard</Text>
 
                     <FlatList
-                        data={Standard}
+                        data={standard}
                         numColumns={2}
-                        keyExtractor={(item) => item.id.toString()}
+                        keyExtractor={(item) => item?.class_name?.toString()}
                         showsVerticalScrollIndicator={false}
                         columnWrapperStyle={styles.row}
                         contentContainerStyle={styles.listContainer}
                         renderItem={({ item }) => (
-
                             <TouchableOpacity
                                 style={[styles.boardItem, {
-                                    backgroundColor: selectStandard === item?.standard ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)',
-                                    borderColor: selectStandard === item?.standard ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)'
-                                }]} onPress={() => handleSelectStandard(item?.standard)}>
-                                <Text style={styles.boardModalText}>{item.standard}</Text>
+                                    backgroundColor: selectStandard === item?.class_name ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)',
+                                    borderColor: selectStandard === item?.class_name ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)'
+                                }]} onPress={() => handleSelectStandard(item?.class_name)}>
+                                <Text style={styles.boardModalText}>{item?.class_name}</Text>
                             </TouchableOpacity>
                         )}
                     />
@@ -349,18 +510,7 @@ const HomeScreen = () => {
                 </AppModal>
             </View>
 
-
-            {/* </View> */}
-
         </SafeAreaView>
     )
 }
 export default HomeScreen
-
-
-{/* <StatusBar backgroundColor="transparent"
-                barStyle={'light-content'} /> */}
-{/* <View style={{ paddingTop: insets.top, backgroundColor: Colors.primaryColor }}>
- <StatusBar barStyle={'light-content'} backgroundColor="transparent" />
-<AppHeader title="Paper Fast" leftIcon={Icons.drawer} onBackPress={() => navigation.openDrawer()} discriptionText='(For Teacher)' rightIcon={Icons.notification} />  </View>
-<View style={styles.ContantantRaper}> */}

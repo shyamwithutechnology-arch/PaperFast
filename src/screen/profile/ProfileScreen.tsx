@@ -182,19 +182,6 @@ const ProfileScreen = () => {
 
         setErrors({});
 
-        // const validateForm = (name) => {
-        //     // console.log('eeeeeeeeeeeeee', name?.firstName.trim() === '')
-        //     const errors = {};
-
-        //     if (!name?.firstName || name?.firstName.trim() === '') {
-        //         errors.firstName = 'Pease Enter Fist Name';
-        //     } else if (!name?.lastName || name?.lastName.trim() === '') {
-        //         errors.lastName = 'Please Enter Last Name';
-        //     } else if (name?.email.trim() === '') {
-        //         errors.email = 'Please Enter Email';
-        //     }
-        //     return errors;
-        // };
         const validateForm = (name) => {
             const errors = {};
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -321,9 +308,9 @@ const ProfileScreen = () => {
             setLoading(false);
         }
     };
+    
     const handleGetProfile = async (userId) => {
         setLoading(true);
-
         try {
             const formData = new FormData();
             formData.append('usr_id', userId);

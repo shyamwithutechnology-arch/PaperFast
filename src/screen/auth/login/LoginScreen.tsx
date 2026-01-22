@@ -371,6 +371,7 @@ const LoginScreen = () => {
         <SafeAreaView
             style={styles.mainContainer}
             edges={['left', 'right', 'bottom']}>
+                <Loader visible={loading}/>
             {/* <StatusBar barStyle="dark-content" backgroundColor={Colors.primaryColor} /> */}
             <AppHeader title="Paper Fast" discriptionText='Paper Generate In Minute' />
             <View style={styles.innerMainContainer}>

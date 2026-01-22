@@ -80,7 +80,7 @@ const CustomDrawer = ({navigation}) => {
                         resizeMode='contain'
                     />
                     <TouchableOpacity style={styles.cancelButton} onPress={() => navigation.closeDrawer()}>
-                        <Image source={Icons.drawerCancel} style={{ height: moderateScale(11), width: moderateScale(11) }} />
+                        <Image source={Icons.drawerCancel} resizeMode='contain' style={{ height: moderateScale(12.8), width: moderateScale(12.8) }} />
                     </TouchableOpacity>
                 </View>
 
