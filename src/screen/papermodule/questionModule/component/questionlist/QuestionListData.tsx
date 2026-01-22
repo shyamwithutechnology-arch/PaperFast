@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { styles } from './styles';
-import { moderateScale } from '../../../../../utlis/responsiveSize';
+import { moderateScale } from '../../../../../utils/responsiveSize';
 import { Colors } from '../../../../../theme';
 
 type Option = {

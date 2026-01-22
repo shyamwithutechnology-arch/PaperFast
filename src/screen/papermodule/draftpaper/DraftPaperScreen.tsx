@@ -3,7 +3,7 @@ import { Text, View, StyleSheet, StatusBar, TouchableOpacity, FlatList, Image } 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import HeaderPaperModule from '../../../component/headerpapermodule/Headerpapermodule';
 import { Colors, Fonts } from '../../../theme';
-import { moderateScale, verticalScale } from '../../../utlis/responsiveSize';
+import { moderateScale, verticalScale } from '../../../utils/responsiveSize';
 import DraftPaperList from './component/DraftPaperList';
 import AppModal from '../../../component/modal/AppModal';
 import AppButton from '../../../component/button/AppButton';

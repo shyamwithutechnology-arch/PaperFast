@@ -39,6 +39,9 @@ export const storageKeys = {
   selectedBoard: 'selectedBoard',
   selectedMedium: 'selectedMedium',
   selectedStandard: 'selectedStandard',
+  user_exist: 'user_exist',
+  mobileNumber: 'mobileNumber',
+  userId: 'userId',
 };
 export const localStorage = {
   setItem: (key: string, value: string): Promise<void> => {

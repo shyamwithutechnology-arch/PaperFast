@@ -87,7 +87,7 @@ import {
   Platform,
 } from 'react-native'
 import { styles } from './styles'
-import { moderateScale } from '../../utlis/responsiveSize'
+import { moderateScale } from '../../utils/responsiveSize'
 import { Colors } from '../../theme'
 
 interface AppHeaderProps {

@@ -10,7 +10,7 @@ import {
 import { DrawerContent, DrawerContentScrollView } from '@react-navigation/drawer';
 import { Colors } from '../../theme/color';
 import { Fonts } from '../../theme/fonts';
-import { moderateScale } from '../../utlis/responsiveSize';
+import { moderateScale } from '../../utils/responsiveSize';
 import { styles } from './styles';
 import { Icons } from '../../assets/icons';
 import { Images } from '../../assets/images';

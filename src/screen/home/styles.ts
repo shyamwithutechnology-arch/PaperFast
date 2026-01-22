@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native"
 import { Colors, Fonts } from "../../theme"
-import { moderateScale } from "../../utlis/responsiveSize"
+import { moderateScale } from "../../utils/responsiveSize"
 import { scale, verticalScale } from "react-native-size-matters"
 
 export const styles = StyleSheet.create({

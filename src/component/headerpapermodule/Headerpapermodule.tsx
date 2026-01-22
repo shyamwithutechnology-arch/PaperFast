@@ -16,7 +16,7 @@ import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { styles } from "./styles";
 import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
-import { moderateScale } from "../../utlis/responsiveSize";
+import { moderateScale } from "../../utils/responsiveSize";
 interface HeaderpapermoduleProp {
     title: string,
     rightPress: () => void,

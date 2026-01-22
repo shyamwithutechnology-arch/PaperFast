@@ -59,7 +59,7 @@
 // });
 
 import { StyleSheet } from 'react-native'
-import { moderateScale } from '../../utlis/responsiveSize'
+import { moderateScale } from '../../utils/responsiveSize'
 import { Colors } from '../../theme'
 import { Fonts } from '../../theme/fonts'
 

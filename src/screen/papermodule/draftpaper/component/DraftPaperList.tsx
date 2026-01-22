@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { moderateScale } from '../../../../utlis/responsiveSize';
+import { moderateScale } from '../../../../utils/responsiveSize';
 import { Colors, Fonts } from '../../../../theme';
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 

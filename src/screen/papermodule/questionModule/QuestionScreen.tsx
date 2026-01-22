@@ -5,7 +5,7 @@ import { Colors } from "../../../theme";
 import HeaderPaperModule from "../../../component/headerpapermodule/Headerpapermodule";
 import { styles } from "./styles";
 import Icon from "react-native-vector-icons/Feather";
-import { moderateScale } from "../../../utlis/responsiveSize";
+import { moderateScale } from "../../../utils/responsiveSize";
 import { Icons } from "../../../assets/icons";
 import QuestionListData from "./component/questionlist/QuestionListData";
 import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
