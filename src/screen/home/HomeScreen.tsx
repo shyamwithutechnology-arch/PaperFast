@@ -37,13 +37,13 @@ const HomeScreen = () => {
         }
     }
     const handleBordCloseModal = () => {
-        if (selectedBoard === null) {
-            showSnackbar('Please Select Board', 'error')
-            return false
-        }
-        if (selectedBoard !== null) {
+        // if (selectedBoard === null) {
+        //     showSnackbar('Please Select Board', 'error')
+        //     return false
+        // }
+        // if (selectedBoard !== null) {
             setVisible(false)
-        }
+        // }
     }
     const handleSelectedBoard = async (item: string) => {
         setSelectedBoard(item);
@@ -65,13 +65,13 @@ const HomeScreen = () => {
         }
     }
     const handleMediumCloseModal = () => {
-        if (selectMedium === null) {
-            showSnackbar('Please Select Medium', 'error')
-            return false
-        }
-        if (selectMedium !== null) {
+        // if (selectMedium === null) {
+        //     showSnackbar('Please Select Medium', 'error')
+        //     return false
+        // }
+        // if (selectMedium !== null) {
             setVisibleMedium(false)
-        }
+        // }
     }
     const handleSelectMedium = async (item: string) => {
         setSelectMedium(item)
@@ -95,13 +95,13 @@ const HomeScreen = () => {
         }
     }
     const handleStandardCloseModal = () => {
-        if (selectStandard === null) {
-            showSnackbar('Please Select Standard', 'error');
-            return false
-        }
-        if (selectStandard !== null) {
+        // if (selectStandard === null) {
+        //     showSnackbar('Please Select Standard', 'error');
+        //     return false
+        // }
+        // if (selectStandard !== null) {
             setVisibleStandard(false)
-        }
+        // }
     }
     const handleSelectStandard = async (item: string) => {
         setSelectStandard(item)
