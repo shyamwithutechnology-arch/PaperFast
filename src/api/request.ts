@@ -7,8 +7,7 @@ export const GET = async <T>(url: string, params?: object): Promise<T> => {
 
 export const POST = async <T>(url: string, body?: any): Promise<T> => {
   const res = await api.post(url, body);
-  console.log('eeeeeeeerrrrrrrrrr', body);
-
+  // console.log('eeeeeeeerrrrrrrrrr', body);
   return res.data;
 };
 
@@ -38,16 +37,18 @@ export const POST_FORM = async <T>(
   const formData = new FormData();
 
   Object.entries(params).forEach(([key, value]) => {
-    if (value !== undefined && value !== null) {
+    if (value !== undefined && value !== null && value !== '') {
       formData.append(key, String(value));
     }
   });
+  // console.log('📤 POST_FORM sending:', { url, params: Object.fromEntries(formData._parts) });
+  const config = {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  };
 
-  console.log('📤 POST_FORM sending:', { url, formData });
-  
-  // SIMPLIFY - remove all extra config
-  const res = await api.post(url, formData);
-  
-  console.log('✅ POST_FORM response:', res.data);
+  const res = await api.post(url, formData, config);
+  // console.log('✅ POST_FORM response:', res.data);
   return res.data;
 };
