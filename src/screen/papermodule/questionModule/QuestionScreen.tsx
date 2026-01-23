@@ -9,9 +9,6 @@ import { moderateScale } from "../../../utils/responsiveSize";
 import { Icons } from "../../../assets/icons";
 import QuestionListData from "./component/questionlist/QuestionListData";
 import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
-import { RotateInUpLeft } from "react-native-reanimated";
-
-
 const QuestionScreen = () => {
     const navigation = useNavigation()
     const route = useRoute();
@@ -111,8 +108,8 @@ const QuestionScreen = () => {
                                 style={[
                                     styles.chackBox,
                                     {
-                                        backgroundColor:
-                                            selectCheck === 'Options' ? '#4292FA' : Colors.white,
+                                     backgroundColor:
+                                    selectCheck === 'Options' ? '#4292FA' : Colors.white,
                                     },
                                 ]}
                             >
@@ -137,7 +134,7 @@ const QuestionScreen = () => {
                                     styles.chackBox,
                                     {
                                         backgroundColor:
-                                            selectCheck === 'Solutions' ? '#4292FA' : Colors.white,
+                                        selectCheck === 'Solutions' ? '#4292FA' : Colors.white,
                                     },
                                 ]}
                             >

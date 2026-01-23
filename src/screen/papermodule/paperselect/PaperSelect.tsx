@@ -2,13 +2,13 @@ import React, { useCallback, useState } from "react";
 import { View, StatusBar, TouchableOpacity, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "../../../theme";
-import CustomPaperCard from "../component/CustomPaperCard/CustomPaperCard";
 import HeaderPaperModule from "../../../component/headerpapermodule/Headerpapermodule";
 import Paperselectcontent from "./component/paperselectcontent/Paperselectcontent";
 import { styles } from "./styles";
 import { moderateScale } from "react-native-size-matters";
 import Icon from "react-native-vector-icons/FontAwesome6";
 import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
+
 type SelectedSummary = {
     chapterId: number;
     questionId: string;
@@ -39,11 +39,9 @@ const PaperSelect = () => {
     const [selectedPaper, setSelectedPaper] = useState<PaperType>('NCERT');
 
     const handleSelectPaper = (id: string) => {
-        setSelectedPaper(id);
-
+        setSelectedPaper(id)
     }
     const handleQuestionSelect = (payload) => {
-        // navigation.navigate('QuestionScreen')
         navigation.navigate('QuestionScreen', {
             ...payload,
         });
@@ -53,6 +51,7 @@ const PaperSelect = () => {
         { id: 2, title: "Exemplar", key: "EXEMPLAR" },
         { id: 3, title: "RD Sharma", key: "RD_SHARMA" },
     ];
+
     const PAPER_DATA = {
         NCERT: [
             {
@@ -78,7 +77,6 @@ const PaperSelect = () => {
                 ],
             },
         ],
-
         EXEMPLAR: [
             {
                 id: 1,
@@ -101,7 +99,6 @@ const PaperSelect = () => {
                 ],
             },
         ],
-
         RD_SHARMA: [
             {
                 id: 1,
@@ -131,7 +128,7 @@ const PaperSelect = () => {
         useCallback(() => {
             navigation.getParent()?.setOptions({
                 tabBarStyle: { display: 'none' },
-            });
+            })
 
             return () => {
                 navigation.getParent()?.setOptions({
@@ -142,11 +139,9 @@ const PaperSelect = () => {
 
     return (
         <View style={{ flex: 1, backgroundColor: Colors.white }}>
-            {/* STATUS BAR */}
             <StatusBar
                 backgroundColor={Colors.primaryColor}
-                barStyle="dark-content"
-            />
+                barStyle="dark-content" />
 
             {/* HEADER + STATUS BAR SAME BACKGROUND */}
             <SafeAreaView edges={["top"]} style={{ backgroundColor: Colors.lightThemeBlue }}>
@@ -156,13 +151,6 @@ const PaperSelect = () => {
             <SafeAreaView
                 style={{ flex: 1, backgroundColor: Colors.white }}
                 edges={["left", "right", "bottom"]}>
-                {/* <View style={styles.rowContainer}>
-                    {selectBtn.map((item, index) => (
-                        <TouchableOpacity key={item.id} style={[styles.selectBtnBox, { backgroundColor: selectedPaper === item?.title ? Colors.primaryColor : Colors.white, borderColor: selectedPaper === item?.title ? Colors.primaryColor : '#AFAFAF' }]} onPress={() => handleSelectPaper(item?.title)}>
-                            <Text style={[styles.selectBtnText, { color: selectedPaper === item?.title ? Colors.white : '#AFAFAF' }]}>{item.title}</Text>\
-                        </TouchableOpacity>
-                    ))}
-                </View> */}
                 <View style={styles.rowContainer}>
                     {selectBtn.map(item => {
                         const isActive = selectedPaper === item.key;
@@ -176,8 +164,7 @@ const PaperSelect = () => {
                                         borderColor: isActive ? Colors.primaryColor : "#AFAFAF",
                                     },
                                 ]}
-                                onPress={() => setSelectedPaper(item.key as PaperType)}
-                            >
+                                onPress={() => setSelectedPaper(item.key as PaperType)}>
                                 <Text
                                     style={[
                                         styles.selectBtnText,
@@ -189,15 +176,9 @@ const PaperSelect = () => {
                         );
                     })}
                 </View>
-
-                {/* question list topic wise */}
                 <Paperselectcontent data={PAPER_DATA[selectedPaper]} handleNavigate={handleQuestionSelect} activeChapterId={activeChapterId} selectedSummary={selectedSummary} />
-
                 <View style={styles.totalWrapper}>
-                    {/* TOP SHADOW */}
                     <View style={styles.topShadow} />
-
-                    {/* CONTENT */}
                     <View style={styles.totalMainBox}>
                         <View>
                             <Text style={styles.marksTotel}>11 Marks Total</Text>
@@ -205,14 +186,12 @@ const PaperSelect = () => {
                                 1=3,2=0,3=0,4=2,5=0
                             </Text>
                         </View>
-
                         <TouchableOpacity style={styles.exportBox}>
                             <Text style={styles.exportText}>Export Pdf</Text>
                             <Icon name='arrow-right-long' size={moderateScale(18)} color={Colors.white} />
                         </TouchableOpacity>
                     </View>
                 </View>
-
             </SafeAreaView>
 
         </View>

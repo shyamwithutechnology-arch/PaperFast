@@ -78,15 +78,12 @@ export const styles = StyleSheet.create({
     },
     notificationBox: {
         width: '96%',
-        paddingBottom: moderateScale(20),
+        paddingBottom: moderateScale(5),
         borderWidth: 1,
         borderColor: 'rgba(12, 64, 111, 0.19)',
-        // borderRadius:moderateScale(10)
         borderTopLeftRadius: moderateScale(10),
         borderTopRightRadius: moderateScale(10),
         alignSelf: 'center',
-        marginBottom: moderateScale(10),
-        // marginVertical:moderateScale(14)
         marginTop: moderateScale(10)
 
     },
@@ -95,8 +92,6 @@ export const styles = StyleSheet.create({
         backgroundColor: Colors.homeNotificationInnerBgColor,
         flexDirection: 'row',
         alignItems: 'center',
-        // justifyContent:"center",
-        // textAlignVertical:'center',
         borderWidth: 1,
         borderColor: 'rgba(12, 64, 111, 0.19)',
         borderTopLeftRadius: moderateScale(10),
@@ -114,54 +109,18 @@ export const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         paddingLeft: moderateScale(10),
         marginVertical: moderateScale(3),
-        borderBottomWidth:1,
         borderColor:'rgba(12, 64, 111, 0.1)'
     },
     notificationdec: {
         fontSize: moderateScale(11),
         color: Colors.blackSecond,
         fontFamily: Fonts.InstrumentSansRegular,
-        //   lineHeight: 20,
         flex: 1,
-        flexWrap: 'wrap',   // ⭐ REQUIRED
+        flexWrap: 'wrap', 
     },
-    //     lineMainBox:{
-    //         borderWidth:1,
-    //         flexDirection:'row',
-    //         // alignSelf:'center',
-    //           position: "relative",      // IMPORTANT
-    // justifyContent:'space-between',
-    //         flex:1,
-    //     },
-    //     lineBox: {
-    //         height: moderateScale(7),
-    //         width: '50%',
-    //         backgroundColor: Colors.ParagraphAndShortTexts,
-    //         borderRadius: moderateScale(10),
-
-    //   position: "absolute",
-    // //   left: 0,
-    // //   right: 0,
-    // //   alignSelf: "center",
-    //     },
-    //     cancleIcon: {
-    //         width: moderateScale(14),
-    //         height: moderateScale(14)
-    //     },
-    //     cancleBox: {
-    //         width: moderateScale(30),
-    //         height: moderateScale(30),
-    //         borderWidth:1,
-    //         alignItems:'center',
-    //         justifyContent:'center',
-    //         borderRadius:moderateScale(20),
-    //         alignSelf:"flex-end",
-    //     }
     lineMainBox: {
         flexDirection: "row",
         alignItems: "center",
-        // paddingHorizontal: moderateScale(),
-        // borderWidth:1
     },
 
     lineCenterWrapper: {

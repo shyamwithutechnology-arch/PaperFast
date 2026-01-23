@@ -125,9 +125,6 @@ const QuestionListData: React.FC<Props> = ({ selectCheck, selectedMap, setSelect
     })
   }, [])
 
-  // console.log('ddddddddddd', selectedMap)
-  // { Object.keys(selectedMap).map(Number).length ?? 0 }
-
   /** 🧱 RENDER ITEM */
   const renderItem = useCallback(
     ({ item, index }: { item: Question; index: number }) => {

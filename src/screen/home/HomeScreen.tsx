@@ -42,7 +42,7 @@ const HomeScreen = () => {
         //     return false
         // }
         // if (selectedBoard !== null) {
-            setVisible(false)
+        setVisible(false)
         // }
     }
     const handleSelectedBoard = async (item: string) => {
@@ -70,7 +70,7 @@ const HomeScreen = () => {
         //     return false
         // }
         // if (selectMedium !== null) {
-            setVisibleMedium(false)
+        setVisibleMedium(false)
         // }
     }
     const handleSelectMedium = async (item: string) => {
@@ -100,7 +100,7 @@ const HomeScreen = () => {
         //     return false
         // }
         // if (selectStandard !== null) {
-            setVisibleStandard(false)
+        setVisibleStandard(false)
         // }
     }
     const handleSelectStandard = async (item: string) => {
@@ -301,6 +301,7 @@ const HomeScreen = () => {
                     ListHeaderComponent={() => {
                         return (
                             <View>
+                                {/* card box */}
                                 <View style={styles.cardMainBox}>
                                     <TouchableOpacity style={styles.boardBox} onPress={handleBordOpenModal}>
                                         <Image source={Icons.board} style={styles.bordIcon} />
@@ -327,8 +328,7 @@ const HomeScreen = () => {
                                         </View>
                                     </TouchableOpacity>
                                 </View>
-
-                                <Text style={styles.allSubText}>All Subjects</Text>
+                                <Text style={styles.allSubText} onPress={() => navigation.navigate('ChemistryData')}>All Subjects</Text>
                             </View>
                         )
                     }}
@@ -342,16 +342,16 @@ const HomeScreen = () => {
                                             marginTop: moderateScale(0), marginBottom: moderateScale(0)
                                         }]}>Notifications</Text>
                                     </View>
-                                    {Notification.map(item => {
+                                    {Notification.map((item, index) => {
+                                        const lastItem = index === Notification?.length - 1
                                         return (
-                                            <View style={styles.boxNotification} key={item?.id}>
+                                            <View style={[styles.boxNotification, { borderBottomWidth: lastItem ? 0 : 1 }]} key={item?.id}>
                                                 <Image source={Icons.notificationSpace} style={styles.notificationIcon} />
                                                 <Text style={styles.notificationdec}> {item?.label}</Text>
                                             </View>
                                         )
                                     })}
                                 </View>
-                                {/* <HomeBannerSlider /> */}
                                 <HomeBannerSlider
                                     banners={banners}
                                     loading={loading}
@@ -364,12 +364,6 @@ const HomeScreen = () => {
 
                 {/* board */}
                 <AppModal visible={visible} onClose={handleBordCloseModal}>
-                    {/* <View style={styles.lineMainBox}>
-                            <View style={styles.lineBox}/>
-                            <TouchableOpacity style={styles.cancleBox}>
-                                <Image source={Icons.cancel} style={styles.cancleIcon} resizeMode='contain' />
-                            </TouchableOpacity>
-                        </View> */}
                     <View style={styles.lineMainBox}>
                         <View style={styles.lineCenterWrapper}>
                             <View style={styles.lineBox} />

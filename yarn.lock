@@ -1582,6 +1582,13 @@
     prompts "^2.4.2"
     semver "^7.5.2"
 
+"@react-native-community/datetimepicker@^8.6.0":
+  version "8.6.0"
+  resolved "https://registry.yarnpkg.com/@react-native-community/datetimepicker/-/datetimepicker-8.6.0.tgz#1c4318a8bc1d5bfd111d782a87cf0b729f718e79"
+  integrity sha512-yxPSqNfxgpGaqHQIpatqe6ykeBdU/1pdsk/G3x01mY2bpTflLpmVTLqFSJYd3MiZzxNZcMs/j1dQakUczSjcYA==
+  dependencies:
+    invariant "^2.2.4"
+
 "@react-native-community/netinfo@^11.4.1":
   version "11.4.1"
   resolved "https://registry.yarnpkg.com/@react-native-community/netinfo/-/netinfo-11.4.1.tgz#a3c247aceab35f75dd0aa4bfa85d2be5a4508688"
@@ -5782,11 +5789,6 @@ react-native-country-select@0.3.8:
   resolved "https://registry.yarnpkg.com/react-native-country-select/-/react-native-country-select-0.3.8.tgz#af623ca1b26065c7451aaed66b41df54bf7f0927"
   integrity sha512-tkh6D6DCI1WlGEyl7sCA3qMVnQFUX+WZ4Iodxz5VALo45Tv5vkPuTetLzbVTLlzhXUJLTcrT6jjdGXWNmNCvZw==
 
-react-native-date-picker@^5.0.13:
-  version "5.0.13"
-  resolved "https://registry.yarnpkg.com/react-native-date-picker/-/react-native-date-picker-5.0.13.tgz#fe05f58652aaeee9e67f73cf7436c32a623ff3a4"
-  integrity sha512-qCLUODZVsJetO5zuoXjw1D39K527XWqBG8sOfhWdHyPzf13h8RXR1/RSKd1N0fdRDi5GdyizYmB0lPAK12/hbw==
-
 react-native-drawer-layout@^4.2.1:
   version "4.2.1"
   resolved "https://registry.yarnpkg.com/react-native-drawer-layout/-/react-native-drawer-layout-4.2.1.tgz#5c89425662c9b5216a227dbc87bc7f38c4ec8719"
@@ -5816,6 +5818,11 @@ react-native-is-edge-to-edge@1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/react-native-is-edge-to-edge/-/react-native-is-edge-to-edge-1.2.1.tgz#64e10851abd9d176cbf2b40562f751622bde3358"
   integrity sha512-FLbPWl/MyYQWz+KwqOZsSyj2JmLKglHatd3xLZWskXOpRaio4LfEDEz8E/A6uD8QoTHW6Aobw1jbEwK7KMgR7Q==
+
+react-native-mathjax@^2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/react-native-mathjax/-/react-native-mathjax-2.1.2.tgz#d4f8388305111b20bdc74b539b36b3bc7d7ffeb6"
+  integrity sha512-wwlAPigkwfwyLYCXoLCpQ5/kNAFhYJbvclxhJKZd4OaTAwT+b6KDKWvanozBU+OyYTxLQDW8uYjYswLfF4ujcg==
 
 react-native-mmkv@^4.1.1:
   version "4.1.1"

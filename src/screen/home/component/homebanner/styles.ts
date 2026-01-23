@@ -3,10 +3,7 @@ import { moderateScale } from "../../../../utils/responsiveSize";
 
 export const styles = StyleSheet.create({
   container: {
-    marginVertical: moderateScale(20),
-    // borderWidth:1,
-    // marginTop:moderateScale(-30),
-    // marginHorizontal:moderateScale
+        marginTop: moderateScale(15),
   },
   imageWrapper: {
     flex: 1,

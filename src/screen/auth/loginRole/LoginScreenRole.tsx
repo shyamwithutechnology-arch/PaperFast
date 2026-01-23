@@ -15,26 +15,18 @@ import { localStorage, reduxStorage, storageKeys } from '../../../storage/storag
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { showSnackbar } from '../../../utils/snackbar';
 import Loader from '../../../component/loader/Loader'
-import { POST, POST_FORM } from '../../../api/request';
+import {POST_FORM } from '../../../api/request';
 import { ApiEndPoint } from '../../../api/endPoints';
-// 1. Import the wrapper functions (assuming they're in same file as api)
-// import api, { POST } from '../../../api/axios'; // Adjust path
-// import { ApiEndPoint } from '../../../api/endPoints'; // Adjust path
 const LoginScreenRole = () => {
     const route = useRoute()
-    const { phoneNumber } = route.params
-    console.log('phoneNumberphoneNumber', phoneNumber);
+    // const { phoneNumber } = route.params
+    // console.log('phoneNumberphoneNumber', phoneNumber);
 
     const dispatch = useDispatch()
     const [otp, setOtp] = useState('');
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
     const [mobileNumber, setMobileNumber] = useState<string | number>('')
-    // const[input,setInput] = {
-    //     firstName:'',
-    //     lastName:''
-    // }
-    // Single state for all form inputs
     const [input, setInput] = useState({
         firstName: '',
         lastName: ''
@@ -90,12 +82,13 @@ const LoginScreenRole = () => {
             showSnackbar('Please Select Your Role', 'error');
             return;
         }
+        setErrors({});
         setLoading(true);
         try {
             const payload = {
                 usr_first_name: input?.firstName,
                 usr_last_name: input?.lastName,
-                usr_phone: phoneNumber,
+                usr_phone: mobileNumber,
                 usr_role: selectedRole === 'male' ? 'student' : 'tutor',
                 usr_device_token: 'fdsaagdfhghjk'
             };

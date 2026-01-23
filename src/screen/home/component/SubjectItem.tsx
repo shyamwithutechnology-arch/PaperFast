@@ -8,7 +8,6 @@ interface Props {
     onPress: (id: string) => void
 }
 
-// const SubjectItem = React.memo({ item, selected, onPress }: Props) => {
 const SubjectItem = React.memo(({ item, selected, onPress }: Props) => {
     return (
         <TouchableOpacity style={[styles.card, selected && styles.selectedCard]}
