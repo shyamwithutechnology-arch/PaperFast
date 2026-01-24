@@ -15,3 +15,4 @@ export const verticalScale = (size: number) =>
 export const moderateScale = (size: number, factor = 0.5) =>
   size + (scale(size) - size) * factor;
 
+export const mjFont = (size: number) => `${moderateScale(size)}px`;

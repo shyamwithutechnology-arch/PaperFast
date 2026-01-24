@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { View, StatusBar, TouchableOpacity, Text, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "../../../theme";
@@ -7,8 +7,10 @@ import { styles } from "./styles";
 import Icon from "react-native-vector-icons/Feather";
 import { moderateScale } from "../../../utils/responsiveSize";
 import { Icons } from "../../../assets/icons";
-import QuestionListData from "./component/questionlist/QuestionListData";
+import QuestionListData, { Question } from './component/questionlist/QuestionListData';
 import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
+import { POST_FORM } from "../../../api/request";
+import { showSnackbar } from "../../../utils/snackbar";
 const QuestionScreen = () => {
     const navigation = useNavigation()
     const route = useRoute();
@@ -24,33 +26,12 @@ const QuestionScreen = () => {
         label: string;
     };
     const [selectCheck, setSelectedCheck] = useState('Options')
-    /** 🔑 MULTI SELECT STATE */
     const [selectedMap, setSelectedMap] = useState<Record<string, boolean>>({});
-    // console.log('selectedMap', selectedMap);
-    //     const totalQuestions = Object.values(selectedMap)
-    //   .flatMap(chapter => Object.values(chapter || {}))
-    //   .reduce((sum, q) => sum + (q.selectedQuestions?.length || 0), 0);
-
+    const [questionsData, setQuestionsData] = useState<Question[]>([]);
+    const [loader, setLoader] = useState(false)
     const handleCheck = (item: string) => {
         setSelectedCheck(item)
     }
-    // const handleBack = () => {
-    //     const summary = {
-    //         section: 'A. M.C.Q',
-    //         marks: 1,
-    //         questions: Object.keys(selectedMap)
-    //             .filter(id => selectedMap[id])
-    //             .map(Number),
-    //     };
-
-    //     navigation.navigate({
-    //         name: 'PaperSelect', // or navigation.goBack()
-    //         params: { selectedSummary: summary },
-    //         merge: true,
-    //     });
-    //     // navigation.setParams({ selectedSummary: summary });
-    //     // navigation.goBack();
-    // };
 
     const handleBack = () => {
         navigation.navigate('PaperSelect', {
@@ -68,7 +49,6 @@ const QuestionScreen = () => {
             navigation.getParent()?.setOptions({
                 tabBarStyle: { display: 'none' },
             });
-
             return () => {
                 navigation.getParent()?.setOptions({
                     tabBarStyle: { display: 'flex' },
@@ -76,15 +56,41 @@ const QuestionScreen = () => {
             };
         }, []))
 
+    useEffect(() => {
+        fetchQuestions();
+    }, []);
+
+    const fetchQuestions = async () => {
+        setLoader(true)
+        try {
+            let params = {
+                'subject_id': '6',
+                'difficulty': '3',
+                // 'board_id':'10'
+                // 'class_id':
+                'page': '1',
+                'limit': '10'
+            }
+            const response = await POST_FORM('question', params)
+            if (response?.status === 200) {
+                // showSnackbar('')
+                setQuestionsData(response?.result)
+                console.log('responsedddddd', response);
+                // setQuestionsData(response.result); // Assuming your API returns { result: [...] }
+            }
+        } catch (error) {
+            console.error('Error fetching questions:', error);
+        } finally {
+            setLoader(false)
+        }
+    };
 
     return (
         <View style={{ flex: 1, backgroundColor: Colors.white }}>
             {/* STATUS BAR */}
             <StatusBar
                 backgroundColor={Colors.primaryColor}
-                barStyle="dark-content"
-            />
-
+                barStyle="dark-content" />
             {/* HEADER + STATUS BAR SAME BACKGROUND */}
             <View style={{ backgroundColor: Colors.lightThemeBlue }}>
                 <SafeAreaView edges={["top"]}>
@@ -108,11 +114,9 @@ const QuestionScreen = () => {
                                 style={[
                                     styles.chackBox,
                                     {
-                                     backgroundColor:
-                                    selectCheck === 'Options' ? '#4292FA' : Colors.white,
-                                    },
-                                ]}
-                            >
+                                        backgroundColor:
+                                            selectCheck === 'Options' ? '#4292FA' : Colors.white
+                                    }]}>
                                 {selectCheck === 'Options' && (
                                     <Icon name="check" size={moderateScale(14)} color={Colors.white} />
                                 )}
@@ -134,7 +138,7 @@ const QuestionScreen = () => {
                                     styles.chackBox,
                                     {
                                         backgroundColor:
-                                        selectCheck === 'Solutions' ? '#4292FA' : Colors.white,
+                                            selectCheck === 'Solutions' ? '#4292FA' : Colors.white,
                                     },
                                 ]}
                             >
@@ -155,8 +159,15 @@ const QuestionScreen = () => {
                 </View>
 
                 {/*  question list */}
-                <QuestionListData selectCheck={selectCheck} selectedMap={selectedMap}
-                    setSelectedMap={setSelectedMap} />
+                {/* <QuestionListData selectCheck={selectCheck} selectedMap={selectedMap}
+                    setSelectedMap={setSelectedMap} /> */}
+                {/* // Render the component */}
+                <QuestionListData
+                    selectCheck={selectCheck}
+                    selectedMap={selectedMap}
+                    setSelectedMap={setSelectedMap}
+                    questionsData={questionsData}
+                />
             </SafeAreaView>
 
         </View>
