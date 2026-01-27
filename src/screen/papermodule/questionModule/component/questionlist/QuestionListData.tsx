@@ -1329,9 +1329,11 @@ const OptionItem = memo(({
               style={styles.optionMathJax}
             />
           ) : (
-            <Text style={styles.optionText}>
-              {id}) {optionText}
-            </Text>
+            <View style={{ paddingVertical: moderateScale(8), borderRadius: moderateScale(4), paddingHorizontal: moderateScale(6) }}>
+              <Text style={styles.optionText}>
+                {id}) {optionText}
+              </Text>
+            </View>
           )}
         </View>
       )}
@@ -1646,6 +1648,118 @@ QuestionContent.displayName = 'QuestionContent';
 // Memoized Solution Component
 
 // Memoized Solution Component
+
+// Memoized Solution Component
+// const SolutionView = memo(({
+//   explanation,
+//   correctOption,
+//   isSelected
+// }: {
+//   explanation: string;
+//   correctOption: string;
+//   isSelected: boolean;
+// }) => {
+//   // Get text without removing image tags first
+//   const rawText = explanation || '';
+
+//   // Extract images but KEEP the img tags in text for positioning
+//   const images: string[] = [];
+//   let textWithPlaceholders = rawText;
+
+//   // Replace img tags with placeholders to preserve their position
+//   const imgRegex = /<img[^>]+src="data:image\/[^;]+;base64,([^"]+)"[^>]*>/g;
+//   let match;
+//   let imgIndex = 0;
+
+//   while ((match = imgRegex.exec(rawText)) !== null) {
+//     images.push(match[1]);
+//     // Replace with a unique placeholder
+//     textWithPlaceholders = textWithPlaceholders.replace(
+//       match[0],
+//       `[IMAGE_PLACEHOLDER_${imgIndex}]`
+//     );
+//     imgIndex++;
+//   }
+
+//   // Now process the text with placeholders
+//   const processedParts = textWithPlaceholders.split(/(\[IMAGE_PLACEHOLDER_\d+\])/);
+
+//   return (
+//     <View style={[styles.solutionBox, isSelected && styles.cardSelected]}>
+//       <Text style={styles.solutionTitle}>Solution :</Text>
+
+//       <View style={styles.solutionContent}>
+//         {processedParts.map((part, index) => {
+//           // Check if this part is an image placeholder
+//           const imgMatch = part.match(/\[IMAGE_PLACEHOLDER_(\d+)\]/);
+
+//           if (imgMatch) {
+//             const imgIndex = parseInt(imgMatch[1], 10);
+//             if (images[imgIndex]) {
+//               return (
+//                 <Image
+//                   key={`solution-img-${imgIndex}`}
+//                   source={{ uri: `data:image/png;base64,${images[imgIndex]}` }}
+//                   style={styles.solutionImage}
+//                   resizeMode="contain"
+//                 />
+//               );
+//             }
+//             return null;
+//           }
+
+//           // It's text - clean and render it
+//           const cleanText = part
+//             .replace(/<br\s*\/?>/gi, '\n')
+//             .replace(/&lt;/g, '<')
+//             .replace(/&gt;/g, '>')
+//             .replace(/&amp;/g, '&')
+//             .replace(/&nbsp;/g, ' ')
+//             .replace(/<[^>]*>/g, '')
+//             .trim();
+
+//           if (!cleanText) return null;
+
+//           const hasMath = containsMath(cleanText);
+
+//           if (hasMath) {
+//             return (
+//               <ScrollView
+//                 key={`text-${index}`}
+//                 horizontal
+//                 showsHorizontalScrollIndicator={true}
+//                 contentContainerStyle={styles.mathScrollContent}
+//                 style={styles.mathScrollView}
+//               >
+//                 <MathJax
+//                   mathJaxOptions={mathJaxOptions}
+//                   html={cleanText}
+//                   style={[styles.solutionMathJax, isSelected && styles.selectedText]}
+//                 />
+//               </ScrollView>
+//             );
+//           }
+
+//           return (
+//             <Text
+//               key={`text-${index}`}
+//               style={[styles.solutionText, isSelected && styles.selectedText]}
+//             >
+//               {cleanText}
+//             </Text>
+//           );
+//         })}
+//       </View>
+
+//       <Text style={styles.answerText}>
+//         <Text style={styles.answerLabel}>Answer: </Text>
+//         Option {correctOption || ''}
+//       </Text>
+//     </View>
+//   );
+// });
+// Memoized Solution Component - Clean Version
+// Memoized Solution Component - Super Simple Version
 const SolutionView = memo(({
   explanation,
   correctOption,
@@ -1655,72 +1769,68 @@ const SolutionView = memo(({
   correctOption: string;
   isSelected: boolean;
 }) => {
-  const { text: solutionText, images: solutionImages } = useMemo(() =>
-    extractImagesFromHtml(explanation || ''),
-    [explanation]
-  );
+  // 1. Extract images
+  const images = useMemo(() => {
+    const imgRegex = /<img[^>]+src="data:image\/[^;]+;base64,([^"]+)"[^>]*>/g;
+    const matches: string[] = [];
+    let match;
+    while ((match = imgRegex.exec(explanation || '')) !== null) {
+      matches.push(match[1]);
+    }
+    return matches;
+  }, [explanation]);
 
-  const hasMath = containsMath(solutionText);
-  const hasImages = solutionImages.length > 0;
+  // 2. Remove image tags to get clean text
+  const cleanText = useMemo(() => {
+    let text = explanation || '';
 
-  // CRITICAL FIX: Check if there's text BEFORE the first image
-  const hasTextBeforeImages = useMemo(() => {
-    if (!explanation || !hasImages) return false;
+    // Remove image tags
+    text = text.replace(/<img[^>]*>/g, '');
 
-    // Find the position of the first image tag
-    const firstImgIndex = explanation.indexOf('<img');
-    if (firstImgIndex === -1) return false;
-
-    // Get text before the first image
-    const textBeforeFirstImg = explanation.substring(0, firstImgIndex);
-
-    // Clean it to check if it has actual content
-    const cleaned = textBeforeFirstImg
-      .replace(/<br\s*\/?>/gi, ' ')
-      .replace(/<[^>]*>/g, '')
+    // Clean HTML
+    text = text
+      .replace(/<br\s*\/?>/gi, ' ') // Convert <br> to space
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&amp;/g, '&')
       .replace(/&nbsp;/g, ' ')
+      .replace(/<[^>]*>/g, '') // Remove any remaining HTML
       .trim();
 
-    return cleaned.length > 0;
-  }, [explanation, hasImages]);
+    return text;
+  }, [explanation]);
+
+  const hasMath = containsMath(cleanText);
+  const hasText = cleanText.length > 0;
+  const hasImages = images.length > 0;
 
   return (
     <View style={[styles.solutionBox, isSelected && styles.cardSelected]}>
       <Text style={styles.solutionTitle}>Solution :</Text>
 
-      {/* Solution Text */}
-      {solutionText.trim().length > 0 && (
-        <View style={styles.solutionContent}>
+      {/* Text Content */}
+      {hasText && (
+        <View style={styles.textContainer}>
           {hasMath ? (
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={true}
-              contentContainerStyle={styles.mathScrollContent}
-              style={styles.mathScrollView}
-            >
-              <MathJax
-                mathJaxOptions={mathJaxOptions}
-                html={solutionText}
-                style={[styles.solutionMathJax, isSelected && styles.selectedText]}
-              />
-            </ScrollView>
+            <MathJax
+              mathJaxOptions={mathJaxOptions}
+              html={cleanText}
+              style={[styles.solutionMathJax, isSelected && styles.selectedText]}
+            />
           ) : (
             <Text style={[styles.solutionText, isSelected && styles.selectedText]}>
-              {solutionText}
+              {cleanText}
             </Text>
           )}
         </View>
       )}
 
-      {/* Solution Images - CRITICAL: Only add margin if there's text BEFORE images */}
+      {/* Images (after text) */}
       {hasImages && (
-        <View style={[
-          styles.solutionImagesContainer,
-          hasTextBeforeImages && styles.solutionImagesWithText
-        ]}>
-          {solutionImages.map((base64, index) => (
+        <View style={styles.imagesContainer}>
+          {images.map((base64, index) => (
             <Image
-              key={`solution-img-${index}`}
+              key={`img-${index}`}
               source={{ uri: `data:image/png;base64,${base64}` }}
               style={styles.solutionImage}
               resizeMode="contain"
@@ -1736,8 +1846,7 @@ const SolutionView = memo(({
     </View>
   );
 });
-// Item Component
-// Item Component
+
 const QuestionItem = memo(({
   item,
   index,
@@ -1938,10 +2047,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: moderateScale(12),
     // width:'100%',
     // borderBottomWidth: .5,
-    borderWidth: .6,
+    borderBottomWidth: .6,
     borderColor: 'rgba(12, 64, 111, 0.12)',
     marginHorizontal: 0, // Add this
-    // flex:1
+    paddingBottom:moderateScale(10),
+    flex:1,
     // marginTop:moderateScale(-30)
   },
   cardSelected: {
@@ -1969,8 +2079,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   mathJaxWrapper: {
-    // flex: 1,
-    // borderWidth: 1,
+    flex: 1,
+    borderWidth: 1,
     paddingVertical: moderateScale(0.5),
     marginTop: moderateScale(6),
     // borderWidth: 1
@@ -1979,7 +2089,7 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(14),
     fontFamily: Fonts.InstrumentSansMedium,
     color: Colors.black,
-    lineHeight: moderateScale(22),
+    lineHeight: moderateScale(19),
   },
   questionMathJax: {
     fontSize: moderateScale(14),
@@ -1990,20 +2100,20 @@ const styles = StyleSheet.create({
   selectedText: {
     backgroundColor: 'transparent',
   },
-  imagesContainer: {
-    // marginBottom: moderateScale(-10),
-    // borderWidth: 1,
-    marginLeft: moderateScale(-20)
-    // verticalAlign:"top"
-  },
+  // imagesContainer: {
+  //   // marginBottom: moderateScale(-10),
+  //   // borderWidth: 1,
+  //   marginLeft: moderateScale(-20)
+  //   // verticalAlign:"top"
+  // },
   imagesWithText: {
     // marginTop: moderateScale(12),
   },
   questionImage: {
     width: '100%',
-    height: verticalScale(100), //180
-    maxHeight: verticalScale(100), //250
-    minHeight: verticalScale(100), //
+    height: verticalScale(80), //180
+    maxHeight: verticalScale(150), //250
+    minHeight: verticalScale(60), //
     borderRadius: moderateScale(2),
     // marginBottom: moderateScale(-9),
     backgroundColor: Colors?.white,
@@ -2014,7 +2124,7 @@ const styles = StyleSheet.create({
     // flexDirection: 'row',
     // flexWrap: 'wrap',
     // justifyContent: 'space-between',
-    marginBottom: moderateScale(12),
+    // marginBottom: moderateScale(20),
     // borderWidth: 1,  
     // borderColor:"#000"
   },
@@ -2046,20 +2156,20 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(13),
     fontFamily: Fonts.InstrumentSansMedium,
     color: Colors.black,
-    lineHeight: moderateScale(18),
+    // lineHeight: moderateScale(18),
   },
   optionMathJax: {
     fontSize: moderateScale(13),
     fontFamily: Fonts.InstrumentSansMedium,
     color: Colors.black,
-    lineHeight: moderateScale(10),
+    // lineHeight: moderateScale(10),
     // height:moderateScale(20),
     // backgroundColor:"red"
   },
   optionImagesContainer: {
     marginTop: moderateScale(.5),
     // borderWidth:1,
-    backgroundColor:'#000'
+    // backgroundColor: '#000'
   },
   optionImagesWithText: {
     // marginTop: moderateScale(8),
@@ -2069,12 +2179,12 @@ const styles = StyleSheet.create({
     // height: verticalScale(80),
     // maxHeight: verticalScale(120),
     // minHeight: verticalScale(60),
-    height: moderateScale(45), //180
+    height: moderateScale(30), //180
     maxHeight: moderateScale(70), //250
-    minHeight: moderateScale(45), // 60
+    minHeight: moderateScale(30), // 60
     borderRadius: moderateScale(4),
     // marginBottom: moderateScale(.5),
-    backgroundColor: Colors.black,
+    // backgroundColor: Colors.black,
     alignSelf: 'center',
   },
   selectArea: {
@@ -2092,7 +2202,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: moderateScale(5),
-    marginRight: moderateScale(2),
+    marginRight: moderateScale(4),
+//         borderWidth:1,
+// borderColor:'#000'
   },
   checkBoxDefault: {
     backgroundColor: Colors.white,
@@ -2183,85 +2295,87 @@ const styles = StyleSheet.create({
   // },
 
   ////////////////////////////
-  solutionBox: {
-    padding: moderateScale(12),
-    backgroundColor: Colors.white, // Temporary to see if box renders
-    borderRadius: moderateScale(6),
-  },
-  solutionTitle: {
-    fontSize: moderateScale(14),
-    fontFamily: Fonts.InstrumentSansSemiBold,
-    color: Colors.black,
-    marginBottom: moderateScale(8),
-  },
-  solutionContent: {
-    marginBottom: moderateScale(8),
-    flexShrink: 1,
-  },
-  solutionText: {
-    fontSize: moderateScale(13),
-    fontFamily: Fonts.InstrumentSansRegular,
-    color: Colors.black,
-    lineHeight: moderateScale(20),
-    margin: 0,
-    padding: 0,
+  // solutionBox: {
+  //   padding: moderateScale(12),
+  //   backgroundColor: Colors.white, // Temporary to see if box renders
+  //   borderRadius: moderateScale(6),
+  // },
+  // solutionTitle: {
+  //   fontSize: moderateScale(14),
+  //   fontFamily: Fonts.InstrumentSansSemiBold,
+  //   color: Colors.black,
+  //   marginBottom: moderateScale(8),
+  // },
+  // solutionContent: {
+  //   marginBottom: moderateScale(8),
+  //   // flexDirection:'column'
+  //   // flexShrink: 1,
+  // },
+  // solutionText: {
+  //   fontSize: moderateScale(13),
+  //   fontFamily: Fonts.InstrumentSansRegular,
+  //   color: Colors.black,
+  //   lineHeight: moderateScale(20),
+  //   margin: 0,
+  //   padding: 0,
 
-  },
-  solutionMathJax: {
-    fontSize: moderateScale(13),
-    fontFamily: Fonts.InstrumentSansRegular,
-    color: Colors.black,
-    lineHeight: moderateScale(20),
-    flexShrink: 1,
-    minHeight: moderateScale(20),
-    margin: 0,
-    padding: 0,
-  },
+  // },
+  // solutionMathJax: {
+  //   fontSize: moderateScale(13),
+  //   fontFamily: Fonts.InstrumentSansRegular,
+  //   color: Colors.black,
+  //   lineHeight: moderateScale(20),
+  //   flexShrink: 1,
+  //   minHeight: moderateScale(20),
+  //   margin: 0,
+  //   padding: 0,
+  // },
   solutionImagesContainer: {
     // No default margin - images sit directly below
+    // borderWidth:1
   },
   solutionImagesWithText: {
     marginTop: moderateScale(8), // Only when there's text above
   },
-  solutionImage: {
-    width: '100%',
-    // Use aspectRatio for better control
-    height: undefined,
-    aspectRatio: 16 / 9, // Adjust based on your image aspect ratio
-    minHeight: moderateScale(100),
-    maxHeight: moderateScale(200),
-    borderRadius: moderateScale(4),
-    marginBottom: moderateScale(8),
-    backgroundColor: 'transparent',
-    alignSelf: 'center',
-  },
-  answerText: {
-    fontSize: moderateScale(13),
-    fontFamily: Fonts.InstrumentSansSemiBold,
-    color: Colors.black,
-    marginTop: moderateScale(8),
-  },
-  answerLabel: {
-    fontFamily: Fonts.InstrumentSansSemiBold,
-  },
-  noSolutionText: {
-    fontSize: moderateScale(13),
-    fontFamily: Fonts.InstrumentSansRegular,
-    color: Colors.gray,
-    fontStyle: 'italic',
-    marginBottom: moderateScale(8),
-  },
-  mathScrollView: {
-    flexGrow: 1,
-    padding: 0
-    // Remove minHeight if it's causing issues
-    // minHeight: moderateScale(40),
-  },
-  mathScrollContent: {
-    flexGrow: 1,
-    alignItems: 'flex-start',
-    padding: 0
-  },
+  // solutionImage: {
+  //   width: '100%',
+  //   // Use aspectRatio for better control
+  //   height: undefined,
+  //   aspectRatio: 16 / 9, // Adjust based on your image aspect ratio
+  //   minHeight: moderateScale(100),
+  //   maxHeight: moderateScale(200),
+  //   borderRadius: moderateScale(4),
+  //   marginBottom: moderateScale(8),
+  //   backgroundColor: 'transparent',
+  //   alignSelf: 'center',
+  // },
+  // answerText: {
+  //   fontSize: moderateScale(13),
+  //   fontFamily: Fonts.InstrumentSansSemiBold,
+  //   color: Colors.black,
+  //   marginTop: moderateScale(8),
+  // },
+  // answerLabel: {
+  //   fontFamily: Fonts.InstrumentSansSemiBold,
+  // },
+  // noSolutionText: {
+  //   fontSize: moderateScale(13),
+  //   fontFamily: Fonts.InstrumentSansRegular,
+  //   color: Colors.gray,
+  //   fontStyle: 'italic',
+  //   marginBottom: moderateScale(4),
+  // },
+  // mathScrollView: {
+  //   flexGrow: 1,
+  //   padding: 0
+  //   // Remove minHeight if it's causing issues
+  //   // minHeight: moderateScale(40),
+  // },
+  // mathScrollContent: {
+  //   flexGrow: 1,
+  //   alignItems: 'flex-start',
+  //   padding: 0
+  // },
 
   // Add a wrapper for better control
   solutionWrapper: {
@@ -2271,7 +2385,135 @@ const styles = StyleSheet.create({
   },
   questionNumberContainer: {
     marginTop: moderateScale(6),
-    alignItems: 'flex-start',
+    alignItems: 'center',
+    flexDirection:"column",
+    borderWidth:1,
+    height:moderateScale(50),
+    justifyContent:'center'
+  },
+
+
+  ///////////////////////////////////////
+  //   solutionBox: {
+  //   backgroundColor: Colors.white,
+  //   borderRadius: moderateScale(6),
+  //   padding: moderateScale(12),
+  // },
+  // solutionTitle: {
+  //   fontSize: moderateScale(14),
+  //   fontFamily: Fonts.InstrumentSansSemiBold,
+  //   color: Colors.black,
+  //   marginBottom: moderateScale(8),
+  // },
+  // solutionContent: {
+  //   flexDirection: 'column',
+  // },
+  // solutionText: {
+  //   fontSize: moderateScale(13),
+  //   fontFamily: Fonts.InstrumentSansRegular,
+  //   color: Colors.black,
+  //   lineHeight: moderateScale(20),
+  //   marginBottom: moderateScale(4),
+  // },
+  // solutionMathJax: {
+  //   fontSize: moderateScale(13),
+  //   fontFamily: Fonts.InstrumentSansRegular,
+  //   color: Colors.black,
+  //   lineHeight: moderateScale(20),
+  // },
+  // solutionImage: {
+  //   width: '100%',
+  //   height: moderateScale(150),
+  //   minHeight: moderateScale(100),
+  //   maxHeight: moderateScale(200),
+  //   borderRadius: moderateScale(4),
+  //   marginVertical: moderateScale(4), // Add vertical margin around images
+  //   backgroundColor: 'transparent',
+  //   alignSelf: 'center',
+  // },
+  // answerText: {
+  //   fontSize: moderateScale(13),
+  //   fontFamily: Fonts.InstrumentSansSemiBold,
+  //   color: Colors.black,
+  //   marginTop: moderateScale(8),
+  // },
+  // // answerLabel: {
+  // //   fontFamily: Fonts.InstrumentSansSemiBold,
+  // // },
+  // mathScrollView: {
+  //   marginBottom: moderateScale(4),
+  // },
+  // mathScrollContent: {
+  //   flexGrow: 1,
+  //   alignItems: 'flex-start',
+  // },
+  //////////////////////////////////////
+  solutionBox: {
+    backgroundColor: Colors.white,
+    borderRadius: moderateScale(6),
+    padding: moderateScale(2),
+    // marginTop: moderateScale(8),
+    // borderWidth:1
+  },
+  solutionTitle: {
+    fontSize: moderateScale(14),
+    fontFamily: Fonts.InstrumentSansSemiBold,
+    color: Colors.black,
+    // marginBottom: moderateScale(8),
+  },
+  solutionContent: {
+    // No special styles needed
+  },
+  textPart: {
+    marginBottom: moderateScale(4),
+  },
+  textContainer: {
+    // marginBottom: moderateScale(8),
+    // borderWidth:1
+  },
+  solutionText: {
+    fontSize: moderateScale(13),
+    fontFamily: Fonts.InstrumentSansRegular,
+    color: Colors.black,
+    lineHeight: moderateScale(20),
+  },
+  solutionMathJax: {
+    fontSize: moderateScale(13),
+    fontFamily: Fonts.InstrumentSansRegular,
+    color: Colors.black,
+    // lineHeight: moderateScale(20),
+  },
+  imagesContainer: {
+    // Images appear right after text,
+    borderWidth:1,
+    // width:'100%',
+    // marginRight:moderateScale(50)
+  },
+  solutionImage: {
+    width: '100%',
+    height: moderateScale(150),
+    minHeight: moderateScale(100),
+    maxHeight: moderateScale(200),
+    borderRadius: moderateScale(4),
+    backgroundColor: 'transparent',
+    alignSelf: 'center',
+    marginTop: moderateScale(4), // Small space after text
+  },
+  answerText: {
+    fontSize: moderateScale(13),
+    fontFamily: Fonts.InstrumentSansSemiBold,
+    color: Colors.black,
+    marginTop: moderateScale(12),
+  },
+  answerLabel: {
+    fontFamily: Fonts.InstrumentSansSemiBold,
+  },
+  noSolutionText: {
+    fontSize: moderateScale(13),
+    fontFamily: Fonts.InstrumentSansRegular,
+    color: Colors.gray,
+    fontStyle: 'italic',
+    marginBottom: moderateScale(12),
   },
 });
 
