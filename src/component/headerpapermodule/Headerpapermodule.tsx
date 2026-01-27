@@ -32,7 +32,7 @@ const HeaderPaperModule: React.FC = ({ title, rightPress, leftIconPress }: Heade
                 // borderWidth:1,
                 // marginBottom:moderateScale(-80)
             }}>
-                <TouchableOpacity onPress={leftIconPress}>
+                <TouchableOpacity onPress={leftIconPress} style={{ paddingVertical: moderateScale(6),paddingRight:moderateScale(8)}}>
                     <FontAwesome6 name="arrow-left" size={moderateScale(20)} color="#000"
                     />
                 </TouchableOpacity>

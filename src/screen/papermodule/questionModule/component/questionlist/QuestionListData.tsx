@@ -1164,7 +1164,930 @@
 // export default memo(QuestionListData);
 
 
-import React, { memo, useCallback, useMemo } from 'react';
+// import React, { memo, useCallback, useMemo, useState } from 'react';
+// import {
+//   View,
+//   Text,
+//   FlatList,
+//   TouchableOpacity,
+//   StyleSheet,
+//   Image,
+//   Dimensions,
+//   ScrollView,
+// } from 'react-native';
+// import Icon from 'react-native-vector-icons/MaterialIcons';
+// import MathJax from 'react-native-mathjax';
+// import { moderateScale, verticalScale, scale } from '../../../../../utils/responsiveSize';
+// import { Colors, Fonts } from '../../../../../theme';
+
+// const { width: screenWidth } = Dimensions.get('window');
+
+// // MathJax configuration
+// const mathJaxOptions = {
+//   messageStyle: 'none',
+//   extensions: ['tex2jax.js'],
+//   jax: ['input/TeX', 'output/HTML-CSS'],
+//   tex2jax: {
+//     inlineMath: [['$', '$'], ['\\(', '\\)']],
+//     displayMath: [['$$', '$$'], ['\\[', '\\]']],
+//     processEscapes: true,
+//   },
+//   'HTML-CSS': {
+//     scale: 100,
+//     linebreaks: { automatic: true }
+//   },
+//   TeX: {
+//     extensions: ['AMSmath.js', 'AMSsymbols.js', 'noErrors.js', 'noUndefined.js']
+//   }
+// };
+
+// export type Question = {
+//   question_id: string;
+//   question_text: string;
+//   question_type: string;
+//   option_a: string;
+//   option_b: string;
+//   option_c: string;
+//   option_d: string;
+//   correct_option: string;
+//   explanation: string;
+//   board_name: string;
+//   class_name: string;
+//   subject_name: string;
+//   book_title: string | null;
+//   dlevel_name: string;
+//   medium_name: string;
+//   question_marks: number | null;
+//   question_chapter: string;
+//   question_practice: string;
+//   question_subtopic: string | null;
+// };
+
+// type Props = {
+//   selectCheck: 'Options' | 'Solutions';
+//   selectedMap: Record<string, boolean>;
+//   setSelectedMap: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+//   questionsData: Question[];
+// };
+
+// // Helper to check if text contains math expressions
+// const containsMath = (text: string): boolean => {
+//   if (!text) return false;
+//   return /(\$|\\\(|\\\[|\\frac|\\sqrt|\^|_)/.test(text);
+// };
+
+// // Helper to extract base64 images from HTML
+// // const extractImagesFromHtml = (html: string): { text: string; images: string[] } => {
+// //   if (!html) return { text: html || '', images: [] };
+
+// //   const imgRegex = /<img[^>]+src="data:image\/[^;]+;base64,([^"]+)"[^>]*>/g;
+// //   const images: string[] = [];
+// //   let text = html;
+// //   let match;
+
+// //   while ((match = imgRegex.exec(html)) !== null) {
+// //     images.push(match[1]);
+// //     // Remove the img tag from text
+// //     text = text.replace(match[0], '');
+// //   }
+
+// //   // Clean HTML tags
+// //   text = text
+// //     .replace(/<br\s*\/?>/gi, '\n')
+// //     .replace(/&lt;/g, '<')
+// //     .replace(/&gt;/g, '>')
+// //     .replace(/&amp;/g, '&')
+// //     .replace(/&nbsp;/g, ' ')
+// //     .replace(/<[^>]*>/g, '')
+// //     .trim();
+
+// //   return { text, images };
+// // };
+
+// // Helper to extract base64 images from HTML
+// const extractImagesFromHtml = (html: string): { text: string; images: string[] } => {
+//   if (!html) return { text: html || '', images: [] };
+
+//   const imgRegex = /<img[^>]+src="data:image\/[^;]+;base64,([^"]+)"[^>]*>/g;
+//   const images: string[] = [];
+//   let text = html;
+//   let match;
+
+//   // First extract all images
+//   while ((match = imgRegex.exec(html)) !== null) {
+//     images.push(match[1]);
+//     // Remove the img tag from text
+//     text = text.replace(match[0], '');
+//   }
+
+//   // Clean HTML tags - IMPORTANT: Handle <br> tags properly
+//   text = text
+//     .replace(/<br\s*\/?>\s*<br\s*\/?>/gi, '\n\n') // Convert double <br> to double newline
+//     .replace(/<br\s*\/?>/gi, ' ') // Convert single <br> to space
+//     .replace(/&lt;/g, '<')
+//     .replace(/&gt;/g, '>')
+//     .replace(/&amp;/g, '&')
+//     .replace(/&nbsp;/g, ' ')
+//     .replace(/<[^>]*>/g, '') // Remove all remaining HTML tags
+//     .trim();
+
+//   return { text, images };
+// };
+
+// // Memoized Option Component with image support
+// // const OptionItem = memo(({
+// //   id,
+// //   label,
+// //   isSelected
+// // }: {
+// //   id: string;
+// //   label: string;
+// //   isSelected: boolean;
+// // }) => {
+// //   // Extract images and text from option label
+// //   const { text: optionText, images: optionImages } = useMemo(() =>
+// //     extractImagesFromHtml(label || ''),
+// //     [label]
+// //   );
+
+// //   const hasMath = containsMath(optionText);
+// //   const hasText = optionText.trim().length > 0;
+// //   const hasImages = optionImages.length > 0;
+// // console.log('iddddddddddd', id);
+// // const isCorrect = correctOption.includes(id);
+
+// //   return (
+// //     <View style={[
+// //       styles.optionContainer,
+// //       // isSelected && styles.optionContainerSelected
+// //     ]}>
+// //       {/* {id ===  backgroundColor:} */}
+// //       <View style={[styles.optionLabelContainer, ]} >
+// //         <Text style={styles.optionLabel}>{id})</Text>
+// //       </View>
+// //       {/* Option Text */}
+// //       {hasText && (
+// //         <View style={styles.optionTextContainer}>
+// //           {hasMath ? (
+// //             <MathJax
+// //               mathJaxOptions={mathJaxOptions}
+// //               html={`${id}) ${optionText}`}
+// //               style={styles.optionMathJax}
+// //             />
+// //           ) : (
+// //             <View style={{ paddingVertical: moderateScale(8), borderRadius: moderateScale(4) }}>
+// //               <Text style={styles.optionText}>
+// //                 {id}) {optionText}
+// //               </Text>
+// //             </View>
+// //           )}
+// //         </View>
+// //       )}
+
+// //       {/* Option Images */}
+// //       {hasImages && (
+// //         <View style={[
+// //           styles.optionImagesContainer,
+// //           hasText && styles.optionImagesWithText
+// //         ]}>
+// //           {optionImages.map((base64, index) => (
+// //             <Image
+// //               key={`option-img-${id}-${index}`}
+// //               source={{ uri: `data:image/png;base64,${base64}` }}
+// //               style={styles.optionImage}
+// //               resizeMode='contain'
+// //             />
+// //           ))}
+// //         </View>
+// //       )}
+// //     </View>
+// //   );
+// // });
+
+// // OptionItem.displayName = 'OptionItem';
+
+// // Memoized Question Content Component
+// const QuestionContent = memo(({
+//   text,
+//   images,
+//   isSelected
+// }: {
+//   text: string;
+//   images: string[];
+//   isSelected: boolean;
+// }) => {
+//   const cleanText = useMemo(() => {
+//     return (text || '')
+//       .replace(/<br\s*\/?>/gi, '\n')
+//       .replace(/&lt;/g, '<')
+//       .replace(/&gt;/g, '>')
+//       .replace(/&amp;/g, '&')
+//       .replace(/&nbsp;/g, ' ')
+//       .replace(/<[^>]*>/g, '');
+//   }, [text]);
+
+//   const hasMath = containsMath(cleanText);
+//   const hasText = cleanText.trim().length > 0;
+//   const hasImages = images.length > 0;
+
+//   return (
+//     <View style={styles.questionContent}>
+//       {/* Question Text */}
+//       {hasText && (
+//         <View style={styles.mathJaxWrapper}>
+//           {hasMath ? (
+//             <MathJax
+//               mathJaxOptions={mathJaxOptions}
+//               html={cleanText}
+//               style={[styles.questionMathJax, isSelected && styles.selectedText]}
+//             />
+//           ) : (
+//             <Text style={[styles.questionText, isSelected && styles.selectedText]}>
+//               {cleanText}
+//             </Text>
+//           )}
+//         </View>
+//       )}
+
+//       {/* Question Images */}
+//       {hasImages && (
+//         <View style={[
+//           styles.imagesContainer,
+//           hasText && styles.imagesWithText,
+//           isSelected && { backgroundColor: '#EBF6FF' }
+//         ]}>
+//           {images.map((base64, index) => (
+//             <Image
+//               key={`question-img-${index}`}
+//               source={{ uri: `data:image/png;base64,${base64}` }}
+//               style={styles.questionImage}
+//               resizeMode="contain"
+//             // tintColor={isSelected ? '#EBF6FF' : undefined} // Add tintColor prop
+//             // tintColor={'#1E88E5'}
+//             // style={{backgroundColor:'red'}}
+//             />
+//           ))}
+//         </View>
+
+//       )}
+//     </View>
+//   );
+// });
+
+// QuestionContent.displayName = 'QuestionContent';
+// const SolutionView = memo(({
+//   explanation,
+//   correctOption,
+//   isSelected
+// }: {
+//   explanation: string;
+//   correctOption: string;
+//   isSelected: boolean;
+// }) => {
+//   // 1. Extract images
+//   const images = useMemo(() => {
+//     const imgRegex = /<img[^>]+src="data:image\/[^;]+;base64,([^"]+)"[^>]*>/g;
+//     const matches: string[] = [];
+//     let match;
+//     while ((match = imgRegex.exec(explanation || '')) !== null) {
+//       matches.push(match[1]);
+//     }
+//     return matches;
+//   }, [explanation]);
+
+//   // 2. Remove image tags to get clean text
+//   const cleanText = useMemo(() => {
+//     let text = explanation || '';
+
+//     // Remove image tags
+//     text = text.replace(/<img[^>]*>/g, '');
+
+//     // Clean HTML
+//     text = text
+//       .replace(/<br\s*\/?>/gi, ' ') // Convert <br> to space
+//       .replace(/&lt;/g, '<')
+//       .replace(/&gt;/g, '>')
+//       .replace(/&amp;/g, '&')
+//       .replace(/&nbsp;/g, ' ')
+//       .replace(/<[^>]*>/g, '') // Remove any remaining HTML
+//       .trim();
+
+//     return text;
+//   }, [explanation]);
+
+//   const hasMath = containsMath(cleanText);
+//   const hasText = cleanText.length > 0;
+//   const hasImages = images.length > 0;
+//   setCorrectOption(prev => [...prev, correctOption]); // Add to array
+//   return (
+//     <View style={[styles.solutionBox, isSelected && styles.cardSelected]}>
+//       <Text style={styles.solutionTitle}>Solution :</Text>
+
+//       {/* Text Content */}
+//       {hasText && (
+//         <View style={styles.textContainer}>
+//           {hasMath ? (
+//             <MathJax
+//               mathJaxOptions={mathJaxOptions}
+//               html={cleanText}
+//               style={[styles.solutionMathJax, isSelected && styles.selectedText]}
+//             />
+//           ) : (
+//             <Text style={[styles.solutionText, isSelected && styles.selectedText]}>
+//               {cleanText}
+//             </Text>
+//           )}
+//         </View>
+//       )}
+
+//       {/* Images (after text) */}
+//       {hasImages && (
+//         <View style={styles.imagesContainer}>
+//           {images.map((base64, index) => (
+//             <Image
+//               key={`img-${index}`}
+//               source={{ uri: `data:image/png;base64,${base64}` }}
+//               style={styles.solutionImage}
+//               resizeMode="contain"
+//             />
+//           ))}
+//         </View>
+//       )}
+
+//       <Text style={styles.answerText}>
+//         <Text style={styles.answerLabel}>Answer: </Text>
+//         Option {correctOption || ''}
+//       </Text>
+//     </View>
+//   );
+// });
+
+// const QuestionItem = memo(({
+//   item,
+//   index,
+//   isSelected,
+//   selectCheck,
+//   onToggle,
+//   extractImages
+// }: {
+//   item: Question;
+//   index: number;
+//   isSelected: boolean;
+//   selectCheck: 'Options' | 'Solutions';
+//   onToggle: (id: string) => void;
+//   extractImages: (html: string) => string[];
+// }) => {
+//   const images = extractImages(item.question_text);
+//   const questionTextWithoutImages = (item.question_text || '').replace(/<img[^>]*>/g, '');
+
+//   const options = [
+//     { id: 'A', label: item.option_a || '' },
+//     { id: 'B', label: item.option_b || '' },
+//     { id: 'C', label: item.option_c || '' },
+//     { id: 'D', label: item.option_d || '' },
+//   ];
+
+//   // Debug log to check if explanation exists
+//   console.log(`Question ${index + 1}:`, {
+//     hasExplanation: !!item.explanation,
+//     explanationLength: item.explanation?.length || 0,
+//   });
+
+//   return (
+//     <TouchableOpacity
+//       style={[styles.card, isSelected && styles.cardSelected]}
+//       activeOpacity={0.7}
+//       onPress={() => onToggle(item.question_id)}
+//     >
+//       {/* Question Row */}
+//       <View style={styles.questionRow}>
+//         <View style={styles.questionNumberContainer}>
+//           <Text style={styles.questionNumber}> {index + 1}.</Text>
+//           <View style={[
+//             styles.checkBox,
+//             isSelected ? styles.checkBoxSelected : styles.checkBoxDefault
+//           ]}>
+//             {isSelected && (
+//               <Icon
+//                 name="check"
+//                 size={moderateScale(12)}
+//                 color={Colors.white}
+//               />
+//             )}
+//           </View>
+//         </View>
+
+//         <QuestionContent
+//           text={questionTextWithoutImages}
+//           images={images}
+//           isSelected={isSelected}
+//         />
+//       </View>
+
+//       {/* Options Grid */}
+//       <View style={styles.optionsGrid}>
+//         {options.map((option) => (
+//           <OptionItem
+//             key={option.id}
+//             id={option.id}
+//             label={option.label}
+//             isSelected={isSelected}
+//           />
+//         ))}
+//       </View>
+//       {/* Solution View */}
+//       {selectCheck === 'Solutions' && (
+//         <View style={styles.solutionWrapper}>
+//           <SolutionView
+//             explanation={item.explanation || ''}
+//             correctOption={item.correct_option || ''}
+//             isSelected={isSelected}
+//           />
+//         </View>
+//       )}
+//     </TouchableOpacity>
+//   );
+// });
+
+// // QuestionItem.displayName = 'QuestionItem'; 
+
+// // Main Component
+// const QuestionListData: React.FC<Props> = ({
+//   selectCheck,
+//   selectedMap,
+//   setSelectedMap,
+//   questionsData
+// }) => {
+// const OptionItem = memo(({
+//   id,
+//   label,
+//   isSelected
+// }: {
+//   id: string;
+//   label: string;
+//   isSelected: boolean;
+// }) => {
+//   // Extract images and text from option label
+//   const { text: optionText, images: optionImages } = useMemo(() =>
+//     extractImagesFromHtml(label || ''),
+//     [label]
+//   );
+
+//   const hasMath = containsMath(optionText);
+//   const hasText = optionText.trim().length > 0;
+//   const hasImages = optionImages.length > 0;
+// console.log('iddddddddddd', id);
+// const isCorrect = correctOption.includes(id);
+
+//   return (
+//     <View style={[
+//       styles.optionContainer,
+//       // isSelected && styles.optionContainerSelected
+//     ]}>
+//       {/* {id ===  backgroundColor:} */}
+//       <View style={[styles.optionLabelContainer, isCorrect && {backgroundColor:'red'}]} >
+//         <Text style={styles.optionLabel}>{id})</Text>
+//       </View>
+//       {/* Option Text */}
+//       {hasText && (
+//         <View style={styles.optionTextContainer}>
+//           {hasMath ? (
+//             <MathJax
+//               mathJaxOptions={mathJaxOptions}
+//               html={`${id}) ${optionText}`}
+//               style={styles.optionMathJax}
+//             />
+//           ) : (
+//             <View style={{ paddingVertical: moderateScale(8), borderRadius: moderateScale(4) }}>
+//               <Text style={styles.optionText}>
+//                 {id}) {optionText}
+//               </Text>
+//             </View>
+//           )}
+//         </View>
+//       )}
+
+//       {/* Option Images */}
+//       {hasImages && (
+//         <View style={[
+//           styles.optionImagesContainer,
+//           hasText && styles.optionImagesWithText
+//         ]}>
+//           {optionImages.map((base64, index) => (
+//             <Image
+//               key={`option-img-${id}-${index}`}
+//               source={{ uri: `data:image/png;base64,${base64}` }}
+//               style={styles.optionImage}
+//               resizeMode='contain'
+//             />
+//           ))}
+//         </View>
+//       )}
+//     </View>
+//   );
+// });
+
+// OptionItem.displayName = 'OptionItem';
+// const [correctOption, setCorrectOption] = useState([]); // Empty array
+//   const extractBase64Images = useCallback((html: string): string[] => {
+//     const imgRegex = /<img[^>]+src="data:image\/[^;]+;base64,([^"]+)"[^>]*>/g;
+//     const images: string[] = [];
+//     let match;
+//     while ((match = imgRegex.exec(html || '')) !== null) {
+//       images.push(match[1]);
+//     }
+//     return images;
+//   }, []);
+
+//   const toggleSelect = useCallback((id: string) => {
+//     setSelectedMap(prev => {
+//       const newMap = { ...prev };
+//       if (newMap[id]) {
+//         delete newMap[id];
+//       } else {
+//         newMap[id] = true;
+//       }
+//       return newMap;
+//     });
+//   }, [setSelectedMap]);
+
+//   const renderItem = useCallback(({ item, index }: { item: Question; index: number }) => {
+//     const isSelected = !!selectedMap[item.question_id];
+//     return (
+//       <QuestionItem
+//         item={item}
+//         index={index}
+//         isSelected={isSelected}
+//         selectCheck={selectCheck}
+//         onToggle={toggleSelect}
+//         extractImages={extractBase64Images}
+//       />
+//     );
+//   }, [selectedMap, selectCheck, toggleSelect, extractBase64Images]);
+
+//   const keyExtractor = useCallback((item: Question) => item.question_id, []);
+
+//   const extraData = useMemo(() => ({
+//     selectedMap,
+//     selectCheck
+//   }), [selectedMap, selectCheck]);
+
+//   if (!questionsData || questionsData.length === 0) {
+//     return (
+//       <View style={styles.emptyContainer}>
+//         <Text style={styles.emptyText}>No questions available</Text>
+//       </View>
+//     );
+//   }
+
+//   return (
+//     <View style={styles.container}>
+//       <FlatList
+//         data={questionsData}
+//         keyExtractor={keyExtractor}
+//         renderItem={renderItem}
+//         extraData={extraData}
+//         initialNumToRender={5}
+//         maxToRenderPerBatch={10}
+//         windowSize={10}
+//         removeClippedSubviews={true}
+//         showsVerticalScrollIndicator={false}
+//         contentContainerStyle={styles.listContent}
+//       />
+//     </View>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: Colors.white,
+//     marginHorizontal: 0, // Add this to ensure no margin
+//   },
+//   emptyContainer: {
+//     flex: 1,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     paddingVertical: moderateScale(100),
+//   },
+//   emptyText: {
+//     fontSize: moderateScale(16),
+//     fontFamily: Fonts.InstrumentSansMedium,
+//     color: Colors.gray,
+//   },
+//   listContent: {
+//     // paddingHorizontal: moderateScale(12), // 12
+//     paddingVertical: moderateScale(8),
+//     // borderWidth:1
+//   },
+//   card: {
+//     backgroundColor: Colors.white,
+//     // borderRadius: moderateScale(8),
+//     // padding: moderateScale(16),
+//     // marginBottom: moderateScale(6),
+//     // shadowColor: '#000',
+//     // shadowOffset: { width: 0, height: 1 },
+//     // shadowOpacity: 0.05,
+//     // shadowRadius: 2,
+//     // elevation: 1,
+//     paddingHorizontal: moderateScale(17),
+//     // width:'100%',
+//     // borderBottomWidth: .5,
+//     borderBottomWidth: 1,
+//     borderColor: 'rgba(12, 64, 111, 0.12)',
+//     marginHorizontal: 0, // Add this
+//     paddingBottom: moderateScale(6),
+//     flex: 1,
+//     // marginTop:moderateScale(8)
+//     paddingTop:moderateScale(6)
+//   },
+//   cardSelected: {
+//     backgroundColor: '#EBF6FF'
+//   },
+//   questionRow: {
+//     flexDirection: 'row',
+//     // alignItems:'baseline',
+//     // verticalAlign:'top',
+//     // alignItems: 'flex-start',
+//     marginBottom: moderateScale(10),
+//     // borderWidth: 1,
+//     // width: 'auto',
+//     // marginLeft: moderateScale(-16)
+//     // marginLeft: moderateScale(-16),
+//     // marginRight:moderateScale(20)
+//   },
+//   questionNumber: {
+//     fontSize: moderateScale(15),
+//     fontFamily: Fonts.InstrumentSansSemiBold,
+//     color: Colors.black,
+//     // marginRight: moderateScale(6),
+//     // lineHeight: moderateScale(22),
+//     // minWidth: moderateScale(24),
+//   },
+//   questionContent: {
+//     flex: 1,
+//   },
+//   mathJaxWrapper: {
+//     flex: 1,
+//     // borderWidth: 1,
+//     paddingVertical: moderateScale(0.5),
+//     marginTop: moderateScale(6),
+//     // borderWidth: 1
+//   },
+//   questionText: {
+//     fontSize: moderateScale(14),
+//     fontFamily: Fonts.InstrumentSansMedium,
+//     color: Colors.black,
+//     lineHeight: moderateScale(19),
+//   },
+//   questionMathJax: {
+//     fontSize: moderateScale(14),
+//     fontFamily: Fonts.InstrumentSansMedium,
+//     color: Colors.black,
+//     // lineHeight: moderateScale(200),
+//   },
+//   selectedText: {
+//     backgroundColor: 'transparent',
+//   },
+//   // imagesContainer: {
+//   //   // marginBottom: moderateScale(-10),
+//   //   // borderWidth: 1,
+//   //   marginLeft: moderateScale(-20)
+//   //   // verticalAlign:"top"
+//   // },
+//   imagesWithText: {
+//     // marginTop: moderateScale(12),
+//   },
+//   questionImage: {
+//     width: '100%',
+//     height: verticalScale(60), //180
+//     maxHeight: verticalScale(250), //250
+//     // minHeight: verticalScale(60), //
+//     // height: verticalScale(80), //180
+//     // maxHeight: verticalScale(150), //250
+//     // minHeight: verticalScale(60), //
+//     borderRadius: moderateScale(2),
+//     // marginBottom: moderateScale(-9),
+//     backgroundColor: Colors?.white,
+//     alignSelf: 'center',
+//     resizeMode:"contain"
+//     // verticalAlign:'top'
+//   },
+//   optionsGrid: {
+//     // flexDirection: 'row',
+//     // flexWrap: 'wrap',
+//     // justifyContent: 'space-between',
+//     // marginBottom: moderateScale(20),
+//     // borderWidth: 1,  
+//     // borderColor:"#000"
+//   },
+//   optionContainer: {
+//     width: '100%',
+//     // height:moderateScale(100),
+//     // minHeight: moderateScale(2),
+//     // padding: moderateScale(.2),
+//     marginBottom: moderateScale(6),
+//     backgroundColor: Colors.white,
+//     borderRadius: moderateScale(2),
+//     // alignItems:'flex-start',
+//     // justifyContent:"flex-start"
+//     // borderWidth: 1,
+//     // borderColor: '#E9ECEF',
+//   },
+//   optionContainerSelected: {
+//     backgroundColor: 'green',
+//     borderColor: '#1E88E5',
+//   },
+//   optionTextContainer: {
+//     // marginBottom: moderateScale(40),
+//     // borderWidth:1,
+//     flex: 1,
+//     paddingVertical: moderateScale(.5)
+
+//   },
+//    optionLabelContainer: {
+//     width: moderateScale(30),
+//     alignItems: 'center',
+//     justifyContent: 'flex-start',
+//     paddingTop: moderateScale(2),
+//     borderWidth:1,
+//   borderRadius:moderateScale(2)
+//   },
+
+//   optionLabel: {
+//     fontSize: moderateScale(13),
+//     fontFamily: Fonts.InstrumentSansSemiBold,
+//     color: Colors.black,
+//   },
+//   optionText: {
+//     fontSize: moderateScale(13),
+//     fontFamily: Fonts.InstrumentSansMedium,
+//     color: Colors.black,
+//     // lineHeight: moderateScale(18),
+//   },
+//   optionMathJax: {
+//     fontSize: moderateScale(13),
+//     fontFamily: Fonts.InstrumentSansMedium,
+//     color: Colors.black,
+//     // lineHeight: moderateScale(10),
+//     // height:moderateScale(20),
+//     // backgroundColor:"red"
+//   },
+//   optionImagesContainer: {
+//     marginTop: moderateScale(.5),
+//     // borderWidth:1,
+//     // backgroundColor: '#000'
+//   },
+//   optionImagesWithText: {
+//     // marginTop: moderateScale(8),
+//   },
+//   optionImage: {
+//     width: '100%',
+//     height: moderateScale(60), 
+//     maxHeight: moderateScale(120),
+//     // height: moderateScale(30), //180
+//     // maxHeight: moderateScale(70), //250
+//     // minHeight: moderateScale(30), // 60
+//     borderRadius: moderateScale(4),
+//     // marginBottom: moderateScale(.5),
+//     // backgroundColor: Colors.black,
+//     alignSelf: 'center',
+//   },
+//   selectArea: {
+//     // flexDirection: 'row',
+//     // alignItems: 'center',
+//     // paddingVertical: moderateScale(12),
+//     // borderTopWidth: 1,
+//     // borderTopColor: 'rgba(0,0,0,0.1)',
+//     // borderWidth: 1
+//   },
+//   checkBox: {
+//     width: moderateScale(17),
+//     height: moderateScale(17),
+//     borderRadius: moderateScale(5),
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     // marginTop: moderateScale(5),
+//     marginRight: moderateScale(3),
+//   },
+//   checkBoxDefault: {
+//     backgroundColor: Colors.white,
+//     borderWidth: 1.5,
+//     borderColor: '#BFBFBF',
+//     marginRight: moderateScale(3),
+//   },
+//   checkBoxSelected: {
+//     backgroundColor: '#1E88E5',
+//     borderWidth: 0,
+//   },
+//   selectText: {
+//     fontSize: moderateScale(13),
+//     fontFamily: Fonts.InstrumentSansMedium,
+//     color: Colors.black,
+//   },
+//   solutionImagesContainer: {
+//     // No default margin - images sit directly below
+//     // borderWidth:1
+//   },
+//   solutionImagesWithText: {
+//     marginTop: moderateScale(8), // Only when there's text above
+//   },
+//   // Add a wrapper for better control
+//   solutionWrapper: {
+//     marginTop: moderateScale(6),
+//     // Ensure it's visible
+//     overflow: 'visible',
+
+//   },
+//   questionNumberContainer: {
+//     marginTop: moderateScale(6),
+//     alignItems: 'flex-start',
+//     flexDirection: "column",
+//     // borderWidth: 1,
+//     height: moderateScale(50),
+//     // justifyContent: 'center'
+//   },
+//   solutionBox: {
+//     backgroundColor: Colors.white,
+//     borderRadius: moderateScale(6),
+//     // padding: moderateScale(2),
+//   },
+//   solutionTitle: {
+//     fontSize: moderateScale(14),
+//     fontFamily: Fonts.InstrumentSansSemiBold,
+//     color: Colors.black,
+//     // marginTop: moderateScale(-500),
+//     // borderWidth:1
+//   },
+//   solutionContent: {
+//     // No special styles needed
+//   },
+//   textPart: {
+//     marginBottom: moderateScale(4),
+//   },
+//   textContainer: {
+//     // marginBottom: moderateScale(8),
+//     // borderWidth:1,
+//     marginLeft: 0
+//   },
+//   solutionText: {
+//     fontSize: moderateScale(13),
+//     fontFamily: Fonts.InstrumentSansRegular,
+//     color: Colors.black,
+//     lineHeight: moderateScale(20),
+//     marginLeft: 0
+//   },
+//   solutionMathJax: {
+//     fontSize: moderateScale(13),
+//     fontFamily: Fonts.InstrumentSansRegular,
+//     color: Colors.black,
+//     marginLeft: 0
+//     // lineHeight: moderateScale(20),
+//   },
+//   imagesContainer: {
+//     // Images appear right after text,
+//     // borderWidth: 1,
+//     // borderColor: 'red',
+//     // flexDirection:'row'
+//     // marginLeft:moderateScale(-20)
+//     // width:'100%',
+//     // marginRight:moderateScale(50)
+//   },
+//   solutionImage: {
+//     width: '100%',
+//       height: moderateScale(150), // Fixed height for all solution images
+//     maxHeight: moderateScale(200),
+//     // height: moderateScale(150),
+//     // minHeight: moderateScale(100),
+//     // maxHeight: moderateScale(200),
+//     borderRadius: moderateScale(4),
+//     backgroundColor: 'transparent',
+//     alignSelf: 'center',
+//     marginTop: moderateScale(4),
+//     resizeMode:"contain" // Small space after text
+//   },
+//   answerText: {
+//     fontSize: moderateScale(13),
+//     fontFamily: Fonts.InstrumentSansSemiBold,
+//     color: Colors.black,
+//     // borderWidth:1
+//     // marginTop: moderateScale(12),
+//   },
+//   answerLabel: {
+//     fontFamily: Fonts.InstrumentSansSemiBold,
+//   },
+//   noSolutionText: {
+//     fontSize: moderateScale(13),
+//     fontFamily: Fonts.InstrumentSansRegular,
+//     color: Colors.gray,
+//     fontStyle: 'italic',
+//     marginBottom: moderateScale(12),
+//   },
+// });
+
+// export default memo(QuestionListData);
+
+import React, { memo, useCallback, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -1237,34 +2160,6 @@ const containsMath = (text: string): boolean => {
 };
 
 // Helper to extract base64 images from HTML
-// const extractImagesFromHtml = (html: string): { text: string; images: string[] } => {
-//   if (!html) return { text: html || '', images: [] };
-
-//   const imgRegex = /<img[^>]+src="data:image\/[^;]+;base64,([^"]+)"[^>]*>/g;
-//   const images: string[] = [];
-//   let text = html;
-//   let match;
-
-//   while ((match = imgRegex.exec(html)) !== null) {
-//     images.push(match[1]);
-//     // Remove the img tag from text
-//     text = text.replace(match[0], '');
-//   }
-
-//   // Clean HTML tags
-//   text = text
-//     .replace(/<br\s*\/?>/gi, '\n')
-//     .replace(/&lt;/g, '<')
-//     .replace(/&gt;/g, '>')
-//     .replace(/&amp;/g, '&')
-//     .replace(/&nbsp;/g, ' ')
-//     .replace(/<[^>]*>/g, '')
-//     .trim();
-
-//   return { text, images };
-// };
-
-// Helper to extract base64 images from HTML
 const extractImagesFromHtml = (html: string): { text: string; images: string[] } => {
   if (!html) return { text: html || '', images: [] };
 
@@ -1298,11 +2193,15 @@ const extractImagesFromHtml = (html: string): { text: string; images: string[] }
 const OptionItem = memo(({
   id,
   label,
-  isSelected
+  isSelected,
+  isCorrect, // Add isCorrect as prop
+  selectCheck
 }: {
   id: string;
   label: string;
   isSelected: boolean;
+  isCorrect: boolean;
+  selectCheck: 'Solutions' | 'Options'
 }) => {
   // Extract images and text from option label
   const { text: optionText, images: optionImages } = useMemo(() =>
@@ -1313,47 +2212,85 @@ const OptionItem = memo(({
   const hasMath = containsMath(optionText);
   const hasText = optionText.trim().length > 0;
   const hasImages = optionImages.length > 0;
-
+  const selectOption = selectCheck === 'Solutions'
   return (
     <View style={[
       styles.optionContainer,
-      // isSelected && styles.optionContainerSelected
+      // hasText  ? styles.correctOptionContainer : styles.imageStyle/
     ]}>
-      {/* Option Text */}
-      {hasText && (
-        <View style={styles.optionTextContainer}>
-          {hasMath ? (
-            <MathJax
-              mathJaxOptions={mathJaxOptions}
-              html={`${id}) ${optionText}`}
-              style={styles.optionMathJax}
-            />
-          ) : (
-            <View style={{ paddingVertical: moderateScale(8), borderRadius: moderateScale(4), paddingHorizontal: moderateScale(6) }}>
-              <Text style={styles.optionText}>
-                {id}) {optionText}
-              </Text>
+      {/* Option Label */}
+
+
+      {/* Option Content */}
+      {hasImages &&
+        <View style={[styles.optionContent, hasImages && { flexDirection: 'column' }]}>
+          <View style={[
+            styles.optionLabelContainer,
+            // selectOption && isCorrect && styles.correctOptionLabel
+          ]}>
+            <Text style={[
+              styles.optionLabel,
+              (selectOption && isCorrect && styles.correctOptionText
+              )]}>
+              {id})
+            </Text>
+          </View>
+          {/* Option Images */}
+          {hasImages && (
+            <View style={styles.optionImagesContainer}>
+              {optionImages.map((base64, index) => (
+                <Image
+                  key={`option-img-${id}-${index}`}
+                  source={{ uri: `data:image/png;base64,${base64}` }}
+                  style={styles.optionImage}
+                  resizeMode='contain'
+                />
+              ))}
             </View>
           )}
         </View>
-      )}
+      }
 
-      {/* Option Images */}
-      {hasImages && (
-        <View style={[
-          styles.optionImagesContainer,
-          hasText && styles.optionImagesWithText
-        ]}>
-          {optionImages.map((base64, index) => (
-            <Image
-              key={`option-img-${id}-${index}`}
-              source={{ uri: `data:image/png;base64,${base64}` }}
-              style={styles.optionImage}
-              resizeMode='contain'
-            />
-          ))}
+      {hasText &&
+        <View style={[styles.optionContent, hasText && { flexDirection: "row", alignItems: 'center', justifyContent: "flex-start" }]}>
+          <View style={[
+            styles.optionLabelContainer,
+            // selectOption && isCorrect && styles.correctOptionLabel
+          ]}>
+            <Text style={[
+              styles.optionLabel,
+              (selectOption && isCorrect && styles.correctOptionText
+              )]}>
+              {id})
+            </Text>
+          </View>
+          {/* Option Text */}
+          {hasText && (
+            <View style={[
+              styles.optionTextContainer,
+              hasImages && styles.optionTextWithImages
+            ]}>
+              {hasMath ? (
+                <MathJax
+                  mathJaxOptions={mathJaxOptions}
+                  html={optionText}
+                  style={[
+                    styles.optionMathJax,
+                    (selectOption && isCorrect && styles.correctOptionText)
+                  ]}
+                />
+              ) : (
+                <Text style={[
+                  styles.optionText,
+                  (selectOption && isCorrect && styles.correctOptionText)
+                ]}>
+                  {optionText}
+                </Text>
+              )}
+            </View>
+          )}
         </View>
-      )}
+      }
     </View>
   );
 });
@@ -1416,9 +2353,6 @@ const QuestionContent = memo(({
               source={{ uri: `data:image/png;base64,${base64}` }}
               style={styles.questionImage}
               resizeMode="contain"
-            // tintColor={isSelected ? '#EBF6FF' : undefined} // Add tintColor prop
-            // tintColor={'#1E88E5'}
-            // style={{backgroundColor:'red'}}
             />
           ))}
         </View>
@@ -1428,338 +2362,7 @@ const QuestionContent = memo(({
 });
 
 QuestionContent.displayName = 'QuestionContent';
-// Memoized Solution Component
-// const SolutionView = memo(({
-//   explanation,
-//   correctOption,
-//   isSelected
-// }: {
-//   explanation: string;
-//   correctOption: string;
-//   isSelected: boolean;
-// }) => {
-//   const { text: solutionText, images: solutionImages } = useMemo(() =>
-//     extractImagesFromHtml(explanation || ''),
-//     [explanation]
-//   );
 
-//   const hasMath = containsMath(solutionText);
-//   const hasText = solutionText.trim().length > 0;
-//   const hasImages = solutionImages.length > 0;
-//   return (
-//     <View style={styles.solutionBox}>
-//       <Text style={styles.solutionTitle}>Solution :</Text>
-//       {/* Solution Text */}
-//       {hasText && (
-//         <View style={styles.solutionContent}>
-//           {hasMath ? (
-//             <ScrollView horizontal
-//               showsHorizontalScrollIndicator={true}
-//               contentContainerStyle={{ flexGrow: 1 }}
-//               style={styles.mathScrollView}>
-//               <MathJax
-//                 mathJaxOptions={mathJaxOptions}
-//                 html={solutionText}
-//                 style={[styles.solutionMathJax, isSelected && styles.selectedText]}
-//               />
-//             </ScrollView>
-//           ) : (
-//             <Text style={[styles.solutionText, isSelected && styles.selectedText]}>
-//               {solutionText}
-//             </Text>
-//           )}
-//         </View>
-//       )}
-
-//       {/* Solution Images */}
-//       {hasImages && (
-//         <View style={[
-//           styles.solutionImagesContainer,
-//           hasText && styles.solutionImagesWithText
-//         ]}>
-//           {solutionImages.map((base64, index) => (
-//             <Image
-//               key={`solution-img-${index}`}
-//               source={{ uri: `data:image/png;base64,${base64}` }}
-//               style={styles.solutionImage}
-//               resizeMode="contain"
-//             />
-//           ))}
-//         </View>
-//       )}
-
-//       <Text style={styles.answerText}>
-//         <Text style={styles.answerLabel}>Answer: </Text>
-//         Option {correctOption || ''}
-//       </Text>
-//     </View>
-//   );
-// });
-// Memoized Solution Component
-// const SolutionView = memo(({
-//   explanation,
-//   correctOption,
-//   isSelected
-// }: {
-//   explanation: string;
-//   correctOption: string;
-//   isSelected: boolean;
-// }) => {
-//   const { text: solutionText, images: solutionImages } = useMemo(() =>
-//     extractImagesFromHtml(explanation || ''),
-//     [explanation]
-//   );
-
-//   const hasMath = containsMath(solutionText);
-//   const hasText = solutionText.trim().length > 0;
-//   const hasImages = solutionImages.length > 0;
-
-//   return (
-//     <View style={styles.solutionBox}>
-//       <Text style={styles.solutionTitle}>Solution :</Text>
-
-//       {/* Solution Text */}
-//       {hasText && (
-//         <View style={styles.solutionContent}>
-//           {hasMath ? (
-//             <ScrollView
-//               horizontal
-//               showsHorizontalScrollIndicator={true}
-//               contentContainerStyle={styles.mathScrollContent}
-//               style={styles.mathScrollView}
-//             >
-//               <MathJax
-//                 mathJaxOptions={mathJaxOptions}
-//                 html={solutionText}
-//                 style={[styles.solutionMathJax, isSelected && styles.selectedText]}
-//               />
-//             </ScrollView>
-//           ) : (
-//             <Text style={[styles.solutionText, isSelected && styles.selectedText]}>
-//               {solutionText}
-//             </Text>
-//           )}
-//         </View>
-//       )}
-
-//       {/* Solution Images */}
-//       {hasImages && (
-//         <View style={[
-//           styles.solutionImagesContainer,
-//           hasText && styles.solutionImagesWithText // Only add margin when there's text above
-//         ]}>
-//           {solutionImages.map((base64, index) => (
-//             <Image
-//               key={`solution-img-${index}`}
-//               source={{ uri: `data:image/png;base64,${base64}` }}
-//               style={styles.solutionImage}
-//               resizeMode="contain"
-//             />
-//           ))}
-//         </View>
-//       )}
-
-//       <Text style={styles.answerText}>
-//         <Text style={styles.answerLabel}>Answer: </Text>
-//         Option {correctOption || ''}
-//       </Text>
-//     </View>
-//   );
-// });
-// SolutionView.displayName = 'SolutionView';
-// Memoized Solution Component
-// const SolutionView = memo(({
-//   explanation,
-//   correctOption,
-//   isSelected
-// }: {
-//   explanation: string;
-//   correctOption: string;
-//   isSelected: boolean;
-// }) => {
-//   const { text: solutionText, images: solutionImages } = useMemo(() =>
-//     extractImagesFromHtml(explanation || ''),
-//     [explanation]
-//   );
-
-//   const hasMath = containsMath(solutionText);
-//   const hasText = solutionText.trim().length > 0;
-//   const hasImages = solutionImages.length > 0;
-
-//   return (
-//     <View style={styles.solutionBox}>
-//       <Text style={styles.solutionTitle}>Solution :</Text>
-
-//       {/* Check if there's any content to show */}
-//       {(hasText || hasImages) ? (
-//         <>
-//           {/* Solution Text */}
-//           {hasText && (
-//             <View style={styles.solutionContent}>
-//               {hasMath ? (
-//                 <ScrollView
-//                   horizontal
-//                   showsHorizontalScrollIndicator={true}
-//                   contentContainerStyle={styles.mathScrollContent}
-//                   style={styles.mathScrollView}
-//                 >
-//                   <MathJax
-//                     mathJaxOptions={mathJaxOptions}
-//                     html={solutionText}
-//                     style={[styles.solutionMathJax, isSelected && styles.selectedText]}
-//                   />
-//                 </ScrollView>
-//               ) : (
-//                 <Text style={[styles.solutionText, isSelected && styles.selectedText]}>
-//                   {solutionText}
-//                 </Text>
-//               )}
-//             </View>
-//           )}
-
-//           {/* Solution Images */}
-//           {hasImages && (
-//             <View style={[
-//               styles.solutionImagesContainer,
-//               hasText && styles.solutionImagesWithText
-//             ]}>
-//               {solutionImages.map((base64, index) => (
-//                 <Image
-//                   key={`solution-img-${index}`}
-//                   source={{ uri: `data:image/png;base64,${base64}` }}
-//                   style={styles.solutionImage}
-//                   resizeMode="contain"
-//                 />
-//               ))}
-//             </View>
-//           )}
-//         </>
-//       ) : (
-//         <Text style={styles.noSolutionText}>No solution available</Text>
-//       )}
-
-//       <Text style={styles.answerText}>
-//         <Text style={styles.answerLabel}>Answer: </Text>
-//         Option {correctOption || ''}
-//       </Text>
-//     </View>
-//   );
-// });
-// Memoized Solution Component
-
-// Memoized Solution Component
-
-// Memoized Solution Component
-// const SolutionView = memo(({
-//   explanation,
-//   correctOption,
-//   isSelected
-// }: {
-//   explanation: string;
-//   correctOption: string;
-//   isSelected: boolean;
-// }) => {
-//   // Get text without removing image tags first
-//   const rawText = explanation || '';
-
-//   // Extract images but KEEP the img tags in text for positioning
-//   const images: string[] = [];
-//   let textWithPlaceholders = rawText;
-
-//   // Replace img tags with placeholders to preserve their position
-//   const imgRegex = /<img[^>]+src="data:image\/[^;]+;base64,([^"]+)"[^>]*>/g;
-//   let match;
-//   let imgIndex = 0;
-
-//   while ((match = imgRegex.exec(rawText)) !== null) {
-//     images.push(match[1]);
-//     // Replace with a unique placeholder
-//     textWithPlaceholders = textWithPlaceholders.replace(
-//       match[0],
-//       `[IMAGE_PLACEHOLDER_${imgIndex}]`
-//     );
-//     imgIndex++;
-//   }
-
-//   // Now process the text with placeholders
-//   const processedParts = textWithPlaceholders.split(/(\[IMAGE_PLACEHOLDER_\d+\])/);
-
-//   return (
-//     <View style={[styles.solutionBox, isSelected && styles.cardSelected]}>
-//       <Text style={styles.solutionTitle}>Solution :</Text>
-
-//       <View style={styles.solutionContent}>
-//         {processedParts.map((part, index) => {
-//           // Check if this part is an image placeholder
-//           const imgMatch = part.match(/\[IMAGE_PLACEHOLDER_(\d+)\]/);
-
-//           if (imgMatch) {
-//             const imgIndex = parseInt(imgMatch[1], 10);
-//             if (images[imgIndex]) {
-//               return (
-//                 <Image
-//                   key={`solution-img-${imgIndex}`}
-//                   source={{ uri: `data:image/png;base64,${images[imgIndex]}` }}
-//                   style={styles.solutionImage}
-//                   resizeMode="contain"
-//                 />
-//               );
-//             }
-//             return null;
-//           }
-
-//           // It's text - clean and render it
-//           const cleanText = part
-//             .replace(/<br\s*\/?>/gi, '\n')
-//             .replace(/&lt;/g, '<')
-//             .replace(/&gt;/g, '>')
-//             .replace(/&amp;/g, '&')
-//             .replace(/&nbsp;/g, ' ')
-//             .replace(/<[^>]*>/g, '')
-//             .trim();
-
-//           if (!cleanText) return null;
-
-//           const hasMath = containsMath(cleanText);
-
-//           if (hasMath) {
-//             return (
-//               <ScrollView
-//                 key={`text-${index}`}
-//                 horizontal
-//                 showsHorizontalScrollIndicator={true}
-//                 contentContainerStyle={styles.mathScrollContent}
-//                 style={styles.mathScrollView}
-//               >
-//                 <MathJax
-//                   mathJaxOptions={mathJaxOptions}
-//                   html={cleanText}
-//                   style={[styles.solutionMathJax, isSelected && styles.selectedText]}
-//                 />
-//               </ScrollView>
-//             );
-//           }
-
-//           return (
-//             <Text
-//               key={`text-${index}`}
-//               style={[styles.solutionText, isSelected && styles.selectedText]}
-//             >
-//               {cleanText}
-//             </Text>
-//           );
-//         })}
-//       </View>
-
-//       <Text style={styles.answerText}>
-//         <Text style={styles.answerLabel}>Answer: </Text>
-//         Option {correctOption || ''}
-//       </Text>
-//     </View>
-//   );
-// });
-// Memoized Solution Component - Clean Version
-// Memoized Solution Component - Super Simple Version
 const SolutionView = memo(({
   explanation,
   correctOption,
@@ -1871,13 +2474,6 @@ const QuestionItem = memo(({
     { id: 'C', label: item.option_c || '' },
     { id: 'D', label: item.option_d || '' },
   ];
-
-  // Debug log to check if explanation exists
-  console.log(`Question ${index + 1}:`, {
-    hasExplanation: !!item.explanation,
-    explanationLength: item.explanation?.length || 0,
-  });
-
   return (
     <TouchableOpacity
       style={[styles.card, isSelected && styles.cardSelected]}
@@ -1886,7 +2482,7 @@ const QuestionItem = memo(({
     >
       {/* Question Row */}
       <View style={styles.questionRow}>
-        <View style={styles.questionNumberContainer}>
+        <View style={[styles.questionNumberContainer]}>
           <Text style={styles.questionNumber}> {index + 1}.</Text>
           <View style={[
             styles.checkBox,
@@ -1895,7 +2491,7 @@ const QuestionItem = memo(({
             {isSelected && (
               <Icon
                 name="check"
-                size={moderateScale(14)}
+                size={moderateScale(12)}
                 color={Colors.white}
               />
             )}
@@ -1911,14 +2507,19 @@ const QuestionItem = memo(({
 
       {/* Options Grid */}
       <View style={styles.optionsGrid}>
-        {options.map((option) => (
-          <OptionItem
-            key={option.id}
-            id={option.id}
-            label={option.label}
-            isSelected={isSelected}
-          />
-        ))}
+        {options.map((option) => {
+          return (
+            <OptionItem
+              key={option.id}
+              id={option.id}
+              label={option.label}
+              isSelected={isSelected}
+              isCorrect={item.correct_option === option.id} // Pass correct option check
+              selectCheck={selectCheck} // Pass it here
+            />
+          )
+        }
+        )}
       </View>
 
       {/* Solution View */}
@@ -1935,8 +2536,6 @@ const QuestionItem = memo(({
   );
 });
 
-// QuestionItem.displayName = 'QuestionItem'; 
-
 // Main Component
 const QuestionListData: React.FC<Props> = ({
   selectCheck,
@@ -1944,6 +2543,7 @@ const QuestionListData: React.FC<Props> = ({
   setSelectedMap,
   questionsData
 }) => {
+  // console.log('selectCheck',selectCheck);
   const extractBase64Images = useCallback((html: string): string[] => {
     const imgRegex = /<img[^>]+src="data:image\/[^;]+;base64,([^"]+)"[^>]*>/g;
     const images: string[] = [];
@@ -2017,7 +2617,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.white,
-    marginHorizontal: 0, // Add this to ensure no margin
+    marginHorizontal: 0,
   },
   emptyContainer: {
     flex: 1,
@@ -2031,59 +2631,37 @@ const styles = StyleSheet.create({
     color: Colors.gray,
   },
   listContent: {
-    // paddingHorizontal: moderateScale(12), // 12
     paddingVertical: moderateScale(8),
   },
   card: {
     backgroundColor: Colors.white,
-    // borderRadius: moderateScale(8),
-    // padding: moderateScale(16),
-    // marginBottom: moderateScale(6),
-    // shadowColor: '#000',
-    // shadowOffset: { width: 0, height: 1 },
-    // shadowOpacity: 0.05,
-    // shadowRadius: 2,
-    // elevation: 1,
-    paddingHorizontal: moderateScale(12),
-    // width:'100%',
-    // borderBottomWidth: .5,
-    borderBottomWidth: .6,
+    paddingHorizontal: moderateScale(17),
+    borderBottomWidth: 1,
     borderColor: 'rgba(12, 64, 111, 0.12)',
-    marginHorizontal: 0, // Add this
-    paddingBottom:moderateScale(10),
-    flex:1,
-    // marginTop:moderateScale(-30)
+    marginHorizontal: 0,
+    paddingBottom: moderateScale(6),
+    flex: 1,
+    paddingTop: moderateScale(6)
   },
   cardSelected: {
     backgroundColor: '#EBF6FF'
   },
   questionRow: {
     flexDirection: 'row',
-    // alignItems: 'flex-start',
-    marginBottom: moderateScale(12),
-    // borderWidth: 1,
-    // width: 'auto',
-    // marginLeft: moderateScale(-16)
-    // marginLeft: moderateScale(-16),
-    // marginRight:moderateScale(20)
+    marginBottom: moderateScale(10),
   },
   questionNumber: {
     fontSize: moderateScale(15),
     fontFamily: Fonts.InstrumentSansSemiBold,
     color: Colors.black,
-    // marginRight: moderateScale(6),
-    // lineHeight: moderateScale(22),
-    // minWidth: moderateScale(24),
   },
   questionContent: {
     flex: 1,
   },
   mathJaxWrapper: {
     flex: 1,
-    borderWidth: 1,
     paddingVertical: moderateScale(0.5),
     marginTop: moderateScale(6),
-    // borderWidth: 1
   },
   questionText: {
     fontSize: moderateScale(14),
@@ -2092,418 +2670,184 @@ const styles = StyleSheet.create({
     lineHeight: moderateScale(19),
   },
   questionMathJax: {
-    fontSize: moderateScale(14),
+    fontSize: moderateScale(11),
     fontFamily: Fonts.InstrumentSansMedium,
     color: Colors.black,
-    // lineHeight: moderateScale(200),
   },
   selectedText: {
     backgroundColor: 'transparent',
   },
-  // imagesContainer: {
-  //   // marginBottom: moderateScale(-10),
-  //   // borderWidth: 1,
-  //   marginLeft: moderateScale(-20)
-  //   // verticalAlign:"top"
-  // },
   imagesWithText: {
     // marginTop: moderateScale(12),
   },
   questionImage: {
     width: '100%',
-    height: verticalScale(80), //180
-    maxHeight: verticalScale(150), //250
-    minHeight: verticalScale(60), //
+    height: verticalScale(60),
+    maxHeight: verticalScale(250),
     borderRadius: moderateScale(2),
-    // marginBottom: moderateScale(-9),
     backgroundColor: Colors?.white,
-    alignSelf: 'flex-start',
-    // verticalAlign:'top'
+    alignSelf: 'center',
+    resizeMode: "contain"
   },
   optionsGrid: {
-    // flexDirection: 'row',
-    // flexWrap: 'wrap',
-    // justifyContent: 'space-between',
-    // marginBottom: moderateScale(20),
-    // borderWidth: 1,  
-    // borderColor:"#000"
+    // Your options grid styles
   },
   optionContainer: {
-    width: '100%',
-    // height:moderateScale(100),
-    // minHeight: moderateScale(2),
-    padding: moderateScale(.2),
-    marginBottom: moderateScale(6),
+    flexDirection: 'row',
+    alignItems: 'center',
+    // justifyContent:"flex-start",
+    marginBottom: moderateScale(8),
     backgroundColor: Colors.white,
-    borderRadius: moderateScale(2),
-    // alignItems:'flex-start',
-    // justifyContent:"flex-start"
-    // borderWidth: 1,
-    // borderColor: '#E9ECEF',
+    borderRadius: moderateScale(4),
+    paddingVertical: moderateScale(4),
+    // borderWidth: 1
   },
-  optionContainerSelected: {
-    backgroundColor: 'green',
+  correctOptionContainer: {
+    borderWidth: 1,
+    borderColor: 'rgba(12, 64, 111, 0.12)',
+    flexDirection: 'row'
+  },
+  imageStyle: {
+    flexDirection: 'column'
+  },
+  optionLabelContainer: {
+    width: moderateScale(30),
+    alignItems: 'center',
+    justifyContent: 'center',
+    // marginRight: moderateScale(8),
+    borderRadius: moderateScale(4),
+    // paddingVertical: moderateScale(2),
+    // borderWidth: 1,
+    borderColor: '#BFBFBF',
+    // alignSelf: "baseline",
+    // marginLeft: moderateScale(4)
+  },
+  correctOptionLabel: {
+    // backgroundColor: '#4CAF50',
     borderColor: '#1E88E5',
+    borderWidth: 1.4
+  },
+  optionLabel: {
+    fontSize: moderateScale(13),
+    fontFamily: Fonts.InstrumentSansSemiBold,
+    color: Colors.black,
+    // textAlign:'center'
+  },
+  correctOptionText: {
+    color: Colors?.questionSelect,
+    fontFamily: Fonts.InstrumentSansSemiBold,
+  },
+  optionContent: {
+    flex: 1,
+    // flexDirection:'row',
+    // flexDirection: 'row',
+    // alignItems:"center",
+    // justifyContent:"flex-start",
+    // overflow:"hidden"
+  },
+  optionImagesContainer: {
+    marginBottom: moderateScale(4),
+  },
+  optionImage: {
+    width: '100%',
+    height: moderateScale(60),
+    maxHeight: moderateScale(120),
+    borderRadius: moderateScale(4),
+    alignSelf: 'center',
+    resizeMode: 'contain',
   },
   optionTextContainer: {
-    // marginBottom: moderateScale(40),
-    // borderWidth:1,
     flex: 1,
-    paddingVertical: moderateScale(.5)
-
+    // paddingVertical:moderateScale(30)
+    paddingVertical: moderateScale(.5),
+    minHeight: moderateScale(40),
+    // borderWidth:1
+  },
+  optionTextWithImages: {
+    marginTop: moderateScale(4),
   },
   optionText: {
     fontSize: moderateScale(13),
     fontFamily: Fonts.InstrumentSansMedium,
     color: Colors.black,
-    // lineHeight: moderateScale(18),
+    lineHeight: moderateScale(18),
+    marginLeft: moderateScale(5), marginTop: moderateScale(8)
   },
   optionMathJax: {
-    fontSize: moderateScale(13),
+    fontSize: moderateScale(11),
     fontFamily: Fonts.InstrumentSansMedium,
     color: Colors.black,
-    // lineHeight: moderateScale(10),
-    // height:moderateScale(20),
-    // backgroundColor:"red"
-  },
-  optionImagesContainer: {
-    marginTop: moderateScale(.5),
-    // borderWidth:1,
-    // backgroundColor: '#000'
-  },
-  optionImagesWithText: {
-    // marginTop: moderateScale(8),
-  },
-  optionImage: {
-    width: '100%',
-    // height: verticalScale(80),
-    // maxHeight: verticalScale(120),
-    // minHeight: verticalScale(60),
-    height: moderateScale(30), //180
-    maxHeight: moderateScale(70), //250
-    minHeight: moderateScale(30), // 60
-    borderRadius: moderateScale(4),
-    // marginBottom: moderateScale(.5),
-    // backgroundColor: Colors.black,
-    alignSelf: 'center',
-  },
-  selectArea: {
-    // flexDirection: 'row',
-    // alignItems: 'center',
-    // paddingVertical: moderateScale(12),
-    // borderTopWidth: 1,
-    // borderTopColor: 'rgba(0,0,0,0.1)',
-    // borderWidth: 1
   },
   checkBox: {
-    width: moderateScale(20),
-    height: moderateScale(20),
+    width: moderateScale(17),
+    height: moderateScale(17),
     borderRadius: moderateScale(5),
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: moderateScale(5),
-    marginRight: moderateScale(4),
-//         borderWidth:1,
-// borderColor:'#000'
+    marginRight: moderateScale(3),
   },
   checkBoxDefault: {
     backgroundColor: Colors.white,
     borderWidth: 1.5,
     borderColor: '#BFBFBF',
+    marginRight: moderateScale(3),
   },
   checkBoxSelected: {
     backgroundColor: '#1E88E5',
     borderWidth: 0,
   },
-  selectText: {
-    fontSize: moderateScale(13),
-    fontFamily: Fonts.InstrumentSansMedium,
-    color: Colors.black,
-  },
-  // solutionBox: {
-  //   // marginTop: moderateScale(16), //
-  //   // padding: moderateScale(14), //
-  //   // backgroundColor: '#F8F9FA',
-  //   // borderRadius: moderateScale(8),
-  //   borderWidth: 1,
-  //   borderColor: 'red',
-  //   padding: moderateScale(12), // Keep only necessary padding
-  //   backgroundColor: '#F8F9FA',
-  //   borderRadius: moderateScale(6),
-  // },
-  // solutionTitle: {
-  //   fontSize: moderateScale(15),
-  //   fontFamily: Fonts.InstrumentSansSemiBold,
-  //   color: Colors.black,
-  //   marginBottom: moderateScale(8)
-  // },
-  // solutionContent: {
-  //   marginBottom: moderateScale(8),
-  //   flexShrink: 1,
-  // },
-  // solutionText: {
-  //   fontSize: moderateScale(13),
-  //   fontFamily: Fonts.InstrumentSansRegular,
-  //   color: Colors.black,
-  //   lineHeight: moderateScale(20),
-  // },
-  // solutionMathJax: {
-  //   fontSize: moderateScale(13),
-  //   fontFamily: Fonts.InstrumentSansRegular,
-  //   color: Colors.black,
-  //   lineHeight: moderateScale(20),
-  //   // ADD this to prevent overflow issues
-  //   flexShrink: 1,
-  // },
-  // solutionImagesContainer: {
-  //   // marginTop: moderateScale(8),
-  // },
-  // solutionImagesWithText: {
-  //   marginTop: moderateScale(8),
-  // },
-  // solutionImage: {
-  //   // width: '100%',
-  //   // height: moderateScale(150),
-  //   // maxHeight: moderateScale(200),
-  //   // minHeight: moderateScale(100),
-  //   // borderRadius: moderateScale(6),
-  //   // marginBottom: moderateScale(8),
-  //   // backgroundColor: '#f5f5f5',
-  //   // alignSelf: 'center',
-  //   width: '100%',
-  //   height: moderateScale(150),
-  //   borderRadius: moderateScale(4),
-  //   backgroundColor: 'transparent', // Use transparent instead of white
-  //   alignSelf: 'center',
-
-  // },
-  // answerText: {
-  //   fontSize: moderateScale(13),
-  //   fontFamily: Fonts.InstrumentSansSemiBold,
-  //   color: Colors.black,
-  // },
-  // answerLabel: {
-  //   fontFamily: Fonts.InstrumentSansSemiBold,
-  // },
-  // mathScrollView: {
-  //   flexGrow: 1,
-  //   minHeight: moderateScale(40), // Set minimum height
-  // },
-  // mathScrollContent: {
-  //   flexGrow: 1,
-  //   alignItems: 'flex-start', // Align content properly
-  // },
-
-  ////////////////////////////
-  // solutionBox: {
-  //   padding: moderateScale(12),
-  //   backgroundColor: Colors.white, // Temporary to see if box renders
-  //   borderRadius: moderateScale(6),
-  // },
-  // solutionTitle: {
-  //   fontSize: moderateScale(14),
-  //   fontFamily: Fonts.InstrumentSansSemiBold,
-  //   color: Colors.black,
-  //   marginBottom: moderateScale(8),
-  // },
-  // solutionContent: {
-  //   marginBottom: moderateScale(8),
-  //   // flexDirection:'column'
-  //   // flexShrink: 1,
-  // },
-  // solutionText: {
-  //   fontSize: moderateScale(13),
-  //   fontFamily: Fonts.InstrumentSansRegular,
-  //   color: Colors.black,
-  //   lineHeight: moderateScale(20),
-  //   margin: 0,
-  //   padding: 0,
-
-  // },
-  // solutionMathJax: {
-  //   fontSize: moderateScale(13),
-  //   fontFamily: Fonts.InstrumentSansRegular,
-  //   color: Colors.black,
-  //   lineHeight: moderateScale(20),
-  //   flexShrink: 1,
-  //   minHeight: moderateScale(20),
-  //   margin: 0,
-  //   padding: 0,
-  // },
-  solutionImagesContainer: {
-    // No default margin - images sit directly below
-    // borderWidth:1
-  },
-  solutionImagesWithText: {
-    marginTop: moderateScale(8), // Only when there's text above
-  },
-  // solutionImage: {
-  //   width: '100%',
-  //   // Use aspectRatio for better control
-  //   height: undefined,
-  //   aspectRatio: 16 / 9, // Adjust based on your image aspect ratio
-  //   minHeight: moderateScale(100),
-  //   maxHeight: moderateScale(200),
-  //   borderRadius: moderateScale(4),
-  //   marginBottom: moderateScale(8),
-  //   backgroundColor: 'transparent',
-  //   alignSelf: 'center',
-  // },
-  // answerText: {
-  //   fontSize: moderateScale(13),
-  //   fontFamily: Fonts.InstrumentSansSemiBold,
-  //   color: Colors.black,
-  //   marginTop: moderateScale(8),
-  // },
-  // answerLabel: {
-  //   fontFamily: Fonts.InstrumentSansSemiBold,
-  // },
-  // noSolutionText: {
-  //   fontSize: moderateScale(13),
-  //   fontFamily: Fonts.InstrumentSansRegular,
-  //   color: Colors.gray,
-  //   fontStyle: 'italic',
-  //   marginBottom: moderateScale(4),
-  // },
-  // mathScrollView: {
-  //   flexGrow: 1,
-  //   padding: 0
-  //   // Remove minHeight if it's causing issues
-  //   // minHeight: moderateScale(40),
-  // },
-  // mathScrollContent: {
-  //   flexGrow: 1,
-  //   alignItems: 'flex-start',
-  //   padding: 0
-  // },
-
-  // Add a wrapper for better control
   solutionWrapper: {
-    marginTop: moderateScale(12),
-    // Ensure it's visible
+    marginTop: moderateScale(6),
     overflow: 'visible',
   },
   questionNumberContainer: {
     marginTop: moderateScale(6),
-    alignItems: 'center',
-    flexDirection:"column",
-    borderWidth:1,
-    height:moderateScale(50),
-    justifyContent:'center'
+    alignItems: 'flex-start',
+    flexDirection: "column",
+    height: moderateScale(50),
   },
-
-
-  ///////////////////////////////////////
-  //   solutionBox: {
-  //   backgroundColor: Colors.white,
-  //   borderRadius: moderateScale(6),
-  //   padding: moderateScale(12),
-  // },
-  // solutionTitle: {
-  //   fontSize: moderateScale(14),
-  //   fontFamily: Fonts.InstrumentSansSemiBold,
-  //   color: Colors.black,
-  //   marginBottom: moderateScale(8),
-  // },
-  // solutionContent: {
-  //   flexDirection: 'column',
-  // },
-  // solutionText: {
-  //   fontSize: moderateScale(13),
-  //   fontFamily: Fonts.InstrumentSansRegular,
-  //   color: Colors.black,
-  //   lineHeight: moderateScale(20),
-  //   marginBottom: moderateScale(4),
-  // },
-  // solutionMathJax: {
-  //   fontSize: moderateScale(13),
-  //   fontFamily: Fonts.InstrumentSansRegular,
-  //   color: Colors.black,
-  //   lineHeight: moderateScale(20),
-  // },
-  // solutionImage: {
-  //   width: '100%',
-  //   height: moderateScale(150),
-  //   minHeight: moderateScale(100),
-  //   maxHeight: moderateScale(200),
-  //   borderRadius: moderateScale(4),
-  //   marginVertical: moderateScale(4), // Add vertical margin around images
-  //   backgroundColor: 'transparent',
-  //   alignSelf: 'center',
-  // },
-  // answerText: {
-  //   fontSize: moderateScale(13),
-  //   fontFamily: Fonts.InstrumentSansSemiBold,
-  //   color: Colors.black,
-  //   marginTop: moderateScale(8),
-  // },
-  // // answerLabel: {
-  // //   fontFamily: Fonts.InstrumentSansSemiBold,
-  // // },
-  // mathScrollView: {
-  //   marginBottom: moderateScale(4),
-  // },
-  // mathScrollContent: {
-  //   flexGrow: 1,
-  //   alignItems: 'flex-start',
-  // },
-  //////////////////////////////////////
   solutionBox: {
     backgroundColor: Colors.white,
     borderRadius: moderateScale(6),
-    padding: moderateScale(2),
-    // marginTop: moderateScale(8),
-    // borderWidth:1
   },
   solutionTitle: {
     fontSize: moderateScale(14),
     fontFamily: Fonts.InstrumentSansSemiBold,
     color: Colors.black,
-    // marginBottom: moderateScale(8),
-  },
-  solutionContent: {
-    // No special styles needed
-  },
-  textPart: {
-    marginBottom: moderateScale(4),
   },
   textContainer: {
-    // marginBottom: moderateScale(8),
-    // borderWidth:1
+    marginLeft: 0
   },
   solutionText: {
     fontSize: moderateScale(13),
     fontFamily: Fonts.InstrumentSansRegular,
     color: Colors.black,
     lineHeight: moderateScale(20),
+    marginLeft: 0
   },
   solutionMathJax: {
     fontSize: moderateScale(13),
     fontFamily: Fonts.InstrumentSansRegular,
     color: Colors.black,
-    // lineHeight: moderateScale(20),
+    marginLeft: 0
   },
   imagesContainer: {
-    // Images appear right after text,
-    borderWidth:1,
-    // width:'100%',
-    // marginRight:moderateScale(50)
+    // Images appear right after text
   },
   solutionImage: {
     width: '100%',
     height: moderateScale(150),
-    minHeight: moderateScale(100),
     maxHeight: moderateScale(200),
     borderRadius: moderateScale(4),
     backgroundColor: 'transparent',
     alignSelf: 'center',
-    marginTop: moderateScale(4), // Small space after text
+    marginTop: moderateScale(4),
+    resizeMode: "contain"
   },
   answerText: {
     fontSize: moderateScale(13),
     fontFamily: Fonts.InstrumentSansSemiBold,
     color: Colors.black,
-    marginTop: moderateScale(12),
   },
   answerLabel: {
     fontFamily: Fonts.InstrumentSansSemiBold,

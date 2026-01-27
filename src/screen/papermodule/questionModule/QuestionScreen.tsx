@@ -10,7 +10,6 @@ import { Icons } from "../../../assets/icons";
 import QuestionListData, { Question } from './component/questionlist/QuestionListData';
 import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
 import { POST_FORM } from "../../../api/request";
-import { showSnackbar } from "../../../utils/snackbar";
 import Loader from "../../../component/loader/Loader";
 const QuestionScreen = () => {
     const navigation = useNavigation()
@@ -29,6 +28,8 @@ const QuestionScreen = () => {
     const [selectCheck, setSelectedCheck] = useState('Options')
     const [selectedMap, setSelectedMap] = useState<Record<string, boolean>>({});
     const [questionsData, setQuestionsData] = useState<Question[]>([]);
+    console.log('questionsData', questionsData?.pagination);
+
     const [loader, setLoader] = useState(false)
     const handleCheck = (item: string) => {
         setSelectedCheck(item)
@@ -75,8 +76,11 @@ const QuestionScreen = () => {
             const response = await POST_FORM('question', params)
             if (response?.status === 200) {
                 // showSnackbar('')
-                setQuestionsData(response?.result)
-                console.log('responsedddddd', response);
+                setTimeout(() => {
+                    console.log('responsedddddd', response);
+
+                }, 2000)
+                setQuestionsData(response)
                 // setQuestionsData(response.result); // Assuming your API returns { result: [...] }
             }
         } catch (error) {
@@ -108,7 +112,7 @@ const QuestionScreen = () => {
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         {/* OPTIONS */}
                         <TouchableOpacity
-                            style={{ flexDirection: 'row', alignItems: 'center' }}
+                            style={{ flexDirection: 'row', alignItems: 'center', }}
                             onPress={() => handleCheck('Options')}
                             activeOpacity={0.7}
                         >
@@ -140,10 +144,8 @@ const QuestionScreen = () => {
                                     styles.chackBox,
                                     {
                                         backgroundColor:
-                                            selectCheck === 'Solutions' ? '#4292FA' : Colors.white,
-                                    },
-                                ]}
-                            >
+                                            selectCheck === 'Solutions' ? '#4292FA' : Colors.white
+                                    }]}>
                                 {selectCheck === 'Solutions' && (
                                     <Icon name="check" size={moderateScale(14)} color={Colors.white} />
                                 )}
@@ -159,7 +161,9 @@ const QuestionScreen = () => {
                         </TouchableOpacity>
                     </View>
                 </View>
-
+           {   questionsData?.pagination?.pages ===   <View style={styles.paginationBox}>
+                    <Text style={styles.paginationText}>2</Text>
+                </View>}
                 {/*  question list */}
                 {/* <QuestionListData selectCheck={selectCheck} selectedMap={selectedMap}
                         setSelectedMap={setSelectedMap} /> */}
@@ -168,7 +172,7 @@ const QuestionScreen = () => {
                     selectCheck={selectCheck}
                     selectedMap={selectedMap}
                     setSelectedMap={setSelectedMap}
-                    questionsData={questionsData}
+                    questionsData={questionsData?.result ?? []}
                 />
             </SafeAreaView>
 
