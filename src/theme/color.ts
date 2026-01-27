@@ -18,6 +18,7 @@ export const Colors = {
     homeCardBoxStoke: 'rgba(12, 64, 111, 0.19)',
     homeNotificationInnerBgColor:'#F3F5F8',
     gray:'rgba(1, 54, 105, 0.13)',
-    lightThemeBlue:'#E3F2FF'
+    lightThemeBlue:'#E3F2FF',
+    questionSelect:'#08AA26'
 }
 
