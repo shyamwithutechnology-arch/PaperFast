@@ -16,6 +16,8 @@ import Loader from '../../component/loader/Loader';
 
 const HomeScreen = () => {
     const [selectedSubject, setSelectedSubject] = useState<null | string>(null)
+    console.log('selectedSubject', selectedSubject);
+
     const navigation = useNavigation();
     const [visible, setVisible] = useState(false);
     const [selectedBoard, setSelectedBoard] = useState<null | string>(null)
@@ -128,9 +130,17 @@ const HomeScreen = () => {
         await fetchBanners();
     };
 
-    const handleSelect = (id: string) => {
-        setSelectedSubject(id),
-            navigation.navigate('PaperTypeScreen');
+    // const handleSelect = (id: string) => {
+    //     setSelectedSubject(id),
+    //         navigation.navigate('PaperTypeScreen');
+    // }
+    const handleSelect = async (id: string) => {
+        setSelectedSubject(id);
+
+        // Save to localStorage
+        await localStorage.setItem(storageKeys.selectedSubject, id);
+
+        navigation.navigate('PaperTypeScreen');
     }
 
     const handleBoardDataGet = async () => {
@@ -248,12 +258,18 @@ const HomeScreen = () => {
         }
     };
 
-    const renderItem = useCallback(({ item }) => {
+    const renderItem = useCallback(({ item, index }) => {
         return (
+            // <SubjectItem
+            //     item={item}
+            //     selected={selectedSubject === item.id}
+            //     onPress={handleSelect} />
             <SubjectItem
                 item={item}
+                index={index}   // ✅ REQUIRED
                 selected={selectedSubject === item.id}
-                onPress={handleSelect} />
+                onPress={handleSelect}
+            />
             // onPress={setSelectedSubject} />
         )
     }, [selectedSubject])
@@ -281,6 +297,17 @@ const HomeScreen = () => {
         fetchBanners();
     }, []);
 
+    useEffect(() => {
+        const restoreSelectedSubject = async () => {
+            const savedSubject = await localStorage.getItem(storageKeys.selectedSubject);
+            if (savedSubject) {
+                setSelectedSubject(savedSubject);
+            }
+        };
+
+        restoreSelectedSubject();
+    }, []);
+
     return (
         <SafeAreaView
             style={styles.mainContainer}
@@ -292,7 +319,7 @@ const HomeScreen = () => {
                     data={SUBJECTS}
                     keyExtractor={(item) => item.id}
                     renderItem={renderItem}
-                    // extraData={selectedSubject}
+                    extraData={selectedSubject}
                     showsVerticalScrollIndicator={false}
                     removeClippedSubviews
                     initialNumToRender={6}

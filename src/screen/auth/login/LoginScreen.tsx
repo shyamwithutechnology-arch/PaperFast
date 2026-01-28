@@ -372,7 +372,6 @@ const LoginScreen = () => {
             style={styles.mainContainer}
             edges={['left', 'right', 'bottom']}>
                 <Loader visible={loading}/>
-            {/* <StatusBar barStyle="dark-content" backgroundColor={Colors.primaryColor} /> */}
             <AppHeader title="Paper Fast" discriptionText='Paper Generate In Minute' />
             <View style={styles.innerMainContainer}>
                 <View style={styles.innerSecondMainContainer}>
@@ -445,21 +444,8 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: moderateScale(30),
         borderTopRightRadius: moderateScale(30),
         backgroundColor: Colors.white,
-        marginTop: moderateScale(20),
-        // marginHorizontal:moderateScale(10)
-        // paddingHorizontal:moderateScale(10)
+        marginTop: moderateScale(20)
     },
-    // loginNumberText: {
-    //     color: Colors.white,
-    //     fontSize: wp('5%')
-    // },
-
-    // headerUpperBox: {
-    //     width: wp("100"),
-    //     height: hp("30"),
-    //     backgroundColor: "rgba(11, 182, 199, 0.17)",
-    // },
-
     loginText: {
         fontSize: moderateScale(20),
         color: Colors.black,
@@ -481,8 +467,6 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginTop: moderateScale(20),
     },
-
-    // phoneInput static 
     phoneInput: {
         fontSize: moderateScale(15),
         fontFamily: Fonts.InterMedium,
@@ -490,12 +474,10 @@ const styles = StyleSheet.create({
         flex: 1,
         textAlignVertical: 'center',
     },
-
     prefix: {
         fontSize: moderateScale(15),
         fontFamily: Fonts.InterMedium,
         color: Colors.InputText,
-        // marginLeft: moderateScale(10)
     },
     phoneInputBox: {
         height: moderateScale(52),
@@ -509,8 +491,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginTop: moderateScale(24)
-    }
-    ,
+    },
     countryImgStyle: {
         width: moderateScale(30),
         aspectRatio: 1.5,
@@ -520,7 +501,6 @@ const styles = StyleSheet.create({
         width: moderateScale(60),
         aspectRatio: 1.5,
         resizeMode: 'contain'
-
     },
     privacyBox: {
         marginTop: moderateScale(18),
@@ -541,7 +521,6 @@ const styles = StyleSheet.create({
         fontSize: moderateScale(22),
         color: "#3B3B3B",
         fontFamily: Fonts.InterSemiBold,
-        // alignSelf: 'flex-start'
     },
     plusImg: {
         height: moderateScale(25),
@@ -561,8 +540,7 @@ const styles = StyleSheet.create({
     havingText: {
         color: Colors.ParagraphAndShortTexts,
         fontFamily: Fonts.InterRegular,
-    }
-    ,
+    },
     supportBox: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -570,24 +548,14 @@ const styles = StyleSheet.create({
     },
     numberTextBox: {
         flexDirection: 'row',
-        alignItems: 'center',
-        // borderWidth:1,
-        // alignSelf: 'flex-start'
+        alignItems: 'center'
     },
     versionText: {
         fontSize: moderateScale(14),
         color: "#454545",
         fontFamily: Fonts.InterRegular,
         alignSelf: 'center',
-        // marginBottom: 'auto'
         marginVertical: moderateScale(10)
     }
 }
 )
-
-// <Text style={styles.subHeading}>We’ll send an OTP to verify your number.</Text>
-// <TextInput style={styles.phoneInput} maxLength={10} keyboardType="number-pad" onChangeText={setPhoneInput} value={phoneInput} />
-// <Text style={styles.prefix}>+91</Text>
-// <Text style={styles.supportText}>Support</Text>
-// <Text style={styles.supportNumberText}>91{phoneInput}</Text>
-

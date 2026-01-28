@@ -180,7 +180,6 @@
 
 // export default QuestionScreen;
 
-
 import React, { useCallback, useEffect, useState } from "react";
 import { View, StatusBar, TouchableOpacity, Text, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -194,7 +193,8 @@ import QuestionListData, { Question } from './component/questionlist/QuestionLis
 import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
 import { POST_FORM } from "../../../api/request";
 import Loader from "../../../component/loader/Loader";
-import Pagination from "./component/Pagination"; // Import the pagination component
+import Pagination from "./component/Pagination";
+import AppModal from "../../../component/modal/AppModal";
 
 const QuestionScreen = () => {
     const navigation = useNavigation()
@@ -215,6 +215,7 @@ const QuestionScreen = () => {
     const [selectedMap, setSelectedMap] = useState<Record<string, boolean>>({});
     const [questionsData, setQuestionsData] = useState<any>(null);
     const [loader, setLoader] = useState(false);
+    const [labelStatus, setLabelStatus] = useState(false);
 
     const [pagination, setPagination] = useState({
         limit: 10,
@@ -226,7 +227,12 @@ const QuestionScreen = () => {
     const handleCheck = (item: string) => {
         setSelectedCheck(item)
     }
-
+    const handleLabelStatus = () => {
+        setLabelStatus(true)
+    }
+    const handleLabelClose = () => {
+        setLabelStatus(false)
+    }
     const handleBack = () => {
         navigation.navigate('PaperSelect', {
             selectedSummary: {
@@ -238,23 +244,7 @@ const QuestionScreen = () => {
         });
     };
 
-    useFocusEffect(
-        useCallback(() => {
-            navigation.getParent()?.setOptions({
-                tabBarStyle: { display: 'none' },
-            });
-            return () => {
-                navigation.getParent()?.setOptions({
-                    tabBarStyle: { display: 'flex' },
-                });
-            };
-        }, []))
-
-    useEffect(() => {
-        fetchQuestions(pagination.page);
-    }, []);
-
-    const fetchQuestions = async (page: number = 1) => {
+    const fetchQuestions = async (page: number = 1, limit: number = pagination?.limit) => {
         setLoader(true)
         try {
             let params = {
@@ -262,11 +252,11 @@ const QuestionScreen = () => {
                 // 'difficulty': '3',
                 'easy': '3',
                 'page': page.toString(),
-                'limit': '10'
+                'limit': limit.toString()
             }
             const response = await POST_FORM('question', params)
             if (response?.status === 200) {
-                console.log('API Response:', response);
+                // console.log('API Response:', response);
                 setQuestionsData(response);
 
                 // Update pagination state from API response
@@ -285,7 +275,6 @@ const QuestionScreen = () => {
             setLoader(false)
         }
     };
-
     // Handle page change
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= pagination.pages) {
@@ -294,6 +283,33 @@ const QuestionScreen = () => {
             // scrollViewRef.current?.scrollTo({ y: 0, animated: true });
         }
     };
+
+    // Handle limit change
+    const handleLimitChange = (newLimit: number) => {
+        setPagination(prev => ({
+            ...prev,
+            limit: newLimit,
+            page: 1 // Reset to first page
+        }));
+
+        // Fetch data with new limit
+        fetchQuestions(1, newLimit);
+    };
+    useFocusEffect(
+        useCallback(() => {
+            navigation.getParent()?.setOptions({
+                tabBarStyle: { display: 'none' },
+            });
+            return () => {
+                navigation.getParent()?.setOptions({
+                    tabBarStyle: { display: 'flex' },
+                });
+            };
+        }, []))
+
+    useEffect(() => {
+        fetchQuestions(pagination.page, pagination?.limit);
+    }, []);
 
     return (
         <View style={{ flex: 1, backgroundColor: Colors.white }}>
@@ -381,7 +397,7 @@ const QuestionScreen = () => {
                             width: moderateScale(30),
                             alignItems: "center",
                             justifyContent: 'center'
-                        }}>
+                        }} onPress={handleLabelStatus}>
                             <Image source={Icons.filter} style={{
                                 height: moderateScale(20),
                                 width: moderateScale(20)
@@ -390,27 +406,23 @@ const QuestionScreen = () => {
                     </View>
                 </View>
 
-                {/* Remove this old pagination box */}
-                {/* {questionsData?.pagination?.pages && <View style={styles.paginationBox}>
-                    <Text style={styles.paginationText}>2</Text>
-                </View>} */}
-
-                {/* Pagination Component */}
+                {/* Pagination*/}
                 {pagination.pages > 1 && (
                     <Pagination
                         paginationData={pagination}
                         onPageChange={handlePageChange}
+                        onLimitChange={handleLimitChange}
                     />
                 )}
+
                 {/* Question list */}
                 <QuestionListData
                     selectCheck={selectCheck}
                     selectedMap={selectedMap}
                     setSelectedMap={setSelectedMap}
-                    questionsData={questionsData?.result ?? []}
-                />
+                    questionsData={questionsData?.result ?? []} />
 
-
+                <AppModal visible={labelStatus} onClose={handleLabelClose} />
             </SafeAreaView>
         </View>
     );
