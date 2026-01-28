@@ -63,10 +63,8 @@ const Pagination: React.FC<PaginationProps> = ({ paginationData, onPageChange })
             if (endPage < pages - 1) {
                 visiblePages.push('...');
             }
-
             visiblePages.push(pages);
         }
-
         return visiblePages;
     };
 
@@ -145,9 +143,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: moderateScale(16),
         paddingVertical: moderateScale(6),
         backgroundColor: '#F6FBFF',
-        // borderTopWidth: 1,
-        // borderTopColor: Colors.InputStroke || '#e0e0e0',
-        // width: Dimensions.get('window').width,
         borderWidth: 1,
         width: '100%'
     },
