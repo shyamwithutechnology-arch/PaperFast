@@ -2218,9 +2218,6 @@ const OptionItem = memo(({
       styles.optionContainer,
       // hasText  ? styles.correctOptionContainer : styles.imageStyle/
     ]}>
-      {/* Option Label */}
-
-
       {/* Option Content */}
       {hasImages &&
         <View style={[styles.optionContent, hasImages && { flexDirection: 'column' }]}>
