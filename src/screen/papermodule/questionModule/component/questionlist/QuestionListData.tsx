@@ -2658,18 +2658,21 @@ const styles = StyleSheet.create({
   mathJaxWrapper: {
     flex: 1,
     paddingVertical: moderateScale(0.5),
-    marginTop: moderateScale(6),
+    // marginTop: moderateScale(6),
+    // borderWidth:1
   },
   questionText: {
     fontSize: moderateScale(14),
     fontFamily: Fonts.InstrumentSansMedium,
     color: Colors.black,
-    lineHeight: moderateScale(19),
+    // borderWidth:1
+    // lineHeight: moderateScale(19),
   },
   questionMathJax: {
     fontSize: moderateScale(11),
     fontFamily: Fonts.InstrumentSansMedium,
     color: Colors.black,
+    // borderWidth:1
   },
   selectedText: {
     backgroundColor: 'transparent',
@@ -2798,7 +2801,7 @@ const styles = StyleSheet.create({
     overflow: 'visible',
   },
   questionNumberContainer: {
-    marginTop: moderateScale(6),
+    // marginTop: moderateScale(6),
     alignItems: 'flex-start',
     flexDirection: "column",
     height: moderateScale(50),

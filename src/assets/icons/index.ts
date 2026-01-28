@@ -36,4 +36,6 @@ rightArrow:require('./rightArrow.png'),
 paperFile:require('./paperFile.png'),
 filter:require('./filter.png'),
 arrowLeft:require('./arrowLeft.png'),
+fileUpload:require('./fileUpload.png'),
+date:require('./date.png'),
 };

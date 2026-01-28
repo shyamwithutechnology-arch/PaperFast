@@ -6,6 +6,7 @@ import {
     TouchableOpacity,
     StyleSheet,
     StatusBar,
+    Alert,
 } from 'react-native';
 import { DrawerContent, DrawerContentScrollView } from '@react-navigation/drawer';
 import { Colors } from '../../theme/color';
@@ -35,34 +36,43 @@ const MENU = [
     { id: 10, title: 'Delete Account', icon: Icons.delete, route: 'DeleteAccountScreen' },
 ];
 
-const CustomDrawer = ({navigation}) => {
+const CustomDrawer = ({ navigation }) => {
     const [role, setRole] = React.useState<'Teacher' | 'Student'>('Teacher');
     // const navigation = useNavigation()
     const dispatch = useDispatch()
-    const handleLoggeOut = async() => {
-        //    const token = '1234';
-        //    reduxStorage.de()
-    //    await reduxStorage.removeItem('token')
-    //     await localStorage.removeItem('')
+    // const handleLoggeOut = async () => {
+    // Alert.alert('', 'Are You Sure You Want to LogOut')
+    //     await reduxStorage.removeItem('token');
+    //     await localStorage.clearAll();
     //     dispatch(logout());
-
-
-            // 1. Remove redux storage token
-            await reduxStorage.removeItem('token');
-            
-            // 2. Clear ALL local storage items
-            await localStorage.clearAll();
-            
-            // 3. Dispatch logout action to clear redux state
-            dispatch(logout());
-            // 4. Navigate to login or initial screen
-            // navigation.reset({
-            //     index: 0,
-            //     routes: [{ name: 'LoginScreen' }],
-            // });
-
-
+    // };
+    const handleLoggeOut = () => {
+        Alert.alert(
+            'Logout',
+            'Are you sure you want to log out?',
+            [
+                {
+                    text: 'Cancel',
+                    style: 'cancel',
+                },
+                {
+                    text: 'Logout',
+                    style: 'destructive',
+                    onPress: async () => {
+                        try {
+                            await reduxStorage.removeItem('token');
+                            await localStorage.clearAll();
+                            dispatch(logout());
+                        } catch (error) {
+                            console.log('Logout error:', error);
+                        }
+                    },
+                },
+            ],
+            { cancelable: true }
+        );
     };
+
     return (
         <SafeAreaView
             style={styles.mainContainer}
