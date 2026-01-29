@@ -13,7 +13,7 @@ export const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     borderTopLeftRadius: moderateScale(24),
     borderTopRightRadius: moderateScale(24),
-    paddingHorizontal: scale(15),
+    paddingHorizontal: scale(8),
     paddingVertical: verticalScale(16),
   },
 });

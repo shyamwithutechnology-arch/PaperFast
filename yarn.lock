@@ -5797,6 +5797,13 @@ react-native-drawer-layout@^4.2.1:
     color "^4.2.3"
     use-latest-callback "^0.2.4"
 
+react-native-element-dropdown@^2.12.4:
+  version "2.12.4"
+  resolved "https://registry.yarnpkg.com/react-native-element-dropdown/-/react-native-element-dropdown-2.12.4.tgz#259db84e673b9f4fc03090a54760efd4f4a1456c"
+  integrity sha512-abZc5SVji9FIt7fjojRYrbuvp03CoeZJrgvezQoDoSOrpiTqkX69ix5m+j06W2AVncA0VWvbT+vCMam8SoVadw==
+  dependencies:
+    lodash "^4.17.21"
+
 react-native-gesture-handler@^2.30.0:
   version "2.30.0"
   resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-2.30.0.tgz#990c621fbeeefde853ececdcab7cbe1b621dbb8b"

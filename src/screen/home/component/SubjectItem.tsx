@@ -84,22 +84,19 @@ import { moderateScale, scale, verticalScale } from '../../../utils/responsiveSi
 import { Colors, Fonts } from '../../../theme'
 
 const GOOGLE_PROFILE_GRADIENTS = [
-    { start: '#4285F4', end: '#34A853' }, // Blue to Green
-    { start: '#EA4335', end: '#0c5b19' }, // Red to Yellow
-    { start: '#4285F4', end: '#EA4335' }, // Blue to Red
+    { start: '#76a1e7', end: '#2d4433' }, // Blue to Green
+    { start: '#75332d', end: '#5c625d' }, // Red to Yellow
+    { start: '#474e5a', end: '#e35447' }, // Blue to Red
     { start: '#34A853', end: '#4285F4' }, // Green to Blue
-    { start: '#380bdd', end: '#EA4335' }, // Yellow to Red
+    { start: '#380bdd', end: '#eea39d' }, // Yellow to Red
     // { start: '#4285F4', end: '#FBBC05' }, // Blue to Yellow
     { start: '#EA4335', end: '#4285F4' }, // Red to Blue
-    { start: '#34A853', end: '#e0ab0b' }, // Green to Yellow
-    { start: '#e0ab0b', end: '#34A853' }, // Yellow to Green
+    { start: '#709b7c', end: '#594f2f' }, // Green to Yellow
+    { start: '#7f765d', end: '#34A853' }, // Yellow to Green
     { start: '#4285F4', end: '#673AB7' }, // Blue to Purple
-    { start: '#EA4335', end: '#673AB7' }, // Red to Purple
+    { start: '#39302f', end: '#673AB7' }, // Red to Purple
     { start: '#34A853', end: '#673AB7' }, // Green to Purple
 ]
-
-
-
 const getGradientFromText = (text: string) => {
     let hash = 0
     for (let i = 0; i < text.length; i++) {
@@ -130,8 +127,7 @@ const SubjectItem = ({ item, selected, onPress }) => {
                     style={[
                         styles.avatar,
                         // { backgroundColor: gradient.start },
-                    ]}
-                >
+                    ]}>
                     <Text style={styles.avatarText}>
                         {item.label.charAt(0).toUpperCase()}
                     </Text>

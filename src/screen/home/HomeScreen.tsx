@@ -13,6 +13,10 @@ import { useNavigation } from '@react-navigation/native';
 import { localStorage, storageKeys } from '../../storage/storage';
 import { showSnackbar } from '../../utils/snackbar';
 import Loader from '../../component/loader/Loader';
+import { GET, POST_FORM } from '../../api/request';
+import { ApiEndPoint } from '../../api/endPoints';
+import { ScrollView } from 'react-native-gesture-handler';
+import { Colors } from '../../theme';
 
 const HomeScreen = () => {
     const [selectedSubject, setSelectedSubject] = useState<null | string>(null)
@@ -143,121 +147,225 @@ const HomeScreen = () => {
         navigation.navigate('PaperTypeScreen');
     }
 
+    // const handleBoardDataGet = async () => {
+    //     setLoading(true);
+    //     try {
+    //         const response = await fetch('https://www.papers.withupartners.in/api/boards')
+    //         console.log('Response status:rr', response);
+
+    //         const newRes = await response.json();
+    //         console.log('newRes:', newRes);
+
+    //         if (response.ok) {
+    //             if (newRes.status === '1') {
+    //                 // setProfileData(new)
+    //                 // console.log('newRes.statusss', newRes.result)
+    //                 setBoardData(newRes.result)
+    //             } else {
+    //                 showSnackbar(newRes?.msg || 'OTP Failed', 'error');
+    //             }
+    //         }
+    //     } catch (error) {
+    //         console.error('API Error:', error);
+    //         if (error.message?.includes('Network')) {
+    //             showSnackbar('No internet connection', 'error');
+    //         } else {
+    //             showSnackbar(error.message, 'error');
+    //         }
+
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+
     const handleBoardDataGet = async () => {
         setLoading(true);
         try {
-            const response = await fetch('https://www.papers.withupartners.in/api/boards')
-            console.log('Response status:rr', response);
-
-            const newRes = await response.json();
-            console.log('newRes:', newRes);
-
-            if (response.ok) {
-                if (newRes.status === '1') {
-                    // setProfileData(new)
-                    // console.log('newRes.statusss', newRes.result)
-                    setBoardData(newRes.result)
-                } else {
-                    showSnackbar(newRes?.msg || 'OTP Failed', 'error');
-                }
-            }
-        } catch (error) {
-            console.error('API Error:', error);
-            if (error.message?.includes('Network')) {
-                showSnackbar('No internet connection', 'error');
+            const response = await GET(ApiEndPoint.Board);
+            if (response && response.status === '1') {
+                setBoardData(response?.result)
             } else {
-                showSnackbar(error.message, 'error');
+                const errorMessage = response?.message ||
+                    'Data not fetch. Please try again.';
+                showSnackbar(errorMessage, 'error');
             }
 
+        } catch (error: any) {
+            if (error?.offline) {
+                showSnackbar('No internet connection', 'error');
+                return;
+            }
+            const errorMessage = error?.response?.data?.message ||
+                error?.message ||
+                'Something went wrong. Please try again.';
+            showSnackbar(errorMessage, 'error');
         } finally {
             setLoading(false);
         }
     };
+
+    // const handleMediumDataFetch = async () => {
+    //     setLoading(true);
+    //     try {
+    //         const response = await fetch('https://www.papers.withupartners.in/api/medium')
+    //         console.log('Response status:rr', response);
+    //         const newRes = await response.json();
+    //         console.log('newRes:', newRes);
+
+    //         if (response.ok) {
+    //             if (newRes.status === '1') {
+    //                 // setProfileData(new)
+    //                 // console.log('newRes.statusss', newRes.result)
+    //                 setMedium(newRes.result)
+    //             } else {
+    //                 showSnackbar(newRes?.msg || 'OTP Failed', 'error');
+    //             }
+    //         }
+    //     } catch (error) {
+    //         console.error('API Error:', error);
+    //         if (error.message?.includes('Network')) {
+    //             showSnackbar('No internet connection', 'error');
+    //         } else {
+    //             showSnackbar(error.message, 'error');
+    //         }
+
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
     const handleMediumDataFetch = async () => {
         setLoading(true);
         try {
-            const response = await fetch('https://www.papers.withupartners.in/api/medium')
-            console.log('Response status:rr', response);
-            const newRes = await response.json();
-            console.log('newRes:', newRes);
-
-            if (response.ok) {
-                if (newRes.status === '1') {
-                    // setProfileData(new)
-                    // console.log('newRes.statusss', newRes.result)
-                    setMedium(newRes.result)
-                } else {
-                    showSnackbar(newRes?.msg || 'OTP Failed', 'error');
-                }
-            }
-        } catch (error) {
-            console.error('API Error:', error);
-            if (error.message?.includes('Network')) {
-                showSnackbar('No internet connection', 'error');
+            const response = await GET(ApiEndPoint.Medium);
+            if (response && response.status === '1') {
+                setMedium(response?.result)
             } else {
-                showSnackbar(error.message, 'error');
+                const errorMessage = response?.message ||
+                    'Data not fetch. Please try again.';
+                showSnackbar(errorMessage, 'error');
             }
-
+        } catch (error: any) {
+            if (error?.offline) {
+                showSnackbar('No internet connection', 'error');
+                return;
+            }
+            const errorMessage = error?.response?.data?.message ||
+                error?.message ||
+                'Something went wrong. Please try again.';
+            showSnackbar(errorMessage, 'error');
         } finally {
             setLoading(false);
         }
     };
+
+    // const handleStandardFetch = async () => {
+    //     setLoading(true);
+    //     try {
+    //         const response = await fetch('https://www.papers.withupartners.in/api/classes')
+    //         console.log('Response status:rr', response);
+    //         const newRes = await response.json();
+    //         console.log('newRes:', newRes);
+
+    //         if (response.ok) {
+    //             if (newRes.status === '1') {
+    //                 // setProfileData(new)
+    //                 // console.log('newRes.statusss', newRes.result)
+    //                 setStandard(newRes.result)
+    //             } else {
+    //                 showSnackbar(newRes?.msg || 'OTP Failed', 'error');
+    //             }
+    //         }
+    //     } catch (error) {
+    //         console.error('API Error:', error);
+    //         if (error.message?.includes('Network')) {
+    //             showSnackbar('No internet connection', 'error');
+    //         } else {
+    //             showSnackbar(error.message, 'error');
+    //         }
+
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
     const handleStandardFetch = async () => {
         setLoading(true);
         try {
-            const response = await fetch('https://www.papers.withupartners.in/api/classes')
-            console.log('Response status:rr', response);
-            const newRes = await response.json();
-            console.log('newRes:', newRes);
-
-            if (response.ok) {
-                if (newRes.status === '1') {
-                    // setProfileData(new)
-                    // console.log('newRes.statusss', newRes.result)
-                    setStandard(newRes.result)
-                } else {
-                    showSnackbar(newRes?.msg || 'OTP Failed', 'error');
-                }
-            }
-        } catch (error) {
-            console.error('API Error:', error);
-            if (error.message?.includes('Network')) {
-                showSnackbar('No internet connection', 'error');
+            const response = await GET(ApiEndPoint.Classes);
+            if (response && response.status === '1') {
+                setStandard(response?.result)
             } else {
-                showSnackbar(error.message, 'error');
+                const errorMessage = response?.message ||
+                    'Data not fetch. Please try again.';
+                showSnackbar(errorMessage, 'error');
             }
 
+        } catch (error: any) {
+            if (error?.offline) {
+                showSnackbar('No internet connection', 'error');
+                return;
+            }
+            const errorMessage = error?.response?.data?.message ||
+                error?.message ||
+                'Something went wrong. Please try again.';
+            showSnackbar(errorMessage, 'error');
         } finally {
             setLoading(false);
         }
     };
+
+    // const fetchBanners = async () => {
+    //     setLoading(true)
+    //     try {
+    //         const response = await fetch('https://www.papers.withupartners.in/api/banner');
+    //         const newRes = await response.json();
+
+    //         if (newRes?.status === 200) {
+    //             console.log('responseassssss', response);
+    //             setBanners(newRes?.result || []);
+    //         } else {
+    //             showSnackbar(newRes?.msg || 'Failed to load banners', 'error');
+    //             // Fallback to local images if API fails
+    //             setBanners([]);
+    //         }
+    //     } catch (error) {
+    //         console.error('Banner fetch error:', error);
+    //         showSnackbar('Network error', 'error');
+    //         // Fallback to local images
+    //         setBanners([]);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
     const fetchBanners = async () => {
-        setLoading(true)
+        setLoading(true);
         try {
-            const response = await fetch('https://www.papers.withupartners.in/api/banner');
-            const newRes = await response.json();
-
-            if (newRes?.status === 200) {
-                console.log('responseassssss', response);
-                setBanners(newRes?.result || []);
+            const response = await GET(ApiEndPoint.Banner);
+            if (response && response.status === '1') {
+                setBanners(response?.result)
             } else {
-                showSnackbar(newRes?.msg || 'Failed to load banners', 'error');
-                // Fallback to local images if API fails
+                const errorMessage = response?.message ||
+                    'Data not fetch. Please try again.';
+                showSnackbar(errorMessage, 'error');
                 setBanners([]);
+
             }
-        } catch (error) {
-            console.error('Banner fetch error:', error);
-            showSnackbar('Network error', 'error');
-            // Fallback to local images
-            setBanners([]);
+
+        } catch (error: any) {
+            if (error?.offline) {
+                showSnackbar('No internet connection', 'error');
+                return;
+            }
+            const errorMessage = error?.response?.data?.message ||
+                error?.message ||
+                'Something went wrong. Please try again.';
+            showSnackbar(errorMessage, 'error');
         } finally {
             setLoading(false);
         }
     };
-
     const renderItem = useCallback(({ item, index }) => {
         return (
             // <SubjectItem
@@ -390,47 +498,49 @@ const HomeScreen = () => {
                 />
 
                 {/* board */}
-                <AppModal visible={visible} onClose={handleBordCloseModal}>
-                    <View style={styles.lineMainBox}>
-                        <View style={styles.lineCenterWrapper}>
-                            <View style={styles.lineBox} />
+                <AppModal visible={visible} onClose={handleBordCloseModal} >
+                    <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: Colors.white }}showsVerticalScrollIndicator={false}>
+                        <View style={styles.lineMainBox}>
+                            <View style={styles.lineCenterWrapper}>
+                                <View style={styles.lineBox} />
+                            </View>
+
+                            <TouchableOpacity style={styles.cancleBox} onPress={handleBordCloseModal}>
+                                <Image
+                                    source={Icons.cancel}
+                                    style={styles.cancleIcon}
+                                    resizeMode="contain"
+                                />
+                            </TouchableOpacity>
                         </View>
 
-                        <TouchableOpacity style={styles.cancleBox} onPress={handleBordCloseModal}>
-                            <Image
-                                source={Icons.cancel}
-                                style={styles.cancleIcon}
-                                resizeMode="contain"
-                            />
-                        </TouchableOpacity>
-                    </View>
+                        <Text style={styles.selectModal}>Select Board</Text>
 
-                    <Text style={styles.selectModal}>Select Board</Text>
+                        <FlatList
+                            data={boardData}
+                            numColumns={2}
+                            keyExtractor={(item) => item?.board_name?.toString()}
+                            showsVerticalScrollIndicator={false}
+                            columnWrapperStyle={styles.row}
+                            contentContainerStyle={styles.listContainer}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity style={[styles.boardItem,
+                                {
+                                    backgroundColor: selectedBoard == item?.board_name ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)',
+                                    borderColor: selectedBoard === item?.board_name ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)'
+                                }]}
+                                    onPress={() => handleSelectedBoard(item?.board_name)} key={item?.board_name}>
+                                    <Text style={styles.boardModalText}>{item?.board_name}</Text>
+                                </TouchableOpacity>
+                            )}
+                        />
 
-                    <FlatList
-                        data={boardData}
-                        numColumns={2}
-                        keyExtractor={(item) => item?.board_name?.toString()}
-                        showsVerticalScrollIndicator={false}
-                        columnWrapperStyle={styles.row}
-                        contentContainerStyle={styles.listContainer}
-                        renderItem={({ item }) => (
-                            <TouchableOpacity style={[styles.boardItem,
-                            {
-                                backgroundColor: selectedBoard == item?.board_name ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)',
-                                borderColor: selectedBoard === item?.board_name ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)'
-                            }]}
-                                onPress={() => handleSelectedBoard(item?.board_name)} key={item?.board_name}>
-                                <Text style={styles.boardModalText}>{item?.board_name}</Text>
-                            </TouchableOpacity>
-                        )}
-                    />
-
-                    <AppButton title='Submit' onPress={handleMediumOpenModal} style={{
-                        width: "96%",
-                        marginTop: moderateScale(15),
-                        marginBottom: moderateScale(40)
-                    }} />
+                        <AppButton title='Submit' onPress={handleMediumOpenModal} style={{
+                            width: "96%",
+                            marginTop: moderateScale(15),
+                            marginBottom: moderateScale(40)
+                        }} />
+                    </ScrollView>
                 </AppModal>
 
                 {/*  medium */}
