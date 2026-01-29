@@ -6,7 +6,8 @@ export const styles = StyleSheet.create({
   mainBox: {
     flexDirection: "row",
     justifyContent: "center",
-    marginTop: moderateScale(15)
+    marginTop: moderateScale(15),
+    // borderWidth:1
   },
   card: {
     backgroundColor: Colors.white,
@@ -14,14 +15,15 @@ export const styles = StyleSheet.create({
     // padding: moderateScale(16),
     width: moderateScale(162),
     paddingHorizontal: moderateScale(8),
-    marginHorizontal: moderateScale(5),
+    marginHorizontal: moderateScale(4.8),
     paddingVertical: moderateScale(20),
+    // marginTop:moderateScale(-40),
     height: moderateScale(150),
     shadowColor: '#1E90FF',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.25,
     shadowRadius: 12,
-    elevation: 8,
+    elevation: 4,
     // borderWidth:1
 
   },

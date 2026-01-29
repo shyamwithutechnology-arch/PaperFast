@@ -195,6 +195,7 @@ import { POST_FORM } from "../../../api/request";
 import Loader from "../../../component/loader/Loader";
 import Pagination from "./component/Pagination";
 import AppModal from "../../../component/modal/AppModal";
+import { showSnackbar } from "../../../utils/snackbar";
 
 const QuestionScreen = () => {
     const navigation = useNavigation()
@@ -213,7 +214,7 @@ const QuestionScreen = () => {
 
     const [selectCheck, setSelectedCheck] = useState('Options')
     const [selectedMap, setSelectedMap] = useState<Record<string, boolean>>({});
-    const [questionsData, setQuestionsData] = useState<any>(null);
+    const [questionsData, setQuestionsData] = useState<any>({});
     const [loader, setLoader] = useState(false);
     const [labelStatus, setLabelStatus] = useState(false);
 
@@ -251,13 +252,15 @@ const QuestionScreen = () => {
                 'subject_id': '6',
                 // 'difficulty': '3',
                 'easy': '3',
-                'page': page.toString(),
-                'limit': limit.toString()
+                'page': page?.toString(),
+                'limit': limit?.toString()
             }
             const response = await POST_FORM('question', params)
+            console.log('responsewwwwwwww', response);
+
             if (response?.status === 200) {
                 // console.log('API Response:', response);
-                setQuestionsData(response);
+                setQuestionsData(response || {});
 
                 // Update pagination state from API response
                 if (response?.pagination) {
@@ -269,8 +272,15 @@ const QuestionScreen = () => {
                     });
                 }
             }
-        } catch (error) {
-            console.error('Error fetching questions:', error);
+        } catch (error: any) {
+            if (error?.offline) {
+                showSnackbar('No internet connection', 'error');
+                return;
+            }
+            const errorMessage = error?.response?.data?.message ||
+                error?.message ||
+                'Something went wrong. Please try again.';
+            showSnackbar(errorMessage, 'error');
         } finally {
             setLoader(false)
         }

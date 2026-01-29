@@ -53,7 +53,7 @@
 // export default PaperTypeScreen;
 
 
-import React from "react";
+import React, { useState } from "react";
 import { View, StatusBar, Text, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors, Fonts } from "../../../theme";
@@ -63,8 +63,10 @@ import { styles } from "./styles";
 import { Icons } from "../../../assets/icons";
 import { moderateScale } from "../../../utils/responsiveSize";
 import { useNavigation } from "@react-navigation/native";
+import Loader from "../../../component/loader/Loader";
 
 const PaperTypeScreen = () => {
+  const [loading, setLoading] = useState<boolean>(false);
   const navigation = useNavigation()
   const handleSelectPaperType = (payload) => {
     navigation.navigate('PaperSelect', { 'paperType': payload })
@@ -91,6 +93,7 @@ const PaperTypeScreen = () => {
 
       {/* SCREEN CONTENT */}
       <SafeAreaView style={{ flex: 1 }} edges={["left", "right", "bottom"]}>
+        <Loader  visible={loading}/>
         <CustomPaperCard onPress={handleSelectPaperType} />
 
         <View style={styles.draftBox}>

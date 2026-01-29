@@ -6,9 +6,7 @@ export const styles = StyleSheet.create({
     headerContainer: {
         paddingVertical: moderateScale(16),
         paddingHorizontal: moderateScale(16),
-        // borderWidth: 1,
         flexDirection: 'row',
-        // paddingLeft: moderateScale(16),
         alignItems: "center",
         backgroundColor: Colors.lightThemeBlue,
         justifyContent:"space-between",
@@ -19,6 +17,7 @@ export const styles = StyleSheet.create({
         color: Colors.black,
         fontFamily: Fonts.InstrumentSansMedium,
         marginLeft: moderateScale(15)
+        // paddingRight:moderateScale(8)
     },
     saveDraftText:{
         fontFamily:Fonts.InstrumentSansMedium,

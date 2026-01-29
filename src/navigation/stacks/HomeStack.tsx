@@ -7,6 +7,7 @@ import PaperSelect from '../../screen/papermodule/paperselect/PaperSelect';
 import QuestionScreen from '../../screen/papermodule/questionModule/QuestionScreen';
 import DraftPaperScreen from '../../screen/papermodule/draftpaper/DraftPaperScreen';
 import ChemistryData from '../../screen/papermodule/ChemistryData';
+import MyPdfScreen from '../../screen/mypdf/MyPdfScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -19,6 +20,7 @@ const HomeStack = () => {
             <Stack.Screen name="QuestionScreen" component={QuestionScreen} />
             <Stack.Screen name="DraftPaperScreen" component={DraftPaperScreen} />
             <Stack.Screen name="ChemistryData" component={ChemistryData} />
+            <Stack.Screen name="MyPdfScreen" component={MyPdfScreen} />
 
             {/* <Stack.Screen name="HomeDetails" component={HomeDetails} /> */}
         </Stack.Navigator>
