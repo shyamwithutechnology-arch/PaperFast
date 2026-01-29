@@ -9,4 +9,5 @@ Rectangle3:require('./Rectangle3.png'),
 Rectangle4:require('./Rectangle4.png'),
 banner:require('./banner.png'),
 banner1:require('./banner1.png'),
+loader:require('./loader.png'),
 };

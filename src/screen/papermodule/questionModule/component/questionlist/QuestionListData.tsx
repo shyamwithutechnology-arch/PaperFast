@@ -2097,6 +2097,7 @@ import {
   Image,
   Dimensions,
   ScrollView,
+  ImageBackground,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MathJax from 'react-native-mathjax';
@@ -2123,6 +2124,7 @@ const mathJaxOptions = {
     extensions: ['AMSmath.js', 'AMSsymbols.js', 'noErrors.js', 'noUndefined.js']
   }
 };
+
 
 export type Question = {
   question_id: string;
@@ -2219,11 +2221,11 @@ const OptionItem = memo(({
       // hasText  ? styles.correctOptionContainer : styles.imageStyle/
     ]}>
       {/* Option Content */}
+      {/* // selectOption && isCorrect && styles.correctOptionLabel */}
       {hasImages &&
-        <View style={[styles.optionContent, hasImages && { flexDirection: 'column' }]}>
+        <View style={[styles.optionContent, hasImages && { flexDirection: 'row', borderColor: selectOption && isCorrect ? Colors.questionSelect : '#fff', borderWidth: 1 }]}>
           <View style={[
             styles.optionLabelContainer,
-            // selectOption && isCorrect && styles.correctOptionLabel
           ]}>
             <Text style={[
               styles.optionLabel,
@@ -2232,9 +2234,8 @@ const OptionItem = memo(({
               {id})
             </Text>
           </View>
-          {/* Option Images */}
           {hasImages && (
-            <View style={styles.optionImagesContainer}>
+            <View style={[styles.optionImagesContainer, { width: moderateScale(300), height: moderateScale(62) }]}>
               {optionImages.map((base64, index) => (
                 <Image
                   key={`option-img-${id}-${index}`}
@@ -2247,9 +2248,39 @@ const OptionItem = memo(({
           )}
         </View>
       }
+      {/* // hasImages && <View style={[styles.optionContent, hasImages && { flexDirection: 'row', borderWidth: 1 }]}> */}
+      {/* {
+        hasImages && <View style={[styles.optionContent]}>
+          <View style={[
+            styles.optionLabelContainer, {
+              position: "absolute"
+            }
+          ]}>
+            <Text style={[
+              styles.optionLabel,
+              (selectOption && isCorrect && styles.correctOptionText
+              )]}>
+              {id})
+            </Text>
+          </View>
+          {optionImages.map((base64, index) => (
+            <View style={[styles.optionImagesContainer, { borderWidth: 1, borderColor: "#000", width: '100%', height: moderateScale(62),alignSelf:'flex-start' }]}>
+              <ImageBackground
+                key={`option-img-${id}-${index}`}
+                source={{ uri: `data:image/png;base64,${base64}` }}
+                style={styles.optionImage}
+                resizeMode='contain'
+              />
+            </View>
+          ))}
+
+        </View>
+
+      } */}
+
 
       {hasText &&
-        <View style={[styles.optionContent, hasText && { flexDirection: "row", alignItems: 'center', justifyContent: "flex-start" }]}>
+        <View style={[styles.optionContent, hasText && { flexDirection: "row", alignItems: 'flex-start', justifyContent: "flex-start", borderColor: selectOption && isCorrect ? Colors.questionSelect : '#fff', borderWidth: 1 }]}>
           <View style={[
             styles.optionLabelContainer,
             // selectOption && isCorrect && styles.correctOptionLabel
@@ -2318,6 +2349,60 @@ const QuestionContent = memo(({
   const hasText = cleanText.trim().length > 0;
   const hasImages = images.length > 0;
 
+  //   const htmlContent = `
+  // <!DOCTYPE html>
+  // <html>
+  // <head>
+  // <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  // <style>
+  //   body {
+  //     margin: 0 !important;
+  //     padding: 0 !important;
+  //   }
+  //   p, div {
+  //     margin: 0 !important;
+  //     padding: 0 !important;
+  //   }
+  // </style>
+  // </head>
+  // <body>
+  // ${cleanText}
+  // </body>
+  // </html>
+  // `;
+  const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: ${moderateScale(12)}px;
+    color: #000;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+
+  p, div {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .MathJax_Display {
+    margin: 0 !important;
+  }
+
+</style>
+</head>
+<body>
+${cleanText}
+</body>
+</html>
+`;
+
+
   return (
     <View style={styles.questionContent}>
       {/* Question Text */}
@@ -2326,8 +2411,10 @@ const QuestionContent = memo(({
           {hasMath ? (
             <MathJax
               mathJaxOptions={mathJaxOptions}
-              html={cleanText}
-              style={[styles.questionMathJax, isSelected && styles.selectedText]}
+              html={htmlContent}
+              style={[styles.questionMathJax, isSelected && styles.selectedText, {
+                marginTop: 0, paddingVertical: 0,
+              }]}
             />
           ) : (
             <Text style={[styles.questionText, isSelected && styles.selectedText]}>
@@ -2453,7 +2540,8 @@ const QuestionItem = memo(({
   isSelected,
   selectCheck,
   onToggle,
-  extractImages
+  extractImages,
+  listottomLineHide
 }: {
   item: Question;
   index: number;
@@ -2461,6 +2549,7 @@ const QuestionItem = memo(({
   selectCheck: 'Options' | 'Solutions';
   onToggle: (id: string) => void;
   extractImages: (html: string) => string[];
+  listottomLineHide: any
 }) => {
   const images = extractImages(item.question_text);
   const questionTextWithoutImages = (item.question_text || '').replace(/<img[^>]*>/g, '');
@@ -2473,9 +2562,10 @@ const QuestionItem = memo(({
   ];
   return (
     <TouchableOpacity
-      style={[styles.card, isSelected && styles.cardSelected]}
+      style={[styles.card, isSelected && styles.cardSelected, { borderBottomWidth: listottomLineHide ? 0 : 1 }]}
       activeOpacity={0.7}
       onPress={() => onToggle(item.question_id)}
+
     >
       {/* Question Row */}
       <View style={styles.questionRow}>
@@ -2494,7 +2584,6 @@ const QuestionItem = memo(({
             )}
           </View>
         </View>
-
         <QuestionContent
           text={questionTextWithoutImages}
           images={images}
@@ -2565,6 +2654,9 @@ const QuestionListData: React.FC<Props> = ({
 
   const renderItem = useCallback(({ item, index }: { item: Question; index: number }) => {
     const isSelected = !!selectedMap[item.question_id];
+    let langthList = index === questionsData?.length - 1;
+    console.log('lllllllllllllllll', langthList);
+
     return (
       <QuestionItem
         item={item}
@@ -2573,6 +2665,7 @@ const QuestionListData: React.FC<Props> = ({
         selectCheck={selectCheck}
         onToggle={toggleSelect}
         extractImages={extractBase64Images}
+        listottomLineHide={langthList}
       />
     );
   }, [selectedMap, selectCheck, toggleSelect, extractBase64Images]);
@@ -2632,13 +2725,14 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: Colors.white,
-    paddingHorizontal: moderateScale(17),
-    borderBottomWidth: 1,
-    borderColor: 'rgba(12, 64, 111, 0.12)',
-    marginHorizontal: 0,
-    paddingBottom: moderateScale(6),
+    borderBottomWidth: 1.5,
+    borderColor: 'rgba(12, 64, 111, 0.30)',
+    // marginHorizontal: 0,
     flex: 1,
-    paddingTop: moderateScale(6)
+    // paddingBottom: moderateScale(6),
+    // paddingTop: moderateScale(6)
+    paddingHorizontal: moderateScale(16),
+    paddingVertical: moderateScale(10)
   },
   cardSelected: {
     backgroundColor: '#EBF6FF'
@@ -2646,30 +2740,34 @@ const styles = StyleSheet.create({
   questionRow: {
     flexDirection: 'row',
     marginBottom: moderateScale(10),
+
   },
   questionNumber: {
-    fontSize: moderateScale(15),
-    fontFamily: Fonts.InstrumentSansSemiBold,
+    fontSize: moderateScale(12),
+    fontFamily: Fonts.InstrumentSansMedium,
     color: Colors.black,
+    // textAlignVertical: 'top'
   },
   questionContent: {
     flex: 1,
   },
   mathJaxWrapper: {
-    flex: 1,
-    paddingVertical: moderateScale(0.5),
+    // flex: 1,
+    paddingVertical: moderateScale(0.1),
     // marginTop: moderateScale(6),
-    // borderWidth:1
+    // borderWidth: 1
   },
   questionText: {
-    fontSize: moderateScale(14),
+    fontSize: moderateScale(12),
     fontFamily: Fonts.InstrumentSansMedium,
     color: Colors.black,
-    // borderWidth:1
-    // lineHeight: moderateScale(19),
+    // borderWidth:1,
+    lineHeight: moderateScale(15),
+    marginTop: moderateScale(0),
+
   },
   questionMathJax: {
-    fontSize: moderateScale(11),
+    fontSize: moderateScale(12),
     fontFamily: Fonts.InstrumentSansMedium,
     color: Colors.black,
     // borderWidth:1
@@ -2693,13 +2791,13 @@ const styles = StyleSheet.create({
     // Your options grid styles
   },
   optionContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    // flexDirection: 'row',
+    // alignItems: 'flex-start',
     // justifyContent:"flex-start",
     marginBottom: moderateScale(8),
     backgroundColor: Colors.white,
     borderRadius: moderateScale(4),
-    paddingVertical: moderateScale(4),
+    paddingVertical: moderateScale(.2),
     // borderWidth: 1
   },
   correctOptionContainer: {
@@ -2711,16 +2809,13 @@ const styles = StyleSheet.create({
     flexDirection: 'column'
   },
   optionLabelContainer: {
-    width: moderateScale(30),
+    width: moderateScale(20),
     alignItems: 'center',
-    justifyContent: 'center',
-    // marginRight: moderateScale(8),
+    // justifyContent: 'flex-start',
     borderRadius: moderateScale(4),
-    // paddingVertical: moderateScale(2),
-    // borderWidth: 1,
     borderColor: '#BFBFBF',
-    // alignSelf: "baseline",
-    // marginLeft: moderateScale(4)
+    // borderWidth: 1,
+    height: moderateScale(20),
   },
   correctOptionLabel: {
     // backgroundColor: '#4CAF50',
@@ -2728,8 +2823,8 @@ const styles = StyleSheet.create({
     borderWidth: 1.4
   },
   optionLabel: {
-    fontSize: moderateScale(13),
-    fontFamily: Fonts.InstrumentSansSemiBold,
+    fontSize: moderateScale(12),
+    fontFamily: Fonts.InstrumentSansMedium,
     color: Colors.black,
     // textAlign:'center'
   },
@@ -2744,17 +2839,19 @@ const styles = StyleSheet.create({
     // alignItems:"center",
     // justifyContent:"flex-start",
     // overflow:"hidden"
+    borderRadius: moderateScale(2)
   },
   optionImagesContainer: {
     marginBottom: moderateScale(4),
   },
   optionImage: {
     width: '100%',
-    height: moderateScale(60),
+    height: '100%',
     maxHeight: moderateScale(120),
     borderRadius: moderateScale(4),
-    alignSelf: 'center',
-    resizeMode: 'contain',
+    alignSelf: "flex-start"
+    // alignSelf: 'flex-start',
+    // resizeMode: 'contain',
   },
   optionTextContainer: {
     flex: 1,
@@ -2805,6 +2902,8 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     flexDirection: "column",
     height: moderateScale(50),
+    // borderWidth: 1,
+    marginRight: moderateScale(2)
   },
   solutionBox: {
     backgroundColor: Colors.white,

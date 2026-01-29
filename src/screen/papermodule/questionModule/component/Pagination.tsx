@@ -1,4 +1,4 @@
-// // Pagination.tsx
+// // // Pagination.tsx
 // import React, { useState } from 'react';
 // import {
 //     View,
@@ -259,6 +259,8 @@
 // export default Pagination;
 
 // Pagination.tsx
+
+
 import React, { useState, useRef, useEffect } from 'react';
 import {
     View,
@@ -392,7 +394,7 @@ const Pagination: React.FC<PaginationProps> = ({
     //     // You might want to use a more sophisticated click-outside detection
     //     // depending on your app's requirements
     //     return () => {
-    //         handleClickOutside() // comment 
+    //         handleClickOutside() // comment
     //     };
     // }, [showLimitDropdown]);
 
@@ -434,8 +436,10 @@ const Pagination: React.FC<PaginationProps> = ({
                                             styles.dropdownContainer,
                                             {
                                                 position: 'absolute',
-                                                top: dropdownPosition.y,
-                                                left: dropdownPosition.x,
+                                                // top: dropdownPosition.x,
+                                                // left: dropdownPosition.y,
+                                                top:moderateScale(155),
+                                                left:moderateScale(82)
                                             }
                                         ]}
                                     >

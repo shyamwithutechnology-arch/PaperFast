@@ -15,8 +15,6 @@ type SelectedSummary = {
     questionMarks: string;
     selectedQuestions: number[];
 };
-
-
 const PaperSelect = () => {
     const navigation = useNavigation()
     const route = useRoute();

@@ -188,6 +188,7 @@ const HomeScreen = () => {
                 const errorMessage = response?.message ||
                     'Data not fetch. Please try again.';
                 showSnackbar(errorMessage, 'error');
+                setBoardData([])
             }
 
         } catch (error: any) {
@@ -244,6 +245,7 @@ const HomeScreen = () => {
                 const errorMessage = response?.message ||
                     'Data not fetch. Please try again.';
                 showSnackbar(errorMessage, 'error');
+                setMedium([])
             }
         } catch (error: any) {
             if (error?.offline) {
@@ -299,6 +301,7 @@ const HomeScreen = () => {
                 const errorMessage = response?.message ||
                     'Data not fetch. Please try again.';
                 showSnackbar(errorMessage, 'error');
+                setStandard([])
             }
 
         } catch (error: any) {
@@ -343,7 +346,7 @@ const HomeScreen = () => {
         setLoading(true);
         try {
             const response = await GET(ApiEndPoint.Banner);
-            if (response && response.status === '1') {
+            if (response && response.status === 200) {
                 setBanners(response?.result)
             } else {
                 const errorMessage = response?.message ||
@@ -425,7 +428,7 @@ const HomeScreen = () => {
             <View style={styles.innerMainContainer}>
                 <FlatList
                     data={SUBJECTS}
-                    keyExtractor={(item) => item.id}
+                    keyExtractor={(item) => item.id.toString()}
                     renderItem={renderItem}
                     extraData={selectedSubject}
                     showsVerticalScrollIndicator={false}
@@ -499,7 +502,7 @@ const HomeScreen = () => {
 
                 {/* board */}
                 <AppModal visible={visible} onClose={handleBordCloseModal} >
-                    <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: Colors.white }}showsVerticalScrollIndicator={false}>
+                    <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: Colors.white }} showsVerticalScrollIndicator={false}>
                         <View style={styles.lineMainBox}>
                             <View style={styles.lineCenterWrapper}>
                                 <View style={styles.lineBox} />
@@ -545,99 +548,103 @@ const HomeScreen = () => {
 
                 {/*  medium */}
                 <AppModal visible={visibleMedium} onClose={handleMediumCloseModal}>
-                    <View style={styles.lineMainBox}>
-                        <View style={styles.lineCenterWrapper}>
-                            <View style={styles.lineBox} />
+                    <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: Colors.white }} showsVerticalScrollIndicator={false}>
+                        <View style={styles.lineMainBox}>
+                            <View style={styles.lineCenterWrapper}>
+                                <View style={styles.lineBox} />
+                            </View>
+
+                            <TouchableOpacity style={styles.cancleBox} onPress={handleMediumCloseModal}>
+                                <Image
+                                    source={Icons.cancel}
+                                    style={styles.cancleIcon}
+                                    resizeMode="contain"
+                                />
+                            </TouchableOpacity>
                         </View>
 
-                        <TouchableOpacity style={styles.cancleBox} onPress={handleMediumCloseModal}>
-                            <Image
-                                source={Icons.cancel}
-                                style={styles.cancleIcon}
-                                resizeMode="contain"
-                            />
-                        </TouchableOpacity>
-                    </View>
-
-                    <Text style={[styles.selectModal, { marginBottom: moderateScale(20) }]}>Select Medium</Text>
-                    {/* <TouchableOpacity style={[styles.englishMediumBox, { backgroundColor: selectMedium === 'English' ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)', borderColor: selectedBoard === 'English' ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)' }]} onPress={() => handleSelectMedium('English')} >
+                        <Text style={[styles.selectModal, { marginBottom: moderateScale(20) }]}>Select Medium</Text>
+                        {/* <TouchableOpacity style={[styles.englishMediumBox, { backgroundColor: selectMedium === 'English' ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)', borderColor: selectedBoard === 'English' ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)' }]} onPress={() => handleSelectMedium('English')} >
                         <Text style={[styles.englishText, { color: selectMedium === 'English' ? Colors.primaryColor : Colors.InputText }]}>{selectedBoard} - English Medium</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[styles.englishMediumBox, { backgroundColor: selectMedium === 'Hindi' ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)', borderColor: selectedBoard === 'Hindi' ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)' }]} onPress={() => handleSelectMedium('Hindi')}>
                         <Text style={[styles.englishText, { color: selectMedium === 'Hindi' ? Colors.primaryColor : Colors.InputText }]}>{selectedBoard} - हिंदी माध्यम</Text>
                     </TouchableOpacity> */}
-                    <FlatList
-                        data={medium}
-                        // numColumns={2}
-                        keyExtractor={(item) => item?.medium_name?.toString()}
-                        showsVerticalScrollIndicator={false}
-                        // columnWrapperStyle={styles.row}
-                        contentContainerStyle={styles.listContainer}
-                        renderItem={({ item }) => (
-                            <TouchableOpacity style={[styles.boardItem,
-                            {
-                                backgroundColor: selectMedium == item?.medium_name ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)',
-                                borderColor: selectMedium === item?.medium_name ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)',
-                                marginBottom: moderateScale(15)
-                            }]}
-                                // onPress={() => handleSelectedBoard(item?.board_name)} 
-                                onPress={() => handleSelectMedium(item?.medium_name)}
-                                key={item?.medium_name}>
-                                <Text style={styles.boardModalText}>{selectedBoard}-{item?.medium_name}</Text>
-                            </TouchableOpacity>
-                        )}
-                    />
+                        <FlatList
+                            data={medium}
+                            // numColumns={2}
+                            keyExtractor={(item) => item?.medium_name?.toString()}
+                            showsVerticalScrollIndicator={false}
+                            // columnWrapperStyle={styles.row}
+                            contentContainerStyle={styles.listContainer}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity style={[styles.boardItem,
+                                {
+                                    backgroundColor: selectMedium == item?.medium_name ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)',
+                                    borderColor: selectMedium === item?.medium_name ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)',
+                                    marginBottom: moderateScale(15)
+                                }]}
+                                    // onPress={() => handleSelectedBoard(item?.board_name)} 
+                                    onPress={() => handleSelectMedium(item?.medium_name)}
+                                    key={item?.medium_name}>
+                                    <Text style={styles.boardModalText}>{selectedBoard}-{item?.medium_name}</Text>
+                                </TouchableOpacity>
+                            )}
+                        />
 
-                    <AppButton title='Submit' onPress={handleStandardOpenModal} style={{
-                        width: "100%",
-                        marginTop: moderateScale(25),
-                        marginBottom: moderateScale(20),
-                        // borderRadius:0,
-                        // marginTop:moderateScale(-40)
-                    }} />
+                        <AppButton title='Submit' onPress={handleStandardOpenModal} style={{
+                            width: "100%",
+                            marginTop: moderateScale(25),
+                            marginBottom: moderateScale(20),
+                            // borderRadius:0,
+                            // marginTop:moderateScale(-40)
+                        }} />
+                    </ScrollView>
                 </AppModal>
 
                 {/* standard */}
                 <AppModal visible={visibleStandard} onClose={handleStandardCloseModal}>
-                    <View style={styles.lineMainBox}>
-                        <View style={styles.lineCenterWrapper}>
-                            <View style={styles.lineBox} />
+                    <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: Colors.white }} showsVerticalScrollIndicator={false}>
+                        <View style={styles.lineMainBox}>
+                            <View style={styles.lineCenterWrapper}>
+                                <View style={styles.lineBox} />
+                            </View>
+
+                            <TouchableOpacity style={styles.cancleBox} onPress={handleStandardCloseModal}>
+                                <Image
+                                    source={Icons.cancel}
+                                    style={styles.cancleIcon}
+                                    resizeMode="contain"
+                                />
+                            </TouchableOpacity>
                         </View>
 
-                        <TouchableOpacity style={styles.cancleBox} onPress={handleStandardCloseModal}>
-                            <Image
-                                source={Icons.cancel}
-                                style={styles.cancleIcon}
-                                resizeMode="contain"
-                            />
-                        </TouchableOpacity>
-                    </View>
+                        <Text style={styles.selectModal}>Select Standard</Text>
 
-                    <Text style={styles.selectModal}>Select Standard</Text>
+                        <FlatList
+                            data={standard}
+                            numColumns={2}
+                            keyExtractor={(item) => item?.class_name?.toString()}
+                            showsVerticalScrollIndicator={false}
+                            columnWrapperStyle={styles.row}
+                            contentContainerStyle={styles.listContainer}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity
+                                    style={[styles.boardItem, {
+                                        backgroundColor: selectStandard === item?.class_name ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)',
+                                        borderColor: selectStandard === item?.class_name ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)'
+                                    }]} onPress={() => handleSelectStandard(item?.class_name)}>
+                                    <Text style={styles.boardModalText}>{item?.class_name}</Text>
+                                </TouchableOpacity>
+                            )}
+                        />
 
-                    <FlatList
-                        data={standard}
-                        numColumns={2}
-                        keyExtractor={(item) => item?.class_name?.toString()}
-                        showsVerticalScrollIndicator={false}
-                        columnWrapperStyle={styles.row}
-                        contentContainerStyle={styles.listContainer}
-                        renderItem={({ item }) => (
-                            <TouchableOpacity
-                                style={[styles.boardItem, {
-                                    backgroundColor: selectStandard === item?.class_name ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)',
-                                    borderColor: selectStandard === item?.class_name ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)'
-                                }]} onPress={() => handleSelectStandard(item?.class_name)}>
-                                <Text style={styles.boardModalText}>{item?.class_name}</Text>
-                            </TouchableOpacity>
-                        )}
-                    />
-
-                    <AppButton title='Submit' onPress={handleStandardCloseModal} style={{
-                        width: "96%",
-                        marginTop: moderateScale(15),
-                        marginBottom: moderateScale(40)
-                    }} />
+                        <AppButton title='Submit' onPress={handleStandardCloseModal} style={{
+                            width: "96%",
+                            marginTop: moderateScale(15),
+                            marginBottom: moderateScale(40)
+                        }} />
+                        </ScrollView>
                 </AppModal>
             </View>
 

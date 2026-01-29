@@ -53,7 +53,8 @@ const MainTabs = () => {
           height: moderateScale(80), // 80
           backgroundColor: Colors.white,
           paddingTop: moderateScale(6),
-          elevation: 10
+          elevation: 10,
+          overflow:'hidden'
           // borderTopWidth: 1,
           // borderColor:"#000",
           // alignSelf:"center"

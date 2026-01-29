@@ -48,7 +48,8 @@ export const styles = StyleSheet.create({
     elevation: 2,
     borderWidth: 1,
     borderColor: "rgba(0, 140, 227, 0.11)",
-    marginHorizontal: moderateScale(10)
+    marginHorizontal: moderateScale(14),
+    
   },
 
   itemText: {
