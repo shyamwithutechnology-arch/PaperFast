@@ -183,7 +183,7 @@ const PaperSelect = () => {
                         <View>
                             <Text style={styles.marksTotel}>11 Marks Total</Text>
                             <Text style={[styles.marksTotel, { fontSize: moderateScale(12) }]}>
-                                1=3,2=0,3=0,4=2,5=0
+                                1=3,2=0,3=0,4=2,5=0ddd
                             </Text>
                         </View>
                         <TouchableOpacity style={styles.exportBox}>

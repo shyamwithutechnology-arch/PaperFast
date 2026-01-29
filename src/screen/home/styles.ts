@@ -121,6 +121,7 @@ export const styles = StyleSheet.create({
     lineMainBox: {
         flexDirection: "row",
         alignItems: "center",
+        marginTop:moderateScale(20)
     },
 
     lineCenterWrapper: {
@@ -152,8 +153,9 @@ export const styles = StyleSheet.create({
         fontFamily: Fonts.InstrumentSansMedium,
         color: Colors.black,
         marginTop: moderateScale(10),
-        marginLeft: moderateScale(8),
-        marginBottom: moderateScale(10)
+        marginLeft: moderateScale(6),
+        marginBottom: moderateScale(10),
+        // borderWidth:1
     },
     selectStanBox: {
         paddingHorizontal: scale(14),
