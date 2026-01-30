@@ -478,7 +478,7 @@ const HomeScreen = () => {
                                         <Image source={Icons.NotificationDashBord} style={styles.notificationIcon} />
                                         <Text style={[styles.allSubText, {
                                             marginTop: moderateScale(0), marginBottom: moderateScale(0)
-                                        }]}>Notifications</Text>
+                                        }]}>Updated New</Text>
                                     </View>
                                     {Notification.map((item, index) => {
                                         const lastItem = index === Notification?.length - 1

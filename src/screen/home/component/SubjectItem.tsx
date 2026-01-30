@@ -2,18 +2,14 @@ import React from 'react'
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native'
 import { moderateScale, scale, verticalScale } from '../../../utils/responsiveSize'
 import { Colors, Fonts } from '../../../theme'
+import { Images } from '../../../assets/images'
+import { Icons } from '../../../assets/icons'
 interface Props {
     item: { id: string, label: string },
     selected: boolean,
     onPress: (id: string) => void
 }
 
-// #FFF8DE = light-yellow
-// #FFE8DE = light Orange
-// #DEEDFF = Light Blue
-// #E5DEFF = light purple
-// #DEF9FF = Sky Blue
-// #FFDEDE = Light red
 let randomColor = [
     '#FFF8DE',
     '#FFE8DE',
@@ -21,7 +17,6 @@ let randomColor = [
     '#E5DEFF',
     '#DEF9FF',
     '#FFDEDE',
-    '#DEEDFF',
 ]
 
 const getCardColor = (id: string) => {
@@ -41,16 +36,20 @@ const SubjectItem = React.memo(({ item, selected, onPress }: Props) => {
         [item.id]
     );
     return (
-        <TouchableOpacity style={[styles.card, selected && styles.selectedCard, { backgroundColor: bgColor },
+        <TouchableOpacity style={[styles.card, selected && styles.selectedCard,
+        { backgroundColor: bgColor },
         ]}
             onPress={() => onPress(item?.id)}
             activeOpacity={0.7}>
-            <View style={styles.subjectBox}>
-                <Text style={styles.label}>{item.label}</Text>
-
-                {/* Radio Button */}
-                <View style={styles.radio}>
-                    {selected && <View style={styles.radioInner} />}
+            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                <View style={styles.subjectBox}>
+                    <View style={styles.radio}>
+                        {selected && <View style={styles.radioInner} />}
+                    </View>
+                    <Text style={styles.label}>{item.label}</Text>
+                </View>
+                <View style={{ width: moderateScale(40), height: moderateScale(30) }}>
+                    <Image source={Icons.dashBoardImg1} style={{ width: moderateScale(40), height: moderateScale(40) }} resizeMode='contain' />
                 </View>
             </View>
         </TouchableOpacity>
@@ -62,14 +61,17 @@ const styles = StyleSheet.create({
     card: {
         marginVertical: moderateScale(6),
         borderRadius: moderateScale(5),
-        backgroundColor: 'rgba(12,64,111,0.05)',
+        // backgroundColor: 'rgba(12,64,111,0.05)',
+        // backgroundColor: '#fff',
         // paddingHorizontal: moderateScale(9),
         alignSelf: 'center',
         marginHorizontal: moderateScale(7),
         marginTop: moderateScale(6),
         // gap: moderateScale(40),
         // paddingHorizontal:moderateScale(4)
-
+        width: scale(167),
+        borderWidth: .5,
+        borderColor:Colors.InputStroke
     },
     selectedCard: {
         backgroundColor: 'rgba(12,64,111,0.12)',
@@ -78,7 +80,8 @@ const styles = StyleSheet.create({
     label: {
         fontSize: moderateScale(14),
         fontFamily: Fonts.InstrumentSansMedium,
-        color: Colors.black
+        color: Colors.black,
+        marginLeft: moderateScale(8)
     },
     radio: {
         width: moderateScale(16),
@@ -96,16 +99,19 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.primaryColor
     },
     subjectBox: {
-        width: scale(167),
+        width: scale(122),
+        // width:scale(140),
         height: verticalScale(50),
-        borderWidth: .3,
-        borderColor: Colors.InputStroke,
+        // borderWidth: .3,
+        // borderWidth: 1,
+        // borderColor: Colors.InputStroke,
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        // justifyContent: 'space-between',
         alignItems: 'center',
-        alignSelf: 'center',
-        paddingHorizontal: moderateScale(10),
+        // alignSelf: 'center',
+        // paddingHorizontal: moderateScale(10),
         borderRadius: moderateScale(5),
+        marginLeft: moderateScale(4)
         // marginBottom:moderateScale(-25)
     }
 })
