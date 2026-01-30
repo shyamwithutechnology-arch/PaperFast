@@ -27,7 +27,6 @@ export const styles = StyleSheet.create({
         marginTop: moderateScale(16),
         marginLeft: moderateScale(7),
         marginBottom: moderateScale(8),
-        // borderWidth:1
     },
     boardBox: {
         height: verticalScale(88),
