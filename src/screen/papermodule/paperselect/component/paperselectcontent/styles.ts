@@ -3,7 +3,7 @@ import { moderateScale } from "../../../../../utils/responsiveSize";
 import { Colors, Fonts } from "../../../../../theme";
 export const styles = StyleSheet.create({
   wrapper: {
-    marginBottom: moderateScale(16),
+    marginBottom: moderateScale(10),
   },
 
   /* TITLE CARD */
@@ -14,11 +14,25 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    elevation: 1,
+    // elevation: 1,
     marginHorizontal: moderateScale(14),
-    borderColor: 'rgba(0, 140, 227, 0.11)',
-    borderWidth: 1,
-    shadowColor: ''
+    // borderColor: 'rgba(0, 140, 227, 0.11)',
+    // shadowColor: ''
+
+    // iOS Shadow
+    shadowColor: 'green',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: moderateScale(300),
+
+    // Android Shadow
+    elevation: 30,
+    borderWidth: .7,
+    borderColor: Colors?.InputStroke,
+    borderTopWidth: .5,
   },
 
   title: {
@@ -49,7 +63,7 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(0, 140, 227, 0.11)",
     marginHorizontal: moderateScale(14),
-    
+
   },
 
   itemText: {

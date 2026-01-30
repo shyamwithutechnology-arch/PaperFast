@@ -250,8 +250,8 @@ const QuestionScreen = () => {
         try {
             let params = {
                 'subject_id': '6',
-                // 'difficulty': '3',
-                'easy': '3',
+                'difficulty': '3',
+                // 'easy': '3',
                 'page': page?.toString(),
                 'limit': limit?.toString()
             }
@@ -422,8 +422,7 @@ const QuestionScreen = () => {
                         paginationData={pagination}
                         onPageChange={handlePageChange}
                         onLimitChange={handleLimitChange}
-                    />
-                )}
+                    />)}
 
                 {/* Question list */}
                 <QuestionListData

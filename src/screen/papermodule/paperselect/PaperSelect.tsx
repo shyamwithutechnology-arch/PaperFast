@@ -74,6 +74,28 @@ const PaperSelect = () => {
                     { id: "D", label: "Ques-Ans (Each of 4 Mark)", questionMarks: '4' },
                 ],
             },
+            {
+                id: 3,
+                title: "Trigonomatery ",
+                chapterName: "Chap 03",
+                questions: [
+                    { id: "A", label: "M.C.Q (1 Marks)", questionMarks: '1' },
+                    { id: "B", label: "Very short answer type  (2 Marks)", questionMarks: '2' },
+                    { id: "C", label: "Ques-Ans (Each of 3 Mark)", questionMarks: '3' },
+                    { id: "D", label: "Ques-Ans (Each of 4 Mark)", questionMarks: '4' },
+                ],
+            },
+            {
+                id: 4,
+                title: "Probability",
+                chapterName: "Chap 04",
+                questions: [
+                    { id: "A", label: "M.C.Q (1 Marks)", questionMarks: '1' },
+                    { id: "B", label: "Very short answer type  (2 Marks)", questionMarks: '2' },
+                    { id: "C", label: "Ques-Ans (Each of 3 Mark)", questionMarks: '3' },
+                    { id: "D", label: "Ques-Ans (Each of 4 Mark)", questionMarks: '4' },
+                ],
+            },
         ],
         EXEMPLAR: [
             {
@@ -138,7 +160,7 @@ const PaperSelect = () => {
     return (
         <View style={{ flex: 1, backgroundColor: Colors.white }}>
             <StatusBar
-                backgroundColor={Colors.primaryColor}
+                backgroundColor={Colors.lightThemeBlue}
                 barStyle="dark-content" />
 
             {/* HEADER + STATUS BAR SAME BACKGROUND */}
@@ -185,8 +207,8 @@ const PaperSelect = () => {
                             </Text>
                         </View>
                         <TouchableOpacity style={styles.exportBox}>
-                            <Text style={styles.exportText}>Export Pdf</Text>
-                            <Icon name='arrow-right-long' size={moderateScale(18)} color={Colors.white} />
+                            <Text style={styles.exportText}>Export PDF</Text>
+                            <Icon name='arrow-right-long' size={moderateScale(16)} color={Colors.white} />
                         </TouchableOpacity>
                     </View>
                 </View>

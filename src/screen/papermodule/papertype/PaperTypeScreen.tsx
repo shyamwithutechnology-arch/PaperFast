@@ -93,15 +93,22 @@ const PaperTypeScreen = () => {
 
       {/* SCREEN CONTENT */}
       <SafeAreaView style={{ flex: 1 }} edges={["left", "right", "bottom"]}>
-        <Loader  visible={loading}/>
+        <Loader visible={loading} />
         <CustomPaperCard onPress={handleSelectPaperType} />
+        <View style={styles.mainMaskView}>
+          <Image source={Icons.MaskGroup} style={styles.maskGroupImag} />
 
-        <View style={styles.draftBox}>
-          <Text style={styles.draftText}>Draft  Paper</Text>
-
-          <View style={{ alignSelf: 'center', marginTop: moderateScale(30) }}>
-            <Image source={Icons.paperFile} resizeMode="contain" style={{ height: moderateScale(30), width: moderateScale(30), alignSelf: "center" }} />
-            <Text style={{ fontSize: moderateScale(13), fontFamily: Fonts.InstrumentSansRegular, color: Colors.ParagraphAndShortTexts, marginTop: moderateScale(10) }}>No Draft Paper Avaliable</Text>
+          <View style={{}}>
+            <View style={[styles.supportBox, { marginHorizontal: moderateScale(0) }]}>
+              <View style={styles.scrachLine} />
+              <View style={[styles.supportBox, { flexDirection: 'column', alignItems: 'flex-start' }]}>
+                <Text style={styles.supportText}>Support</Text>
+                <View style={styles.numberTextBox}>
+                  <Image source={Icons.plus} style={styles.plusImg} />
+                  <Text style={styles.supportNumberText}>91 8709952350</Text>
+                </View>
+              </View>
+            </View>
           </View>
         </View>
       </SafeAreaView>

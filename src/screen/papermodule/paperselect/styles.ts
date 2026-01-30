@@ -58,7 +58,7 @@ export const styles = StyleSheet.create({
     marksTotel: {
         fontSize: moderateScale(14),
         fontFamily: Fonts.InterSemiBold,
-        color: Colors.black
+        color: Colors.InputText
     },
     // exportBox:{
     //     paddingHorizontal:moderateScale(13),
@@ -89,7 +89,7 @@ export const styles = StyleSheet.create({
 
     topShadow: {
         height: 3,
-        backgroundColor: Colors.primaryColor,
+        backgroundColor: Colors.InputText,
         opacity: 0.08,
     },
 
@@ -106,11 +106,12 @@ export const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: -3 },
         shadowOpacity: 0.12,
         shadowRadius: 4,
+        
     },
 
     exportBox: {
-        paddingHorizontal: moderateScale(14),
-        paddingVertical: moderateScale(8),
+        paddingHorizontal: moderateScale(8),
+        paddingVertical: moderateScale(7),
         backgroundColor: Colors.primaryColor,
         borderRadius: moderateScale(6),
         flexDirection: "row",

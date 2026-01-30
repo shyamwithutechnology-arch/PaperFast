@@ -644,7 +644,7 @@ const HomeScreen = () => {
                             marginTop: moderateScale(15),
                             marginBottom: moderateScale(40)
                         }} />
-                        </ScrollView>
+                    </ScrollView>
                 </AppModal>
             </View>
 

@@ -319,6 +319,7 @@ const Paperselectcontent: React.FC<Props> = ({ data, handleNavigate, activeChapt
         return (
           <View key={item.id} style={styles.wrapper}>
             {/* TITLE */}
+            {/* <View style={{borderWidth:1, paddingVertical:moderateScale(1)}}> */}
             <TouchableOpacity
               style={styles.titleBox}
               activeOpacity={0.8}
@@ -333,10 +334,11 @@ const Paperselectcontent: React.FC<Props> = ({ data, handleNavigate, activeChapt
                 source={Icons.downArrow}
                 style={[
                   styles.arrow,
-                  { transform: [{ rotate: isOpen ? "180deg" : "0deg" }] },
+                  { transform: [{ rotate: isOpen ? "180deg" : "272deg" }] },
                 ]}
               />
             </TouchableOpacity>
+            {/* </View> */}
 
             {/* CONTENT */}
             {isOpen && (
