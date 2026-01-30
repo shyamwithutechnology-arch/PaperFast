@@ -44,8 +44,7 @@ const MyPdfScreen = () => {
                     <TouchableOpacity style={styles.dragBox} >
                         <Image source={Icons?.fileUpload} style={styles.fileUploadImg} resizeMode='contain' />
                     </TouchableOpacity>
-
-                    <View style={{marginVertical:moderateScale(15)}}>
+                    <View style={{ marginVertical: moderateScale(15) }}>
                         <AppTextInput placeHolderText='Insitute Name' />
                     </View>
                     <AppTextInput placeHolderText='Enter Test Name' />
@@ -76,7 +75,6 @@ const MyPdfScreen = () => {
                     </View>
                     <Text style={[styles.TimeText, styles.waterMark]}>Water Mark</Text>
 
-
                     <View style={styles.parentLogo}>
                         <TouchableOpacity style={styles.logoMainBox} onPress={() => handleSelectWaterMark('1')}>
                             <View style={styles.radioButton}>
@@ -89,11 +87,9 @@ const MyPdfScreen = () => {
                             <View style={styles.radioButton} >
                                 {logo === '2' && <View style={styles.innerView} />}
                             </View>
-
                             <Text style={[styles.TimeText, styles.logoText]}>Text</Text>
                         </TouchableOpacity>
                     </View>
-
 
                     <TouchableOpacity style={[styles.dragBox, { marginTop: moderateScale(14) }]} >
                         <Image source={Icons?.fileUpload} style={styles.fileUploadImg} resizeMode='contain' />
@@ -117,7 +113,6 @@ const MyPdfScreen = () => {
                         </TouchableOpacity>
                     </View>
 
-
                     <TouchableOpacity style={[styles.dragBox, { marginTop: moderateScale(14) }]} >
                         <Image source={Icons?.fileUpload} style={styles.fileUploadImg} resizeMode='contain' />
                     </TouchableOpacity>
@@ -135,7 +130,6 @@ const MyPdfScreen = () => {
         </View>
     );
 };
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -165,8 +159,6 @@ const styles = StyleSheet.create({
         color: Colors.black,
         marginLeft: moderateScale(16),
         marginVertical: moderateScale(10)
-        // textAlign: 'center',
-        // marginBottom: moderateScale(16),
     },
     message: {
         fontSize: moderateScale(14),
@@ -231,8 +223,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignSelf: "center",
         marginTop: moderateScale(10),
-        // marginTop:moderateScale(-40)
-
     },
     dateImg: {
         height: moderateScale(20),
@@ -243,8 +233,7 @@ const styles = StyleSheet.create({
         width: moderateScale(17.5),
         borderWidth: 1,
         borderRadius: moderateScale(2),
-        borderColor: Colors.InputStroke,
-        // marginTop:moderateScale(-40)
+        borderColor: Colors.InputStroke
     },
     hideBox: {
         alignItems: 'center',

@@ -21,12 +21,12 @@ export const styles = StyleSheet.create({
         marginTop: moderateScale(-28),
     },
     allSubText: {
-        fontSize: moderateScale(17),
+        fontSize: moderateScale(15),
         fontFamily: Fonts.InstrumentSansMedium,
         color: Colors.black,
         marginTop: moderateScale(16),
-        marginLeft: moderateScale(12),
-        marginBottom: moderateScale(4)
+        marginLeft: moderateScale(7),
+        marginBottom: moderateScale(8),
     },
     boardBox: {
         height: verticalScale(88),
@@ -88,7 +88,7 @@ export const styles = StyleSheet.create({
 
     },
     notificationInnerBox: {
-        paddingVertical: moderateScale(8),
+        paddingVertical: moderateScale(4),
         backgroundColor: Colors.homeNotificationInnerBgColor,
         flexDirection: 'row',
         alignItems: 'center',

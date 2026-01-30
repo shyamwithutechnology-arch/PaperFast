@@ -38,4 +38,5 @@ filter:require('./filter.png'),
 arrowLeft:require('./arrowLeft.png'),
 fileUpload:require('./fileUpload.png'),
 date:require('./date.png'),
+dashBoardImg1:require('./dashBoardImg1.png'),
 };
