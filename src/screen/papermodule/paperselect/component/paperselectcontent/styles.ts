@@ -55,7 +55,7 @@ export const styles = StyleSheet.create({
 
   /* CONTENT CARD */
   contentBox: {
-    marginTop: moderateScale(12), // 🔥 space between title & content
+    marginTop: moderateScale(8), // 🔥 space between title & content
     backgroundColor: Colors.white,
     borderRadius: moderateScale(7),
     padding: moderateScale(10),
