@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, Image, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, Image, FlatList, TouchableOpacity, SectionList } from 'react-native';
 import { styles } from './styles';
 import AppHeader from '../../component/header/AppHeader';
 import { Icons } from '../../assets/icons/index'
@@ -16,7 +16,7 @@ import Loader from '../../component/loader/Loader';
 import { GET, POST_FORM } from '../../api/request';
 import { ApiEndPoint } from '../../api/endPoints';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Colors } from '../../theme';
+import { Colors, Fonts } from '../../theme';
 
 const HomeScreen = () => {
     const [selectedSubject, setSelectedSubject] = useState<null | string>(null)
@@ -34,6 +34,7 @@ const HomeScreen = () => {
     const [medium, setMedium] = useState([]);
     const [standard, setStandard] = useState([]);
     const [banners, setBanners] = useState([]);
+    console.log('boardData', boardData);
 
     // board
     const handleBordOpenModal = async () => {
@@ -55,6 +56,39 @@ const HomeScreen = () => {
         setSelectedBoard(item);
         await localStorage.setItem(storageKeys.selectedBoard, item);
         //   setVisible(false);
+    };
+
+    //     const filteredData = () => {
+    //         boardData?.filter(item => {
+    //             return (
+    //             if(item?.exam_type_name === "Engineering") {
+    //                 return item?.boards
+    //             }
+    //             if(item?.exam_type_name === 'Medical') {
+    //                 return item?.boards
+    //             }
+    //             if(item?.exam_type_name === 'Board') {
+    //                 return item?.boards
+    //             }
+    //             )
+    //     })
+    // }
+
+    const getSectionedData = () => {
+        if (!boardData) return [];
+
+        const sections = ['Engineering', 'Medical', 'Board']
+            .map(type => {
+                const examData = boardData.find(item => item?.exam_type_name === type);
+                return {
+                    title: type,
+                    data: examData?.boards || [],
+                    exam_type_id: examData?.exam_type_id
+                };
+            })
+            .filter(section => section.data.length > 0);
+
+        return sections;
     };
 
     // medium 
@@ -442,7 +476,7 @@ const HomeScreen = () => {
                                 {/* card box */}
                                 <View style={styles.cardMainBox}>
                                     <TouchableOpacity style={styles.boardBox} onPress={handleBordOpenModal}>
-                                        <Image source={Icons.board} style={styles.bordIcon} />
+                                        <Image source={Icons.boardImg} style={styles.bordIcon} resizeMode='contain'/>
                                         <Text style={styles.boardText}>Board</Text>
                                         <View style={styles.rajasthanBox}>
                                             <Text style={styles.boardTextStyl} numberOfLines={1}>{selectedBoard}</Text>
@@ -450,7 +484,7 @@ const HomeScreen = () => {
                                         </View>
                                     </TouchableOpacity>
                                     <TouchableOpacity style={styles.boardBox} onPress={handleMediumOpenModal}>
-                                        <Image source={Icons.board} style={styles.bordIcon} />
+                                        <Image source={Icons.mediumImg} style={styles.bordIcon}resizeMode='contain' />
                                         <Text style={styles.boardText}>Medium</Text>
                                         <View style={styles.rajasthanBox}>
                                             <Text style={styles.boardTextStyl} numberOfLines={1}>{selectMedium}</Text>
@@ -458,7 +492,7 @@ const HomeScreen = () => {
                                         </View>
                                     </TouchableOpacity>
                                     <TouchableOpacity style={styles.boardBox} onPress={handleStandardOpenModal}>
-                                        <Image source={Icons.board} style={styles.bordIcon} />
+                                        <Image source={Icons.standardImg} style={styles.bordIcon} resizeMode='contain' />
                                         <Text style={styles.boardText}>Standard</Text>
                                         <View style={styles.rajasthanBox}>
                                             <Text style={styles.boardTextStyl} numberOfLines={1}>{selectStandard}</Text>
@@ -475,17 +509,20 @@ const HomeScreen = () => {
                             <View>
                                 <View style={styles.notificationBox}>
                                     <View style={styles.notificationInnerBox}>
-                                        <Image source={Icons.NotificationDashBord} style={styles.notificationIcon} />
+                                        <Image source={Icons.megaphone} style={styles.notificationIcon} resizeMode='contain'/>
                                         <Text style={[styles.allSubText, {
-                                            marginTop: moderateScale(0), marginBottom: moderateScale(0)
-                                        }]}>Updated New</Text>
+                                            marginTop: moderateScale(0), marginBottom: moderateScale(0), fontFamily:Fonts.InstrumentSansSemiBold, fontSize:moderateScale(14), marginLeft:moderateScale(15)
+                                        }]}>Latest News</Text>
                                     </View>
                                     {Notification.map((item, index) => {
                                         const lastItem = index === Notification?.length - 1
                                         return (
                                             <View style={[styles.boxNotification, { borderBottomWidth: lastItem ? 0 : 1 }]} key={item?.id}>
-                                                <Image source={Icons.notificationSpace} style={styles.notificationIcon} />
-                                                <Text style={styles.notificationdec}> {item?.label}</Text>
+                                                {/* <Image source={Icons.notificationSpace} style={styles.notificationIcon} /> */}
+                                                <Text style={styles.notificationdec}>{item?.label}</Text>
+                                                <View style={{backgroundColor:'#D9534F', paddingHorizontal:moderateScale(4),borderRadius:moderateScale(2),alignItems:"center",justifyContent:"center"}}>
+                                                    <Text style={{fontFamily:Fonts.InstrumentSansRegular, fontSize:moderateScale(8),color:Colors.white, }}>New</Text>
+                                                </View>
                                             </View>
                                         )
                                     })}
@@ -502,7 +539,7 @@ const HomeScreen = () => {
 
                 {/* board */}
                 <AppModal visible={visible} onClose={handleBordCloseModal} >
-                    <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: Colors.white }} showsVerticalScrollIndicator={false}>
+                    <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: Colors.white}} showsVerticalScrollIndicator={false}>
                         <View style={styles.lineMainBox}>
                             <View style={styles.lineCenterWrapper}>
                                 <View style={styles.lineBox} />
@@ -517,26 +554,68 @@ const HomeScreen = () => {
                             </TouchableOpacity>
                         </View>
 
-                        <Text style={styles.selectModal}>Select Board</Text>
+                        {/* <Text style={styles.selectModal}>Select Board</Text> */}
 
-                        <FlatList
-                            data={boardData}
+                        {/* <FlatList
+                            data={getSectionedData()}
                             numColumns={2}
                             keyExtractor={(item) => item?.board_name?.toString()}
                             showsVerticalScrollIndicator={false}
                             columnWrapperStyle={styles.row}
                             contentContainerStyle={styles.listContainer}
                             renderItem={({ item }) => (
-                                <TouchableOpacity style={[styles.boardItem,
-                                {
-                                    backgroundColor: selectedBoard == item?.board_name ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)',
-                                    borderColor: selectedBoard === item?.board_name ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)'
-                                }]}
-                                    onPress={() => handleSelectedBoard(item?.board_name)} key={item?.board_name}>
-                                    <Text style={styles.boardModalText}>{item?.board_name}</Text>
-                                </TouchableOpacity>
-                            )}
-                        />
+                                <View>
+                                    <Text>{item?.exam_type_name}</Text>
+                                    <TouchableOpacity
+                                        style={[styles.boardItem, {
+                                            backgroundColor: selectedBoard == item?.board_name ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)',
+                                            borderColor: selectedBoard === item?.board_name ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)'
+                                        }]}
+                                        onPress={() => handleSelectedBoard(item?.board_name)}
+                                        key={item?.board_name}
+                                    >
+                                        <Text style={styles.boardModalText}>{item?.board_name}</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            )
+
+                            }
+                        /> */}
+
+                        {getSectionedData().map((section) => (
+                            <View key={section.title} style={styles.sectionContainer}>
+                                <Text style={styles.sectionTitle}>{section?.title}</Text>
+                                <View style={styles.bottomLine} />
+                                <FlatList
+                                    data={section.data}
+                                    numColumns={2}
+                                    scrollEnabled={false} // Important: disable scroll when nested
+                                    keyExtractor={(item) => item.board_id?.toString()}
+                                    columnWrapperStyle={styles.row}
+                                    showsVerticalScrollIndicator={false}
+                                    contentContainerStyle={styles.listContainer}
+                                    renderItem={({ item }) => (
+                                        <TouchableOpacity
+                                            style={[
+                                                styles.boardItem,
+                                                {
+                                                    backgroundColor: selectedBoard === item?.board_name
+                                                        ? 'rgba(12, 64, 111, 0.1)'
+                                                        : 'rgba(12, 64, 111, 0.05)',
+                                                    borderColor: selectedBoard === item?.board_name
+                                                        ? 'rgba(12, 64, 111, 1)'
+                                                        : 'rgba(12, 64, 111, 0.19)'
+                                                }
+                                            ]}
+                                            onPress={() => handleSelectedBoard(item?.board_name)}
+                                        >
+                                            <Image source={{ uri: item?.board_image }} style={styles.logoImg} resizeMode='contain' />
+                                            <Text style={styles.boardModalText}>{item?.board_name}</Text>
+                                        </TouchableOpacity>
+                                    )}
+                                />
+                            </View>
+                        ))}
 
                         <AppButton title='Submit' onPress={handleMediumOpenModal} style={{
                             width: "96%",
@@ -572,7 +651,7 @@ const HomeScreen = () => {
                     </TouchableOpacity> */}
                         <FlatList
                             data={medium}
-                            // numColumns={2}
+                            numColumns={2}
                             keyExtractor={(item) => item?.medium_name?.toString()}
                             showsVerticalScrollIndicator={false}
                             // columnWrapperStyle={styles.row}

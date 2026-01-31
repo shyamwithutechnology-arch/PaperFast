@@ -42,4 +42,9 @@ regularpaper:require('./regularpaper.png'),
 draftpaper:require('./draftpaper.png'),
 custompaper:require('./custompaper.png'),
 latestNew:require('./latestNew.png'),
+// boardlogoImg:require('./boardlogoImg.png'), //
+boardImg:require('./boardImg.png'),
+mediumImg:require('./mediumImg.png'),
+standardImg:require('./standardImg.png'),
+megaphone:require('./megaphone.png'),
 };
