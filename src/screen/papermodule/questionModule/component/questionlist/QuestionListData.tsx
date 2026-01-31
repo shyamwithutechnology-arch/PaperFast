@@ -1780,27 +1780,27 @@
 //     paddingVertical: moderateScale(8),
 //     // borderWidth:1
 //   },
-//   card: {
-//     backgroundColor: Colors.white,
-//     // borderRadius: moderateScale(8),
-//     // padding: moderateScale(16),
-//     // marginBottom: moderateScale(6),
-//     // shadowColor: '#000',
-//     // shadowOffset: { width: 0, height: 1 },
-//     // shadowOpacity: 0.05,
-//     // shadowRadius: 2,
-//     // elevation: 1,
-//     paddingHorizontal: moderateScale(17),
-//     // width:'100%',
-//     // borderBottomWidth: .5,
-//     borderBottomWidth: 1,
-//     borderColor: 'rgba(12, 64, 111, 0.12)',
-//     marginHorizontal: 0, // Add this
-//     paddingBottom: moderateScale(6),
-//     flex: 1,
-//     // marginTop:moderateScale(8)
-//     paddingTop:moderateScale(6)
-//   },
+// card: {
+// borderRadius: moderateScale(8),
+// padding: moderateScale(16),
+// marginBottom: moderateScale(6),
+// shadowColor: '#000',
+// shadowOffset: { width: 0, height: 1 },
+// shadowOpacity: 0.05,
+// shadowRadius: 2,
+// elevation: 1,
+// width:'100%',
+// borderBottomWidth: .5,
+// backgroundColor: Colors.white,
+// paddingHorizontal: moderateScale(17),
+// borderBottomWidth: 1,
+// borderColor: 'rgba(12, 64, 111, 0.12)',
+// marginHorizontal: 0, // Add this
+// paddingBottom: moderateScale(6),
+// flex: 1,
+// paddingTop:moderateScale(6),
+// marginTop:moderateScale(8)
+// },
 //   cardSelected: {
 //     backgroundColor: '#EBF6FF'
 //   },
@@ -2103,7 +2103,6 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import MathJax from 'react-native-mathjax';
 import { moderateScale, verticalScale, scale } from '../../../../../utils/responsiveSize';
 import { Colors, Fonts } from '../../../../../theme';
-
 const { width: screenWidth } = Dimensions.get('window');
 
 // MathJax configuration
@@ -2191,6 +2190,7 @@ const extractImagesFromHtml = (html: string): { text: string; images: string[] }
   return { text, images };
 };
 
+
 // Memoized Option Component with image support
 const OptionItem = memo(({
   id,
@@ -2210,6 +2210,14 @@ const OptionItem = memo(({
     extractImagesFromHtml(label || ''),
     [label]
   );
+  const formattedOptionText = useMemo(() => {
+    return `
+    <div style="font-size:${moderateScale(11)}px; line-height:24px;">
+      ${optionText}
+    </div>
+  `;
+  }, [optionText]);
+
 
   const hasMath = containsMath(optionText);
   const hasText = optionText.trim().length > 0;
@@ -2223,19 +2231,20 @@ const OptionItem = memo(({
       {/* Option Content */}
       {/* // selectOption && isCorrect && styles.correctOptionLabel */}
       {hasImages &&
-        <View style={[styles.optionContent, hasImages && { flexDirection: 'row', borderColor: selectOption && isCorrect ? Colors.questionSelect : '#fff', borderWidth: 1 }]}>
+        <View style={[styles.optionContent, hasImages && { flexDirection: 'row', alignItems: "center", borderColor: selectOption && isCorrect ? Colors.questionSelect : '#fff' }, ]}>
           <View style={[
             styles.optionLabelContainer,
+            selectOption && isCorrect && styles.correctOptionBgColor
           ]}>
             <Text style={[
               styles.optionLabel,
               (selectOption && isCorrect && styles.correctOptionText
               )]}>
-              {id})
+              {id}
             </Text>
           </View>
           {hasImages && (
-            <View style={[styles.optionImagesContainer, { width: moderateScale(300), height: moderateScale(62) }]}>
+            <View style={[styles.optionImagesContainer, { width: moderateScale(270), height: moderateScale(62),  }]}>
               {optionImages.map((base64, index) => (
                 <Image
                   key={`option-img-${id}-${index}`}
@@ -2246,50 +2255,20 @@ const OptionItem = memo(({
               ))}
             </View>
           )}
-        </View>
-      }
-      {/* // hasImages && <View style={[styles.optionContent, hasImages && { flexDirection: 'row', borderWidth: 1 }]}> */}
-      {/* {
-        hasImages && <View style={[styles.optionContent]}>
-          <View style={[
-            styles.optionLabelContainer, {
-              position: "absolute"
-            }
-          ]}>
-            <Text style={[
-              styles.optionLabel,
-              (selectOption && isCorrect && styles.correctOptionText
-              )]}>
-              {id})
-            </Text>
-          </View>
-          {optionImages.map((base64, index) => (
-            <View style={[styles.optionImagesContainer, { borderWidth: 1, borderColor: "#000", width: '100%', height: moderateScale(62),alignSelf:'flex-start' }]}>
-              <ImageBackground
-                key={`option-img-${id}-${index}`}
-                source={{ uri: `data:image/png;base64,${base64}` }}
-                style={styles.optionImage}
-                resizeMode='contain'
-              />
-            </View>
-          ))}
-
-        </View>
-
-      } */}
+        </View>}
 
 
       {hasText &&
-        <View style={[styles.optionContent, hasText && { flexDirection: "row", alignItems: 'flex-start', justifyContent: "flex-start", borderColor: selectOption && isCorrect ? Colors.questionSelect : '#fff', borderWidth: 1 }]}>
+        <View style={[styles.optionContent, hasText && { flexDirection: "row", alignItems: 'center', borderColor: selectOption && isCorrect ? Colors.questionSelect : '#fff', }]}>
           <View style={[
             styles.optionLabelContainer,
-            // selectOption && isCorrect && styles.correctOptionLabel
+            selectOption && isCorrect && styles.correctOptionBgColor
           ]}>
             <Text style={[
               styles.optionLabel,
               (selectOption && isCorrect && styles.correctOptionText
               )]}>
-              {id})
+              {id}
             </Text>
           </View>
           {/* Option Text */}
@@ -2301,7 +2280,7 @@ const OptionItem = memo(({
               {hasMath ? (
                 <MathJax
                   mathJaxOptions={mathJaxOptions}
-                  html={optionText}
+                  html={formattedOptionText}
                   style={[
                     styles.optionMathJax,
                     (selectOption && isCorrect && styles.correctOptionText)
@@ -2335,9 +2314,18 @@ const QuestionContent = memo(({
   images: string[];
   isSelected: boolean;
 }) => {
+  // const cleanText = useMemo(() => {
+  //   return (text || '')
+  // .replace(/<br\s*\/?>/gi, '\n')
+  // .replace(/&lt;/g, '<')
+  // .replace(/&gt;/g, '>')
+  // .replace(/&amp;/g, '&')
+  // .replace(/&nbsp;/g, ' ')
+  // .replace(/<[^>]*>/g, '');
+  // }, [text]);
   const cleanText = useMemo(() => {
     return (text || '')
-      .replace(/<br\s*\/?>/gi, '\n')
+      // .replace(/<br\s*\/?>/gi, '\n')
       .replace(/&lt;/g, '<')
       .replace(/&gt;/g, '>')
       .replace(/&amp;/g, '&')
@@ -2345,31 +2333,11 @@ const QuestionContent = memo(({
       .replace(/<[^>]*>/g, '');
   }, [text]);
 
+
   const hasMath = containsMath(cleanText);
   const hasText = cleanText.trim().length > 0;
   const hasImages = images.length > 0;
 
-  //   const htmlContent = `
-  // <!DOCTYPE html>
-  // <html>
-  // <head>
-  // <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  // <style>
-  //   body {
-  //     margin: 0 !important;
-  //     padding: 0 !important;
-  //   }
-  //   p, div {
-  //     margin: 0 !important;
-  //     padding: 0 !important;
-  //   }
-  // </style>
-  // </head>
-  // <body>
-  // ${cleanText}
-  // </body>
-  // </html>
-  // `;
   const htmlContent = `
 <!DOCTYPE html>
 <html>
@@ -2383,6 +2351,7 @@ const QuestionContent = memo(({
     font-size: ${moderateScale(12)}px;
     color: #000;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: ${moderateScale(18)}px;
   }
 
   p, div {
@@ -2467,6 +2436,7 @@ const SolutionView = memo(({
     return matches;
   }, [explanation]);
 
+
   // 2. Remove image tags to get clean text
   const cleanText = useMemo(() => {
     let text = explanation || '';
@@ -2476,19 +2446,62 @@ const SolutionView = memo(({
 
     // Clean HTML
     text = text
-      .replace(/<br\s*\/?>/gi, ' ') // Convert <br> to space
+      // .replace(/<br\s*\/?>/gi, ' ') // Convert <br> to space
+      // .replace(/<br\s*\/?>/gi, '<br/>')
       .replace(/&lt;/g, '<')
       .replace(/&gt;/g, '>')
       .replace(/&amp;/g, '&')
       .replace(/&nbsp;/g, ' ')
-      .replace(/<[^>]*>/g, '') // Remove any remaining HTML
+      // .replace(/<[^>]*>/g, '') // Remove any remaining HTML
       .trim();
 
     return text;
   }, [explanation]);
 
-  const hasMath = containsMath(cleanText);
-  const hasText = cleanText.length > 0;
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+@font-face {
+  font-family: 'InstrumentSansBold';
+  src: url('file:///android_asset/fonts/InstrumentSans_SemiCondensed-Regular.ttf');
+  font-weight: normal;
+}
+
+body {
+  margin:0 !important;
+  padding:0 !important;
+  font-size:14px;
+  color:#000;
+  font-family:'InstrumentSansBold', Arial, sans-serif;
+  line-height:20px;
+}
+
+p, div {
+  margin:0 !important;
+  padding:0 !important;
+}
+
+.MathJax_Display {
+  margin:0 !important;
+}
+
+</style>
+</head>
+
+<body>
+${cleanText}
+</body>
+</html>
+`;
+
+  const hasMath = containsMath(htmlContent);
+  const hasText = htmlContent.length > 0;
   const hasImages = images.length > 0;
 
   return (
@@ -2501,12 +2514,12 @@ const SolutionView = memo(({
           {hasMath ? (
             <MathJax
               mathJaxOptions={mathJaxOptions}
-              html={cleanText}
+              html={htmlContent}
               style={[styles.solutionMathJax, isSelected && styles.selectedText]}
             />
           ) : (
             <Text style={[styles.solutionText, isSelected && styles.selectedText]}>
-              {cleanText}
+              {htmlContent}
             </Text>
           )}
         </View>
@@ -2562,62 +2575,85 @@ const QuestionItem = memo(({
   ];
   return (
     <TouchableOpacity
-      style={[styles.card, isSelected && styles.cardSelected, { borderBottomWidth: listottomLineHide ? 0 : 1 }]}
-      activeOpacity={0.7}
-      onPress={() => onToggle(item.question_id)}
-
-    >
-      {/* Question Row */}
-      <View style={styles.questionRow}>
-        <View style={[styles.questionNumberContainer]}>
-          <Text style={styles.questionNumber}> {index + 1}.</Text>
-          <View style={[
-            styles.checkBox,
-            isSelected ? styles.checkBoxSelected : styles.checkBoxDefault
-          ]}>
-            {isSelected && (
-              <Icon
-                name="check"
-                size={moderateScale(12)}
-                color={Colors.white}
-              />
-            )}
-          </View>
+      // style={[styles.card, isSelected && styles.cardSelected, { borderBottomWidth: listottomLineHide ? 0 : 1 }]}
+      // activeOpacity={0.7} 
+      style={[ styles.cardMainBox ,isSelected && styles.cardSelected, { borderBottomWidth: listottomLineHide ? 0 : 1 }, { flexDirection: "row", paddingLeft: moderateScale(3),
+  
+  }]}
+      onPress={() => onToggle(item.question_id)}>
+      <View style={[styles.questionNumberContainer, {}]}>
+        <Text style={styles.questionNumber}> {index + 1}.</Text>
+        <View style={[
+          styles.checkBox,
+          isSelected ? styles.checkBoxSelected : styles.checkBoxDefault
+        ]}>
+          {isSelected && (
+            <Icon
+              name="check"
+              size={moderateScale(12)}
+              color={Colors.white}
+            />
+          )}
         </View>
+      </View>
+      <View style={[styles.card, isSelected && styles.cardSelected, ]}>
+        {/* Question Row */}
+        {/* <View style={styles.questionRow}> */}
+        {/* <View style={[styles.questionNumberContainer]}>
+            <Text style={styles.questionNumber}> {index + 1}.</Text>
+            <View style={[
+              styles.checkBox,
+              isSelected ? styles.checkBoxSelected : styles.checkBoxDefault
+            ]}>
+              {isSelected && (
+                <Icon
+                  name="check"
+                  size={moderateScale(12)}
+                  color={Colors.white}
+                />
+              )}
+            </View>
+          </View> */}
+        {/* <QuestionContent
+            text={questionTextWithoutImages}
+            images={images}
+            isSelected={isSelected}
+          /> */}
+        {/* </View> */}
         <QuestionContent
           text={questionTextWithoutImages}
           images={images}
           isSelected={isSelected}
         />
-      </View>
 
-      {/* Options Grid */}
-      <View style={styles.optionsGrid}>
-        {options.map((option) => {
-          return (
-            <OptionItem
-              key={option.id}
-              id={option.id}
-              label={option.label}
+        {/* Options Grid */}
+        <View style={styles.optionsGrid}>
+          {options.map((option) => {
+            return (
+              <OptionItem
+                key={option.id}
+                id={option.id}
+                label={option.label}
+                isSelected={isSelected}
+                isCorrect={item.correct_option === option.id} // Pass correct option check
+                selectCheck={selectCheck} // Pass it here
+              />
+            )
+          }
+          )}
+        </View>
+
+        {/* Solution View */}
+        {selectCheck === 'Solutions' && (
+          <View style={styles.solutionWrapper}>
+            <SolutionView
+              explanation={item.explanation || ''}
+              correctOption={item.correct_option || ''}
               isSelected={isSelected}
-              isCorrect={item.correct_option === option.id} // Pass correct option check
-              selectCheck={selectCheck} // Pass it here
             />
-          )
-        }
+          </View>
         )}
       </View>
-
-      {/* Solution View */}
-      {selectCheck === 'Solutions' && (
-        <View style={styles.solutionWrapper}>
-          <SolutionView
-            explanation={item.explanation || ''}
-            correctOption={item.correct_option || ''}
-            isSelected={isSelected}
-          />
-        </View>
-      )}
     </TouchableOpacity>
   );
 });
@@ -2706,7 +2742,7 @@ const QuestionListData: React.FC<Props> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: '#f9fafb',
     marginHorizontal: 0,
   },
   emptyContainer: {
@@ -2724,15 +2760,14 @@ const styles = StyleSheet.create({
     paddingVertical: moderateScale(8),
   },
   card: {
-    backgroundColor: Colors.white,
-    borderBottomWidth: 1.5,
-    borderColor: 'rgba(12, 64, 111, 0.30)',
+    // backgroundColor: 'red',
+    backgroundColor: '#f9fafb',
     // marginHorizontal: 0,
     flex: 1,
-    // paddingBottom: moderateScale(6),
-    // paddingTop: moderateScale(6)
-    paddingHorizontal: moderateScale(16),
-    paddingVertical: moderateScale(10)
+    paddingBottom: moderateScale(6),
+    paddingTop: moderateScale(6),
+    paddingHorizontal: moderateScale(12),
+    // paddingVertical: moderateScale(10)
   },
   cardSelected: {
     backgroundColor: '#EBF6FF'
@@ -2750,26 +2785,34 @@ const styles = StyleSheet.create({
   },
   questionContent: {
     flex: 1,
+    marginBottom: moderateScale(10),
+    // borderWidth: 1
   },
   mathJaxWrapper: {
     // flex: 1,
-    paddingVertical: moderateScale(0.1),
     // marginTop: moderateScale(6),
-    // borderWidth: 1
+    // borderWidth: 1,
+    paddingVertical: moderateScale(1),
+    marginBottom: moderateScale(8)
   },
   questionText: {
-    fontSize: moderateScale(12),
+    fontSize: moderateScale(14),
     fontFamily: Fonts.InstrumentSansMedium,
     color: Colors.black,
     // borderWidth:1,
-    lineHeight: moderateScale(15),
-    marginTop: moderateScale(0),
+
+    // lineHeight: moderateScale(18),
+    marginTop: moderateScale(1),
+    // marginLeft:moderateScale(-32)
+    // marginTop:moderateScale(10)
 
   },
   questionMathJax: {
     fontSize: moderateScale(12),
     fontFamily: Fonts.InstrumentSansMedium,
     color: Colors.black,
+    alignSelf: 'stretch', // ✅ important
+    minHeight: moderateScale(20), // prevents collapse
     // borderWidth:1
   },
   selectedText: {
@@ -2777,19 +2820,23 @@ const styles = StyleSheet.create({
   },
   imagesWithText: {
     // marginTop: moderateScale(12),
+
   },
   questionImage: {
     width: '100%',
-    height: verticalScale(60),
+    height: moderateScale(60),
     maxHeight: verticalScale(250),
     borderRadius: moderateScale(2),
     backgroundColor: Colors?.white,
     alignSelf: 'center',
-    resizeMode: "contain"
+    resizeMode: "contain",
   },
   optionsGrid: {
     // Your options grid styles
   },
+
+
+
   optionContainer: {
     // flexDirection: 'row',
     // alignItems: 'flex-start',
@@ -2809,13 +2856,16 @@ const styles = StyleSheet.create({
     flexDirection: 'column'
   },
   optionLabelContainer: {
-    width: moderateScale(20),
+    width: moderateScale(28),
     alignItems: 'center',
+    justifyContent: "center",
     // justifyContent: 'flex-start',
-    borderRadius: moderateScale(4),
-    borderColor: '#BFBFBF',
+    borderRadius: moderateScale(20),
+    // borderColor: '#BFBFBF',
     // borderWidth: 1,
-    height: moderateScale(20),
+    height: moderateScale(28),
+    backgroundColor: '#BFBFBF',
+    marginLeft: moderateScale(2)
   },
   correctOptionLabel: {
     // backgroundColor: '#4CAF50',
@@ -2823,14 +2873,17 @@ const styles = StyleSheet.create({
     borderWidth: 1.4
   },
   optionLabel: {
-    fontSize: moderateScale(12),
+    fontSize: moderateScale(11),
     fontFamily: Fonts.InstrumentSansMedium,
-    color: Colors.black,
+    color: Colors.white,
     // textAlign:'center'
   },
   correctOptionText: {
-    color: Colors?.questionSelect,
+    color: Colors?.white,
     fontFamily: Fonts.InstrumentSansSemiBold,
+  },
+  correctOptionBgColor: {
+    backgroundColor:  Colors?.questionSelect,
   },
   optionContent: {
     flex: 1,
@@ -2839,10 +2892,15 @@ const styles = StyleSheet.create({
     // alignItems:"center",
     // justifyContent:"flex-start",
     // overflow:"hidden"
-    borderRadius: moderateScale(2)
+    borderRadius: moderateScale(2),
+    // borderWidth:1
   },
   optionImagesContainer: {
     marginBottom: moderateScale(4),
+    // borderWidth: 1,
+    justifyContent: "flex-start",
+    alignItems: 'flex-start',
+    marginLeft:moderateScale(10)
   },
   optionImage: {
     width: '100%',
@@ -2868,12 +2926,15 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.InstrumentSansMedium,
     color: Colors.black,
     lineHeight: moderateScale(18),
-    marginLeft: moderateScale(5), marginTop: moderateScale(8)
+    marginLeft: moderateScale(5),
+    //  marginTop: moderateScale(8)
+    // borderWidth:1
   },
   optionMathJax: {
     fontSize: moderateScale(11),
     fontFamily: Fonts.InstrumentSansMedium,
     color: Colors.black,
+    // borderWidth: 1
   },
   checkBox: {
     width: moderateScale(17),
@@ -2886,7 +2947,7 @@ const styles = StyleSheet.create({
   checkBoxDefault: {
     backgroundColor: Colors.white,
     borderWidth: 1.5,
-    borderColor: '#BFBFBF',
+    borderColor: '#0c0c0c',
     marginRight: moderateScale(3),
   },
   checkBoxSelected: {
@@ -2902,15 +2963,21 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     flexDirection: "column",
     height: moderateScale(50),
+    marginTop: moderateScale(6),
     // borderWidth: 1,
-    marginRight: moderateScale(2)
+    paddingLeft: moderateScale(4)
+    // marginRight: moderateScale(2)
+  },
+  cardMainBox:{
+      borderBottomWidth: 1.5,
+    borderColor: 'rgba(12, 64, 111, 0.30)', 
   },
   solutionBox: {
     backgroundColor: Colors.white,
     borderRadius: moderateScale(6),
   },
   solutionTitle: {
-    fontSize: moderateScale(14),
+    fontSize: moderateScale(12),
     fontFamily: Fonts.InstrumentSansSemiBold,
     color: Colors.black,
   },
@@ -2944,12 +3011,14 @@ const styles = StyleSheet.create({
     resizeMode: "contain"
   },
   answerText: {
-    fontSize: moderateScale(13),
+    fontSize: moderateScale(12),
     fontFamily: Fonts.InstrumentSansSemiBold,
     color: Colors.black,
   },
   answerLabel: {
     fontFamily: Fonts.InstrumentSansSemiBold,
+    fontSize: moderateScale(12),
+    color: Colors.black
   },
   noSolutionText: {
     fontSize: moderateScale(13),
@@ -2958,6 +3027,189 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     marginBottom: moderateScale(12),
   },
+  // optionContainer: {
+  //   // flexDirection: 'row',
+  //   // alignItems: 'flex-start',
+  //   // justifyContent:"flex-start",
+  //   marginBottom: moderateScale(8),
+  //   backgroundColor: Colors.yellow,
+  //   borderRadius: moderateScale(4),
+  //   paddingVertical: moderateScale(.2),
+  //   // marginTop
+  //   // borderWidth: 1
+  // },
+  // correctOptionContainer: {
+  //   // borderWidth: 1,
+  //   borderColor: 'rgba(12, 64, 111, 0.12)',
+  //   flexDirection: 'row'
+  // },
+  // imageStyle: {
+  //   flexDirection: 'column'
+  // },
+  // optionLabelContainer: {
+  //   width: moderateScale(25),
+  //   alignItems: 'center',
+  //   // justifyContent: 'flex-start',
+  //   borderRadius: moderateScale(40),
+  //   // borderColor: '#BFBFBF',
+  //   backgroundColor: 'rgb(108, 121, 142)',
+  //   // borderWidth: 1,
+  //   height: moderateScale(25),
+  //   // borderWidth:1,
+  //   justifyContent: "center"
+  // },
+  // correctOptionLabel: {
+  //   // backgroundColor: '#4CAF50',
+  //   borderColor: '#1E88E5',
+  //   borderWidth: 1.4
+  // },
+  // optionLabel: {
+  //   fontSize: moderateScale(12),
+  //   fontFamily: Fonts.InstrumentSansMedium,
+  //   color: Colors.white,
+  //   // textAlign:'center'
+  // },
+  // correctOptionText: {
+  //   color: Colors?.questionSelect,
+  //   fontFamily: Fonts.InstrumentSansSemiBold,
+  // },
+  // optionContent: {
+  //   flex: 1,
+  //   // flexDirection:'row',
+  //   // flexDirection: 'row',
+  //   // alignItems:"center",
+  //   // justifyContent:"flex-start",
+  //   // overflow:"hidden"
+  //   borderRadius: moderateScale(2)
+  // },
+  // optionImagesContainer: {
+  //   marginBottom: moderateScale(4),
+  // },
+  // optionImage: {
+  //   width: '100%',
+  //   height: '100%',
+  //   maxHeight: moderateScale(120),
+  //   borderRadius: moderateScale(4),
+  //   alignSelf: "flex-start"
+  //   // alignSelf: 'flex-start',
+  //   // resizeMode: 'contain',
+  // },
+  // optionTextContainer: {
+  //   flex: 1,
+  //   // paddingVertical:moderateScale(30)
+  //   paddingVertical: moderateScale(10),
+  //   // minHeight: moderateScale(40),
+  //   flexDirection: "row",
+  //   alignItems: "center",
+  //   justifyContent: "flex-start",
+  //   // verticalAlign:"middle",
+  //   // alignSelf:"center"
+  //   // borderWidth:1
+  // },
+  // optionTextWithImages: {
+  //   marginTop: moderateScale(4),
+  // },
+  // optionText: {
+  //   fontSize: moderateScale(11),
+  //   fontFamily: Fonts.InstrumentSansMedium,
+  //   color: Colors.black,
+  //   // lineHeight: moderateScale(18),
+  //   marginLeft: moderateScale(5),
+  //   //  marginTop: moderateScale(8)
+  // },
+  // optionMathJax: {
+  //   fontSize: moderateScale(11),
+  //   fontFamily: Fonts.InstrumentSansMedium,
+  //   color: Colors.black,
+  // },
+  // checkBox: {
+  //   width: moderateScale(17),
+  //   height: moderateScale(17),
+  //   borderRadius: moderateScale(5),
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  //   marginRight: moderateScale(3),
+  // },
+  // checkBoxDefault: {
+  //   backgroundColor: Colors.white,
+  //   borderWidth: 1.5,
+  //   borderColor: '#BFBFBF',
+  //   marginRight: moderateScale(3),
+  // },
+  // checkBoxSelected: {
+  //   backgroundColor: '#1E88E5',
+  //   borderWidth: 0,
+  // },
+  // solutionWrapper: {
+  //   marginTop: moderateScale(6),
+  //   overflow: 'visible',
+  // },
+  // questionNumberContainer: {
+  //   marginTop: moderateScale(6),
+  //   alignItems: 'flex-start',
+  //   flexDirection: "column",
+  //   height: moderateScale(50),
+  //   borderWidth: .5,
+  //   // paddingTop:moderateScale(2.5)
+  //   // marginRight: moderateScale(1)
+  // },
+  // solutionBox: {
+  //   backgroundColor: Colors.white,
+  //   borderRadius: moderateScale(6),
+  // },
+  // solutionTitle: {
+  //   fontSize: moderateScale(14),
+  //   fontFamily: Fonts.InstrumentSansSemiBold,
+  //   color: Colors.black,
+  // },
+  // textContainer: {
+  //   marginLeft: 0
+  // },
+  // solutionText: {
+  //   fontSize: moderateScale(13),
+  //   fontFamily: Fonts.InstrumentSansRegular,
+  //   color: Colors.black,
+  //   lineHeight: moderateScale(20),
+  //   marginLeft: 0
+  // },
+  // solutionMathJax: {
+  //   fontSize: moderateScale(13),
+  //   fontFamily: Fonts.InstrumentSansRegular,
+  //   color: Colors.black,
+  //   marginLeft: 0
+  // },
+  // imagesContainer: {
+  //   // Images appear right after text
+  //   // marginTop:moderateScale(20),
+  //   borderWidth:1
+  //   // marginTop: moderateScale(6), // controlled spacing
+  //   // marginTop: moderateScale(-30),
+  // },
+  // solutionImage: {
+  //   width: '100%',
+  //   height: moderateScale(150),
+  //   maxHeight: moderateScale(200),
+  //   borderRadius: moderateScale(4),
+  //   backgroundColor: 'transparent',
+  //   alignSelf: 'center',
+  //   marginTop: moderateScale(4),
+  //   resizeMode: "contain"
+  // },
+  // answerText: {
+  //   fontSize: moderateScale(13),
+  //   fontFamily: Fonts.InstrumentSansSemiBold,
+  //   color: Colors.black,
+  // },
+  // answerLabel: {
+  //   fontFamily: Fonts.InstrumentSansSemiBold,
+  // },
+  // noSolutionText: {
+  //   fontSize: moderateScale(13),
+  //   fontFamily: Fonts.InstrumentSansRegular,
+  //   color: Colors.gray,
+  //   fontStyle: 'italic',
+  //   marginBottom: moderateScale(12),
+  // },
 });
-
 export default memo(QuestionListData);
+

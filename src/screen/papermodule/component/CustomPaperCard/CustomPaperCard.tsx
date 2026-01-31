@@ -5,45 +5,48 @@ import { styles } from './styles';
 import { Icons } from '../../../../assets/icons';
 import { moderateScale } from 'react-native-size-matters';
 import { useNavigation } from '@react-navigation/native';
+import { Images } from '../../../../assets/images';
 
 const CustomPaperCard = ({ onPress }) => {
   const navigation = useNavigation()
   return (
     <View >
       <View style={styles.mainBox}>
-      <TouchableOpacity style={styles.card} activeOpacity={0.8} onPress={ () => onPress('Regular Paper')}>
-        <Image source={Icons.customPaper} style={styles.icon} />
+        <TouchableOpacity style={styles.card} activeOpacity={0.8} onPress={() => onPress('Regular Paper')}>
+          <View style={styles.imgeCurcel}>
+            <Image source={Icons.regularpaper} style={styles.icon} />
+          </View>
 
-        <Text style={styles.title}>Regular Paper</Text>
-        <Text style={styles.subtitle}>Select question of {`\n`}your choice</Text>
-
-        <View style={styles.arrowButton}>
-          <Image source={Icons.rightArrow} style={styles.arrowIcon} />
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.card} activeOpacity={0.8} onPress={ () => onPress('Custom Paper')}>
-        <Image source={Icons.textPaper} style={styles.icon} />
-
-        <Text style={styles.title}>Custom Paper</Text>
-        <Text style={styles.subtitle}>Select question of {`\n`}your choice</Text>
-
-        <View style={styles.arrowButton}>
-          <Image source={Icons.rightArrow} style={styles.arrowIcon} />
-        </View>
-      </TouchableOpacity>
+          <Text style={styles.title}>Regular Paper</Text>
+          <Text style={styles.subtitle}>Select question of your {`\n`}choice</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.card} activeOpacity={0.8} onPress={() => onPress('Custom Paper')}>
+          <View style={styles.imgeCurcel}>
+            <Image source={Icons.custompaper} style={styles.icon} /></View>
+          <Text style={styles.title}>Custom Paper</Text>
+          <Text style={styles.subtitle}>Select question of your{`\n`}choice</Text>
+        </TouchableOpacity>
       </View>
+      <View style={styles.mainBox}>
+        <TouchableOpacity style={styles.card} activeOpacity={0.8} onPress={() => onPress('Random Paper')}>
+          <View style={styles.imgeCurcel}>
+            <Image source={Icons.randompaper} style={styles.icon} />
+          </View>
 
-         <TouchableOpacity style={[styles.card,{marginTop:moderateScale(15), marginLeft:moderateScale(15), }]} activeOpacity={0.8} onPress={ () => onPress('Random Paper')}>
-        <Image source={Icons.randomPaper} style={styles.icon} />
-
-        <Text style={styles.title}>Rendom Paper</Text>
-        <Text style={styles.subtitle}>Select question of {`\n`}your choice</Text>
-
-        <View style={styles.arrowButton}>
-          <Image source={Icons.rightArrow} style={styles.arrowIcon} />
-        </View>
-      </TouchableOpacity>
+          <Text style={styles.title}>Rendom Paper</Text>
+          <Text style={styles.subtitle}>Select question of your {`\n`}choice</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.card} activeOpacity={0.8} onPress={() => navigation?.navigate('DraftPaperScreen')}>
+          <View style={styles.imgeCurcel}>
+            <Image source={Icons.draftpaper} style={styles.icon} /></View>
+          <Text style={styles.title}>Draft Paper</Text>
+          <Text style={styles.subtitle}>Select question of your{`\n`}choice</Text>
+        </TouchableOpacity>
       </View>
+      <View style={styles.bannerBox}>
+        <Image source={Images?.papertypeBanner} resizeMode='contain' style={styles.paperBannerImg} />
+      </View>
+    </View>
   );
 };
 
