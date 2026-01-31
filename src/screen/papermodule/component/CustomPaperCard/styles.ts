@@ -6,7 +6,7 @@ export const styles = StyleSheet.create({
   mainBox: {
     flexDirection: "row",
     justifyContent: "center",
-    marginTop: moderateScale(15),
+    marginTop: moderateScale(16.5),
     // borderWidth:1
   },
   card: {

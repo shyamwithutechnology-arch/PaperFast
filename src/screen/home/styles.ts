@@ -79,21 +79,22 @@ export const styles = StyleSheet.create({
     notificationBox: {
         width: '96%',
         paddingBottom: moderateScale(.5),
-        borderWidth: 1,
+        borderWidth: 1.5,
         borderColor: 'rgba(12, 64, 111, 0.19)',
         // borderTopLeftRadius: moderateScale(10),
-        // borderTopRightRadius: moderateScale(10),
+        // borderTopRightRadius: moderateScale(10), //
         alignSelf: 'center',
         marginTop: moderateScale(10),
         backgroundColor: "rgba(243, 245, 248, 1)",
-borderRadius:moderateScale(6)
+        borderRadius: moderateScale(6)
     },
     notificationInnerBox: {
         paddingVertical: moderateScale(4),
         backgroundColor: Colors.homeNotificationInnerBgColor,
         flexDirection: 'row',
         alignItems: 'center',
-        borderWidth: 1,
+        // borderWidth: 1,
+        borderBottomWidth:1,
         borderColor: 'rgba(12, 64, 111, 0.19)',
         borderTopLeftRadius: moderateScale(5),
         borderTopRightRadius: moderateScale(5),
@@ -109,26 +110,30 @@ borderRadius:moderateScale(6)
         alignItems: 'center',
         justifyContent: 'flex-start',
         paddingLeft: moderateScale(10),
-        marginVertical: moderateScale(3),
+        // marginVertical: moderateScale(3),
         borderColor: 'rgba(12, 64, 111, 0.1)',
         // backgroundColor:'red'
         flex: 1,
         flexWrap: 'wrap',
+        paddingVertical:moderateScale(5)
     },
     notificationdec: {
         fontSize: moderateScale(10),
         color: Colors.black,
         fontFamily: Fonts.InstrumentSansRegular,
         // width:moderateScale(300),
-        paddingRight:moderateScale(10),
+        paddingRight: moderateScale(10),
         // borderWidth: 1,
         flexWrap: 'wrap',
-        paddingVertical:moderateScale(4)
+        paddingVertical: moderateScale(4)
     },
     lineMainBox: {
         flexDirection: "row",
         alignItems: "center",
-        marginTop: moderateScale(20)
+        // marginTop: moderateScale(10),
+        // borderWidth:1,
+        marginHorizontal:moderateScale(2),
+        marginBottom:moderateScale(20)
     },
 
     lineCenterWrapper: {
@@ -160,7 +165,7 @@ borderRadius:moderateScale(6)
         fontFamily: Fonts.InstrumentSansMedium,
         color: Colors.black,
         marginTop: moderateScale(10),
-        marginLeft: moderateScale(6),
+        marginLeft: moderateScale(9),
         marginBottom: moderateScale(10),
         // borderWidth:1
     },
@@ -191,6 +196,7 @@ borderRadius:moderateScale(6)
 
     listContainer: {
         paddingTop: verticalScale(8),
+        // borderWidth:1
     },
     sectionTitle: {
         fontSize: moderateScale(18),
@@ -201,18 +207,23 @@ borderRadius:moderateScale(6)
         marginTop: moderateScale(8), // -28
         marginBottom: moderateScale(3)
     },
+    sectionContainer:{
+        // borderWidth:1,
+        // marginBottom:moderateScale(-39)
+    },
     bottomLine: {
         height: 1,
         width: '94%',
         marginHorizontal: moderateScale(10),
         backgroundColor: '#DFDFDF',
         marginVertical: moderateScale(6),
+        // marginTop:moderateScale(-40)
         // marginRight:moderateScale(40)
     },
     boardItem: {
         flex: 1,
-        marginHorizontal: scale(9),
-        minHeight: verticalScale(44),
+        marginHorizontal: scale(9.5),
+        minHeight: verticalScale(40),
         borderRadius: moderateScale(8),
         borderWidth: 1,
         borderColor: Colors.InputStroke,
@@ -220,17 +231,36 @@ borderRadius:moderateScale(6)
         // justifyContent: "space-between",
         flexDirection: "row",
         paddingHorizontal: scale(8),
-        width: moderateScale(170),
+        width: moderateScale(160),
+        // marginVertical:moderateScale(0)
+        marginBottom:moderateScale(-2)
     },
-
+    mediumBox: {
+        flex: 1,
+        marginHorizontal: scale(6),
+        minHeight: verticalScale(44),
+        borderRadius: moderateScale(8),
+        borderWidth: 1,
+        borderColor: Colors.InputStroke,
+        alignItems: "center",
+        justifyContent: "center",
+        paddingHorizontal: scale(12),
+        marginBottom: moderateScale(15),
+    },
     boardModalText: {
-        fontSize: moderateScale(15),
+        fontSize: moderateScale(13),
         // textAlign: "center",
         fontFamily: Fonts.InstrumentSansRegular,
         color: Colors.primaryColor,
         // marginLeft:moderateScale(10),
         // borderWidth:1,
         width: moderateScale(110),
+    },
+     mediumModalText: {
+        fontSize: moderateScale(15),
+        // textAlign: "center",
+        fontFamily: Fonts.InstrumentSansRegular,
+        color: Colors.primaryColor
     },
     logoImg: {
         height: moderateScale(22),

@@ -2098,6 +2098,7 @@ import {
   Dimensions,
   ScrollView,
   ImageBackground,
+  Pressable,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MathJax from 'react-native-mathjax';
@@ -2574,12 +2575,11 @@ const QuestionItem = memo(({
     { id: 'D', label: item.option_d || '' },
   ];
   return (
-    <TouchableOpacity
-      // style={[styles.card, isSelected && styles.cardSelected, { borderBottomWidth: listottomLineHide ? 0 : 1 }]}
-      // activeOpacity={0.7} 
-      style={[ styles.cardMainBox ,isSelected && styles.cardSelected, { borderBottomWidth: listottomLineHide ? 0 : 1 }, { flexDirection: "row", paddingLeft: moderateScale(3),
-  
-  }]}
+    <Pressable
+      
+      // style={[ styles.cardMainBox ,isSelected && styles.cardSelected, { borderBottomWidth: listottomLineHide ? 0 : 1 }, 
+      style={[ styles.cardMainBox ,isSelected && styles.cardSelected, 
+        { flexDirection: "row", paddingLeft: moderateScale(3)}]}
       onPress={() => onToggle(item.question_id)}>
       <View style={[styles.questionNumberContainer, {}]}>
         <Text style={styles.questionNumber}> {index + 1}.</Text>
@@ -2654,7 +2654,7 @@ const QuestionItem = memo(({
           </View>
         )}
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 });
 
@@ -2691,8 +2691,6 @@ const QuestionListData: React.FC<Props> = ({
   const renderItem = useCallback(({ item, index }: { item: Question; index: number }) => {
     const isSelected = !!selectedMap[item.question_id];
     let langthList = index === questionsData?.length - 1;
-    console.log('lllllllllllllllll', langthList);
-
     return (
       <QuestionItem
         item={item}
@@ -2864,7 +2862,7 @@ const styles = StyleSheet.create({
     // borderColor: '#BFBFBF',
     // borderWidth: 1,
     height: moderateScale(28),
-    backgroundColor: '#BFBFBF',
+    backgroundColor: Colors?.lightThemeBlue,
     marginLeft: moderateScale(2)
   },
   correctOptionLabel: {
@@ -2875,7 +2873,7 @@ const styles = StyleSheet.create({
   optionLabel: {
     fontSize: moderateScale(11),
     fontFamily: Fonts.InstrumentSansMedium,
-    color: Colors.white,
+    color: Colors.black,
     // textAlign:'center'
   },
   correctOptionText: {
@@ -2947,7 +2945,7 @@ const styles = StyleSheet.create({
   checkBoxDefault: {
     backgroundColor: Colors.white,
     borderWidth: 1.5,
-    borderColor: '#0c0c0c',
+    borderColor: Colors?.InputStroke,
     marginRight: moderateScale(3),
   },
   checkBoxSelected: {
@@ -2969,8 +2967,11 @@ const styles = StyleSheet.create({
     // marginRight: moderateScale(2)
   },
   cardMainBox:{
-      borderBottomWidth: 1.5,
-    borderColor: 'rgba(12, 64, 111, 0.30)', 
+    elevation:30,
+    marginVertical:moderateScale(1),
+    shadowColor:'rgba(0, 140, 227, 1)',
+    borderRadius:moderateScale(10),
+    backgroundColor:Colors?.white
   },
   solutionBox: {
     backgroundColor: Colors.white,

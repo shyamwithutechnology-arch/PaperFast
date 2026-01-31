@@ -25,8 +25,8 @@ export const styles = StyleSheet.create({
         fontSize:moderateScale(12)
     },
     saveDraftBox:{
-        paddingVertical:moderateScale(8),
-        paddingHorizontal:moderateScale(12),
+        paddingVertical:moderateScale(6),
+        paddingHorizontal:moderateScale(8),
         // borderWidth:1,
         borderRadius:moderateScale(5),
         backgroundColor:Colors.primaryColor

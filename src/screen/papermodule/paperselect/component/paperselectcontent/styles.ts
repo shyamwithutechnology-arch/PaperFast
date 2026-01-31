@@ -3,14 +3,14 @@ import { moderateScale } from "../../../../../utils/responsiveSize";
 import { Colors, Fonts } from "../../../../../theme";
 export const styles = StyleSheet.create({
   wrapper: {
-    marginBottom: moderateScale(10),
+    marginBottom: moderateScale(9),
   },
 
-  /* TITLE CARD */
   titleBox: {
     backgroundColor: Colors.white,
     borderRadius: moderateScale(6),
-    padding: moderateScale(16),
+    paddingHorizontal:moderateScale(13),
+    paddingVertical:moderateScale(10),
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -20,7 +20,7 @@ export const styles = StyleSheet.create({
     // shadowColor: ''
 
     // iOS Shadow
-    shadowColor: 'green',
+    shadowColor: 'rgba(0, 140, 227, .9)',
     shadowOffset: {
       width: 0,
       height: 3,
@@ -36,8 +36,8 @@ export const styles = StyleSheet.create({
   },
 
   title: {
-    fontFamily: Fonts.InstrumentSansMedium,
-    fontSize: moderateScale(15),
+    fontFamily: Fonts.InstrumentSansBold,
+    fontSize: moderateScale(13),
     color: Colors.black,
   },
 

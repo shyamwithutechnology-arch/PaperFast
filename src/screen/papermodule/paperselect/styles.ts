@@ -39,12 +39,12 @@ export const styles = StyleSheet.create({
         flexWrap: 'wrap',          // 🔥 moves to next line if space ends
         gap: moderateScale(10),    // RN 0.71+ supported
         marginLeft: moderateScale(15),
-        marginVertical: moderateScale(15)
+        marginVertical: moderateScale(20)
     },
 
     selectBtnBox: {
-        paddingVertical: moderateScale(6),
-        paddingHorizontal: moderateScale(14),
+        paddingVertical: moderateScale(4),
+        paddingHorizontal: moderateScale(10),
         borderRadius: moderateScale(5),
         backgroundColor: Colors.primaryColor,
         borderWidth: 1,
