@@ -33,9 +33,9 @@ const HomeScreen = () => {
     const [boardData, setBoardData] = useState([]);
     const [medium, setMedium] = useState([]);
     const [standard, setStandard] = useState([]);
+    const [subData, setSubData] = useState([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [banners, setBanners] = useState([]);
-    console.log('medium', medium);
 
     // board
     const handleBordOpenModal = async () => {
@@ -45,18 +45,19 @@ const HomeScreen = () => {
         }
     }
     const handleBordCloseModal = () => {
-        // if (selectedBoard === null) {
-        //     showSnackbar('Please Select Board', 'error')
-        //     return false
-        // }
-        // if (selectedBoard !== null) {
-        setVisible(false)
-        // }
+        if (selectedBoard === null) {
+            showSnackbar('Please Select Board', 'error')
+            return false
+        }
+        if (selectedBoard !== null) {
+            setVisible(false)
+        }
     }
     const handleSelectedBoard = async (board_name, borardId) => {
-        setBoardId(borardId);
-        setSelectedBoard(board_name);
+        // setBoardId(borardId);
+        await localStorage.setItem(storageKeys.boardId, borardId);
         await localStorage.setItem(storageKeys.selectedBoard, board_name);
+        setSelectedBoard(board_name);
         //   setVisible(false);
     };
 
@@ -131,7 +132,8 @@ const HomeScreen = () => {
         if (selectedBoard !== null && selectMedium !== null) {
             setVisible(false)
             setVisibleMedium(false)
-            await handleStandardFetch()
+            const boardId = await localStorage.getItem(storageKeys.boardId)
+            await handleStandardFetch(boardId)
             setVisibleStandard(true)
         }
     }
@@ -326,12 +328,56 @@ const HomeScreen = () => {
     //     }
     // };
 
-    const handleStandardFetch = async () => {
+    const handleSubFetch = async (id) => {
+        // Alert.alert('sddddddddddddd')
         setLoading(true);
         try {
-            const response = await POST_FORM(ApiEndPoint.Classes, boardId);
+            let params = {
+                et_id: id
+            }
+            console.log('paramsssssss', params);
+
+            const response = await POST_FORM(ApiEndPoint.Subject, params);
+            console.log('ressddddddddddd', response);
+
+            if (response && response.status === 200) {
+                setSubData(response?.result)
+            } else {
+                const errorMessage = response?.message ||
+                    'Data not fetch. Please try again.';
+                showSnackbar(errorMessage, 'error');
+                setSubData([])
+            }
+
+        } catch (error: any) {
+            console.log('eressssss', error);
+
+            if (error?.offline) {
+                showSnackbar('No internet connection', 'error');
+                return;
+            }
+            const errorMessage = error?.response?.data?.message ||
+                error?.message ||
+                'Something went wrong. Please try again.';
+            showSnackbar(errorMessage, 'error');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleStandardFetch = async (id: string) => {
+        setLoading(true);
+        try {
+            let params = {
+                et_id: id
+            }
+            const response = await POST_FORM(ApiEndPoint.Classes, params);
             if (response && response.status === 200) {
                 setStandard(response?.result)
+                const boardId = await localStorage.getItem(storageKeys.boardId)
+                if (boardId) {
+                    await handleSubFetch(boardId);
+                }
             } else {
                 const errorMessage = response?.message ||
                     'Data not fetch. Please try again.';
@@ -415,7 +461,7 @@ const HomeScreen = () => {
             <SubjectItem
                 item={item}
                 index={index}   // ✅ REQUIRED
-                selected={selectedSubject === item.id}
+                selected={selectedSubject === item.subject_id}
                 onPress={handleSelect}
             />
             // onPress={setSelectedSubject} />
@@ -443,6 +489,14 @@ const HomeScreen = () => {
 
     useEffect(() => {
         fetchBanners();
+        const subId = async () => {
+            const boardId = await localStorage.getItem(storageKeys.boardId)
+            // console.log('boardIdssssss',boardId);
+            if (boardId) {
+                await handleSubFetch(boardId);
+            }
+        }
+        subId()
     }, []);
 
     useEffect(() => {
@@ -463,8 +517,8 @@ const HomeScreen = () => {
             <AppHeader title="Paper Fast" leftIcon={Icons.drawer} onBackPress={() => navigation.openDrawer()} discriptionText='(For Teacher)' rightIcon={Icons.notification} onRightPress={() => navigation.navigate('NotificationScreen')} />
             <View style={styles.innerMainContainer}>
                 <FlatList
-                    data={SUBJECTS}
-                    keyExtractor={(item) => item.id.toString()}
+                    data={subData}
+                    keyExtractor={(item) => item?.subject_id.toString()}
                     renderItem={renderItem}
                     extraData={selectedSubject}
                     showsVerticalScrollIndicator={false}
@@ -700,7 +754,7 @@ const HomeScreen = () => {
                                 <Image
                                     source={Icons.cancel}
                                     style={styles.cancleIcon}
-                                    resizeMode="contain"/>
+                                    resizeMode="contain" />
                             </TouchableOpacity>
                         </View>
                         <Text style={styles.selectModal}>Select Standard</Text>
@@ -716,7 +770,7 @@ const HomeScreen = () => {
                                     style={[styles.boardItem, {
                                         backgroundColor: selectStandard === item?.class_name ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)',
                                         borderColor: selectStandard === item?.class_name ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)',
-                                        minHeight:moderateScale(45)
+                                        minHeight: moderateScale(45)
                                     }]} onPress={() => handleSelectStandard(item?.class_name)}>
                                     <Text style={styles.boardModalText}>{item?.class_name}</Text>
                                 </TouchableOpacity>

@@ -7,4 +7,5 @@
         Medium:'medium',
         Classes:'classes',
         Banner:'banner',
+        Subject:'subject',
     }

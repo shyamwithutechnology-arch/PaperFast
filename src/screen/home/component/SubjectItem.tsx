@@ -22,32 +22,33 @@ let randomColor = [
 const getCardColor = (id: string) => {
     let hash = 0;
 
-    for (let i = 0; i < id.length; i++) {
-        hash = id.charCodeAt(i) + ((hash << 5) - hash)}
+    for (let i = 0; i < id?.length; i++) {
+        hash = id?.charCodeAt(i) + ((hash << 5) - hash)
+    }
     const index = Math.abs(hash) % randomColor.length;
     return randomColor[index];
 };
 
 const SubjectItem = React.memo(({ item, selected, onPress }: Props) => {
     const bgColor = React.useMemo(
-        () => getCardColor(item.id),
-        [item.id]
+        () => getCardColor(item.subject_id),
+        [item.subject_id]
     );
     return (
         <TouchableOpacity style={[styles.card, selected && styles.selectedCard,
         { backgroundColor: bgColor },
         ]}
-            onPress={() => onPress(item?.id)}
+            onPress={() => onPress(item?.subject_id)}
             activeOpacity={0.7}>
             <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                 <View style={styles.subjectBox}>
                     <View style={styles.radio}>
                         {selected && <View style={styles.radioInner} />}
                     </View>
-                    <Text style={styles.label}  numberOfLines={1}>{item.label}</Text>
+                    <Text style={styles.label} numberOfLines={1}>{item?.subject_name}</Text>
                 </View>
                 <View style={{ width: moderateScale(40), height: moderateScale(30) }}>
-                    <Image source={item?.img} style={{ width: moderateScale(35), height: moderateScale(35) }} resizeMode='contain' />
+                    <Image source={{uri:item?.subject_image}} style={{ width: moderateScale(36), height: moderateScale(36) }} resizeMode='contain' />
                 </View>
             </View>
         </TouchableOpacity>
@@ -69,7 +70,7 @@ const styles = StyleSheet.create({
         // paddingHorizontal:moderateScale(4)
         width: scale(167),
         borderWidth: .5,
-        borderColor:Colors.InputStroke
+        borderColor: Colors.InputStroke
     },
     selectedCard: {
         backgroundColor: 'rgba(12,64,111,0.12)',
@@ -81,7 +82,7 @@ const styles = StyleSheet.create({
         color: Colors.black,
         marginLeft: moderateScale(8),
         // borderWidth:1,
-        width:moderateScale(98)
+        width: moderateScale(98)
     },
     radio: {
         width: moderateScale(14),
@@ -106,6 +107,6 @@ const styles = StyleSheet.create({
         borderRadius: moderateScale(5),
         // marginLeft: moderateScale(4),
         // borderWidth:1,
-        paddingLeft:moderateScale(6)
+        paddingLeft: moderateScale(6)
     }
 })

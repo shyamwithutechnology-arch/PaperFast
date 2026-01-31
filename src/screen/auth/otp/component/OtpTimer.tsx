@@ -12,7 +12,7 @@ interface OtpTimerProps {
 }
 // { onResendOtp, isLoading = false }
 const OtpTimer = ({ onResendOtp, isLoading = false }) => {
-  const { formatTime, isExpired, resetTimer } = useOtpTimer(12000);
+  const { formatTime, isExpired, resetTimer } = useOtpTimer(120);
 
   const handleResend = () => {
     if (!isExpired || isLoading) return;
