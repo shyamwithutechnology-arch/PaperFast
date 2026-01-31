@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, Image, FlatList, TouchableOpacity, SectionList } from 'react-native';
+import { View, Text, Image, FlatList, TouchableOpacity, SectionList, Alert } from 'react-native';
 import { styles } from './styles';
 import AppHeader from '../../component/header/AppHeader';
 import { Icons } from '../../assets/icons/index'
@@ -25,16 +25,17 @@ const HomeScreen = () => {
     const navigation = useNavigation();
     const [visible, setVisible] = useState(false);
     const [selectedBoard, setSelectedBoard] = useState<null | string>(null)
+    const [boardId, setBoardId] = useState<null | string>(null)
     const [visibleMedium, setVisibleMedium] = useState(false);
     const [selectMedium, setSelectMedium] = useState<null | string>(null);
     const [visibleStandard, setVisibleStandard] = useState(false);
     const [selectStandard, setSelectStandard] = useState<null | string>(null);
-    const [loading, setLoading] = useState<boolean>(false);
     const [boardData, setBoardData] = useState([]);
     const [medium, setMedium] = useState([]);
     const [standard, setStandard] = useState([]);
+    const [loading, setLoading] = useState<boolean>(false);
     const [banners, setBanners] = useState([]);
-    console.log('boardData', boardData);
+    console.log('medium', medium);
 
     // board
     const handleBordOpenModal = async () => {
@@ -52,9 +53,10 @@ const HomeScreen = () => {
         setVisible(false)
         // }
     }
-    const handleSelectedBoard = async (item: string) => {
-        setSelectedBoard(item);
-        await localStorage.setItem(storageKeys.selectedBoard, item);
+    const handleSelectedBoard = async (board_name, borardId) => {
+        setBoardId(borardId);
+        setSelectedBoard(board_name);
+        await localStorage.setItem(storageKeys.selectedBoard, board_name);
         //   setVisible(false);
     };
 
@@ -93,7 +95,6 @@ const HomeScreen = () => {
 
     // medium 
     const handleMediumOpenModal = async () => {
-
         if (selectedBoard === null) {
             showSnackbar('Please Select Board', 'error')
             return false
@@ -149,12 +150,12 @@ const HomeScreen = () => {
     }
 
     const SUBJECTS = [
-        { id: 'math', label: 'Math' },
-        { id: 'science', label: 'Science' },
-        { id: 'english', label: 'English' },
-        { id: 'hindi', label: 'Hindi' },
-        { id: 'sanskrit', label: 'Sanskrit' },
-        { id: 'social science', label: 'Social Science' },
+        { id: 'math', label: 'Math', img: Icons.math },
+        { id: 'science', label: 'Science', img: Icons.science },
+        { id: 'english', label: 'English', img: Icons.english },
+        { id: 'hindi', label: 'Hindi', img: Icons.hindi },
+        { id: 'sanskrit', label: 'Sanskrit', img: Icons.socialscience },
+        { id: 'social science', label: 'Social Science', img: Icons.sanskrit },
     ];
 
     const Notification = [
@@ -217,7 +218,7 @@ const HomeScreen = () => {
         try {
             const response = await GET(ApiEndPoint.Board);
             if (response && response.status === '1') {
-                setBoardData(response?.result)
+                setBoardData(response?.result || [])
             } else {
                 const errorMessage = response?.message ||
                     'Data not fetch. Please try again.';
@@ -273,7 +274,7 @@ const HomeScreen = () => {
         setLoading(true);
         try {
             const response = await GET(ApiEndPoint.Medium);
-            if (response && response.status === '1') {
+            if (response && response.status === 200) {
                 setMedium(response?.result)
             } else {
                 const errorMessage = response?.message ||
@@ -328,8 +329,8 @@ const HomeScreen = () => {
     const handleStandardFetch = async () => {
         setLoading(true);
         try {
-            const response = await GET(ApiEndPoint.Classes);
-            if (response && response.status === '1') {
+            const response = await POST_FORM(ApiEndPoint.Classes, boardId);
+            if (response && response.status === 200) {
                 setStandard(response?.result)
             } else {
                 const errorMessage = response?.message ||
@@ -381,7 +382,7 @@ const HomeScreen = () => {
         try {
             const response = await GET(ApiEndPoint.Banner);
             if (response && response.status === 200) {
-                setBanners(response?.result)
+                setBanners(response?.result || [])
             } else {
                 const errorMessage = response?.message ||
                     'Data not fetch. Please try again.';
@@ -403,7 +404,9 @@ const HomeScreen = () => {
             setLoading(false);
         }
     };
+
     const renderItem = useCallback(({ item, index }) => {
+        // console.log('itemssssss', item);
         return (
             // <SubjectItem
             //     item={item}
@@ -449,7 +452,6 @@ const HomeScreen = () => {
                 setSelectedSubject(savedSubject);
             }
         };
-
         restoreSelectedSubject();
     }, []);
 
@@ -458,7 +460,7 @@ const HomeScreen = () => {
             style={styles.mainContainer}
             edges={['left', 'right', 'bottom']}>
             <Loader visible={loading} />
-            <AppHeader title="Paper Fast" leftIcon={Icons.drawer} onBackPress={() => navigation.openDrawer()} discriptionText='(For Teacher)' rightIcon={Icons.notification} />
+            <AppHeader title="Paper Fast" leftIcon={Icons.drawer} onBackPress={() => navigation.openDrawer()} discriptionText='(For Teacher)' rightIcon={Icons.notification} onRightPress={() => navigation.navigate('NotificationScreen')} />
             <View style={styles.innerMainContainer}>
                 <FlatList
                     data={SUBJECTS}
@@ -476,7 +478,7 @@ const HomeScreen = () => {
                                 {/* card box */}
                                 <View style={styles.cardMainBox}>
                                     <TouchableOpacity style={styles.boardBox} onPress={handleBordOpenModal}>
-                                        <Image source={Icons.boardImg} style={styles.bordIcon} resizeMode='contain'/>
+                                        <Image source={Icons.boardImg} style={styles.bordIcon} resizeMode='contain' />
                                         <Text style={styles.boardText}>Board</Text>
                                         <View style={styles.rajasthanBox}>
                                             <Text style={styles.boardTextStyl} numberOfLines={1}>{selectedBoard}</Text>
@@ -484,7 +486,7 @@ const HomeScreen = () => {
                                         </View>
                                     </TouchableOpacity>
                                     <TouchableOpacity style={styles.boardBox} onPress={handleMediumOpenModal}>
-                                        <Image source={Icons.mediumImg} style={styles.bordIcon}resizeMode='contain' />
+                                        <Image source={Icons.mediumImg} style={styles.bordIcon} resizeMode='contain' />
                                         <Text style={styles.boardText}>Medium</Text>
                                         <View style={styles.rajasthanBox}>
                                             <Text style={styles.boardTextStyl} numberOfLines={1}>{selectMedium}</Text>
@@ -509,21 +511,25 @@ const HomeScreen = () => {
                             <View>
                                 <View style={styles.notificationBox}>
                                     <View style={styles.notificationInnerBox}>
-                                        <Image source={Icons.megaphone} style={styles.notificationIcon} resizeMode='contain'/>
+                                        <Image source={Icons.megaphone} style={styles.notificationIcon} resizeMode='contain' />
                                         <Text style={[styles.allSubText, {
-                                            marginTop: moderateScale(0), marginBottom: moderateScale(0), fontFamily:Fonts.InstrumentSansSemiBold, fontSize:moderateScale(14), marginLeft:moderateScale(15)
+                                            marginTop: moderateScale(0), marginBottom: moderateScale(0), fontFamily: Fonts.InstrumentSansSemiBold, fontSize: moderateScale(14), marginLeft: moderateScale(15)
                                         }]}>Latest News</Text>
                                     </View>
                                     {Notification.map((item, index) => {
                                         const lastItem = index === Notification?.length - 1
                                         return (
-                                            <View style={[styles.boxNotification, { borderBottomWidth: lastItem ? 0 : 1 }]} key={item?.id}>
-                                                {/* <Image source={Icons.notificationSpace} style={styles.notificationIcon} /> */}
-                                                <Text style={styles.notificationdec}>{item?.label}</Text>
-                                                <View style={{backgroundColor:'#D9534F', paddingHorizontal:moderateScale(4),borderRadius:moderateScale(2),alignItems:"center",justifyContent:"center"}}>
-                                                    <Text style={{fontFamily:Fonts.InstrumentSansRegular, fontSize:moderateScale(8),color:Colors.white, }}>New</Text>
+                                            <>
+                                                <View style={[styles.boxNotification]} key={item?.id}>
+                                                    {/* <Image source={Icons.notificationSpace} style={styles.notificationIcon} /> */}
+                                                    {/* { borderBottomWidth: lastItem ? 0 : 1 } */}
+                                                    <Text style={styles.notificationdec}>{item?.label}</Text>
+                                                    <View style={{ backgroundColor: '#D9534F', paddingHorizontal: moderateScale(4), borderRadius: moderateScale(2), alignItems: "center", justifyContent: "center" }}>
+                                                        <Text style={{ fontFamily: Fonts.InstrumentSansRegular, fontSize: moderateScale(8), color: Colors.white, }}>New</Text>
+                                                    </View>
                                                 </View>
-                                            </View>
+                                                {!lastItem && <View style={{ height: 1, width: '100%', backgroundColor: Colors?.InputStroke, marginTop: moderateScale(0) }} />}
+                                            </>
                                         )
                                     })}
                                 </View>
@@ -539,7 +545,7 @@ const HomeScreen = () => {
 
                 {/* board */}
                 <AppModal visible={visible} onClose={handleBordCloseModal} >
-                    <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: Colors.white}} showsVerticalScrollIndicator={false}>
+                    <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: Colors.white }} showsVerticalScrollIndicator={false}>
                         <View style={styles.lineMainBox}>
                             <View style={styles.lineCenterWrapper}>
                                 <View style={styles.lineBox} />
@@ -582,8 +588,8 @@ const HomeScreen = () => {
                             }
                         /> */}
 
-                        {getSectionedData().map((section) => (
-                            <View key={section.title} style={styles.sectionContainer}>
+                        {getSectionedData().map((section) => {
+                            return (<View key={section.title} style={styles.sectionContainer}>
                                 <Text style={styles.sectionTitle}>{section?.title}</Text>
                                 <View style={styles.bottomLine} />
                                 <FlatList
@@ -594,31 +600,35 @@ const HomeScreen = () => {
                                     columnWrapperStyle={styles.row}
                                     showsVerticalScrollIndicator={false}
                                     contentContainerStyle={styles.listContainer}
-                                    renderItem={({ item }) => (
-                                        <TouchableOpacity
-                                            style={[
-                                                styles.boardItem,
-                                                {
-                                                    backgroundColor: selectedBoard === item?.board_name
-                                                        ? 'rgba(12, 64, 111, 0.1)'
-                                                        : 'rgba(12, 64, 111, 0.05)',
-                                                    borderColor: selectedBoard === item?.board_name
-                                                        ? 'rgba(12, 64, 111, 1)'
-                                                        : 'rgba(12, 64, 111, 0.19)'
-                                                }
-                                            ]}
-                                            onPress={() => handleSelectedBoard(item?.board_name)}
-                                        >
-                                            <Image source={{ uri: item?.board_image }} style={styles.logoImg} resizeMode='contain' />
-                                            <Text style={styles.boardModalText}>{item?.board_name}</Text>
-                                        </TouchableOpacity>
-                                    )}
+                                    renderItem={({ item }) => {
+                                        return (
+                                            <TouchableOpacity
+                                                style={[
+                                                    styles.boardItem,
+                                                    {
+                                                        backgroundColor: selectedBoard === item?.board_name
+                                                            ? 'rgba(12, 64, 111, 0.1)'
+                                                            : 'rgba(12, 64, 111, 0.05)',
+                                                        borderColor: selectedBoard === item?.board_name
+                                                            ? Colors.primaryColor
+                                                            : 'rgba(12, 64, 111, 0.19)'
+                                                    }
+                                                ]}
+                                                onPress={() => handleSelectedBoard(item?.board_name, section?.exam_type_id)}>
+                                                <Image source={{ uri: item?.board_image }} style={styles.logoImg} resizeMode='contain' />
+                                                <Text style={styles.boardModalText}>{item?.board_name}</Text>
+                                            </TouchableOpacity>
+                                        )
+                                    }}
                                 />
                             </View>
-                        ))}
+                            )
+                        }
+
+                        )}
 
                         <AppButton title='Submit' onPress={handleMediumOpenModal} style={{
-                            width: "96%",
+                            width: "94%",
                             marginTop: moderateScale(15),
                             marginBottom: moderateScale(40)
                         }} />
@@ -651,28 +661,25 @@ const HomeScreen = () => {
                     </TouchableOpacity> */}
                         <FlatList
                             data={medium}
-                            numColumns={2}
                             keyExtractor={(item) => item?.medium_name?.toString()}
                             showsVerticalScrollIndicator={false}
                             // columnWrapperStyle={styles.row}
                             contentContainerStyle={styles.listContainer}
                             renderItem={({ item }) => (
-                                <TouchableOpacity style={[styles.boardItem,
+                                <TouchableOpacity style={[styles.mediumBox,
                                 {
                                     backgroundColor: selectMedium == item?.medium_name ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)',
-                                    borderColor: selectMedium === item?.medium_name ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)',
-                                    marginBottom: moderateScale(15)
+                                    borderColor: selectMedium === item?.medium_name ? Colors?.primaryColor : 'rgba(12, 64, 111, 0.19)',
                                 }]}
                                     // onPress={() => handleSelectedBoard(item?.board_name)} 
                                     onPress={() => handleSelectMedium(item?.medium_name)}
                                     key={item?.medium_name}>
-                                    <Text style={styles.boardModalText}>{selectedBoard}-{item?.medium_name}</Text>
+                                    <Text style={styles.mediumModalText}>{selectedBoard}-{item?.medium_name}</Text>
                                 </TouchableOpacity>
                             )}
                         />
-
                         <AppButton title='Submit' onPress={handleStandardOpenModal} style={{
-                            width: "100%",
+                            width: "96%",
                             marginTop: moderateScale(25),
                             marginBottom: moderateScale(20),
                             // borderRadius:0,
@@ -693,13 +700,10 @@ const HomeScreen = () => {
                                 <Image
                                     source={Icons.cancel}
                                     style={styles.cancleIcon}
-                                    resizeMode="contain"
-                                />
+                                    resizeMode="contain"/>
                             </TouchableOpacity>
                         </View>
-
                         <Text style={styles.selectModal}>Select Standard</Text>
-
                         <FlatList
                             data={standard}
                             numColumns={2}
@@ -711,7 +715,8 @@ const HomeScreen = () => {
                                 <TouchableOpacity
                                     style={[styles.boardItem, {
                                         backgroundColor: selectStandard === item?.class_name ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)',
-                                        borderColor: selectStandard === item?.class_name ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)'
+                                        borderColor: selectStandard === item?.class_name ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)',
+                                        minHeight:moderateScale(45)
                                     }]} onPress={() => handleSelectStandard(item?.class_name)}>
                                     <Text style={styles.boardModalText}>{item?.class_name}</Text>
                                 </TouchableOpacity>
@@ -719,7 +724,7 @@ const HomeScreen = () => {
                         />
 
                         <AppButton title='Submit' onPress={handleStandardCloseModal} style={{
-                            width: "96%",
+                            width: "94%",
                             marginTop: moderateScale(15),
                             marginBottom: moderateScale(40)
                         }} />

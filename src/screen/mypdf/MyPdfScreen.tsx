@@ -122,8 +122,8 @@ const MyPdfScreen = () => {
                     </TouchableOpacity>
 
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: 'space-between', marginHorizontal: moderateScale(16), marginTop: moderateScale(10) }}>
-                        <AppButton title='Pdf Preview' style={{ paddingHorizontal: moderateScale(35) }} />
-                        <AppButton title='Cancel' style={{ paddingHorizontal: moderateScale(53) }} />
+                        <AppButton title='PDF Preview' style={{ paddingHorizontal: moderateScale(35), paddingVertical :moderateScale(10) }} />
+                        <AppButton title='Cancel' style={{ paddingHorizontal: moderateScale(53), paddingVertical :moderateScale(10) }} />
                     </View>
                 </ScrollView>
             </SafeAreaView>

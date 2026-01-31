@@ -50,15 +50,16 @@ const MainTabs = () => {
         headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: {
-          height: moderateScale(80), // 80
+          height: moderateScale(85), // 80
           backgroundColor: Colors.white,
           paddingTop: moderateScale(6),
           elevation: 10,
-          overflow:'hidden'
+          overflow:'hidden',
           // borderTopWidth: 1,
           // borderColor:"#000",
           // alignSelf:"center"
           // borderTopColor: '#E5E5E5',
+        
         },
       }}
     >

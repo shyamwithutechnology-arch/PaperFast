@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { View, StatusBar, TouchableOpacity, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "../../../theme";
@@ -8,6 +8,7 @@ import { styles } from "./styles";
 import { moderateScale } from "react-native-size-matters";
 import Icon from "react-native-vector-icons/FontAwesome6";
 import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
+import { localStorage, storageKeys } from "../../../storage/storage";
 
 type SelectedSummary = {
     chapterId: number;
@@ -29,12 +30,14 @@ const PaperSelect = () => {
         selectedSummary?.chapterId ?? null
     );
 
-    const handleBack = () => {
+    const handleBack = async () => {
+        await localStorage.removeItem(storageKeys?.selectedPaperType)
         navigation.navigate('PaperTypeScreen')
     }
     type PaperType = 'NCERT' | 'EXEMPLAR' | 'RD_SHARMA';
 
     const [selectedPaper, setSelectedPaper] = useState<PaperType>('NCERT');
+    const [paperHeader, setPaperHeader] = useState<PaperType>('Regular Paper');
 
     const handleSelectPaper = (id: string) => {
         setSelectedPaper(id)
@@ -157,6 +160,13 @@ const PaperSelect = () => {
             };
         }, []))
 
+    useEffect(() => {
+        const handlePaperType = async () => {
+            const data = await localStorage.getItem(storageKeys.selectedPaperType);
+            setPaperHeader(data)
+        }
+        handlePaperType()
+    }, [])
     return (
         <View style={{ flex: 1, backgroundColor: Colors.white }}>
             <StatusBar
@@ -165,7 +175,7 @@ const PaperSelect = () => {
 
             {/* HEADER + STATUS BAR SAME BACKGROUND */}
             <SafeAreaView edges={["top"]} style={{ backgroundColor: Colors.lightThemeBlue }}>
-                <HeaderPaperModule title={route?.params?.paperType} rightPress={() => { navigation.navigate('DraftPaperScreen') }} leftIconPress={handleBack} />
+                <HeaderPaperModule title={paperHeader} rightPress={() => { navigation.navigate('DraftPaperScreen') }} leftIconPress={handleBack} />
             </SafeAreaView>
             {/* MAIN CONTENT */}
             <SafeAreaView
@@ -206,7 +216,7 @@ const PaperSelect = () => {
                                 1=3,2=0,3=0,4=2,5=0ddd
                             </Text>
                         </View>
-                        <TouchableOpacity style={styles.exportBox}>
+                        <TouchableOpacity style={styles.exportBox} onPress={() => navigation.navigate('MyPdfScreen')}>
                             <Text style={styles.exportText}>Export PDF</Text>
                             <Icon name='arrow-right-long' size={moderateScale(16)} color={Colors.white} />
                         </TouchableOpacity>

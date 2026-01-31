@@ -371,7 +371,7 @@ const LoginScreen = () => {
         <SafeAreaView
             style={styles.mainContainer}
             edges={['left', 'right', 'bottom']}>
-                <Loader visible={loading}/>
+            <Loader visible={loading} />
             <AppHeader title="Paper Fast" discriptionText='Paper Generate In Minute' />
             <View style={styles.innerMainContainer}>
                 <View style={styles.innerSecondMainContainer}>
@@ -397,8 +397,8 @@ const LoginScreen = () => {
 
                     <View style={styles.privacyBox}>
                         <Text style={styles.byRegisterText}>By registering, you agree to the
-                            <Text style={[styles.byRegisterText, { fontFamily: Fonts.InterSemiBold }]}>Terms of Service,{`\n`}
-                                <Text style={[styles.byRegisterText, { fontFamily: Fonts.InterSemiBold }]} onPress={() => { console.log('this for those') }}>
+                            <Text style={[styles.byRegisterText, { fontFamily: Fonts.InterSemiBold }]} onPress={() => navigation.navigate('TermandconditionScreen')}>Terms of Service,{`\n`}
+                                <Text style={[styles.byRegisterText, { fontFamily: Fonts.InterSemiBold }]}  onPress={() => navigation.navigate('PrivacyPolicyScreen')}>
                                     Privacy Policy </Text>
                             </Text> and <Text style={[styles.byRegisterText, { fontFamily: Fonts.InterSemiBold }]}>Cookie Policy.</Text></Text>
                     </View>

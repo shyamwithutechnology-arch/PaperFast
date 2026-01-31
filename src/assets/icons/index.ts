@@ -47,4 +47,14 @@ boardImg:require('./boardImg.png'),
 mediumImg:require('./mediumImg.png'),
 standardImg:require('./standardImg.png'),
 megaphone:require('./megaphone.png'),
+
+
+//// home icon
+math:require('./math.png'),
+science:require('./science.png'),
+hindi:require('./hindi.png'),
+sanskrit:require('./sanskrit.png'),
+socialscience:require('./socialscience.png'),
+english:require('./english.png'),
+
 };
