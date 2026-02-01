@@ -7,7 +7,7 @@ import { moderateScale } from 'react-native-size-matters';
 import { useNavigation } from '@react-navigation/native';
 import { Images } from '../../../../assets/images';
 import HomeBannerSlider from '../../../home/component/homebanner/HomeBannerSlider';
-import { showSnackbar } from '../../../../utils/snackbar';
+import { showSnackbar } from '../../../../utils/toastConfig';
 import { ApiEndPoint } from '../../../../api/endPoints';
 import { GET } from '../../../../api/request';
 

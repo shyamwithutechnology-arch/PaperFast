@@ -20,8 +20,6 @@ export const styles = StyleSheet.create({
         borderTopRightRadius: moderateScale(30),
         backgroundColor: Colors.white,
         marginTop: moderateScale(20),
-        // marginHorizontal:moderateScale(10)
-        // paddingHorizontal:moderateScale(10)
         paddingHorizontal: moderateScale(13)
     },
 
@@ -30,13 +28,11 @@ export const styles = StyleSheet.create({
         color: Colors.black,
         marginTop: moderateScale(40),
         fontFamily: Fonts.InstrumentSansSemiBold,
-        // marginLeft: moderateScale(20),
     },
     subHeading: {
         fontSize: moderateScale(14),
         color: Colors.ParagraphAndShortTexts,
         fontFamily: Fonts.InterRegular,
-        // marginLeft: moderateScale(20),
         marginTop: moderateScale(8),
     },
 

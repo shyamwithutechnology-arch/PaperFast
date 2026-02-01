@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StatusBar, Image, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { styles } from './styles';
 import { Colors, Fonts } from '../../../theme';
 import AppHeader from '../../../component/header/AppHeader';
-import { OtpInput, OtpTimer } from '../../auth/otp/component';
 import AppButton from '../../../component/button/AppButton';
 import AppTextInput from '../../../component/apptextinput/AppTextInput';
 import { moderateScale } from '../../../utils/responsiveSize';
@@ -12,31 +11,27 @@ import { Icons } from '../../../assets/icons'
 import { useDispatch } from "react-redux";
 import { loginSuccess } from '../../../redux/slices/authSlice';
 import { localStorage, reduxStorage, storageKeys } from '../../../storage/storage';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { showSnackbar } from '../../../utils/snackbar';
 import Loader from '../../../component/loader/Loader'
-import {POST_FORM } from '../../../api/request';
+import { POST_FORM } from '../../../api/request';
 import { ApiEndPoint } from '../../../api/endPoints';
-const LoginScreenRole = () => {
-    const route = useRoute()
-    // const { phoneNumber } = route.params
-    // console.log('phoneNumberphoneNumber', phoneNumber);
+import { showToast } from '../../../utils/toast';
 
+type NameFormData = {
+    firstName: string;
+    lastName: string
+}
+type NameFormErrors = Partial<Record<keyof NameFormData, string>>;
+
+const LoginScreenRole = () => {
     const dispatch = useDispatch()
-    const [otp, setOtp] = useState('');
-    const [firstName, setFirstName] = useState('')
-    const [lastName, setLastName] = useState('')
     const [mobileNumber, setMobileNumber] = useState<string | number>('')
-    const [input, setInput] = useState({
+    const [input, setInput] = useState<NameFormData>({
         firstName: '',
         lastName: ''
     });
     const [selectedRole, setSelectedRole] = useState('')
-
     const [loading, setLoading] = useState<boolean>(false);
-    const [errors, setErrors] = useState({});
-    const navigation = useNavigation()
-
+    const [errors, setErrors] = useState<NameFormErrors>({});
 
     const handleRoleSelect = (status) => {
         if (status === 'male') {
@@ -46,26 +41,37 @@ const LoginScreenRole = () => {
         }
     }
     // LoginScreen.tsx
-    const handleLoggedIn = () => {
-        const token = '1234';
-        reduxStorage.setItem('token', '123456')
-        dispatch(loginSuccess(token));
-
-        // ✅ Don't navigate here - let RootStack handle it automatically
-        // The auth state change will trigger RootStack to re-render
-    };
+    // const handleLoggedIn = () => {
+    //     const token = '1234';
+    //     reduxStorage.setItem('token', '123456')
+    //     dispatch(loginSuccess(token));
+    // };
 
     const handleLoginVerify = async () => {
         setErrors({});
-        // Validate form
-        const validateForm = (formData) => {
-            const errors = {};
+        const NAME_REGEX = /^[A-Za-z]+(?:[ -][A-Za-z]+)*$/;
+        const validateForm = (formData: NameFormData) => {
+            const errors: Partial<Record<keyof NameFormData, string>> = {};
+            // First Name
             if (!formData?.firstName?.trim()) {
-                errors.firstName = 'Please enter first name';
+                errors.firstName = 'First name is required';
+            } else if (formData.firstName.trim().length < 2) {
+                errors.firstName = 'First name must be at least 2 characters';
+            } else if (formData.firstName.trim().length > 40) {
+                errors.firstName = 'First name must be less than 40 characters';
+            } else if (!NAME_REGEX.test(formData.firstName.trim())) {
+                errors.firstName = 'First name can contain only letters';
             }
 
+            // Last Name
             if (!formData?.lastName?.trim()) {
-                errors.lastName = 'Please enter last name';
+                errors.lastName = 'Last name is required';
+            } else if (formData.lastName.trim().length < 2) {
+                errors.lastName = 'Last name must be at least 2 characters';
+            } else if (formData.lastName.trim().length > 40) {
+                errors.lastName = 'Last name must be less than 40 characters';
+            } else if (!NAME_REGEX.test(formData.lastName.trim())) {
+                errors.lastName = 'Last name can contain only letters';
             }
             return errors;
         };
@@ -74,12 +80,12 @@ const LoginScreenRole = () => {
 
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
-            showSnackbar('Please fill all required fields', 'error');
+            showToast('error', 'Error', 'Please fill all required fields.');
             return;
         }
 
         if (!selectedRole) {
-            showSnackbar('Please Select Your Role', 'error');
+            showToast('error', 'Error', 'Please Select Your Role');
             return;
         }
         setErrors({});
@@ -94,155 +100,38 @@ const LoginScreenRole = () => {
             };
             const response = await POST_FORM(ApiEndPoint.LoGINROlE, payload);
             if (response && response.status === 200) {
-                showSnackbar('Registration Successful', 'success');
+                showToast('success', 'Success', 'Registration Successful');
                 await localStorage.setItem(storageKeys.userId, String(response?.result?.usr_id))
-                await reduxStorage.setItem('token', '123456')
-                dispatch(loginSuccess('123456'));
+                await reduxStorage.setItem('token', '1234')
+                dispatch(loginSuccess('1234'));
             } else {
-                const errorMessage = response?.message ||
+                const errorMessage = response?.msg ||
                     'Registration failed. Please try again.';
-                showSnackbar(errorMessage, 'error');
+                showToast('error', 'Error', errorMessage);
             }
 
         } catch (error: any) {
             if (error?.offline) {
-                showSnackbar('No internet connection', 'error');
                 return;
             }
             const errorMessage = error?.response?.data?.message ||
                 error?.message ||
                 'Something went wrong. Please try again.';
-            showSnackbar(errorMessage, 'error');
+            showToast('error', 'Error', errorMessage);
         } finally {
             setLoading(false);
         }
     };
 
-    // run with fetch
-    // const handleLoginVerify = async() => {
 
-    //     // Clear previous errors
-    //     setErrors({});
-
-    //     // Validate phone number
-    //     const validateForm = (name) => {
-    //         console.log('eeeeeeeeeeeeee', name?.firstName)
-    //         const errors = {};
-
-    //         if (!name?.firstName || name?.firstName.trim() === '') {
-    //             errors.firstName = 'Pease Enter Fist Name';
-    //         } else if (!name?.lastName || name?.lastName.trim() === '') {
-    //             errors.lastName = 'Please Enter Last Name';
-    //         }
-    //         return errors;
-    //     };
-
-    //     const validationErrors = validateForm(input);
-
-    //     if (Object.keys(validationErrors).length > 0) {
-    //         setErrors(validationErrors);
-    //         showSnackbar('Please fill all required fields', 'error');
-    //         return;
-    //     }
-    //     if (!selectedRole) {
-    //         showSnackbar('Please Select Your Role', 'error');
-    //         return;
-    //     }
-    //     setErrors({});
-
-    //     setLoading(true);
-
-    //     try {
-    //         // Create FormData exactly like Postman
-    //         const formData = new FormData();
-
-    // formData.append('usr_first_name', input?.firstName);
-    // formData.append('usr_last_name', input?.lastName);
-    // formData.append('usr_phone', mobileNumber);
-    // formData.append('usr_role', selectedRole === 'Male' ? 'Student' : 'tutor');
-    // formData.append('usr_device_token', 'abc123xyz');
-
-    //         // formData.append('usr_first_name', 'Nidhi');
-    //         // formData.append('usr_last_name','Sharma' );
-    //         // formData.append('usr_phone', '9414359663');
-    //         // formData.append('usr_role', 'tutor');
-    //         // formData.append('usr_device_token', 'abc123xyz');
-
-    //         // console.log('Sending FormData exactly like Postman:');
-    //         // console.log('usr_first_name: Nidhi');
-    //         // console.log('usr_last_name: Sharma');
-    //         // console.log('usr_phone: 9414359663');
-    //         // console.log('usr_role: tutor');
-    //         // console.log('udddd',formData);
-
-    //         const response = await fetch('https://www.papers.withupartners.in/api/login', {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Accept': 'application/json',
-    //                 // 'Cookie': 'ci_session=ee5f5e885a10559417733c3aae4ec3e9cb3587e6'
-    //             },
-    //             body: formData
-    //         });
-
-    //         console.log('Response status:rr', response);
-
-    //         // Get response text first to see what's returned
-    //         const newRes = await response.json();
-    //         console.log('newRes:', newRes);
-
-    //         // // Try to parse as JSON
-    //         // let responseData;
-    //         // try {
-    //         //     responseData = JSON.parse(responseText);
-    //         // } catch (e) {
-    //         //     console.log('Response is not JSON:', responseText);
-    //         //     throw new Error('Invalid response format');
-    //         // }
-
-    //         // console.log('Parsed response:', responseData);
-
-    //         if (response.ok) {
-    //             //     // Check your API's success condition
-    //             //     if (newRes.status === 200 || responseData.success) {
-    //             //         showSnackbar('Registration successful!', 'success');
-    //             //     } else {
-    //             //         showSnackbar(responseData.message || 'Registration failed', 'error');
-    //             //     }
-    //             // } else {
-    //             //     throw new Error(`HTTP ${response.status}: ${responseData.message || 'Request failed'}`);
-    //             console.log('newRes.status',newRes.status == '1')
-
-    //             if (newRes.status === 200) {                    
-    //                 showSnackbar(newRes?.msg || 'Registration successful!', 'success');
-    //                 console.log(' newRes?.result?.usr_id', newRes?.result?.usr_id);
-
-    //                 await localStorage.setItem(storageKeys.userId, String(newRes?.result?.usr_id))
-    //                 await reduxStorage.setItem('token', '123456')
-    //                 dispatch(loginSuccess('123456'));
-    //             } else {
-    //                 showSnackbar(newRes?.msg || 'Registration failed', 'error');
-    //             }
-    //         }
-    //     } catch (error) {
-    //         console.error('API Error:', error);
-    //         // if (error.message?.includes('Network')) {
-    //         //     showSnackbar('No internet connection', 'error');
-    //         // } else {
-    //         //     showSnackbar(error.message, 'error');
-    //         // }
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-
-    const handleFirstNameChange = (text) => {
+    const handleFirstNameChange = (text: string) => {
         setInput(prev => ({ ...prev, firstName: text }));
         if (errors.firstName) {
             setErrors(prev => ({ ...prev, firstName: '' }));
         }
     };
 
-    const handleLastNameChange = (text) => {
+    const handleLastNameChange = (text: string) => {
         setInput(prev => ({ ...prev, lastName: text }));
         if (errors.lastName) {
             setErrors(prev => ({ ...prev, lastName: '' }));

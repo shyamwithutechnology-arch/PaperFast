@@ -8,4 +8,6 @@
         Classes:'classes',
         Banner:'banner',
         Subject:'subject',
+        UpdateProfile:'update-profile',
+        GetProfile:'get-profile',
     }
