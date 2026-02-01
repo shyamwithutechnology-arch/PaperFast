@@ -2388,7 +2388,7 @@ ${cleanText}
             />
           ) : (
             <Text style={[styles.questionText, isSelected && styles.selectedText]}>
-              {cleanText}
+              {cleanText}gggg
             </Text>
           )}
         </View>
@@ -2924,15 +2924,12 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.InstrumentSansMedium,
     color: Colors.black,
     lineHeight: moderateScale(18),
-    marginLeft: moderateScale(5),
-    //  marginTop: moderateScale(8)
-    // borderWidth:1
+    marginLeft: moderateScale(5)
   },
   optionMathJax: {
     fontSize: moderateScale(11),
     fontFamily: Fonts.InstrumentSansMedium,
-    color: Colors.black,
-    // borderWidth: 1
+    color: Colors.black
   },
   checkBox: {
     width: moderateScale(17),
@@ -2957,21 +2954,18 @@ const styles = StyleSheet.create({
     overflow: 'visible',
   },
   questionNumberContainer: {
-    // marginTop: moderateScale(6),
     alignItems: 'flex-start',
     flexDirection: "column",
     height: moderateScale(50),
     marginTop: moderateScale(6),
-    // borderWidth: 1,
     paddingLeft: moderateScale(4)
-    // marginRight: moderateScale(2)
   },
   cardMainBox:{
     elevation:30,
     marginVertical:moderateScale(1),
     shadowColor:'rgba(0, 140, 227, 1)',
-    borderRadius:moderateScale(10),
-    backgroundColor:Colors?.white
+    // borderRadius:moderateScale(10),
+    backgroundColor:'#f9fafb'
   },
   solutionBox: {
     backgroundColor: Colors.white,

@@ -6,7 +6,7 @@ import { Colors } from "../../theme";
 import HeaderPaperModule from "../../component/headerpapermodule/Headerpapermodule";
 // import SimpleHtmlView from "../../components/SimpleHtmlView";
 import HtmlView from "../../component/htmlview/HtmlView";
-import { showSnackbar } from "../../utils/snackbar";
+import { showSnackbar } from "../../utils/toastConfig";
 import Loader from "../../component/loader/Loader"; // If you have a Loader component
 
 const TermandconditionScreen = () => {

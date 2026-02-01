@@ -1,6 +1,20 @@
 // import React, { useEffect, useRef, useState } from "react";
-// import { View, Text, Image, TextInput, Pressable, StatusBar, StyleSheet, Platform, TouchableOpacity, Keyboard, KeyboardAvoidingView, ScrollView } from "react-native";
+// import {
+//     View,
+//     Text,
+//     Image,
+//     TextInput,
+//     Pressable,
+//     StatusBar,
+//     StyleSheet,
+//     Platform,
+//     TouchableOpacity,
+//     Keyboard,
+//     KeyboardAvoidingView,
+//     ScrollView
+// } from "react-native";
 // import { SafeAreaView } from "react-native-safe-area-context";
+// import DateTimePicker from '@react-native-community/datetimepicker'; // Changed import
 // import { styles } from "./styles";
 // import AppHeader from "../../component/header/AppHeader";
 // import { Icons } from "../../assets/icons";
@@ -8,27 +22,20 @@
 // import AppButton from "../../component/button/AppButton";
 // import { Colors, Fonts } from "../../theme";
 // import AppTextInput from "../../component/apptextinput/AppTextInput";
-// import { showSnackbar } from "../../utils/snackbar";
+// import { showSnackbar } from "../../utils/toastConfig";
 // import Loader from "../../component/loader/Loader";
 // import { localStorage, storageKeys } from "../../storage/storage";
-// // import { useNavigation } from "@react-navigation/native";
 // import { useNavigation, useRoute } from '@react-navigation/native';
-// import DatePicker from 'react-native-date-picker'
-
+// import { GET, POST_FORM } from "../../api/request";
+// import { ApiEndPoint } from "../../api/endPoints";
+// import { showToast } from "../../utils/toast";
 
 // const ProfileScreen = () => {
 //     const navigation = useNavigation()
-
-//     // const [phone, setPhone] = useState<string>("");
 //     const [phone, setPhone] = useState<string>("");
-//     // const [name, setName] = useState('Rohit')
-//     // const [lastName, setLastName] = useState('Saini')
-//     // const [phoneInput, setPhoneInput] = useState<string>("");
-//     // const [dob, setDob] = useState('20/10/2004')
-//     // const [email, setEmail] = useState('rahit@gmail.com')
 //     const [profileData, setProfileData] = useState({})
 //     const [date, setDate] = useState(new Date())
-//     const [open, setOpen] = useState(false)
+//     const [showDatePicker, setShowDatePicker] = useState(false) // Changed state name
 //     const [input, setInput] = useState({
 //         firstName: '',
 //         lastName: '',
@@ -36,31 +43,23 @@
 //         dob: "",
 //         email: ''
 //     })
+
 //     console.log('profileData', profileData);
 
 //     const [loading, setLoading] = useState<boolean>(false);
 //     const [errors, setErrors] = useState({});
 //     const [userProfileId, setUserProfileId] = useState('');
-//     const timeoutRef = useRef(null); // Create a ref for timeout
-
+//     const timeoutRef = useRef(null);
 
 //     const handlePhoneChange = (text: string) => {
 //         const digitsOnly = text.replace(/\D/g, '');
-
-//         // let formatted = digitsOnly;
-//         // if (digitsOnly.length > 5) {
-//         //     formatted = `${digitsOnly.slice(0, 5)}-${digitsOnly.slice(5, 10)}`;
-//         // }
-//         // setInput((...pre,{ input: digitsOnly}));
 //         setInput(prev => ({ ...prev, phoneInput: digitsOnly }));
 //         if (errors.phoneInput) {
 //             setErrors(prev => ({ ...prev, phoneInput: '' }));
 //         }
 //     };
 
-//     // const handleOtpRequest = () => {
-//     //     navigation.navigate('OtpRequestScreen', { phoneNumber: phoneInput });
-//     // }
+//     // Format date for display
 //     const formatDateToDDMMYY = (date) => {
 //         if (!date) return 'Select Date';
 //         const day = String(date.getDate()).padStart(2, '0');
@@ -69,117 +68,38 @@
 //         return `${day}/${month}/${year}`;
 //     };
 
-//     // const handleProfileRequest = async () => {
-//     // setErrors({});
+//     // Format date for API (YYYY-MM-DD)
+//     const formatDateForAPI = (date) => {
+//         if (!date) return '';
+//         const year = date.getFullYear();
+//         const month = String(date.getMonth() + 1).padStart(2, '0');
+//         const day = String(date.getDate()).padStart(2, '0');
+//         return `${year}-${month}-${day}`;
+//     };
 
-//     // Validate phone number
-//     // const validateForm = (name) => {
-//     //     // console.log('eeeeeeeeeeeeee', name?.firstName)
-//     //     const errors = {};
+//     // Handle date change from DateTimePicker
+//     const handleDateChange = (event, selectedDate) => {
+//         setShowDatePicker(false); // Hide picker on both platforms
 
-//     //     if (!name?.firstName || name?.firstName.trim() === '') {
-//     //         errors.firstName = 'Pease Enter Fist Name';
-//     //     } else if (!name?.lastName || name?.lastName.trim() === '') {
-//     //         errors.lastName = 'Please Enter Last Name';
-//     //     } else if (name?.phoneInput.trim() === '') {
-//     //         errors.phoneInput = 'Please Enter Phone Name';
-//     //     } else if (name?.phoneInput.length > 10) {
-//     //         errors.phoneInput = 'Please Enter 10 digit number';
-//     //     }
-//     //     return errors;
-//     // };
+//         if (selectedDate) {
+//             setDate(selectedDate);
+//             // Update input.dob with formatted date for display
+//             setInput(prev => ({
+//                 ...prev,
+//                 dob: formatDateToDDMMYY(selectedDate)
+//             }));
 
-//     // const validationErrors = validateForm(input);
-
-//     // if (Object.keys(validationErrors).length > 0) {
-//     //     setErrors(validationErrors);
-//     //     showSnackbar('Please fill all required fields', 'error');
-//     //     return;
-//     // }
-//     //     // if (!selectedRole) {
-//     //     //     showSnackbar('Please Select Your Role', 'error');
-//     //     //     return;
-//     //     // }
-
-//     //     setLoading(true);
-
-//     //     try {
-//     //         // Create FormData exactly like Postman
-//     //         const formData = new FormData();
-
-//     //         formData.append('usr_id', userProfileId);
-//     //         formData.append('usr_first_name', input?.name !== '' ? input?.name : profileData?.usr_first_name);
-//     //         formData.append('usr_last_name', input?.lastName !== '' ? input?.lastName : profileData?.usr_last_name);
-//     //         formData.append('usr_role', profileData?.usr_role);
-//     //         formData.append('usr_gender', profileData?.usr_gender);
-//     //         formData.append('usr_dob', profileData?.usr_device_token);
-
-//     //         const response = await fetch('https://www.papers.withupartners.in/api/update-profile', {
-//     //             method: 'POST',
-//     //             // headers: {
-//     //             //     'Accept': 'application/json',
-//     //             //     'Cookie': 'ci_session=ee5f5e885a10559417733c3aae4ec3e9cb3587e6'
-//     //             // },
-//     //             body: formData
-//     //         });
-
-//     //         console.log('Response status:rr', response);
-
-
-
-//     //         // // Try to parse as JSON
-//     //         // let responseData;
-//     //         // try {
-//     //         //     responseData = JSON.parse(responseText);
-//     //         // } catch (e) {
-//     //         //     console.log('Response is not JSON:', responseText);
-//     //         //     throw new Error('Invalid response format');
-//     //         // }
-
-//     //         // console.log('Parsed response:', responseData);
-
-//     //         if (response.ok) {
-//     //             // Get response text first to see what's returned
-//     //             const newRes = await response.json();
-//     //             console.log('newRes:dddddd', newRes);
-//     //             //     // Check your API's success condition
-//     //             //     if (newRes.status === 200 || responseData.success) {
-//     //             //         showSnackbar('Registration successful!', 'success');
-//     //             //     } else {
-//     //             //         showSnackbar(responseData.message || 'Registration failed', 'error');
-//     //             //     }
-//     //             // } else {
-//     //             //     throw new Error(`HTTP ${response.status}: ${responseData.message || 'Request failed'}`);
-
-//     //             // showSnackbar(newRes?.msg, 'success');
-//     //             if (newRes.status === '1') {
-//     //                 // console.log('newRes?.msggg', newRes?.msg)
-//     //                 showSnackbar(newRes?.msg, 'success');
-//     //                 // console.log('newRes.statussss', newRes?.result)
-//     //                 // setLoading(false)
-//     //                 // reduxStorage.setItem('token', '123456')
-//     //                 // dispatch(loginSuccess('123456'));
-//     //                 // navigation.navigate('OtpRequestScreen', { 'otpResult': newRes?.result, 'phoneNumber': phoneInput })
-//     //             } else {
-//     //                 showSnackbar(newRes?.msg || 'OTP Failed', 'error');
-//     //             }
-//     //         }
-
-//     //     } catch (error) {
-//     //         // console.error('API Error:', error);
-//     //         if (error.message?.includes('Network')) {
-//     //             showSnackbar('No internet connection', 'error');
-//     //         } else {
-//     //             showSnackbar(error.message, 'error');
-//     //         }
-
-//     //     } finally {
-//     //         setLoading(false);
-//     //     }
-//     // };
+//             // Also update profileData if needed
+//             if (profileData) {
+//                 setProfileData(prev => ({
+//                     ...prev,
+//                     usr_dob: formatDateForAPI(selectedDate)
+//                 }));
+//             }
+//         }
+//     };
 
 //     const handleProfileRequest = async () => {
-
 //         setErrors({});
 
 //         const validateForm = (name) => {
@@ -213,18 +133,9 @@
 //                 errors.email = 'Email cannot exceed 100 characters';
 //             }
 
-//             // Optional: Phone validation (if you have phone field)
-//             // if (name?.phoneInput) {
-//             //     const phone = name.phoneInput.trim();
-//             //     if (phone && phone.length !== 10) {
-//             //         errors.phoneInput = 'Please Enter a Valid 10-digit Phone Number';
-//             //     } else if (phone && !/^\d+$/.test(phone)) {
-//             //         errors.phoneInput = 'Phone number must contain only digits';
-//             //     }
-//             // }
-
 //             return errors;
 //         };
+
 //         const validationErrors = validateForm(input);
 
 //         if (Object.keys(validationErrors).length > 0) {
@@ -235,155 +146,146 @@
 //         setLoading(true);
 
 //         try {
-//             const formData = new FormData();
-//             formData.append('usr_id', userProfileId);
-//             formData.append('usr_first_name', input?.firstName);
-//             formData.append('usr_last_name', input?.lastName);
-//             formData.append('usr_role', profileData?.usr_role);
-//             formData.append('usr_gender', profileData?.usr_gender);
-//             formData.append('usr_dob', profileData?.usr_device_token);
-//             formData.append('usr_email', input?.email);
+//             // const formData = new FormData();
+//             // formData.append('usr_id', userProfileId);
+//             // formData.append('usr_first_name', input?.firstName);
+//             // formData.append('usr_last_name', input?.lastName);
+//             // formData.append('usr_role', profileData?.usr_role);
+//             // formData.append('usr_gender', profileData?.usr_gender);
+//             // formData.append('usr_dob', formatDateForAPI(date)); // Use formatted date
+//             // formData.append('usr_email', input?.email);
 
-//             const response = await fetch('https://www.papers.withupartners.in/api/update-profile', {
-//                 method: 'POST',
-//                 body: formData
-//             });
-
-//             console.log('Response status:', response.status);
-
-//             // Check if response is OK
-//             if (!response.ok) {
-//                 throw new Error(`HTTP ${response.status}: Request failed`);
+//             const params = {
+//                 'usr_id': userProfileId,
+//                 'usr_first_name': input?.firstName,
+//                 'usr_last_name': input?.lastName,
+//                 'usr_role': profileData?.usr_role,
+//                 'usr_gender': profileData?.usr_gender,
+//                 'usr_dob': formatDateForAPI(date),
+//                 'usr_email': input?.email
 //             }
 
-//             const responseText = await response.text();
-//             console.log('Raw response:', responseText);
+//             const response = await POST_FORM(ApiEndPoint?.UpdateProfile, params)
 
-//             let newRes;
-//             try {
-//                 newRes = JSON.parse(responseText);
-//             } catch (parseError) {
-//                 console.error('JSON parse error:', parseError);
-//                 showSnackbar('Invalid server response', 'error');
-//                 return;
-//             }
 
-//             console.log('Parsed response:ddd', newRes);
+//             // try {
+//             //     newRes = JSON.parse(responseText);
+//             // } catch (parseError) {
+//             //     console.error('JSON parse error:', parseError);
+//             //     showSnackbar('Invalid server response', 'error');
+//             //     return;
+//             // }
 
-//             // Show snackbar based on status
-//             if (newRes.status === 200) {
+//             // console.log('Parsed response:ddd', newRes);
+
+//             if (response.status === 200) {
 //                 console.log('✅ SUCCESS - Showing snackbar');
-//                 if (timeoutRef.current) {
-//                     clearTimeout(timeoutRef.current);
-//                 }
+//                 // if (timeoutRef.current) {
+//                 //     clearTimeout(timeoutRef.current);
+//                 // }
 
-//                 setLoading(false); // Hide loader first
+//                 // timeoutRef.current = setTimeout(() => {
+//                 //     showSnackbar(newRes?.msg, 'success');
+//                 //     timeoutRef.current = null;
+//                 // }, 1000);
 
-//                 // Set a new timeout for snackbar
-//                 timeoutRef.current = setTimeout(() => {
-//                     showSnackbar(newRes?.msg, 'success');
-//                     timeoutRef.current = null; // Clear the ref after execution
-//                 }, 1000); // Small delay
-//                 // Optional: Update your state with new data
-//                 if (newRes.result) {
-//                     console.log('ssssssssssssssss', newRes.result);
-//                     setProfileData(newRes.result);
+//                 if (response.result) {
+//                     console.log('ssssssssssssssss', response.result);
+//                     setProfileData(response.result);
 //                 }
 //             } else {
-//                 setLoading(false);
-//                 console.log('❌ ERROR - Showing snackbar');
-//                 showSnackbar(newRes?.msg || 'Update failed', 'error');
+//                 showToast('error', 'Error', response?.msg || 'Update failed');
 //             }
 
 //         } catch (error) {
-//             setLoading(false);
-//             console.error('Catch block error:', error);
-//             showSnackbar(
-//                 error.message?.includes('Network')
-//                     ? 'No internet connection'
-//                     : 'Something went wrong',
-//                 'error'
+//             if (error?.offline) {
+//                 return;
+//             }
+//             showToast('error', "Error", 'Something went wrong',
 //             );
 //         } finally {
 //             setLoading(false);
 //         }
 //     };
 
-//     const handleGetProfile = async (userId) => {
-//         setLoading(true);
+//     // const handleGetProfile = async (userId) => {
+//     //     setLoading(true);
+//     //     try {
+//     //         const formData = new FormData();
+//     //         formData.append('usr_id', userId);
+//     //         const response = await fetch('https://www.papers.withupartners.in/api/get-profile', {
+//     //             method: 'POST',
+//     //             body: formData
+//     //         });
+
+//     //         console.log('Response status:rr', response);
+
+//     //         const newRes = await response.json();
+//     //         console.log('newRes:', newRes);
+
+//     //         if (response.ok) {
+//     // if (newRes.status === 200) {
+//     //     console.log('newRes.statusss', newRes.result)
+//     //     setProfileData(newRes.result);
+
+//     //     // Parse date from API response if exists
+//     //     if (newRes.result.usr_dob) {
+//     //         const dateFromApi = new Date(newRes.result.usr_dob);
+//     //         if (!isNaN(dateFromApi.getTime())) {
+//     //             setDate(dateFromApi);
+//     //         }
+//     //     }
+//     // } else {
+//     //     showSnackbar(newRes?.msg || 'OTP Failed', 'error');
+//     // }
+//     //         }
+
+//     //     } catch (error) {
+//     //         if (error.message?.includes('Network')) {
+//     //             showSnackbar('No internet connection', 'error');
+//     //         } else {
+//     //             showSnackbar(error.message, 'error');
+//     //         }
+//     //     } finally {
+//     //         setLoading(false);
+//     //     }
+//     // };
+
+//     const handleGetProfile = (userId) => {
 //         try {
-//             const formData = new FormData();
-//             formData.append('usr_id', userId);
-//             const response = await fetch('https://www.papers.withupartners.in/api/get-profile', {
-//                 method: 'POST',
-//                 // headers: {
-//                 //     'Accept': 'application/json',
-//                 //     'Cookie': 'ci_session=ee5f5e885a10559417733c3aae4ec3e9cb3587e6'
-//                 // },
-//                 body: formData
-//             });
+//             setLoading(true);
+//             const params = {
+//                 'usr_id': userId
+//             }
+//             console.log('paramsddddd', params);
 
-//             console.log('Response status:rr', response);
+//             const response = POST_FORM(ApiEndPoint.GetProfile, params);
+//             console.log('resss', response);
 
-//             // Get response text first to see what's returned
-//             const newRes = await response.json();
-//             console.log('newRes:', newRes);
-
-//             // // Try to parse as JSON
-//             // let responseData;
-//             // try {
-//             //     responseData = JSON.parse(responseText);
-//             // } catch (e) {
-//             //     console.log('Response is not JSON:', responseText);
-//             //     throw new Error('Invalid response format');
-//             // }
-
-//             // console.log('Parsed response:', responseData);
-
-//             if (response.ok) {
-//                 //     // Check your API's success condition
-//                 //     if (newRes.status === 200 || responseData.success) {
-//                 //         showSnackbar('Registration successful!', 'success');
-//                 //     } else {
-//                 //         showSnackbar(responseData.message || 'Registration failed', 'error');
-//                 //     }
-//                 // } else {
-//                 //     throw new Error(`HTTP ${response.status}: ${responseData.message || 'Request failed'}`);
-
-//                 if (newRes.status === 200) {
-//                     // setProfileData(new)
-//                     console.log('newRes.statusss', newRes.result)
-//                     setProfileData(newRes.result)
-//                     // showSnackbar(newRes?.msg || 'Registration successful!', 'success');
-//                     // reduxStorage.setItem('token', '123456')
-//                     // dispatch(loginSuccess('123456'));
-//                     // showSnackbar(newRes?.msg, 'success');
-//                     // navigation.navigate('OtpRequestScreen', { 'otpResult': newRes?.result, 'phoneNumber': phoneInput })
-//                 } else {
-//                     showSnackbar(newRes?.msg || 'OTP Failed', 'error');
+//             if (response.status === 200) {
+//                 setProfileData(response.result);
+//                 if (response.result.usr_dob) {
+//                     const dateFromApi = new Date(response.result.usr_dob);
+//                     if (!isNaN(dateFromApi.getTime())) {
+//                         setDate(dateFromApi);
+//                     }
 //                 }
-//             }
-
-//         } catch (error) {
-//             // console.error('API Error:', error);
-//             if (error.message?.includes('Network')) {
-//                 showSnackbar('No internet connection', 'error');
 //             } else {
-//                 showSnackbar(error.message, 'error');
+//                 showToast('error', 'Error', response?.msg || 'OTP Failed');
+//             }
+//         } catch (error) {
+//             if (error?.offline) {
+//                 return;
 //             }
 
-//         } finally {
-//             setLoading(false);
+//             showToast('error', "Error", 'Something went wrong');
 //         }
-//     };
-
-
+//     }
 //     const handleFirstNameChange = (text) => {
 //         setInput(prev => ({ ...prev, firstName: text }));
 //         if (errors.firstName) {
 //             setErrors(prev => ({ ...prev, firstName: '' }));
 //         }
-
 //     };
 
 //     const handleLastNameChange = (text) => {
@@ -393,18 +295,21 @@
 //         }
 //     };
 
-//     // const handleDobChange = (text) => {
-//     //     setInput(prev => ({ ...prev, dob: text }));
-//     //     if (errors.dob) {
-//     //         setErrors(prev => ({ ...prev, dob: '' }));
-//     //     }
-//     // };
-
 //     const handleEmailChange = (text) => {
 //         setInput(prev => ({ ...prev, email: text }));
 //         if (errors.email) {
 //             setErrors(prev => ({ ...prev, email: '' }));
 //         }
+//     };
+
+//     // Platform-specific date picker styles
+//     const getDatePickerDisplay = () => {
+//         if (Platform.OS === 'ios') {
+//             return 'spinner';
+//         } else if (Platform.OS === 'android') {
+//             return 'default';
+//         }
+//         return 'default';
 //     };
 
 //     useEffect(() => {
@@ -434,13 +339,12 @@
 //                 firstName: profileData?.usr_first_name || '',
 //                 lastName: profileData?.usr_last_name || '',
 //                 phoneInput: profileData?.usr_phone || '',
-//                 dob: profileData?.usr_join_date || '',
+//                 dob: profileData?.usr_dob ? formatDateToDDMMYY(new Date(profileData.usr_dob)) : '',
 //                 email: profileData?.usr_email || ''
 //             });
 //         }
-//     }, [profileData]); // This runs whenever profileData changes
-//     // userId
-//     console.log('profileDataaaa', profileData);
+//     }, [profileData]);
+
 //     useEffect(() => {
 //         return () => {
 //             if (timeoutRef.current) {
@@ -452,13 +356,19 @@
 //     return (
 //         <SafeAreaView
 //             style={styles.mainContainer}
-//             edges={['left', 'right', 'bottom']} // 🔥 IMPORTANT
+//             edges={['left', 'right', 'bottom']}
 //         >
-//             {/* <> */}
 //             <Loader visible={loading} />
-//             {/* <StatusBar barStyle="dark-content" backgroundColor={Colors.primaryColor} /> */}
-//             <AppHeader title="Paper Fast" discriptionText='Paper Generate In Minute' leftIcon={Icons.arrowLeft} onBackPress={() => navigation.goBack()} leftIconStyle={{   width: moderateScale(20),
-//                   height: moderateScale(20)}}/>
+//             <AppHeader
+//                 title="Paper Fast"
+//                 discriptionText='Paper Generate In Minute'
+//                 leftIcon={Icons.arrowLeft}
+//                 onBackPress={() => navigation.goBack()}
+//                 leftIconStyle={{
+//                     width: moderateScale(20),
+//                     height: moderateScale(20)
+//                 }}
+//             />
 //             <View style={styles.innerMainContainer}>
 //                 <View style={styles.innerSecondMainContainer}>
 //                     <KeyboardAvoidingView
@@ -470,31 +380,78 @@
 //                             style={styles.innerSecondMainContainer}
 //                             contentContainerStyle={{
 //                                 flexGrow: 1,
-//                                 paddingBottom: 30 // Add padding at bottom for better scrolling
+//                                 paddingBottom: 30
 //                             }}
 //                             keyboardShouldPersistTaps="handled"
 //                             showsVerticalScrollIndicator={true}>
+
 //                             <Text style={styles.loginText}>My Profile</Text>
 //                             <Text style={styles.subHeading}>Update your personal details</Text>
+
 //                             <View style={{ marginTop: moderateScale(4) }}>
 //                                 <View style={{ marginBottom: moderateScale(15) }}>
-//                                     <AppTextInput placeHolderText={'Enter Name'} value={input?.firstName} onChangeText={handleFirstNameChange} containerStyle={{}} />
-//                                     {errors?.firstName && <Text style={{ fontSize: moderateScale(12), color: Colors.red, fontFamily: Fonts.InterMedium, marginLeft: moderateScale(20) }}>{errors?.firstName}</Text>}
+//                                     <AppTextInput
+//                                         placeHolderText={'Enter Name'}
+//                                         value={input?.firstName}
+//                                         onChangeText={handleFirstNameChange}
+//                                         containerStyle={{}}
+//                                     />
+//                                     {errors?.firstName && (
+//                                         <Text style={{
+//                                             fontSize: moderateScale(12),
+//                                             color: Colors.red,
+//                                             fontFamily: Fonts.InterMedium,
+//                                             marginLeft: moderateScale(20)
+//                                         }}>
+//                                             {errors?.firstName}
+//                                         </Text>
+//                                     )}
 //                                 </View>
+
 //                                 <View>
-//                                     <AppTextInput placeHolderText={'Enter Last'} value={input?.lastName} onChangeText={handleLastNameChange} />
-//                                     {errors?.lastName && <Text style={{ fontSize: moderateScale(12), color: Colors.red, fontFamily: Fonts.InterMedium, marginLeft: moderateScale(20) }}>{errors?.lastName}</Text>}
+//                                     <AppTextInput
+//                                         placeHolderText={'Enter Last'}
+//                                         value={input?.lastName}
+//                                         onChangeText={handleLastNameChange}
+//                                     />
+//                                     {errors?.lastName && (
+//                                         <Text style={{
+//                                             fontSize: moderateScale(12),
+//                                             color: Colors.red,
+//                                             fontFamily: Fonts.InterMedium,
+//                                             marginLeft: moderateScale(20)
+//                                         }}>
+//                                             {errors?.lastName}
+//                                         </Text>
+//                                     )}
 //                                 </View>
+
 //                                 <View style={styles.phoneInputBox}>
 //                                     <Image source={Icons.country} style={styles.countryImgStyle} />
-//                                     <View style={{ marginLeft: moderateScale(10), alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}>
-//                                         <View style={{ height: moderateScale(18), width: moderateScale(2), backgroundColor: 'rgba(0, 140, 227, 0.31)', }} />
+//                                     <View style={{
+//                                         marginLeft: moderateScale(10),
+//                                         alignItems: 'center',
+//                                         justifyContent: 'center',
+//                                         flexDirection: 'row'
+//                                     }}>
+//                                         <View style={{
+//                                             height: moderateScale(18),
+//                                             width: moderateScale(2),
+//                                             backgroundColor: 'rgba(0, 140, 227, 0.31)'
+//                                         }} />
 //                                         <Text style={styles.prefix}>{'  '}+91</Text>
-//                                         <TextInput style={styles.phoneInput} editable={false} maxLength={10} keyboardType="phone-pad" onChangeText={handlePhoneChange} value={input?.phoneInput} />
+//                                         <TextInput
+//                                             style={styles.phoneInput}
+//                                             editable={false}
+//                                             maxLength={10}
+//                                             keyboardType="phone-pad"
+//                                             onChangeText={handlePhoneChange}
+//                                             value={input?.phoneInput}
+//                                         />
 //                                     </View>
 //                                 </View>
 
-//                                 {/* <AppTextInput placeHolderText={'DD/MM/YY'} value={input?.dob} onChangeText={handleDobChange} containerStyle={{ marginBottom: moderateScale(15) }} /> */}
+//                                 {/* Date Picker Touchable */}
 //                                 <TouchableOpacity
 //                                     style={{
 //                                         paddingHorizontal: moderateScale(12),
@@ -506,110 +463,91 @@
 //                                         marginTop: moderateScale(2),
 //                                         marginBottom: moderateScale(15)
 //                                     }}
-//                                     onPress={() => setOpen(true)}
+//                                     onPress={() => setShowDatePicker(true)}
 //                                 >
 //                                     <Text>{formatDateToDDMMYY(date)}</Text>
 //                                 </TouchableOpacity>
+
+//                                 {/* Date Picker Component */}
+//                                 {showDatePicker && (
+//                                     <DateTimePicker
+//                                         value={date}
+//                                         mode="date"
+//                                         display={getDatePickerDisplay()}
+//                                         onChange={handleDateChange}
+//                                         maximumDate={new Date()}
+//                                         style={Platform.OS === 'ios' ? {
+//                                             backgroundColor: '#FFFFFF',
+//                                             height: 200
+//                                         } : {}}
+//                                         // Android specific props
+//                                         textColor="#333333"
+//                                         accentColor="#FF6B6B"
+//                                         // iOS specific props
+//                                         themeVariant="light"
+//                                     />
+//                                 )}
+
 //                                 <View style={{ marginBottom: moderateScale(15) }}>
-//                                     <AppTextInput placeHolderText={'Enter Email'} keyboardTypeText={'email-address'} value={input?.email} onChangeText={handleEmailChange} containerStyle={{}} />
-//                                     {errors?.email && <Text style={{ fontSize: moderateScale(12), color: Colors.red, fontFamily: Fonts.InterMedium, marginLeft: moderateScale(20) }}>{errors?.email}</Text>}
+//                                     <AppTextInput
+//                                         placeHolderText={'Enter Email'}
+//                                         keyboardTypeText={'email-address'}
+//                                         value={input?.email}
+//                                         onChangeText={handleEmailChange}
+//                                         containerStyle={{}}
+//                                     />
+//                                     {errors?.email && (
+//                                         <Text style={{
+//                                             fontSize: moderateScale(12),
+//                                             color: Colors.red,
+//                                             fontFamily: Fonts.InterMedium,
+//                                             marginLeft: moderateScale(20)
+//                                         }}>
+//                                             {errors?.email}
+//                                         </Text>
+//                                     )}
 //                                 </View>
 //                             </View>
-//                             <AppButton title="Submit" style={{ paddingHorizontal: moderateScale(133), marginTop: moderateScale(14), }} onPress={handleProfileRequest} />
 
-//                             {/* <DatePicker
-//                             modal
-//                             open={open}
-//                             date={date}
-//                             onConfirm={(date) => {
-//                                 setOpen(false)
-//                                 setDate(date)
-//                             }}
-//                             onCancel={() => {
-//                                 setOpen(false)
-//                             }}
-//                             style={{}}
-//                             maximumDate={}
-//                         /> */}
-
-//                             <DatePicker
-//                                 modal
-//                                 open={open}
-//                                 date={date}
-//                                 mode="date" // Ensure it shows only date (not time)
-//                                 onConfirm={(selectedDate) => {
-//                                     setOpen(false);
-//                                     setDate(selectedDate);
+//                             <AppButton
+//                                 title="Submit"
+//                                 style={{
+//                                     paddingHorizontal: moderateScale(133),
+//                                     marginTop: moderateScale(14)
 //                                 }}
-//                                 onCancel={() => {
-//                                     setOpen(false);
-//                                 }}
-//                                 maximumDate={new Date()} // Only dates up to today
-//                                 theme="light" // or "dark" for dark mode
-
-//                                 // Custom colors for all elements
-//                                 // theme={{
-//                                 //     // Background colors
-//                                 //     backgroundColor: '#FFFFFF', // Modal background
-
-//                                 //     // Header colors
-//                                 //     headerColor: '#FF6B6B', // Your custom header color
-//                                 //     headerTextColor: '#FFFFFF', // Header text color
-
-//                                 //     // Text colors
-//                                 //     textColor: '#333333', // Date numbers color
-//                                 //     textSecondaryColor: '#999999', // Disabled dates color
-
-//                                 //     // Button colors
-//                                 //     buttonTextColor: '#FF6B6B', // Confirm/Cancel button text color
-//                                 //     buttonBackgroundColor: '#F5F5F5', // Button background (if supported)
-
-//                                 //     // Border colors
-//                                 //     borderColor: '#E0E0E0',
-
-//                                 //     // Android specific
-//                                 //     androidButtonColor: '#FF6B6B',
-//                                 //     androidButtonTextColor: '#FFFFFF',
-//                                 // }}
-
-//                                 // Alternative prop-based coloring (if theme doesn't work)
-//                                 textColor="#333333" // Date numbers
-//                                 buttonTextColor="#FF6B6B" // Button text
-//                                 confirmText="Confirm"
-//                                 cancelText="Cancel"
-
-//                                 // Modal styling
-//                                 modalProps={{
-//                                     overlayStyle: {
-//                                         backgroundColor: 'rgba(0, 0, 0, 0.5)', // Overlay background
-//                                     }
-//                                 }}
+//                                 onPress={handleProfileRequest}
 //                             />
 //                         </ScrollView>
 //                     </KeyboardAvoidingView>
 //                 </View>
 //             </View>
-//             {/* </> */}
-//             {/* <Text>dsfasff</Text> */}
 //         </SafeAreaView>
 //     )
 // }
 
 // export default ProfileScreen
+
+
+
+
+
+//  &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+// export default ProfileScreen
 import React, { useEffect, useRef, useState } from "react";
-import { 
-  View, 
-  Text, 
-  Image, 
-  TextInput, 
-  Pressable, 
-  StatusBar, 
-  StyleSheet, 
-  Platform, 
-  TouchableOpacity, 
-  Keyboard, 
-  KeyboardAvoidingView, 
-  ScrollView 
+import {
+    View,
+    Text,
+    Image,
+    TextInput,
+    Pressable,
+    StatusBar,
+    StyleSheet,
+    Platform,
+    TouchableOpacity,
+    Keyboard,
+    KeyboardAvoidingView,
+    ScrollView
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DateTimePicker from '@react-native-community/datetimepicker'; // Changed import
@@ -620,10 +558,10 @@ import { moderateScale } from "react-native-size-matters";
 import AppButton from "../../component/button/AppButton";
 import { Colors, Fonts } from "../../theme";
 import AppTextInput from "../../component/apptextinput/AppTextInput";
-import { showSnackbar } from "../../utils/snackbar";
 import Loader from "../../component/loader/Loader";
 import { localStorage, storageKeys } from "../../storage/storage";
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { showToast } from "../../utils/toast";
 
 const ProfileScreen = () => {
     const navigation = useNavigation()
@@ -638,7 +576,7 @@ const ProfileScreen = () => {
         dob: "",
         email: ''
     })
-    
+
     console.log('profileData', profileData);
 
     const [loading, setLoading] = useState<boolean>(false);
@@ -667,7 +605,7 @@ const ProfileScreen = () => {
     const formatDateForAPI = (date) => {
         if (!date) return '';
         const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0'); 
+        const month = String(date.getMonth() + 1).padStart(2, '0');
         const day = String(date.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     };
@@ -675,15 +613,15 @@ const ProfileScreen = () => {
     // Handle date change from DateTimePicker
     const handleDateChange = (event, selectedDate) => {
         setShowDatePicker(false); // Hide picker on both platforms
-        
+
         if (selectedDate) {
             setDate(selectedDate);
             // Update input.dob with formatted date for display
-            setInput(prev => ({ 
-                ...prev, 
-                dob: formatDateToDDMMYY(selectedDate) 
+            setInput(prev => ({
+                ...prev,
+                dob: formatDateToDDMMYY(selectedDate)
             }));
-            
+
             // Also update profileData if needed
             if (profileData) {
                 setProfileData(prev => ({
@@ -730,12 +668,12 @@ const ProfileScreen = () => {
 
             return errors;
         };
-        
+
         const validationErrors = validateForm(input);
 
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
-            showSnackbar('Please fill all required fields', 'error');
+            showToast('success', 'Error', 'Please fill all required fields');
             return;
         }
         setLoading(true);
@@ -769,11 +707,9 @@ const ProfileScreen = () => {
                 newRes = JSON.parse(responseText);
             } catch (parseError) {
                 console.error('JSON parse error:', parseError);
-                showSnackbar('Invalid server response', 'error');
+                showToast('error', 'Error', 'Invalid server response');
                 return;
             }
-
-            console.log('Parsed response:ddd', newRes);
 
             if (newRes.status === 200) {
                 console.log('✅ SUCCESS - Showing snackbar');
@@ -784,34 +720,28 @@ const ProfileScreen = () => {
                 setLoading(false);
 
                 timeoutRef.current = setTimeout(() => {
-                    showSnackbar(newRes?.msg, 'success');
+                    showToast('error', 'Error', newRes?.msg);
                     timeoutRef.current = null;
                 }, 1000);
-                
+
                 if (newRes.result) {
-                    console.log('ssssssssssssssss', newRes.result);
                     setProfileData(newRes.result);
                 }
             } else {
                 setLoading(false);
-                console.log('❌ ERROR - Showing snackbar');
-                showSnackbar(newRes?.msg || 'Update failed', 'error');
+                showToast('error', 'Error', newRes?.msg || 'Update failed');
             }
 
         } catch (error) {
-            setLoading(false);
-            console.error('Catch block error:', error);
-            showSnackbar(
-                error.message?.includes('Network')
-                    ? 'No internet connection'
-                    : 'Something went wrong',
-                'error'
-            );
+            if (error.offline) {
+                return
+            }
+            showToast('error', 'Error', 'Something went wrong')
         } finally {
             setLoading(false);
         }
     };
-    
+
     const handleGetProfile = async (userId) => {
         setLoading(true);
         try {
@@ -831,7 +761,7 @@ const ProfileScreen = () => {
                 if (newRes.status === 200) {
                     console.log('newRes.statusss', newRes.result)
                     setProfileData(newRes.result);
-                    
+
                     // Parse date from API response if exists
                     if (newRes.result.usr_dob) {
                         const dateFromApi = new Date(newRes.result.usr_dob);
@@ -840,16 +770,15 @@ const ProfileScreen = () => {
                         }
                     }
                 } else {
-                    showSnackbar(newRes?.msg || 'OTP Failed', 'error');
+                    showToast('error', 'Error', newRes?.msg || 'OTP Failed')
                 }
             }
 
         } catch (error) {
-            if (error.message?.includes('Network')) {
-                showSnackbar('No internet connection', 'error');
-            } else {
-                showSnackbar(error.message, 'error');
+            if (error.offline) {
+                return
             }
+            showToast('error', 'Error', 'Something went wrong')
         } finally {
             setLoading(false);
         }
@@ -904,8 +833,6 @@ const ProfileScreen = () => {
         getData()
     }, [userProfileId])
 
-    console.log('userProfileId', userProfileId);
-
     // Initialize input when profileData is loaded
     useEffect(() => {
         if (profileData && Object.keys(profileData).length > 0) {
@@ -933,12 +860,12 @@ const ProfileScreen = () => {
             edges={['left', 'right', 'bottom']}
         >
             <Loader visible={loading} />
-            <AppHeader 
-                title="Paper Fast" 
-                discriptionText='Paper Generate In Minute' 
-                leftIcon={Icons.arrowLeft} 
-                onBackPress={() => navigation.goBack()} 
-                leftIconStyle={{   
+            <AppHeader
+                title="Paper Fast"
+                discriptionText='Paper Generate In Minute'
+                leftIcon={Icons.arrowLeft}
+                onBackPress={() => navigation.goBack()}
+                leftIconStyle={{
                     width: moderateScale(20),
                     height: moderateScale(20)
                 }}
@@ -958,69 +885,69 @@ const ProfileScreen = () => {
                             }}
                             keyboardShouldPersistTaps="handled"
                             showsVerticalScrollIndicator={true}>
-                            
+
                             <Text style={styles.loginText}>My Profile</Text>
                             <Text style={styles.subHeading}>Update your personal details</Text>
-                            
+
                             <View style={{ marginTop: moderateScale(4) }}>
                                 <View style={{ marginBottom: moderateScale(15) }}>
-                                    <AppTextInput 
-                                        placeHolderText={'Enter Name'} 
-                                        value={input?.firstName} 
-                                        onChangeText={handleFirstNameChange} 
-                                        containerStyle={{}} 
+                                    <AppTextInput
+                                        placeHolderText={'Enter Name'}
+                                        value={input?.firstName}
+                                        onChangeText={handleFirstNameChange}
+                                        containerStyle={{}}
                                     />
                                     {errors?.firstName && (
-                                        <Text style={{ 
-                                            fontSize: moderateScale(12), 
-                                            color: Colors.red, 
-                                            fontFamily: Fonts.InterMedium, 
-                                            marginLeft: moderateScale(20) 
+                                        <Text style={{
+                                            fontSize: moderateScale(12),
+                                            color: Colors.red,
+                                            fontFamily: Fonts.InterMedium,
+                                            marginLeft: moderateScale(20)
                                         }}>
                                             {errors?.firstName}
                                         </Text>
                                     )}
                                 </View>
-                                
+
                                 <View>
-                                    <AppTextInput 
-                                        placeHolderText={'Enter Last'} 
-                                        value={input?.lastName} 
-                                        onChangeText={handleLastNameChange} 
+                                    <AppTextInput
+                                        placeHolderText={'Enter Last'}
+                                        value={input?.lastName}
+                                        onChangeText={handleLastNameChange}
                                     />
                                     {errors?.lastName && (
-                                        <Text style={{ 
-                                            fontSize: moderateScale(12), 
-                                            color: Colors.red, 
-                                            fontFamily: Fonts.InterMedium, 
-                                            marginLeft: moderateScale(20) 
+                                        <Text style={{
+                                            fontSize: moderateScale(12),
+                                            color: Colors.red,
+                                            fontFamily: Fonts.InterMedium,
+                                            marginLeft: moderateScale(20)
                                         }}>
                                             {errors?.lastName}
                                         </Text>
                                     )}
                                 </View>
-                                
+
                                 <View style={styles.phoneInputBox}>
                                     <Image source={Icons.country} style={styles.countryImgStyle} />
-                                    <View style={{ 
-                                        marginLeft: moderateScale(10), 
-                                        alignItems: 'center', 
-                                        justifyContent: 'center', 
-                                        flexDirection: 'row' 
+                                    <View style={{
+                                        marginLeft: moderateScale(10),
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        flexDirection: 'row'
                                     }}>
-                                        <View style={{ 
-                                            height: moderateScale(18), 
-                                            width: moderateScale(2), 
-                                            backgroundColor: 'rgba(0, 140, 227, 0.31)' 
+                                        <View style={{
+                                            height: moderateScale(18),
+                                            width: moderateScale(2),
+                                            backgroundColor: 'rgba(0, 140, 227, 0.31)'
                                         }} />
                                         <Text style={styles.prefix}>{'  '}+91</Text>
-                                        <TextInput 
-                                            style={styles.phoneInput} 
-                                            editable={false} 
-                                            maxLength={10} 
-                                            keyboardType="phone-pad" 
-                                            onChangeText={handlePhoneChange} 
-                                            value={input?.phoneInput} 
+                                        <TextInput
+                                            style={styles.phoneInput}
+                                            editable={false}
+                                            maxLength={10}
+                                            keyboardType="phone-pad"
+                                            onChangeText={handlePhoneChange}
+                                            value={input?.phoneInput}
                                         />
                                     </View>
                                 </View>
@@ -1063,33 +990,33 @@ const ProfileScreen = () => {
                                 )}
 
                                 <View style={{ marginBottom: moderateScale(15) }}>
-                                    <AppTextInput 
-                                        placeHolderText={'Enter Email'} 
-                                        keyboardTypeText={'email-address'} 
-                                        value={input?.email} 
-                                        onChangeText={handleEmailChange} 
-                                        containerStyle={{}} 
+                                    <AppTextInput
+                                        placeHolderText={'Enter Email'}
+                                        keyboardTypeText={'email-address'}
+                                        value={input?.email}
+                                        onChangeText={handleEmailChange}
+                                        containerStyle={{}}
                                     />
                                     {errors?.email && (
-                                        <Text style={{ 
-                                            fontSize: moderateScale(12), 
-                                            color: Colors.red, 
-                                            fontFamily: Fonts.InterMedium, 
-                                            marginLeft: moderateScale(20) 
+                                        <Text style={{
+                                            fontSize: moderateScale(12),
+                                            color: Colors.red,
+                                            fontFamily: Fonts.InterMedium,
+                                            marginLeft: moderateScale(20)
                                         }}>
                                             {errors?.email}
                                         </Text>
                                     )}
                                 </View>
                             </View>
-                            
-                            <AppButton 
-                                title="Submit" 
-                                style={{ 
-                                    paddingHorizontal: moderateScale(133), 
-                                    marginTop: moderateScale(14) 
-                                }} 
-                                onPress={handleProfileRequest} 
+
+                            <AppButton
+                                title="Submit"
+                                style={{
+                                    paddingHorizontal: moderateScale(133),
+                                    marginTop: moderateScale(14)
+                                }}
+                                onPress={handleProfileRequest}
                             />
                         </ScrollView>
                     </KeyboardAvoidingView>

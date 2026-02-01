@@ -195,7 +195,7 @@ import { POST_FORM } from "../../../api/request";
 import Loader from "../../../component/loader/Loader";
 import Pagination from "./component/Pagination";
 import AppModal from "../../../component/modal/AppModal";
-import { showSnackbar } from "../../../utils/snackbar";
+import { showToast } from "../../../utils/toast";
 
 const QuestionScreen = () => {
     const navigation = useNavigation()
@@ -256,13 +256,8 @@ const QuestionScreen = () => {
                 'limit': limit?.toString()
             }
             const response = await POST_FORM('question', params)
-            console.log('responsewwwwwwww', response);
-
             if (response?.status === 200) {
-                // console.log('API Response:', response);
                 setQuestionsData(response || {});
-
-                // Update pagination state from API response
                 if (response?.pagination) {
                     setPagination({
                         limit: response.pagination.limit,
@@ -274,17 +269,17 @@ const QuestionScreen = () => {
             }
         } catch (error: any) {
             if (error?.offline) {
-                showSnackbar('No internet connection', 'error');
                 return;
             }
             const errorMessage = error?.response?.data?.message ||
                 error?.message ||
                 'Something went wrong. Please try again.';
-            showSnackbar(errorMessage, 'error');
+            showToast('error', 'Error', errorMessage);
         } finally {
             setLoader(false)
         }
     };
+
     // Handle page change
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= pagination.pages) {
@@ -323,20 +318,16 @@ const QuestionScreen = () => {
 
     return (
         <View style={{ flex: 1, backgroundColor: Colors.white }}>
-            {/* STATUS BAR */}
             <StatusBar
                 backgroundColor={Colors.primaryColor}
                 barStyle="dark-content" />
-            {/* HEADER + STATUS BAR SAME BACKGROUND */}
-            <View style={{ backgroundColor: Colors.lightThemeBlue }}>
-                <SafeAreaView edges={["top"]}>
-                    <HeaderPaperModule
-                        title="Number System"
-                        rightPress={() => navigation?.navigate('DraftPaperScreen')}
-                        leftIconPress={handleBack}
-                    />
-                </SafeAreaView>
-            </View>
+            <SafeAreaView edges={["top"]} style={{ backgroundColor: Colors.lightThemeBlue }}>
+                <HeaderPaperModule
+                    title="Number System"
+                    rightPress={() => navigation?.navigate('DraftPaperScreen')}
+                    leftIconPress={handleBack}
+                />
+            </SafeAreaView>
 
             {/* MAIN CONTENT */}
             <SafeAreaView
@@ -356,8 +347,7 @@ const QuestionScreen = () => {
                         <TouchableOpacity
                             style={{ flexDirection: 'row', alignItems: 'center' }}
                             onPress={() => handleCheck('Options')}
-                            activeOpacity={0.7}
-                        >
+                            activeOpacity={0.7}>
                             <View
                                 style={[
                                     styles.chackBox,
@@ -431,7 +421,7 @@ const QuestionScreen = () => {
                     setSelectedMap={setSelectedMap}
                     questionsData={questionsData?.result ?? []} />
 
-                <AppModal visible={labelStatus} onClose={handleLabelClose} />
+                {/* <AppModal visible={labelStatus} onClose={handleLabelClose} /> */}
             </SafeAreaView>
         </View>
     );

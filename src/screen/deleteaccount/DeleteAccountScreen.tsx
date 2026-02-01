@@ -8,7 +8,7 @@ import { moderateScale } from "react-native-size-matters";
 import AppButton from "../../component/button/AppButton";
 import { Colors, Fonts } from "../../theme";
 import AppTextInput from "../../component/apptextinput/AppTextInput";
-import { showSnackbar } from "../../utils/snackbar";
+import { showSnackbar } from "../../utils/toastConfig";
 import Loader from "../../component/loader/Loader";
 import { localStorage, storageKeys } from "../../storage/storage";
 // import { useNavigation } from "@react-navigation/native";

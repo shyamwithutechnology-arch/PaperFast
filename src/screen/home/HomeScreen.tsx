@@ -11,17 +11,15 @@ import AppModal from '../../component/modal/AppModal';
 import AppButton from '../../component/button/AppButton';
 import { useNavigation } from '@react-navigation/native';
 import { localStorage, storageKeys } from '../../storage/storage';
-import { showSnackbar } from '../../utils/snackbar';
 import Loader from '../../component/loader/Loader';
 import { GET, POST_FORM } from '../../api/request';
 import { ApiEndPoint } from '../../api/endPoints';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Colors, Fonts } from '../../theme';
+import { showToast } from '../../utils/toast';
 
 const HomeScreen = () => {
     const [selectedSubject, setSelectedSubject] = useState<null | string>(null)
-    console.log('selectedSubject', selectedSubject);
-
     const navigation = useNavigation();
     const [visible, setVisible] = useState(false);
     const [selectedBoard, setSelectedBoard] = useState<null | string>(null)
@@ -46,7 +44,7 @@ const HomeScreen = () => {
     }
     const handleBordCloseModal = () => {
         if (selectedBoard === null) {
-            showSnackbar('Please Select Board', 'error')
+            showToast('Please Select Board', 'error')
             return false
         }
         if (selectedBoard !== null) {
@@ -60,22 +58,6 @@ const HomeScreen = () => {
         setSelectedBoard(board_name);
         //   setVisible(false);
     };
-
-    //     const filteredData = () => {
-    //         boardData?.filter(item => {
-    //             return (
-    //             if(item?.exam_type_name === "Engineering") {
-    //                 return item?.boards
-    //             }
-    //             if(item?.exam_type_name === 'Medical') {
-    //                 return item?.boards
-    //             }
-    //             if(item?.exam_type_name === 'Board') {
-    //                 return item?.boards
-    //             }
-    //             )
-    //     })
-    // }
 
     const getSectionedData = () => {
         if (!boardData) return [];
@@ -97,7 +79,7 @@ const HomeScreen = () => {
     // medium 
     const handleMediumOpenModal = async () => {
         if (selectedBoard === null) {
-            showSnackbar('Please Select Board', 'error')
+            showToast('Please Select Board', 'error')
             return false
         }
         if (selectedBoard !== null) {
@@ -108,7 +90,7 @@ const HomeScreen = () => {
     }
     const handleMediumCloseModal = () => {
         // if (selectMedium === null) {
-        //     showSnackbar('Please Select Medium', 'error')
+        //     showToast('Please Select Medium', 'error')
         //     return false
         // }
         // if (selectMedium !== null) {
@@ -122,11 +104,11 @@ const HomeScreen = () => {
 
     const handleStandardOpenModal = async () => {
         if (selectedBoard === null) {
-            showSnackbar('Please Select Board', 'error')
+            showToast('Please Select Board', 'error')
             return false
         }
         if (selectMedium === null) {
-            showSnackbar('Please Select Medium', 'error')
+            showToast('Please Select Medium', 'error')
             return false
         }
         if (selectedBoard !== null && selectMedium !== null) {
@@ -139,7 +121,7 @@ const HomeScreen = () => {
     }
     const handleStandardCloseModal = () => {
         // if (selectStandard === null) {
-        //     showSnackbar('Please Select Standard', 'error');
+        //     showToast('Please Select Standard', 'error');
         //     return false
         // }
         // if (selectStandard !== null) {
@@ -150,15 +132,6 @@ const HomeScreen = () => {
         setSelectStandard(item)
         await localStorage.setItem(storageKeys.selectedStandard, item)
     }
-
-    const SUBJECTS = [
-        { id: 'math', label: 'Math', img: Icons.math },
-        { id: 'science', label: 'Science', img: Icons.science },
-        { id: 'english', label: 'English', img: Icons.english },
-        { id: 'hindi', label: 'Hindi', img: Icons.hindi },
-        { id: 'sanskrit', label: 'Sanskrit', img: Icons.socialscience },
-        { id: 'social science', label: 'Social Science', img: Icons.sanskrit },
-    ];
 
     const Notification = [
         { id: '1', label: 'NeetPractice papers available for Classes 1–12 – Start solving now.' },
@@ -171,106 +144,44 @@ const HomeScreen = () => {
         await fetchBanners();
     };
 
-    // const handleSelect = (id: string) => {
-    //     setSelectedSubject(id),
-    //         navigation.navigate('PaperTypeScreen');
-    // }
     const handleSelect = async (id: string) => {
         setSelectedSubject(id);
 
         // Save to localStorage
         await localStorage.setItem(storageKeys.selectedSubject, id);
 
-        navigation.navigate('PaperTypeScreen');
+        navigation.navigate('PaperTypeScreen')
     }
-
-    // const handleBoardDataGet = async () => {
-    //     setLoading(true);
-    //     try {
-    //         const response = await fetch('https://www.papers.withupartners.in/api/boards')
-    //         console.log('Response status:rr', response);
-
-    //         const newRes = await response.json();
-    //         console.log('newRes:', newRes);
-
-    //         if (response.ok) {
-    //             if (newRes.status === '1') {
-    //                 // setProfileData(new)
-    //                 // console.log('newRes.statusss', newRes.result)
-    //                 setBoardData(newRes.result)
-    //             } else {
-    //                 showSnackbar(newRes?.msg || 'OTP Failed', 'error');
-    //             }
-    //         }
-    //     } catch (error) {
-    //         console.error('API Error:', error);
-    //         if (error.message?.includes('Network')) {
-    //             showSnackbar('No internet connection', 'error');
-    //         } else {
-    //             showSnackbar(error.message, 'error');
-    //         }
-
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
 
     const handleBoardDataGet = async () => {
         setLoading(true);
         try {
             const response = await GET(ApiEndPoint.Board);
             if (response && response.status === '1') {
-                setBoardData(response?.result || [])
+                setBoardData(response?.result || []);
+                const boardId = await localStorage.getItem(storageKeys.boardId)
+                if (boardId) {
+                    await handleSubFetch(boardId);
+                }
             } else {
-                const errorMessage = response?.message ||
+                const errorMessage = response?.msg ||
                     'Data not fetch. Please try again.';
-                showSnackbar(errorMessage, 'error');
+                showToast('error', "Error", errorMessage);
                 setBoardData([])
             }
 
         } catch (error: any) {
             if (error?.offline) {
-                showSnackbar('No internet connection', 'error');
                 return;
             }
-            const errorMessage = error?.response?.data?.message ||
-                error?.message ||
+            const errorMessage = error?.response?.data?.msg ||
+                error?.msg ||
                 'Something went wrong. Please try again.';
-            showSnackbar(errorMessage, 'error');
+            showToast('error', "Error", errorMessage);
         } finally {
             setLoading(false);
         }
     };
-
-    // const handleMediumDataFetch = async () => {
-    //     setLoading(true);
-    //     try {
-    //         const response = await fetch('https://www.papers.withupartners.in/api/medium')
-    //         console.log('Response status:rr', response);
-    //         const newRes = await response.json();
-    //         console.log('newRes:', newRes);
-
-    //         if (response.ok) {
-    //             if (newRes.status === '1') {
-    //                 // setProfileData(new)
-    //                 // console.log('newRes.statusss', newRes.result)
-    //                 setMedium(newRes.result)
-    //             } else {
-    //                 showSnackbar(newRes?.msg || 'OTP Failed', 'error');
-    //             }
-    //         }
-    //     } catch (error) {
-    //         console.error('API Error:', error);
-    //         if (error.message?.includes('Network')) {
-    //             showSnackbar('No internet connection', 'error');
-    //         } else {
-    //             showSnackbar(error.message, 'error');
-    //         }
-
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
 
     const handleMediumDataFetch = async () => {
         setLoading(true);
@@ -279,87 +190,50 @@ const HomeScreen = () => {
             if (response && response.status === 200) {
                 setMedium(response?.result)
             } else {
-                const errorMessage = response?.message ||
+                const errorMessage = response?.msg ||
                     'Data not fetch. Please try again.';
-                showSnackbar(errorMessage, 'error');
+                showToast('error', "Error", errorMessage);
                 setMedium([])
             }
         } catch (error: any) {
             if (error?.offline) {
-                showSnackbar('No internet connection', 'error');
                 return;
             }
-            const errorMessage = error?.response?.data?.message ||
-                error?.message ||
+            const errorMessage = error?.response?.data?.msg ||
+                error?.msg ||
                 'Something went wrong. Please try again.';
-            showSnackbar(errorMessage, 'error');
+            showToast('error', "Error", errorMessage);
         } finally {
             setLoading(false);
         }
     };
 
-    // const handleStandardFetch = async () => {
-    //     setLoading(true);
-    //     try {
-    //         const response = await fetch('https://www.papers.withupartners.in/api/classes')
-    //         console.log('Response status:rr', response);
-    //         const newRes = await response.json();
-    //         console.log('newRes:', newRes);
-
-    //         if (response.ok) {
-    //             if (newRes.status === '1') {
-    //                 // setProfileData(new)
-    //                 // console.log('newRes.statusss', newRes.result)
-    //                 setStandard(newRes.result)
-    //             } else {
-    //                 showSnackbar(newRes?.msg || 'OTP Failed', 'error');
-    //             }
-    //         }
-    //     } catch (error) {
-    //         console.error('API Error:', error);
-    //         if (error.message?.includes('Network')) {
-    //             showSnackbar('No internet connection', 'error');
-    //         } else {
-    //             showSnackbar(error.message, 'error');
-    //         }
-
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-
     const handleSubFetch = async (id) => {
-        // Alert.alert('sddddddddddddd')
         setLoading(true);
         try {
             let params = {
                 et_id: id
             }
-            console.log('paramsssssss', params);
 
             const response = await POST_FORM(ApiEndPoint.Subject, params);
-            console.log('ressddddddddddd', response);
 
             if (response && response.status === 200) {
                 setSubData(response?.result)
             } else {
-                const errorMessage = response?.message ||
+                const errorMessage = response?.msg ||
                     'Data not fetch. Please try again.';
-                showSnackbar(errorMessage, 'error');
+                showToast('error', "Error", errorMessage);
                 setSubData([])
             }
 
         } catch (error: any) {
-            console.log('eressssss', error);
-
             if (error?.offline) {
-                showSnackbar('No internet connection', 'error');
                 return;
             }
             const errorMessage = error?.response?.data?.message ||
                 error?.message ||
                 'Something went wrong. Please try again.';
-            showSnackbar(errorMessage, 'error');
+            showToast('error', "Error", errorMessage);
         } finally {
             setLoading(false);
         }
@@ -374,54 +248,25 @@ const HomeScreen = () => {
             const response = await POST_FORM(ApiEndPoint.Classes, params);
             if (response && response.status === 200) {
                 setStandard(response?.result)
-                const boardId = await localStorage.getItem(storageKeys.boardId)
-                if (boardId) {
-                    await handleSubFetch(boardId);
-                }
             } else {
-                const errorMessage = response?.message ||
+                const errorMessage = response?.msg ||
                     'Data not fetch. Please try again.';
-                showSnackbar(errorMessage, 'error');
+                showToast('error', "Error", errorMessage);
                 setStandard([])
             }
 
         } catch (error: any) {
             if (error?.offline) {
-                showSnackbar('No internet connection', 'error');
                 return;
             }
-            const errorMessage = error?.response?.data?.message ||
-                error?.message ||
+            const errorMessage = error?.response?.data?.msg ||
+                error?.msg ||
                 'Something went wrong. Please try again.';
-            showSnackbar(errorMessage, 'error');
+                showToast('error', "Error", errorMessage);
         } finally {
             setLoading(false);
         }
     };
-
-    // const fetchBanners = async () => {
-    //     setLoading(true)
-    //     try {
-    //         const response = await fetch('https://www.papers.withupartners.in/api/banner');
-    //         const newRes = await response.json();
-
-    //         if (newRes?.status === 200) {
-    //             console.log('responseassssss', response);
-    //             setBanners(newRes?.result || []);
-    //         } else {
-    //             showSnackbar(newRes?.msg || 'Failed to load banners', 'error');
-    //             // Fallback to local images if API fails
-    //             setBanners([]);
-    //         }
-    //     } catch (error) {
-    //         console.error('Banner fetch error:', error);
-    //         showSnackbar('Network error', 'error');
-    //         // Fallback to local images
-    //         setBanners([]);
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
 
     const fetchBanners = async () => {
         setLoading(true);
@@ -430,41 +275,34 @@ const HomeScreen = () => {
             if (response && response.status === 200) {
                 setBanners(response?.result || [])
             } else {
-                const errorMessage = response?.message ||
+                const errorMessage = response?.msg ||
                     'Data not fetch. Please try again.';
-                showSnackbar(errorMessage, 'error');
+                showToast('error', "Error", errorMessage);
                 setBanners([]);
 
             }
 
         } catch (error: any) {
             if (error?.offline) {
-                showSnackbar('No internet connection', 'error');
                 return;
             }
-            const errorMessage = error?.response?.data?.message ||
-                error?.message ||
+            const errorMessage = error?.response?.data?.msg ||
+                error?.msg ||
                 'Something went wrong. Please try again.';
-            showSnackbar(errorMessage, 'error');
+            showToast(errorMessage, 'error');
         } finally {
             setLoading(false);
         }
     };
 
     const renderItem = useCallback(({ item, index }) => {
-        // console.log('itemssssss', item);
         return (
-            // <SubjectItem
-            //     item={item}
-            //     selected={selectedSubject === item.id}
-            //     onPress={handleSelect} />
             <SubjectItem
                 item={item}
-                index={index}   // ✅ REQUIRED
+                index={index}  
                 selected={selectedSubject === item.subject_id}
                 onPress={handleSelect}
             />
-            // onPress={setSelectedSubject} />
         )
     }, [selectedSubject])
 
@@ -491,7 +329,6 @@ const HomeScreen = () => {
         fetchBanners();
         const subId = async () => {
             const boardId = await localStorage.getItem(storageKeys.boardId)
-            // console.log('boardIdssssss',boardId);
             if (boardId) {
                 await handleSubFetch(boardId);
             }
@@ -614,34 +451,6 @@ const HomeScreen = () => {
                             </TouchableOpacity>
                         </View>
 
-                        {/* <Text style={styles.selectModal}>Select Board</Text> */}
-
-                        {/* <FlatList
-                            data={getSectionedData()}
-                            numColumns={2}
-                            keyExtractor={(item) => item?.board_name?.toString()}
-                            showsVerticalScrollIndicator={false}
-                            columnWrapperStyle={styles.row}
-                            contentContainerStyle={styles.listContainer}
-                            renderItem={({ item }) => (
-                                <View>
-                                    <Text>{item?.exam_type_name}</Text>
-                                    <TouchableOpacity
-                                        style={[styles.boardItem, {
-                                            backgroundColor: selectedBoard == item?.board_name ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)',
-                                            borderColor: selectedBoard === item?.board_name ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)'
-                                        }]}
-                                        onPress={() => handleSelectedBoard(item?.board_name)}
-                                        key={item?.board_name}
-                                    >
-                                        <Text style={styles.boardModalText}>{item?.board_name}</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            )
-
-                            }
-                        /> */}
-
                         {getSectionedData().map((section) => {
                             return (<View key={section.title} style={styles.sectionContainer}>
                                 <Text style={styles.sectionTitle}>{section?.title}</Text>
@@ -649,7 +458,7 @@ const HomeScreen = () => {
                                 <FlatList
                                     data={section.data}
                                     numColumns={2}
-                                    scrollEnabled={false} // Important: disable scroll when nested
+                                    scrollEnabled={false} 
                                     keyExtractor={(item) => item.board_id?.toString()}
                                     columnWrapperStyle={styles.row}
                                     showsVerticalScrollIndicator={false}
@@ -705,14 +514,7 @@ const HomeScreen = () => {
                                 />
                             </TouchableOpacity>
                         </View>
-
                         <Text style={[styles.selectModal, { marginBottom: moderateScale(20) }]}>Select Medium</Text>
-                        {/* <TouchableOpacity style={[styles.englishMediumBox, { backgroundColor: selectMedium === 'English' ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)', borderColor: selectedBoard === 'English' ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)' }]} onPress={() => handleSelectMedium('English')} >
-                        <Text style={[styles.englishText, { color: selectMedium === 'English' ? Colors.primaryColor : Colors.InputText }]}>{selectedBoard} - English Medium</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.englishMediumBox, { backgroundColor: selectMedium === 'Hindi' ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)', borderColor: selectedBoard === 'Hindi' ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)' }]} onPress={() => handleSelectMedium('Hindi')}>
-                        <Text style={[styles.englishText, { color: selectMedium === 'Hindi' ? Colors.primaryColor : Colors.InputText }]}>{selectedBoard} - हिंदी माध्यम</Text>
-                    </TouchableOpacity> */}
                         <FlatList
                             data={medium}
                             keyExtractor={(item) => item?.medium_name?.toString()}
@@ -725,7 +527,6 @@ const HomeScreen = () => {
                                     backgroundColor: selectMedium == item?.medium_name ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)',
                                     borderColor: selectMedium === item?.medium_name ? Colors?.primaryColor : 'rgba(12, 64, 111, 0.19)',
                                 }]}
-                                    // onPress={() => handleSelectedBoard(item?.board_name)} 
                                     onPress={() => handleSelectMedium(item?.medium_name)}
                                     key={item?.medium_name}>
                                     <Text style={styles.mediumModalText}>{selectedBoard}-{item?.medium_name}</Text>
@@ -736,8 +537,6 @@ const HomeScreen = () => {
                             width: "96%",
                             marginTop: moderateScale(25),
                             marginBottom: moderateScale(20),
-                            // borderRadius:0,
-                            // marginTop:moderateScale(-40)
                         }} />
                     </ScrollView>
                 </AppModal>

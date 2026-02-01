@@ -64,7 +64,7 @@ import { Icons } from "../../../assets/icons";
 import { moderateScale } from "../../../utils/responsiveSize";
 import { useNavigation } from "@react-navigation/native";
 import Loader from "../../../component/loader/Loader";
-import { showSnackbar } from "../../../utils/snackbar";
+import { showSnackbar } from "../../../utils/toastConfig";
 import { GET } from "../../../api/request";
 import { ApiEndPoint } from "../../../api/endPoints";
 import HomeBannerSlider from "../../home/component/homebanner/HomeBannerSlider";
