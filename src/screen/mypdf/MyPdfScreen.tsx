@@ -18,11 +18,34 @@ import Loader from '../../component/loader/Loader';
 import AppTextInput from '../../component/apptextinput/AppTextInput';
 import ClockIcon from "react-native-vector-icons/FontAwesome6";
 import AppButton from '../../component/button/AppButton';
-
+import { Camera, useCameraDevice, useCameraPermission, } from "react-native-vision-camera";
+import AppCamera from '../../component/camera/AppCamera';
 const MyPdfScreen = () => {
     const navigation = useNavigation();
     const [loader, setLoader] = useState(false)
     const [logo, setLogo] = useState('1')
+
+    // """"
+    // const [activeCamera, setActiveCamera] = useState(false)
+    // const device = useCameraDevice('back')
+    // const { hasPermission } = useCameraPermission()
+
+    // if (!hasPermission) return <PermissionsPage />
+    // if (device == null) return <NoCameraDeviceError /> 
+    // const handleOpenCamera = () => {
+    //     setActiveCamera(false)
+    // }
+    const [openCamera, setOpenCamera] = useState(false);
+    const [photoUri, setPhotoUri] = useState<string | null>(null);
+
+    const handleOpenCamera = () => {
+        setOpenCamera(true);
+    };
+
+    const handleCapture = (uri: string) => {
+        setPhotoUri(uri);
+    };
+
     const handleSelectWaterMark = (text) => {
         setLogo(text)
     }
@@ -41,9 +64,25 @@ const MyPdfScreen = () => {
                 <ScrollView style={{ flexGrow: 1, backgroundColor: Colors.white }}>
                     <Loader visible={loader} />
                     <Text style={styles.title}>Institue Header (Size : 320x 50mm)</Text>
-                    <TouchableOpacity style={styles.dragBox} >
+                    {/* <TouchableOpacity style={styles.dragBox} onPress={handleOpenCamera} >
                         <Image source={Icons?.fileUpload} style={styles.fileUploadImg} resizeMode='contain' />
+                    </TouchableOpacity> */}
+
+                    {/* <Camera
+                        style={StyleSheet.absoluteFill}
+                        device={device}
+                        isActive={activeCamera}
+                    /> */}
+                    <TouchableOpacity style={styles.dragBox} onPress={handleOpenCamera}>
+                        {photoUri ? (
+                            <View style={styles.logoImgBox}>
+                            <Image source={{ uri: photoUri }} style={{ width:moderateScale(100),height:moderateScale(80) }} resizeMode='cover' />
+                            </View>
+                        ) : (
+                            <Image source={Icons.fileUpload} style={styles.fileUploadImg} resizeMode='cover' />
+                        )}
                     </TouchableOpacity>
+
                     <View style={{ marginVertical: moderateScale(15) }}>
                         <AppTextInput placeHolderText='Insitute Name' />
                     </View>
@@ -122,9 +161,16 @@ const MyPdfScreen = () => {
                     </TouchableOpacity>
 
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: 'space-between', marginHorizontal: moderateScale(16), marginTop: moderateScale(10) }}>
-                        <AppButton title='PDF Preview' style={{ paddingHorizontal: moderateScale(35), paddingVertical :moderateScale(10) }} />
-                        <AppButton title='Cancel' style={{ paddingHorizontal: moderateScale(53), paddingVertical :moderateScale(10) }} />
+                        <AppButton title='PDF Preview' style={{ paddingHorizontal: moderateScale(35), paddingVertical: moderateScale(10) }} />
+                        <AppButton title='Cancel' style={{ paddingHorizontal: moderateScale(53), paddingVertical: moderateScale(10) }} />
                     </View>
+
+                    <AppCamera
+                        visible={openCamera}
+                        onClose={() => setOpenCamera(false)}
+                        onCapture={handleCapture}
+                    />
+
                 </ScrollView>
             </SafeAreaView>
         </View>
@@ -194,6 +240,9 @@ const styles = StyleSheet.create({
         height: moderateScale(50),
         width: moderateScale(50),
         resizeMode: 'contain'
+    },
+    logoImgBox:{
+        flex:1,
     },
     dateText: {
         fontSize: moderateScale(13),

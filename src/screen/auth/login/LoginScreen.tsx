@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, Image, TextInput } from "react-native";
+import { View, Text, Image, TextInput, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AppHeader from "../../../component/header/AppHeader";
 import AppButton from "../../../component/button/AppButton";
@@ -45,9 +45,14 @@ const LoginScreen = () => {
             const params = {
                 'usr_phone': phoneInput
             }
-            const response = POST_FORM(ApiEndPoint.LoGIN, params)
+            const response = await POST_FORM(ApiEndPoint.LoGINROlE, params)
+            console.log('responserrrrrrrr', response);
             if (response.status === 200) {
+                // console.log('response?.result?.usr_id',response?.result?.usr_id);
+                showToast('success', 'Success', 'Logged in successfully')
                 await localStorage.setItem(storageKeys.userId, String(response?.result?.usr_id))
+                await reduxStorage.setItem('token', '1234')
+                await dispatch(loginSuccess('1234'));
             } else {
                 showToast('error', 'Error', response?.msg || 'Registration failed');
             }
@@ -90,13 +95,20 @@ const LoginScreen = () => {
             }
 
             const response = await POST_FORM(ApiEndPoint?.LoGIN, params);
-            if (response.status === 200) {
+            // setTimeout(() => {
+            //     console.log('rrrrrrrrrrrrrrrrrrrddd', response);
+            // }, 2000)
+            if (response?.status === 200) {
+
                 if (response?.user_exist === 1) {
-                    showToast('success', 'Success', 'Logged in successfully')
-                    const token = '1234';
-                    reduxStorage.setItem('token', token)
-                    handleLoginVerify();
-                    dispatch(loginSuccess(token));
+
+                    // const token = '1234';
+                    // reduxStorage.setItem('token', token)
+                    // await handleLoginVerify();
+                    // dispatch(loginSuccess(token));
+                    await handleLoginVerify();
+                    // setTimeout(() => {
+                    // }, 2000)
                 } else {
                     showToast('success', 'Success', response?.msg)
                     await localStorage.setItem(storageKeys.mobileNumber, phoneInput)

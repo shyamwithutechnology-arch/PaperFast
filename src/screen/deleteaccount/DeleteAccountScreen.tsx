@@ -1,25 +1,18 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, Image, TextInput, Pressable, StatusBar, StyleSheet, Platform, TouchableOpacity, Keyboard, KeyboardAvoidingView, ScrollView } from "react-native";
+import React, { useState } from "react";
+import { View, Text, Image, TextInput, Platform, KeyboardAvoidingView, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./styles";
 import AppHeader from "../../component/header/AppHeader";
 import { Icons } from "../../assets/icons";
 import { moderateScale } from "react-native-size-matters";
 import AppButton from "../../component/button/AppButton";
-import { Colors, Fonts } from "../../theme";
+import { Colors } from "../../theme";
 import AppTextInput from "../../component/apptextinput/AppTextInput";
-import { showSnackbar } from "../../utils/toastConfig";
 import Loader from "../../component/loader/Loader";
-import { localStorage, storageKeys } from "../../storage/storage";
-// import { useNavigation } from "@react-navigation/native";
-import { useNavigation, useRoute } from '@react-navigation/native';
-import DatePicker from 'react-native-date-picker'
-
+import { useNavigation } from '@react-navigation/native';
 
 const DeleteAccountScreen = () => {
     const navigation = useNavigation()
-
-    // const [phone, setPhone] = useState<string>("");
     const [phone, setPhone] = useState<string>("");
     const [profileData, setProfileData] = useState({})
     const [comment, setComment] = useState("")
@@ -138,9 +131,8 @@ const DeleteAccountScreen = () => {
                                 </View>
                                 <View style={{ borderWidth: 1, height: moderateScale(100), marginHorizontal: moderateScale(18), marginVertical: moderateScale(4), paddingLeft: moderateScale(8), borderRadius: moderateScale(4), borderColor: Colors.InputStroke }}>
                                     <TextInput style={[styles.phoneInput, {
-                                        // flex: 1,
                                         textAlignVertical: 'top',
-                                    }]} placeholder="Comment" value={input?.phoneInput} placeholderTextColor={Colors.InputText}
+                                    }]} placeholder="Comment" value={input?.phoneInput} placeholderTextColor={Colors.ParagraphAndShortTexts}
                                         value={comment}
                                         onChangeText={setComment}
                                         multiline={true}

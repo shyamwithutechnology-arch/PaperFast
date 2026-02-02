@@ -44,7 +44,7 @@ const HomeScreen = () => {
     }
     const handleBordCloseModal = () => {
         if (selectedBoard === null) {
-            showToast('Please Select Board', 'error')
+            showToast('error', 'Error', 'Please Select Board')
             return false
         }
         if (selectedBoard !== null) {
@@ -79,7 +79,7 @@ const HomeScreen = () => {
     // medium 
     const handleMediumOpenModal = async () => {
         if (selectedBoard === null) {
-            showToast('Please Select Board', 'error')
+            showToast('error', 'Error', 'Please Select Board')
             return false
         }
         if (selectedBoard !== null) {
@@ -104,11 +104,11 @@ const HomeScreen = () => {
 
     const handleStandardOpenModal = async () => {
         if (selectedBoard === null) {
-            showToast('Please Select Board', 'error')
+            showToast('error', 'Error', 'Please Select Board')
             return false
         }
         if (selectMedium === null) {
-            showToast('Please Select Medium', 'error')
+            showToast('error','Error','Please Select Medium')
             return false
         }
         if (selectedBoard !== null && selectMedium !== null) {
@@ -262,7 +262,7 @@ const HomeScreen = () => {
             const errorMessage = error?.response?.data?.msg ||
                 error?.msg ||
                 'Something went wrong. Please try again.';
-                showToast('error', "Error", errorMessage);
+            showToast('error', "Error", errorMessage);
         } finally {
             setLoading(false);
         }
@@ -289,7 +289,7 @@ const HomeScreen = () => {
             const errorMessage = error?.response?.data?.msg ||
                 error?.msg ||
                 'Something went wrong. Please try again.';
-            showToast(errorMessage, 'error');
+            showToast('error','Error',errorMessage);
         } finally {
             setLoading(false);
         }
@@ -299,7 +299,7 @@ const HomeScreen = () => {
         return (
             <SubjectItem
                 item={item}
-                index={index}  
+                index={index}
                 selected={selectedSubject === item.subject_id}
                 onPress={handleSelect}
             />
@@ -458,7 +458,7 @@ const HomeScreen = () => {
                                 <FlatList
                                     data={section.data}
                                     numColumns={2}
-                                    scrollEnabled={false} 
+                                    scrollEnabled={false}
                                     keyExtractor={(item) => item.board_id?.toString()}
                                     columnWrapperStyle={styles.row}
                                     showsVerticalScrollIndicator={false}

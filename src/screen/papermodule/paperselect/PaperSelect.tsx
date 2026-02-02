@@ -9,6 +9,10 @@ import { moderateScale } from "react-native-size-matters";
 import Icon from "react-native-vector-icons/FontAwesome6";
 import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
 import { localStorage, storageKeys } from "../../../storage/storage";
+import { showToast } from "../../../utils/toast";
+import { GET, POST_FORM } from "../../../api/request";
+import { ApiEndPoint } from "../../../api/endPoints";
+import Loader from "../../../component/loader/Loader";
 
 type SelectedSummary = {
     chapterId: number;
@@ -16,10 +20,16 @@ type SelectedSummary = {
     questionMarks: string;
     selectedQuestions: number[];
 };
+type Book = {
+    book_id: string,
+    book_name: string
+}
 const PaperSelect = () => {
     const navigation = useNavigation()
     const route = useRoute();
-    console.log('routewwwww', route);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [book, setBook] = useState<Book[]>([]);
+    console.log('resdddd', book);
 
     const selectedSummary = route.params?.selectedSummary as
         | SelectedSummary
@@ -37,6 +47,7 @@ const PaperSelect = () => {
     type PaperType = 'NCERT' | 'EXEMPLAR' | 'RD_SHARMA';
 
     const [selectedPaper, setSelectedPaper] = useState<PaperType>('NCERT');
+    console.log('selectedPaper', selectedPaper);
     const [paperHeader, setPaperHeader] = useState<PaperType>('Regular Paper');
 
     const handleSelectPaper = (id: string) => {
@@ -47,6 +58,30 @@ const PaperSelect = () => {
             ...payload,
         });
     }
+    const handleSelectedPaper = (id: PaperType) => {
+        setSelectedPaper(id)
+    }
+
+    // bookFetch
+    const handleFetchBook = async () => {
+        setLoading(true);
+        try {
+            const response = await GET(ApiEndPoint?.bookFetch);
+            if (response?.status === 200) {
+                setBook(response?.result || []);
+            } else {
+                showToast('error', 'Error', response?.msg || 'Profile not found');
+                setBook([]);
+            }
+        } catch (error) {
+            if (error.offline) {
+                return
+            }
+            showToast('error', 'Error', 'Something went wrong')
+        } finally {
+            setLoading(false);
+        }
+    };
     const selectBtn = [
         { id: 1, title: "NCERT", key: "NCERT" },
         { id: 2, title: "Exemplar", key: "EXEMPLAR" },
@@ -163,7 +198,8 @@ const PaperSelect = () => {
     useEffect(() => {
         const handlePaperType = async () => {
             const data = await localStorage.getItem(storageKeys.selectedPaperType);
-            setPaperHeader(data)
+            setPaperHeader(data);
+            await handleFetchBook()
         }
         handlePaperType()
     }, [])
@@ -181,12 +217,13 @@ const PaperSelect = () => {
             <SafeAreaView
                 style={{ flex: 1, backgroundColor: Colors.white }}
                 edges={["left", "right", "bottom"]}>
+                <Loader visible={loading} />
                 <View style={styles.rowContainer}>
-                    {selectBtn.map(item => {
-                        const isActive = selectedPaper === item.key;
+                    {book?.map(item => {
+                        const isActive = selectedPaper === item?.book_name;
                         return (
                             <TouchableOpacity
-                                key={item.id}
+                                key={item?.book_id}
                                 style={[
                                     styles.selectBtnBox,
                                     {
@@ -194,13 +231,13 @@ const PaperSelect = () => {
                                         borderColor: isActive ? Colors.primaryColor : "#AFAFAF",
                                     },
                                 ]}
-                                onPress={() => setSelectedPaper(item.key as PaperType)}>
+                                onPress={() => handleSelectedPaper(item?.book_name as PaperType)}>
                                 <Text
                                     style={[
                                         styles.selectBtnText,
                                         { color: isActive ? Colors.white : "#AFAFAF" },
                                     ]}>
-                                    {item.title}
+                                    {item?.book_name}
                                 </Text>
                             </TouchableOpacity>
                         );

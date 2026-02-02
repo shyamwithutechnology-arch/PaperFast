@@ -81,8 +81,8 @@ export const styles = StyleSheet.create({
     marginTop: moderateScale(5),
   },
   iconBox: {
-    height: moderateScale(40),
-    width: moderateScale(40),
+    height: moderateScale(38),
+    width: moderateScale(38),
     // borderWidth:1,
     borderRadius: moderateScale(50),
     backgroundColor: 'rgba(1, 54, 105, 0.13)',
@@ -94,9 +94,10 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   iconSty: {
-    height: moderateScale(22),
-    width: moderateScale(22),
-    borderRadius: moderateScale(30)
+    height: moderateScale(18),
+    width: moderateScale(18),
+    borderRadius: moderateScale(30),
+
   },
   nextSty: {
     height: moderateScale(20),
