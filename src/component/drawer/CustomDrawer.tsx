@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
     View,
     Text,
@@ -32,9 +32,10 @@ const MENU = [
     { id: 6, title: 'About Us', icon: Icons.about, route: 'AboutUsScreen' },
     { id: 7, title: 'Terms & Conditions', icon: Icons.termAndService, route: 'TermandconditionScreen' },
     { id: 8, title: 'Privacy Policy', icon: Icons.privacy, route: 'PrivacyPolicyScreen' },
-    { id: 9, title: 'Support', icon: Icons.support, route: 'SubscriptionScreen' },
+    { id: 9, title: 'Support', icon: Icons.support, route: 'SupportScreen' },
     { id: 10, title: 'Delete Account', icon: Icons.delete, route: 'DeleteAccountScreen' },
 ];
+
 
 const CustomDrawer = ({ navigation }) => {
     const [role, setRole] = React.useState<'Teacher' | 'Student'>('Teacher');
@@ -46,6 +47,33 @@ const CustomDrawer = ({ navigation }) => {
     //     await localStorage.clearAll();
     //     dispatch(logout());
     // };
+    // const formatedData = () => {
+    //     MENU.filter(item => role === 'Student' ? !['DraftPaperScreen', 'DraftPaperScreen', 'MyPdfScreen', 'SubscriptionScreen'].includes(item?.route) : true)
+    // }
+    // const HIDDEN_ROUTES = {
+    //     Student: ['DraftPaperScreen', 'MyPdfScreen', 'SubscriptionScreen'],
+    //     Teacher: [],
+    // };
+    // const formattedData = () =>
+    //     MENU.filter(item =>
+    //         role === 'Student'
+    //             ? ['DraftPaperScreen', 'MyPdfScreen', 'SubscriptionScreen'].includes(item.route)
+    //             : item
+    //     );
+
+    //     const menuData = useMemo(() => MENU.filter(item => !HIDDEN_ROUTES[role].includes(item?.route)), [role])
+    // console.log('menuData',menuData);
+    const HIDDEN_ROUTES: Record<string, string[]> = {
+        Student: ['DraftPaperScreen', 'MyPdfScreen', 'SubscriptionScreen'],
+        Teacher: [],
+    };
+
+    const menuData = useMemo(
+        () => MENU.filter(item => !HIDDEN_ROUTES[role]?.includes(item.route)),
+        [role]
+    );
+    console.log('rrrrr', menuData);
+
     const handleLoggeOut = () => {
         Alert.alert(
             'Logout',
@@ -78,10 +106,6 @@ const CustomDrawer = ({ navigation }) => {
             style={styles.mainContainer}
         //  edges={['left', 'right', 'bottom']}
         >
-            {/* <AppHeader title=''/> */}
-            {/* <StatusBar backgroundColor={Colors.primaryColor} barStyle={'dark-content'}/> */}
-            {/* ===== FIXED HEADER ===== */}
-            {/* <View style={{backgroundColor:Colors.primaryColor,height:moderateScale(35)}}/> */}
             <View style={{ flex: 1, backgroundColor: '#fff' }}>
                 <View style={styles.profileBox}>
                     <Image
@@ -100,32 +124,9 @@ const CustomDrawer = ({ navigation }) => {
                     contentContainerStyle={styles.menuScrollContent}
                 >
                     {/* ===== Menu List ===== */}
-                    {MENU.map((item, index) => {
+                    {menuData?.map((item, index) => {
                         const isSwitchRole = item.title === 'Switch Role';
                         return (
-                            // <View>
-
-                            //     <TouchableOpacity
-                            //         key={index}
-                            //         style={styles.menuItem}
-                            //         onPress={() => {
-                            //             // navigation.navigate('SomeScreen')
-                            //             navigation.closeDrawer();
-                            //         }}
-                            //     >
-                            //         <View style={styles.iconTextContainer}>
-                            //             <View style={styles.iconBox} >
-                            //                 <Image source={item?.icon} style={styles.iconSty} />
-                            //             </View>
-                            //             <Text style={styles.menuText}>{item?.title}</Text>
-                            //         </View>
-                            //         <Image source={Icons.next} style={styles.nextSty} resizeMode='contain' />
-                            //         {/* </View> */}
-
-                            //     </TouchableOpacity>
-
-                            //     <View style={{ height: moderateScale(1), backgroundColor: 'rgba(12, 64, 111, 0.14)', marginHorizontal: moderateScale(20) }} />
-                            // </View>
                             <View key={item.id}>
                                 <TouchableOpacity style={styles.menuItem} onPress={() => {
                                     if (!isSwitchRole && item.route) {
@@ -136,33 +137,28 @@ const CustomDrawer = ({ navigation }) => {
                                     {/* Left icon + text */}
                                     <View style={styles.iconTextContainer}>
                                         <View style={styles.iconBox}>
-                                            <Image source={item.icon} style={styles.iconSty} />
+                                            <Image source={item.icon} style={styles.iconSty} resizeMode='contain'/>
                                         </View>
                                         <Text style={styles.menuText}>{item.title}</Text>
                                     </View>
 
                                     {/* Right side */}
                                     {isSwitchRole ? (
-
                                         <View style={styles.container1}>
                                             <TouchableOpacity
                                                 style={[styles.button, role === 'Teacher' && styles.active]}
-                                                onPress={() => setRole('Teacher')}
-                                            >
+                                                onPress={() => setRole('Teacher')}>
                                                 <Text
-                                                    style={[styles.text, role === 'Teacher' && styles.activeText]}
-                                                >
+                                                    style={[styles.text, role === 'Teacher' && styles.activeText]}>
                                                     Teacher
                                                 </Text>
                                             </TouchableOpacity>
 
                                             <TouchableOpacity
                                                 style={[styles.button, role === 'Student' && styles.active]}
-                                                onPress={() => setRole('Student')}
-                                            >
+                                                onPress={() => setRole('Student')}>
                                                 <Text
-                                                    style={[styles.text, role === 'Student' && styles.activeText]}
-                                                >
+                                                    style={[styles.text, role === 'Student' && styles.activeText]}>
                                                     Student
                                                 </Text>
                                             </TouchableOpacity>
@@ -173,7 +169,6 @@ const CustomDrawer = ({ navigation }) => {
                                     )}
                                 </TouchableOpacity >
 
-                                {/* Divider */}
                                 <View
                                     style={{
                                         height: moderateScale(1),
@@ -186,15 +181,6 @@ const CustomDrawer = ({ navigation }) => {
                         )
                     })}
                 </DrawerContentScrollView>
-                {/* <View style={{height:moderateScale(50),width:moderateScale(50), backgroundColor:'#FB6464', borderRadius:moderateScale(40)}}> */}
-
-
-                {/* </View> */}
-                {/* ===== Footer ===== */}
-                {/* <View style={styles.footer}>
-                <Text style={styles.supportText}>Support</Text>
-                <Text style={styles.phone}>+91-87099-52350</Text>
-            </View> */}
                 <TouchableOpacity style={styles.logOutMainBox} onPress={handleLoggeOut}>
                     <Image source={Icons.logout} style={styles.logoutSty} resizeMode='contain' />
                     <Text style={styles.logoutText}>Logout My Account</Text>

@@ -10,4 +10,5 @@
         Subject:'subject',
         UpdateProfile:'update-profile',
         GetProfile:'get-profile',
+        bookFetch:'book',
     }

@@ -10,6 +10,7 @@ import AboutUsScreen from '../screen/aboutus/AboutUsScreen';
 import DraftPaperScreen from '../screen/papermodule/draftpaper/DraftPaperScreen';
 import MyPdfScreen from '../screen/mypdf/MyPdfScreen';
 import SubscriptionScreen from '../screen/subscription/SubscriptionScreen';
+import SupportScreen from '../screen/support/SupportScreen';
 
 const Drawer = createDrawerNavigator();
 const { width } = Dimensions.get('window');
@@ -34,6 +35,7 @@ const AppDrawer = () => {
       <Drawer.Screen name='DraftPaperScreen' component={DraftPaperScreen}/>
       <Drawer.Screen name='MyPdfScreen' component={MyPdfScreen}/>
       <Drawer.Screen name='SubscriptionScreen' component={SubscriptionScreen}/>
+      <Drawer.Screen name='SupportScreen' component={SupportScreen}/>
     </Drawer.Navigator>
   );
 }
