@@ -470,8 +470,7 @@ const styles = StyleSheet.create({
         borderRadius: moderateScale(4),
         backgroundColor: Colors.white,
         // elevation: 30,
-        shadowColor: 'green',
-
+        shadowColor: 'rgba(0, 140, 227, .9)',
         // Android Shadow
         elevation: 30,
         borderWidth: .7,
