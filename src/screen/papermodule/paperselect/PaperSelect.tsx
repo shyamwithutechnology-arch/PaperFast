@@ -29,7 +29,8 @@ const PaperSelect = () => {
     const route = useRoute();
     const [loading, setLoading] = useState<boolean>(false);
     const [book, setBook] = useState<Book[]>([]);
-    console.log('resdddd', book);
+    const [chapterData, setChapterData] = useState<any>([]);
+    console.log('chapterData', chapterData);
 
     const selectedSummary = route.params?.selectedSummary as
         | SelectedSummary
@@ -67,6 +68,8 @@ const PaperSelect = () => {
         setLoading(true);
         try {
             const response = await GET(ApiEndPoint?.bookFetch);
+            // console.log('resssssssbook', response);
+            
             if (response?.status === 200) {
                 setBook(response?.result || []);
             } else {
@@ -182,6 +185,36 @@ const PaperSelect = () => {
         ],
     };
 
+
+    const handleChapterFetch = async (data) => {
+        setLoading(true)
+        try {
+            const params = {
+                'board_id': data?.boardId,
+                'medium_id': data?.mediumId,
+                // 'class_id': data?.standardId,
+                'subject_id': data?.subjectId,
+            }
+            console.log('paramssssssssss', params);
+
+            const response = await POST_FORM(ApiEndPoint?.questionChapter, params);
+            console.log('wwwwwwwwwwwwwww', response)
+            if (response?.status === 200) {
+               setChapterData(response?.result || [])
+            } else {
+                showToast('error', 'Error', response.msg || "Chapter fetch faild")
+                setChapterData([])
+            }
+        } catch (error) {
+            if (error?.offline) {
+                return;
+            }
+            showToast('error', 'Error', error.msg || 'Something went wrong. Please try again.')
+        } finally {
+            setLoading(false)
+        }
+    }
+
     useFocusEffect(
         useCallback(() => {
             navigation.getParent()?.setOptions({
@@ -195,14 +228,53 @@ const PaperSelect = () => {
             };
         }, []))
 
+    // useEffect(() => {
+    //     const handlePaperType = async () => {
+    //         const data = await localStorage.getItem(storageKeys.selectedPaperType);
+    //         const boardId = await localStorage.getItem(storageKeys.boardId);
+    //         const mediumId = await localStorage.getItem(storageKeys.selectedMediumId)
+    //         const standardId = await localStorage.getItem(storageKeys.selectedStandardId)
+    //         const subjectId = await localStorage.getItem(storageKeys.selectedSubject)
+    //         setPaperHeader(data || '');
+    //         await handleFetchBook();
+    //         await handleChapterFetch({boardId, mediumId,standardId,subjectId})
+    //     }
+    //     handlePaperType()
+    // }, [])
     useEffect(() => {
+        let isMounted = true; // To prevent state updates on unmounted component
+
         const handlePaperType = async () => {
-            const data = await localStorage.getItem(storageKeys.selectedPaperType);
-            setPaperHeader(data);
-            await handleFetchBook()
-        }
-        handlePaperType()
-    }, [])
+            try {
+                const data = await localStorage.getItem(storageKeys.selectedPaperType);
+                const boardId = await localStorage.getItem(storageKeys.boardId);
+                const mediumId = await localStorage.getItem(storageKeys.selectedMediumId);
+                const standardId = await localStorage.getItem(storageKeys.selectedStandardId);
+                const subjectId = await localStorage.getItem(storageKeys.selectedSubject);
+
+                if (isMounted) {
+                    setPaperHeader(data || '');
+                }
+
+                await handleFetchBook();
+                await handleChapterFetch({
+                    boardId: boardId || '',
+                    mediumId: mediumId || '',
+                    standardId: standardId || '',
+                    subjectId: subjectId || ''
+                });
+
+            } catch (error) {
+                console.error('Error in handlePaperType:', error);
+            }
+        };
+
+        handlePaperType();
+
+        return () => {
+            isMounted = false; // Cleanup on unmount
+        };
+    }, []); // Add dependencies if needed
     return (
         <View style={{ flex: 1, backgroundColor: Colors.white }}>
             <StatusBar
@@ -243,6 +315,7 @@ const PaperSelect = () => {
                         );
                     })}
                 </View>
+                {/* <Paperselectcontent data={PAPER_DATA[selectedPaper]} handleNavigate={handleQuestionSelect} activeChapterId={activeChapterId} selectedSummary={selectedSummary} /> */}
                 <Paperselectcontent data={PAPER_DATA[selectedPaper]} handleNavigate={handleQuestionSelect} activeChapterId={activeChapterId} selectedSummary={selectedSummary} />
                 <View style={styles.totalWrapper}>
                     <View style={styles.topShadow} />
