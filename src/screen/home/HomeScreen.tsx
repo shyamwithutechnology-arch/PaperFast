@@ -51,9 +51,10 @@ const HomeScreen = () => {
             setVisible(false)
         }
     }
-    const handleSelectedBoard = async (board_name, borardId) => {
+    const handleSelectedBoard = async (board_name, borardIdMain, board_id) => {
         // setBoardId(borardId);
-        await localStorage.setItem(storageKeys.boardId, borardId);
+        await localStorage.setItem(storageKeys.boardIdMain, borardIdMain);
+        await localStorage.setItem(storageKeys.boardId, board_id);
         await localStorage.setItem(storageKeys.selectedBoard, board_name);
         setSelectedBoard(board_name);
         //   setVisible(false);
@@ -84,6 +85,7 @@ const HomeScreen = () => {
         }
         if (selectedBoard !== null) {
             setVisible(false);
+
             await handleMediumDataFetch();
             setVisibleMedium(true)
         }
@@ -98,8 +100,9 @@ const HomeScreen = () => {
         // }
     }
     const handleSelectMedium = async (item: string) => {
-        setSelectMedium(item)
-        await localStorage.setItem(storageKeys.selectedMedium, item)
+        setSelectMedium(item?.medium_name)
+        await localStorage.setItem(storageKeys.selectedMedium, item?.medium_name)
+        await localStorage.setItem(storageKeys.selectedMediumId, item?.medium_id)
     }
 
     const handleStandardOpenModal = async () => {
@@ -108,13 +111,13 @@ const HomeScreen = () => {
             return false
         }
         if (selectMedium === null) {
-            showToast('error','Error','Please Select Medium')
+            showToast('error', 'Error', 'Please Select Medium')
             return false
         }
         if (selectedBoard !== null && selectMedium !== null) {
             setVisible(false)
             setVisibleMedium(false)
-            const boardId = await localStorage.getItem(storageKeys.boardId)
+            const boardId = await localStorage.getItem(storageKeys.boardIdMain)
             await handleStandardFetch(boardId)
             setVisibleStandard(true)
         }
@@ -128,9 +131,10 @@ const HomeScreen = () => {
         setVisibleStandard(false)
         // }
     }
-    const handleSelectStandard = async (item: string) => {
-        setSelectStandard(item)
-        await localStorage.setItem(storageKeys.selectedStandard, item)
+    const handleSelectStandard = async (item) => {
+        setSelectStandard(item?.class_name)
+        await localStorage.setItem(storageKeys.selectedStandard, item?.class_name)
+        await localStorage.setItem(storageKeys.selectedStandardId, item?.class_id)
     }
 
     const Notification = [
@@ -149,7 +153,6 @@ const HomeScreen = () => {
 
         // Save to localStorage
         await localStorage.setItem(storageKeys.selectedSubject, id);
-
         navigation.navigate('PaperTypeScreen')
     }
 
@@ -187,6 +190,7 @@ const HomeScreen = () => {
         setLoading(true);
         try {
             const response = await GET(ApiEndPoint.Medium);
+
             if (response && response.status === 200) {
                 setMedium(response?.result)
             } else {
@@ -289,7 +293,7 @@ const HomeScreen = () => {
             const errorMessage = error?.response?.data?.msg ||
                 error?.msg ||
                 'Something went wrong. Please try again.';
-            showToast('error','Error',errorMessage);
+            showToast('error', 'Error', errorMessage);
         } finally {
             setLoading(false);
         }
@@ -328,8 +332,10 @@ const HomeScreen = () => {
     useEffect(() => {
         fetchBanners();
         const subId = async () => {
-            const boardId = await localStorage.getItem(storageKeys.boardId)
+            const boardId = await localStorage.getItem(storageKeys.boardIdMain)
             if (boardId) {
+                console.log('eeeeeeeeee', boardId);
+                
                 await handleSubFetch(boardId);
             }
         }
@@ -393,7 +399,7 @@ const HomeScreen = () => {
                                         </View>
                                     </TouchableOpacity>
                                 </View>
-                                <Text style={styles.allSubText} onPress={() => navigation.navigate('ChemistryData')}>All Subjects</Text>
+                                <Text style={styles.allSubText} onPress={() => navigation.navigate('ScoreBoardScreen')}>All Subjects</Text>
                             </View>
                         )
                     }}
@@ -477,7 +483,7 @@ const HomeScreen = () => {
                                                             : 'rgba(12, 64, 111, 0.19)'
                                                     }
                                                 ]}
-                                                onPress={() => handleSelectedBoard(item?.board_name, section?.exam_type_id)}>
+                                                onPress={() => handleSelectedBoard(item?.board_name, section?.exam_type_id, item?.board_id)}>
                                                 <Image source={{ uri: item?.board_image }} style={styles.logoImg} resizeMode='contain' />
                                                 <Text style={styles.boardModalText}>{item?.board_name}</Text>
                                             </TouchableOpacity>
@@ -517,7 +523,7 @@ const HomeScreen = () => {
                         <Text style={[styles.selectModal, { marginBottom: moderateScale(20) }]}>Select Medium</Text>
                         <FlatList
                             data={medium}
-                            keyExtractor={(item) => item?.medium_name?.toString()}
+                            keyExtractor={(item) => item?.medium_id?.toString()}
                             showsVerticalScrollIndicator={false}
                             // columnWrapperStyle={styles.row}
                             contentContainerStyle={styles.listContainer}
@@ -527,8 +533,8 @@ const HomeScreen = () => {
                                     backgroundColor: selectMedium == item?.medium_name ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)',
                                     borderColor: selectMedium === item?.medium_name ? Colors?.primaryColor : 'rgba(12, 64, 111, 0.19)',
                                 }]}
-                                    onPress={() => handleSelectMedium(item?.medium_name)}
-                                    key={item?.medium_name}>
+                                    onPress={() => handleSelectMedium(item)}
+                                    key={item?.medium_id}>
                                     <Text style={styles.mediumModalText}>{selectedBoard}-{item?.medium_name}</Text>
                                 </TouchableOpacity>
                             )}
@@ -570,7 +576,7 @@ const HomeScreen = () => {
                                         backgroundColor: selectStandard === item?.class_name ? 'rgba(12, 64, 111, 0.1)' : 'rgba(12, 64, 111, 0.05)',
                                         borderColor: selectStandard === item?.class_name ? 'rgba(12, 64, 111, 1)' : 'rgba(12, 64, 111, 0.19)',
                                         minHeight: moderateScale(45)
-                                    }]} onPress={() => handleSelectStandard(item?.class_name)}>
+                                    }]} onPress={() => handleSelectStandard(item)}>
                                     <Text style={styles.boardModalText}>{item?.class_name}</Text>
                                 </TouchableOpacity>
                             )}

@@ -5,6 +5,7 @@ import {
   TextInputProps,
   StyleSheet,
   ViewStyle,
+  Image,
 } from 'react-native';
 import { moderateScale } from '../../utils/responsiveSize';
 import { Colors, Fonts } from '../../theme';
@@ -44,10 +45,12 @@ const AppTextInput: React.FC<AppTextInputProps> = ({
         onChangeText={onChangeText}
         placeholder={placeHolderText}
         keyboardType={keyboardTypeText}
-        // keyboardType='email-address'
+      // keyboardType='email-address'
       />
 
-      {rightIcon && <View style={styles.iconRight}>{rightIcon}</View>}
+      {rightIcon && <View style={styles.iconRight}>
+        <Image source={rightIcon} style={{ width: moderateScale(23), height: moderateScale(23) }} resizeMode='contain' />
+      </View>}
     </View>
   );
 };

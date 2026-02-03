@@ -11,4 +11,5 @@
         UpdateProfile:'update-profile',
         GetProfile:'get-profile',
         bookFetch:'book',
+        questionChapter:'question-chapter',
     }

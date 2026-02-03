@@ -38,13 +38,16 @@ export const appMMKV = createMMKV({
 export const storageKeys = {
   selectedBoard: 'selectedBoard',
   selectedMedium: 'selectedMedium',
+  selectedMediumId: 'selectedMediumId',
   selectedStandard: 'selectedStandard',
+  selectedStandardId: 'selectedStandardId',
   user_exist: 'user_exist',
   mobileNumber: 'mobileNumber',
   userId: 'userId',
   selectedSubject:'selectedSubject',
   selectedPaperType:'selectedPaperType',
-  boardId :'boardId'
+  boardIdMain :'boardIdMain',
+  boardId :'boardId',
 };
 
 
