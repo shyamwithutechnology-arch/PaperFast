@@ -16,15 +16,14 @@ const CustomPaperCard = ({ onPress }) => {
   return (
     <View >
       <View style={styles.mainBox}>
-        <TouchableOpacity style={styles.card} activeOpacity={0.8} onPress={() => onPress('Regular Paper')}>
+        <TouchableOpacity style={styles.card} activeOpacity={0.8} onPress={() => onPress('Manual')}>
           <View style={styles.imgeCurcel}>
             <Image source={Icons.regularpaper} style={styles.icon} />
           </View>
-
-          <Text style={styles.title}>Regular Paper</Text>
+          <Text style={styles.title}>Manual Paper</Text>
           <Text style={styles.subtitle}>Select question of your {`\n`}choice</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.card,{backgroundColor:'#FFF6D4'}]} activeOpacity={0.8} onPress={() => onPress('Custom Paper')}>
+        <TouchableOpacity style={[styles.card,{backgroundColor:'#FFF6D4'}]} activeOpacity={0.8} onPress={() => onPress('Custom')}>
           <View style={styles.imgeCurcel}>
             <Image source={Icons.custompaper} style={styles.icon} /></View>
           <Text style={styles.title}>Custom Paper</Text>
@@ -32,11 +31,10 @@ const CustomPaperCard = ({ onPress }) => {
         </TouchableOpacity>
       </View>
       <View style={styles.mainBox}>
-        <TouchableOpacity style={[styles.card,{backgroundColor:'#DAFEFF'}]} activeOpacity={0.8} onPress={() => onPress('Random Paper')}>
+        <TouchableOpacity style={[styles.card,{backgroundColor:'#DAFEFF'}]} activeOpacity={0.8} onPress={() => onPress('Random')}>
           <View style={styles.imgeCurcel}>
             <Image source={Icons.randompaper} style={styles.icon} />
           </View>
-
           <Text style={styles.title}>Rendom Paper</Text>
           <Text style={styles.subtitle}>Select question of your {`\n`}choice</Text>
         </TouchableOpacity>

@@ -10,8 +10,9 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MathJax from 'react-native-mathjax';
-import { moderateScale, verticalScale, scale } from '../../../../../utils/responsiveSize';
-import { Colors, Fonts } from '../../../../../theme';
+import { Colors, Fonts } from '../../../../theme';
+import { moderateScale, verticalScale } from '../../../../utils/responsiveSize';
+import { useNavigation } from '@react-navigation/native';
 
 // MathJax configuration
 const mathJaxOptions = {
@@ -30,8 +31,7 @@ const mathJaxOptions = {
   TeX: {
     extensions: ['AMSmath.js', 'AMSsymbols.js', 'noErrors.js', 'noUndefined.js']
   }
-};
-
+}
 
 export type Question = {
   question_id: string;
@@ -55,20 +55,14 @@ export type Question = {
   question_subtopic: string | null;
 };
 
-type TogglePayload = {
-  id: string;
-  questionNum: number;
-};
-
 type Props = {
   selectCheck: 'Options' | 'Solutions';
   selectedMap: Record<string, boolean>;
   setSelectedMap: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
-  questionNumber: Record<string, boolean>;
-  setQuestionNumber: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
   questionsData: Question[];
   currentPage: number,
   limit: number;
+
 };
 
 // Helper to check if text contains math expressions
@@ -127,14 +121,6 @@ const OptionItem = memo(({
     extractImagesFromHtml(label || ''),
     [label]
   );
-  // const formattedOptionText = useMemo(() => {
-  //   return `
-  //   <div style="font-size:${moderateScale(10)}px;  line-height:16px;border:1px solid #000">
-  //     ${optionText}
-  //   </div>
-  // `;
-  // }, [optionText]);      // padding: 6px;
-
 
   const formattedOptionText = useMemo(() => {
     return `
@@ -156,37 +142,8 @@ const OptionItem = memo(({
   return (
     <View style={[
       styles.optionContainer,
-      // hasText  ? styles.correctOptionContainer : styles.imageStyle/
     ]}>
-      {/* Option Content */}
-      {/* // selectOption && isCorrect && styles.correctOptionLabel */}
       {hasImages &&
-        // <View style={[styles.optionContent, hasImages && { borderWidth: 1, flexDirection: 'row', alignItems: "center", borderColor: selectOption && isCorrect ? Colors.questionSelect : '#fff' },]}>
-        //   <View style={[
-        //     styles.optionLabelContainer,
-        //     selectOption && isCorrect && styles.correctOptionBgColor
-        //   ]}>
-        //     <Text style={[
-        //       styles.optionLabel,
-        //       (selectOption && isCorrect && styles.correctOptionText
-        //       )]}>
-        //       {id}
-        //     </Text>
-        //   </View>
-        //   {hasImages && (
-        //     // <View style={[styles.optionImagesContainer, { height: moderateScale(62),borderWidth:1 ,width:moderateScale(150), alignItems:'flex-start',justifyContent:"flex-start"}]}>
-        //     <View style={[styles.optionImagesContainer, { width: moderateScale(270), height: moderateScale(62) }]}>
-        //       {optionImages.map((base64, index) => (
-        //         <Image
-        //           key={`option-img-${id}-${index}`}
-        //           source={{ uri: `data:image/png;base64,${base64}` }}
-        //           style={styles.optionImage}
-        //           resizeMode='contain'
-        //         />
-        //       ))}
-        //     </View>
-        //   )}
-        // </View>
         <View
           style={[
             styles.optionContent,
@@ -205,8 +162,7 @@ const OptionItem = memo(({
               style={[
                 styles.optionLabel,
                 selectOption && isCorrect && styles.correctOptionText,
-              ]}
-            >
+              ]}>
               {id}
             </Text>
           </View>
@@ -227,11 +183,7 @@ const OptionItem = memo(({
 
 
       {hasText &&
-        // <View style={[{
-        //   borderWidth: 1, borderColor: 'green', flexDirection: "row", justifyContent: "center", alignItems: 'center', paddingVertical: moderateScale(6),
-        // }]}>
         <View style={[styles.optionContent, { paddingVertical: moderateScale(0) }]}>
-          {/* hasText && {  borderColor: selectOption && isCorrect ? Colors.questionSelect : '#fff'} */}
           <View style={[
             styles.optionLabelContainer, { marginLeft: moderateScale(0) },
             selectOption && isCorrect && styles.correctOptionBgColor
@@ -279,49 +231,6 @@ const OptionItem = memo(({
               }
             </>
           )}
-          {/* {hasText && (
-            <View style={[
-              styles.optionTextContainer,
-              hasImages && styles.optionTextWithImages
-            ]}>
-              {
-                hasMath && (
-                  <Text style={[
-                    styles.optionText,
-                    (selectOption && isCorrect && styles.correctOptionText)
-                  ]}>
-                    {optionText}
-                  </Text>
-                )
-              }
-            </View>
-          )} */}
-          {/* Option Text */}
-          {/* {hasText && (
-              <View style={[
-                styles.optionTextContainer,
-                hasImages && styles.optionTextWithImages
-              ]}>
-                {hasMath ? (
-                  <MathJax
-                    mathJaxOptions={mathJaxOptions}
-                    html={formattedOptionText}
-                    style={[
-                      styles.optionMathJax,
-                      (selectOption && isCorrect && styles.correctOptionText)
-                    ]}
-                  />
-                ) : (
-                  <Text style={[
-                    styles.optionText,
-                    (selectOption && isCorrect && styles.correctOptionText)
-                  ]}>
-                    {optionText}
-                  </Text>
-                )}
-              </View>
-            )} */}
-
         </View>
       }
     </View>
@@ -422,12 +331,7 @@ ${cleanText}
         <View style={[
           styles.imagesContainer,
           hasText && styles.imagesWithText,
-          isSelected && { backgroundColor: '#EBF6FF' },
-          {
-            // borderWidth: 1,
-            // borderColor: "red"
-          }
-
+          isSelected && { backgroundColor: '#EBF6FF' }
         ]}>
           {images.map((base64, index) => (
             <Image
@@ -585,22 +489,20 @@ const QuestionItem = memo(({
   extractImages,
   listottomLineHide,
   currentPage,
-  limit
+  limit,
 }: {
   item: Question;
   index: number;
   isSelected: boolean;
   selectCheck: 'Options' | 'Solutions';
-  // onToggle: (id: string) => void;
-  onToggle: (payload: TogglePayload) => void;
+  onToggle: (id: string) => void;
   extractImages: (html: string) => string[];
   listottomLineHide: any,
-  currentPage: number,
-  limit: number
+  currentPage: number;
+  limit: number;
 }) => {
   const images = extractImages(item.question_text);
   const questionTextWithoutImages = (item.question_text || '').replace(/<img[^>]*>/g, '');
-
   const options = [
     { id: 'A', label: item.option_a || '' },
     { id: 'B', label: item.option_b || '' },
@@ -608,21 +510,15 @@ const QuestionItem = memo(({
     { id: 'D', label: item.option_d || '' },
   ];
   const questionNumber = (currentPage - 1) * limit + index + 1;
-
   return (
     <Pressable
       style={[styles.cardMainBox, isSelected && styles.cardSelected,
       { flexDirection: "row", paddingLeft: moderateScale(3) }]}
-      // onPress={() => onToggle({ id: item?.question_id, qsNumber: questionNumber })}
-      onPress={() =>
-        onToggle({
-          id: item.question_id,
-          questionNum: questionNumber,
-        })
-      }
-    >
+      onPress={() => onToggle(item.question_id)}>
       <View style={[styles.questionNumberContainer, {}]}>
-        <Text style={styles.questionNumber}> {questionNumber}</Text>
+        <Text style={styles.questionNumber}>
+          {'  '}{questionNumber}.
+        </Text>
         <View style={[
           styles.checkBox,
           isSelected ? styles.checkBoxSelected : styles.checkBoxDefault
@@ -637,79 +533,25 @@ const QuestionItem = memo(({
         </View>
       </View>
       <View style={[styles.card, isSelected && styles.cardSelected,]}>
-        {/* Question Row */}
-        {/* <View style={styles.questionRow}> */}
-        {/* <View style={[styles.questionNumberContainer]}>
-            <Text style={styles.questionNumber}> {index + 1}.</Text>
-            <View style={[
-              styles.checkBox,
-              isSelected ? styles.checkBoxSelected : styles.checkBoxDefault
-            ]}>
-              {isSelected && (
-                <Icon
-                  name="check"
-                  size={moderateScale(12)}
-                  color={Colors.white}
-                />
-              )}
-            </View>
-          </View> */}
-        {/* <QuestionContent
-            text={questionTextWithoutImages}
-            images={images}
-            isSelected={isSelected}
-          /> */}
-        {/* </View> */}
         <QuestionContent
           text={questionTextWithoutImages}
           images={images}
           isSelected={isSelected}
         />
-
-        {/* Options Grid */}
-        <View style={styles.optionsGrid}>
-          {options.map((option) => {
-            return (
-              <OptionItem
-                key={option.id}
-                id={option.id}
-                label={option.label}
-                isSelected={isSelected}
-                isCorrect={item.correct_option === option.id} // Pass correct option check
-                selectCheck={selectCheck} // Pass it here
-              />
-            )
-          }
-          )}
-        </View>
-
-        {/* Solution View */}
-        {selectCheck === 'Solutions' && (
-          <View style={styles.solutionWrapper}>
-            <SolutionView
-              explanation={item.explanation || ''}
-              correctOption={item.correct_option || ''}
-              isSelected={isSelected}
-            />
-          </View>
-        )}
       </View>
     </Pressable>
   );
 });
 
 // Main Component
-const QuestionListData: React.FC<Props> = ({
+const QuestionListComponent: React.FC<Props> = ({
   selectCheck,
   selectedMap,
   setSelectedMap,
   questionsData,
   currentPage,
   limit,
-  questionNumber,
-  setQuestionNumber,
 }) => {
-  // console.log('selectCheck',selectCheck);
   const extractBase64Images = useCallback((html: string): string[] => {
     const imgRegex = /<img[^>]+src="data:image\/[^;]+;base64,([^"]+)"[^>]*>/g;
     const images: string[] = [];
@@ -720,32 +562,7 @@ const QuestionListData: React.FC<Props> = ({
     return images;
   }, []);
 
-  // const toggleSelect = useCallback((id: string, number: number) => {
-  //   console.log('rssssssss', id);
-  //   setSelectedMap(prev => {
-  //     const newMap = { ...prev };
-  //     if (newMap[id]) {
-  //       delete newMap[id];
-  //     } else {
-  //       newMap[id] = true;
-  //     }
-  //     return newMap;
-  //   });
-
-  //   setQuestionNumber(pre => {
-  //     const newNumber = { ...pre };
-  //     if (newNumber[number]) {
-  //       delete newNumber[number]
-  //     } else {
-  //       newNumber[number] = true
-  //     }
-  //     return newNumber
-  //   })
-
-  // }, [setSelectedMap, setQuestionNumber]);
-  const toggleSelect = useCallback(
-  ({ id, questionNum }: TogglePayload) => {
-
+  const toggleSelect = useCallback((id: string) => {
     setSelectedMap(prev => {
       const newMap = { ...prev };
       if (newMap[id]) {
@@ -755,24 +572,9 @@ const QuestionListData: React.FC<Props> = ({
       }
       return newMap;
     });
-
-      if (!Number.isFinite(questionNum)) {
-      return;
-    }
-    setQuestionNumber(prev => {
-      const newNumber = { ...prev };
-      if (newNumber[questionNum]) {
-        delete newNumber[questionNum];
-      } else {
-        newNumber[questionNum] = true;
-      }
-      return newNumber;
-    });
-
-  },
-  []
-);
-
+    navigation.navigate('OpenQuestionScreen')
+    
+  }, [setSelectedMap]);
 
   const renderItem = useCallback(({ item, index }: { item: Question; index: number }) => {
     const isSelected = !!selectedMap[item.question_id];
@@ -790,7 +592,7 @@ const QuestionListData: React.FC<Props> = ({
         limit={limit}
       />
     );
-  }, [selectedMap, selectCheck, toggleSelect, extractBase64Images, currentPage, limit, questionNumber]);
+  }, [selectedMap, selectCheck, toggleSelect, extractBase64Images, currentPage, limit]);
 
   const keyExtractor = useCallback((item: Question) => item.question_id, []);
 
@@ -807,6 +609,7 @@ const QuestionListData: React.FC<Props> = ({
     );
   }
 
+  const navigation = useNavigation()
   return (
     <View style={styles.container}>
       <FlatList
@@ -820,7 +623,6 @@ const QuestionListData: React.FC<Props> = ({
         removeClippedSubviews={true}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
-
       />
     </View>
   );
@@ -1051,7 +853,8 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     height: moderateScale(50),
     marginTop: moderateScale(6),
-    paddingLeft: moderateScale(4)
+    paddingLeft: moderateScale(4),
+    // borderWidth:1
   },
   cardMainBox: {
     elevation: 30,
@@ -1166,7 +969,7 @@ const styles = StyleSheet.create({
   },
 
 });
-export default memo(QuestionListData);
+export default memo(QuestionListComponent);
 
 
 

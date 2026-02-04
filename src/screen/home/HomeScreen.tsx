@@ -3,7 +3,7 @@ import { View, Text, Image, FlatList, TouchableOpacity, SectionList, Alert } fro
 import { styles } from './styles';
 import AppHeader from '../../component/header/AppHeader';
 import { Icons } from '../../assets/icons/index'
-import SubjectItem from './component/SubjectItem';
+import SubjectItem, { payload } from './component/SubjectItem';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { moderateScale } from '../../utils/responsiveSize';
 import HomeBannerSlider from './component/homebanner/HomeBannerSlider';
@@ -19,7 +19,9 @@ import { Colors, Fonts } from '../../theme';
 import { showToast } from '../../utils/toast';
 
 const HomeScreen = () => {
-    const [selectedSubject, setSelectedSubject] = useState<null | string>(null)
+    const [selectedSubjectId, setSelectedSubjectId] = useState<null | string>(null)
+    // console.log('seleeeeeeeeeee', selectedSubject);
+    
     const navigation = useNavigation();
     const [visible, setVisible] = useState(false);
     const [selectedBoard, setSelectedBoard] = useState<null | string>(null)
@@ -148,11 +150,12 @@ const HomeScreen = () => {
         await fetchBanners();
     };
 
-    const handleSelect = async (id: string) => {
-        setSelectedSubject(id);
+    const handleSelect = async ({subId,subName}:payload) => {
+        setSelectedSubjectId(subId);
 
         // Save to localStorage
-        await localStorage.setItem(storageKeys.selectedSubject, id);
+        await localStorage.setItem(storageKeys.selectedSubId, subId);
+        await localStorage.setItem(storageKeys.selectedSubject, subName);
         navigation.navigate('PaperTypeScreen')
     }
 
@@ -304,11 +307,11 @@ const HomeScreen = () => {
             <SubjectItem
                 item={item}
                 index={index}
-                selected={selectedSubject === item.subject_id}
+                selected={selectedSubjectId === item.subject_id}
                 onPress={handleSelect}
             />
         )
-    }, [selectedSubject])
+    }, [selectedSubjectId])
 
     useEffect(() => {
         const loadBoard = async () => {
@@ -344,14 +347,13 @@ const HomeScreen = () => {
 
     useEffect(() => {
         const restoreSelectedSubject = async () => {
-            const savedSubject = await localStorage.getItem(storageKeys.selectedSubject);
+            const savedSubject = await localStorage.getItem(storageKeys.selectedSubId);
             if (savedSubject) {
-                setSelectedSubject(savedSubject);
+                setSelectedSubjectId(savedSubject);
             }
         };
         restoreSelectedSubject();
     }, []);
-
     return (
         <SafeAreaView
             style={styles.mainContainer}
@@ -363,7 +365,7 @@ const HomeScreen = () => {
                     data={subData}
                     keyExtractor={(item) => item?.subject_id.toString()}
                     renderItem={renderItem}
-                    extraData={selectedSubject}
+                    extraData={selectedSubjectId}
                     showsVerticalScrollIndicator={false}
                     removeClippedSubviews
                     initialNumToRender={6}
@@ -399,7 +401,7 @@ const HomeScreen = () => {
                                         </View>
                                     </TouchableOpacity>
                                 </View>
-                                <Text style={styles.allSubText} onPress={() => navigation.navigate('ScoreBoardScreen')}>All Subjects</Text>
+                                <Text style={styles.allSubText} onPress={() => navigation.navigate('BookMarkScreen')}>All Subjects</Text>
                             </View>
                         )
                     }}
@@ -439,9 +441,8 @@ const HomeScreen = () => {
                         )
                     }}
                 />
-
                 {/* board */}
-                <AppModal visible={visible} onClose={handleBordCloseModal} >
+                <AppModal visible={visible} onClose={handleBordCloseModal}>
                     <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: Colors.white }} showsVerticalScrollIndicator={false}>
                         <View style={styles.lineMainBox}>
                             <View style={styles.lineCenterWrapper}>
