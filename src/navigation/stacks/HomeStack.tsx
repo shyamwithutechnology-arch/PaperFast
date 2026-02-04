@@ -10,6 +10,10 @@ import ChemistryData from '../../screen/papermodule/ChemistryData';
 import MyPdfScreen from '../../screen/mypdf/MyPdfScreen';
 import NotificationScreen from '../../screen/notification/NotificationScreen';
 import ScoreBoardScreen from '../../screen/scrollboard/ScoreBoardScreen';
+import PaperListScreen from '../../screen/studentModule/QuestionListScreen';
+import QuestionListScreen from '../../screen/studentModule/QuestionListScreen';
+import OpenQuestionScreen from '../../screen/studentModule/openquestion/OpenQuestionScreen';
+import BookMarkScreen from '../../screen/studentModule/bookmark/BookMarkScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -25,7 +29,8 @@ const HomeStack = () => {
             <Stack.Screen name="MyPdfScreen" component={MyPdfScreen} />
             <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
             <Stack.Screen name="ScoreBoardScreen" component={ScoreBoardScreen} />
-
+            <Stack.Screen name="QuestionListScreen" component={QuestionListScreen} />
+            <Stack.Screen name="BookMarkScreen" component={BookMarkScreen} />
             {/* <Stack.Screen name="HomeDetails" component={HomeDetails} /> */}
         </Stack.Navigator>
     );

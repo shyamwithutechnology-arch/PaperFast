@@ -47,6 +47,7 @@ export const Icons = {
     mediumImg: require('./mediumImg.png'),
     standardImg: require('./standardImg.png'),
     megaphone: require('./megaphone.png'),
+    back: require('./back.png'),
 
 
     //// home icon

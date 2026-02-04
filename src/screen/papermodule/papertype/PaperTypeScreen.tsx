@@ -77,7 +77,7 @@ const PaperTypeScreen = () => {
 
   console.log('bannersdddd', banners);
 
-  const handleSelectPaperType = async(payload) => {
+  const handleSelectPaperType = async (payload) => {
     await localStorage.setItem(storageKeys.selectedPaperType, payload)
     navigation.navigate('PaperSelect')
     // navigation.navigate('PaperSelect', { 'paperType': payload })
@@ -122,14 +122,12 @@ const PaperTypeScreen = () => {
   }, []);
   return (
     <View style={{ flex: 1, backgroundColor: Colors.white }}>
-
       {/* STATUS BAR */}
       <StatusBar
         // translucent
         backgroundColor={Colors.lightThemeBlue}
         barStyle="dark-content"
       />
-
       {/* HEADER + STATUS BAR SHARE SAME BACKGROUND */}
       <View style={{ backgroundColor: Colors.lightThemeBlue }}>
         <SafeAreaView edges={["top"]}>
@@ -140,8 +138,8 @@ const PaperTypeScreen = () => {
       {/* SCREEN CONTENT */}
       <SafeAreaView style={{ flex: 1 }} edges={["left", "right", "bottom"]}>
         <Loader visible={loading} />
-        <CustomPaperCard onPress={handleSelectPaperType} />
-        <View style={{marginTop:moderateScale(6)}}>
+        <CustomPaperCard onPress={handleSelectPaperType}/>
+        <View style={{ marginTop: moderateScale(6) }}>
           <HomeBannerSlider
             banners={banners}
             loading={loading}

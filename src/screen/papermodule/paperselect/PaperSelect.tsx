@@ -30,13 +30,12 @@ const PaperSelect = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [book, setBook] = useState<Book[]>([]);
     const [chapterData, setChapterData] = useState<any>([]);
-    console.log('chapterData', chapterData);
+    const [subjectName, setSubjectName] = useState<string | null>('')
+    console.log('subjectName', subjectName);
 
     const selectedSummary = route.params?.selectedSummary as
         | SelectedSummary
         | undefined;
-
-
     const [activeChapterId, setActiveChapterId] = useState<number | null>(
         selectedSummary?.chapterId ?? null
     );
@@ -56,7 +55,7 @@ const PaperSelect = () => {
     }
     const handleQuestionSelect = (payload) => {
         navigation.navigate('QuestionScreen', {
-            ...payload,
+            ...payload, 
         });
     }
     const handleSelectedPaper = (id: PaperType) => {
@@ -69,7 +68,7 @@ const PaperSelect = () => {
         try {
             const response = await GET(ApiEndPoint?.bookFetch);
             // console.log('resssssssbook', response);
-            
+
             if (response?.status === 200) {
                 setBook(response?.result || []);
             } else {
@@ -196,11 +195,10 @@ const PaperSelect = () => {
                 'subject_id': data?.subjectId,
             }
             console.log('paramssssssssss', params);
-
             const response = await POST_FORM(ApiEndPoint?.questionChapter, params);
             console.log('wwwwwwwwwwwwwww', response)
             if (response?.status === 200) {
-               setChapterData(response?.result || [])
+                setChapterData(response?.result || [])
             } else {
                 showToast('error', 'Error', response.msg || "Chapter fetch faild")
                 setChapterData([])
@@ -250,8 +248,9 @@ const PaperSelect = () => {
                 const boardId = await localStorage.getItem(storageKeys.boardId);
                 const mediumId = await localStorage.getItem(storageKeys.selectedMediumId);
                 const standardId = await localStorage.getItem(storageKeys.selectedStandardId);
-                const subjectId = await localStorage.getItem(storageKeys.selectedSubject);
-
+                const subjectId = await localStorage.getItem(storageKeys.selectedSubId);
+                const subjectName = await localStorage.getItem(storageKeys.selectedSubject);
+                setSubjectName(subjectName)
                 if (isMounted) {
                     setPaperHeader(data || '');
                 }
@@ -270,7 +269,6 @@ const PaperSelect = () => {
         };
 
         handlePaperType();
-
         return () => {
             isMounted = false; // Cleanup on unmount
         };
@@ -283,14 +281,14 @@ const PaperSelect = () => {
 
             {/* HEADER + STATUS BAR SAME BACKGROUND */}
             <SafeAreaView edges={["top"]} style={{ backgroundColor: Colors.lightThemeBlue }}>
-                <HeaderPaperModule title={paperHeader} rightPress={() => { navigation.navigate('DraftPaperScreen') }} leftIconPress={handleBack} />
+                <HeaderPaperModule titleStyle={{fontSize:moderateScale(14)}} title={`${paperHeader}`} subjectName={`${subjectName}`} rightPress={() => { navigation.navigate('DraftPaperScreen') }} leftIconPress={handleBack} />
             </SafeAreaView>
             {/* MAIN CONTENT */}
             <SafeAreaView
                 style={{ flex: 1, backgroundColor: Colors.white }}
                 edges={["left", "right", "bottom"]}>
                 <Loader visible={loading} />
-                <View style={styles.rowContainer}>
+                {/* <View style={styles.rowContainer}>
                     {book?.map(item => {
                         const isActive = selectedPaper === item?.book_name;
                         return (
@@ -314,9 +312,11 @@ const PaperSelect = () => {
                             </TouchableOpacity>
                         );
                     })}
-                </View>
+                </View> */}
                 {/* <Paperselectcontent data={PAPER_DATA[selectedPaper]} handleNavigate={handleQuestionSelect} activeChapterId={activeChapterId} selectedSummary={selectedSummary} /> */}
-                <Paperselectcontent data={PAPER_DATA[selectedPaper]} handleNavigate={handleQuestionSelect} activeChapterId={activeChapterId} selectedSummary={selectedSummary} />
+                {/* <View style={{marginTop:moderateScale(20)}}> */}
+                <Paperselectcontent data={chapterData} handleNavigate={handleQuestionSelect} activeChapterId={activeChapterId} selectedSummary={selectedSummary} />
+                {/* </View> */}
                 <View style={styles.totalWrapper}>
                     <View style={styles.topShadow} />
                     <View style={styles.totalMainBox}>

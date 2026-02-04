@@ -561,12 +561,19 @@ import { Colors, Fonts } from '../../theme';
 import { moderateScale } from '../../utils/responsiveSize';
 import { Icons } from '../../assets/icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import DateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import HeaderPaperModule from '../../component/headerpapermodule/Headerpapermodule';
 import Loader from '../../component/loader/Loader';
 import AppTextInput from '../../component/apptextinput/AppTextInput';
 import ClockIcon from "react-native-vector-icons/FontAwesome6";
 import AppButton from '../../component/button/AppButton';
 import { showToast } from '../../utils/toast';
+import AppDropDown from '../../component/dropdown/AppDropDown';
+
+export type DropDownItem = {
+    label: string,
+    value: string
+}
 
 const MyPdfScreen = () => {
     const navigation = useNavigation();
@@ -576,17 +583,63 @@ const MyPdfScreen = () => {
     const [loading, setLoading] = useState(false);
     const [logoUri, setLogoUri] = useState<string | null>(null);
     const [logoFileName, setLogoFileName] = useState<string>('');
-
     // Form states
     const [instituteName, setInstituteName] = useState('');
     const [testName, setTestName] = useState('');
-    const [date, setDate] = useState('');
     const [time, setTime] = useState('2 Hours');
     const [hideDateTime, setHideDateTime] = useState(false);
     const [waterMarkType, setWaterMarkType] = useState('1');
     const [borderType, setBorderType] = useState('1');
     const [waterMarkLogo, setWaterMarkLogo] = useState<string | null>(null);
     const [borderImage, setBorderImage] = useState<string | null>(null);
+    const [dropDownValue, setDropDownValue] = useState<string | null>(null);
+
+    // date picker
+    const [date, setDate] = useState(new Date());
+    const [mode, setMode] = useState('date');
+    const [show, setShow] = useState(false);
+
+    const onChange = (event, selectedDate) => {
+        const currentDate = selectedDate;
+        setShow(false);
+        setDate(currentDate);
+    };
+
+    const formatDate = (date) => {
+        const dd = String(date.getDate()).padStart(2, '0');
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const yy = String(date.getFullYear()).slice(-2);
+
+        return `${dd}/${mm}/${yy}`;
+    };
+    const showMode = (currentMode) => {
+        setShow(true);
+        setMode(currentMode);
+    };
+
+    const showDatepicker = () => {
+        showMode('date');
+    };
+
+    const showTimepicker = () => {
+        showMode('time');
+    };
+
+    const handleHideDateTime = () => {
+        setHideDateTime(!hideDateTime)
+    }
+
+
+    const data:DropDownItem[]  = [
+        { label: 'Item 1', value: '1' },
+        { label: 'Item 2', value: '2' },
+        { label: 'Item 3', value: '3' },
+        { label: 'Item 4', value: '4' },
+        { label: 'Item 5', value: '5' },
+        { label: 'Item 6', value: '6' },
+        { label: 'Item 7', value: '7' },
+        { label: 'Item 8', value: '8' },
+    ];
 
     // ✅ CORRECT: Select institute logo
     const selectAndResizeLogo = async () => {
@@ -828,7 +881,7 @@ const MyPdfScreen = () => {
             <StatusBar backgroundColor={Colors.primaryColor} barStyle="dark-content" />
 
             <SafeAreaView style={{ backgroundColor: Colors.lightThemeBlue }} edges={['top']}>
-                <HeaderPaperModule title='Generate Pdf' leftIconPress={handleBack} />
+                <HeaderPaperModule title='Generate PDF' leftIconPress={handleBack} />
             </SafeAreaView>
 
             <SafeAreaView style={styles.content} edges={['left', 'right', 'bottom']}>
@@ -864,7 +917,7 @@ const MyPdfScreen = () => {
                                         <Image
                                             source={Icons?.fileUpload}
                                             style={styles.uploadIcon}
-                                            resizeMode='cover'
+                                            resizeMode='contain'
                                         />
                                         {/* <Text style={styles.uploadText}>Upload Logo</Text>
                                         <Text style={styles.uploadHint}>Max 50KB • 320×320px</Text> */}
@@ -875,7 +928,6 @@ const MyPdfScreen = () => {
                     </View>
 
                     {/* Form Fields */}
-                    {/* <View style={styles.section}> */}
                     <View style={styles.insBox}>
                         <AppTextInput
                             containerStyle={{ width: '91.5%' }}
@@ -894,34 +946,39 @@ const MyPdfScreen = () => {
                     />
 
                     {/* Date/Time Section */}
-                    <View style={styles.dateTimeRow}>
-                        <View style={styles.dateTimeItem}>
-                            <Text style={styles.label}>Date</Text>
-                            <TouchableOpacity style={styles.dateBox}>
-                                <Text style={styles.dateText}>{date || 'DD/MM/YYYY'}</Text>
-                                <Image source={Icons.date} style={styles.dateIcon} resizeMode='contain' />
-                            </TouchableOpacity>
-                        </View>
-
-                        <View style={styles.dateTimeItem}>
-                            <Text style={styles.label}>Time</Text>
-                            {/* <TouchableOpacity style={styles.dateBox}>
-                                <Text style={styles.dateText}>{time}</Text>
-                                <ClockIcon name="clock-rotate-left" size={20} color="#999" />
-                            </TouchableOpacity> */}
-                            <View style={{ flexDirection: 'row', alignItems: "center" , justifyContent:'space-between',borderWidth:1, paddingHorizontal:moderateScale(10), borderRadius:moderateScale(4), borderColor:Colors.InputStroke,  paddingVertical:moderateScale(1.5)}}>
-                                <TextInput placeholder='Minute' style={{ width:moderateScale(110)}} />
-                                <ClockIcon name="clock-rotate-left" size={17} color="#999" />
-
+                    {!hideDateTime &&
+                        <View style={styles.dateTimeRow}>
+                            <View style={styles.dateTimeItem}>
+                                <Text style={styles.label}>Date</Text>
+                                <TouchableOpacity style={styles.dateBox} onPress={showDatepicker}>
+                                    <Text style={styles.dateText}>{formatDate(date)}</Text>
+                                    <Image source={Icons.date} style={styles.dateIcon} resizeMode='contain' />
+                                </TouchableOpacity>
                             </View>
 
-                        </View>
-                    </View>
+                            <View style={styles.dateTimeItem}>
+                                <Text style={styles.label}>Time</Text>
+                                <View style={{ flexDirection: 'row', alignItems: "center", justifyContent: 'space-between', borderWidth: 1, paddingHorizontal: moderateScale(10), borderRadius: moderateScale(4), borderColor: Colors.InputStroke, paddingVertical: moderateScale(1.5) }}>
+                                    <TextInput placeholder='Minute' inputMode='numeric' style={{ width: moderateScale(110) }} />
+                                    <ClockIcon name="clock-rotate-left" size={17} color="#999" />
 
+                                </View>
+
+                            </View>
+                        </View>}
+                    {show && (
+                        <DateTimePicker
+                            maximumDate={new Date()}
+                            // testID="dateTimePicker"
+                            value={date}
+                            mode={mode}
+                            // is24Hour={true}
+                            onChange={onChange}
+                        />
+                    )}
                     <TouchableOpacity
                         style={styles.checkboxRow}
-                        onPress={() => setHideDateTime(!hideDateTime)}
-                    >
+                        onPress={handleHideDateTime}  >
                         <View style={styles.checkbox}>
                             {hideDateTime && <View style={styles.checkboxInner} />}
                         </View>
@@ -932,12 +989,10 @@ const MyPdfScreen = () => {
                     {/* Watermark Section */}
                     <View style={styles.section}>
                         <Text style={styles.title}>Water Mark</Text>
-
                         <View style={styles.optionRow}>
                             <TouchableOpacity
                                 style={styles.optionItem}
-                                onPress={() => setWaterMarkType('1')}
-                            >
+                                onPress={() => setWaterMarkType('1')}>
                                 <View style={styles.radio}>
                                     {waterMarkType === '1' && <View style={styles.radioSelected} />}
                                 </View>
@@ -946,8 +1001,7 @@ const MyPdfScreen = () => {
 
                             <TouchableOpacity
                                 style={styles.optionItem}
-                                onPress={() => setWaterMarkType('2')}
-                            >
+                                onPress={() => setWaterMarkType('2')}>
                                 <View style={styles.radio}>
                                     {waterMarkType === '2' && <View style={styles.radioSelected} />}
                                 </View>
@@ -957,15 +1011,13 @@ const MyPdfScreen = () => {
 
                         {waterMarkType === '1' ? (
                             <TouchableOpacity
-                                style={styles.uploadAreaSmall}
-                                onPress={selectWatermark}
-                            >
+                                style={styles.uploadAreaSmall} onPress={selectWatermark}>
                                 {waterMarkLogo ? (
                                     <Image source={{ uri: waterMarkLogo }} style={styles.smallImage} resizeMode='stretch' />
                                 ) : (
                                     <>
                                         <Image source={Icons?.fileUpload} style={styles.smallIcon} resizeMode='cover' />
-                                        <Text style={styles.uploadTextSmall}>Upload Watermark</Text>
+                                        {/* <Text style={styles.uploadTextSmall}>Upload Watermark</Text> */}
                                     </>
                                 )}
                             </TouchableOpacity>
@@ -1023,6 +1075,9 @@ const MyPdfScreen = () => {
                             <Text style={styles.wishText}>Wish you all the best</Text>
                         </TouchableOpacity>
                     </View>
+                    <View style={{ marginBottom: moderateScale(0) }}>
+                        <AppDropDown data={data} value={dropDownValue} setValue={setDropDownValue} placeHolderText={'Select A Number'}/>
+                    </View>
 
                     {/* Action Buttons */}
                     <View style={styles.buttonRow}>
@@ -1054,7 +1109,8 @@ const styles = StyleSheet.create({
     },
     section: {
         marginHorizontal: moderateScale(16),
-        marginTop: moderateScale(20),
+        marginTop: moderateScale(10),
+        // borderWidth: 1
     },
     title: {
         fontSize: moderateScale(14),
@@ -1226,18 +1282,19 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: Colors.InputStroke,
         borderStyle: 'solid',
-        borderRadius: moderateScale(6),
+        borderRadius: moderateScale(8),
         // padding: moderateScale(20),
         // padding: moderateScale(22),
         // paddingVertical: moderateScale(10),
         // paddingHorizontal: moderateScale(22),
-        height: moderateScale(120),
+        height: moderateScale(104),
         alignItems: 'center',
+        justifyContent: "center",
         backgroundColor: '#f8f9fa',
     },
     smallIcon: {
-        width: moderateScale(30),
-        height: moderateScale(30),
+        width: moderateScale(48),
+        height: moderateScale(48),
         tintColor: Colors.primaryColor,
         marginBottom: moderateScale(8),
     },

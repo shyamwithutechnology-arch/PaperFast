@@ -181,7 +181,7 @@
 // export default QuestionScreen;
 
 import React, { useCallback, useEffect, useState } from "react";
-import { View, StatusBar, TouchableOpacity, Text, Image } from "react-native";
+import { View, StatusBar, TouchableOpacity, Text, Image, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "../../../theme";
 import HeaderPaperModule from "../../../component/headerpapermodule/Headerpapermodule";
@@ -196,6 +196,9 @@ import Loader from "../../../component/loader/Loader";
 import Pagination from "./component/Pagination";
 import AppModal from "../../../component/modal/AppModal";
 import { showToast } from "../../../utils/toast";
+import { localStorage, storageKeys } from "../../../storage/storage";
+import IconEntypo from "react-native-vector-icons/FontAwesome5";
+import AppButton from "../../../component/button/AppButton";
 
 const QuestionScreen = () => {
     const navigation = useNavigation()
@@ -214,9 +217,15 @@ const QuestionScreen = () => {
 
     const [selectCheck, setSelectedCheck] = useState('Options')
     const [selectedMap, setSelectedMap] = useState<Record<string, boolean>>({});
+    const [questionNumber, setQuestionNumber] = useState<Record<string, boolean>>({});
+    // console.log('questionNumbereeeeeeeeeeeedddd', Object.keys(questionNumber));
+
     const [questionsData, setQuestionsData] = useState<any>({});
     const [loader, setLoader] = useState(false);
     const [labelStatus, setLabelStatus] = useState(false);
+    const [paperType, setPaperType] = useState<string | null>('');
+    const [lebelCheck, setLabelCheck] = useState<string | null>(null);
+    const [questionType, setQuestionType] = useState<boolean>(false);
 
     const [pagination, setPagination] = useState({
         limit: 10,
@@ -234,13 +243,19 @@ const QuestionScreen = () => {
     const handleLabelClose = () => {
         setLabelStatus(false)
     }
+    const handleCheckStatus = (item: string) => {
+        setLabelCheck(item)
+    }
+    const handleQuestionType = () => {
+        setQuestionType(!questionType)
+    }
     const handleBack = () => {
         navigation.navigate('PaperSelect', {
             selectedSummary: {
                 chapterId,
                 questionId,
                 questionMarks,
-                selectedQuestions: Object.keys(selectedMap).map(Number),
+                selectedQuestions: Object.keys(questionNumber),
             },
         });
     };
@@ -314,6 +329,13 @@ const QuestionScreen = () => {
 
     useEffect(() => {
         fetchQuestions(pagination.page, pagination?.limit);
+        // if()
+
+        const type = async () => {
+            const paperType = await localStorage.getItem(storageKeys.selectedPaperType)
+            setPaperType(paperType)
+        }
+        type()
     }, []);
 
     return (
@@ -323,8 +345,9 @@ const QuestionScreen = () => {
                 barStyle="dark-content" />
             <SafeAreaView edges={["top"]} style={{ backgroundColor: Colors.lightThemeBlue }}>
                 <HeaderPaperModule
-                    title="Number System"
+                    title={paperType}
                     rightPress={() => navigation?.navigate('DraftPaperScreen')}
+                    rightPress2={() => navigation?.navigate('MyPdfScreen')}
                     leftIconPress={handleBack}
                 />
             </SafeAreaView>
@@ -340,9 +363,13 @@ const QuestionScreen = () => {
                     alignItems: 'center',
                     marginHorizontal: moderateScale(16),
                     marginTop: moderateScale(10),
-                    marginBottom: moderateScale(15)
+                    marginBottom: moderateScale(15),
+                    // borderWidth:1
                 }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <View style={{
+                        flexDirection: 'row', alignItems: 'center',
+                        // marginTop:moderateScale(-106)
+                    }}>
                         {/* OPTIONS */}
                         <TouchableOpacity
                             style={{ flexDirection: 'row', alignItems: 'center' }}
@@ -419,12 +446,59 @@ const QuestionScreen = () => {
                     selectCheck={selectCheck}
                     selectedMap={selectedMap}
                     setSelectedMap={setSelectedMap}
-                    questionsData={questionsData?.result ?? []} />
+                    questionsData={questionsData?.result ?? []}
+                    currentPage={pagination?.page}
+                    limit={pagination.limit}
+                    questionNumber={questionNumber}
+                    setQuestionNumber={setQuestionNumber}
+                />
+                <AppModal visible={labelStatus} onClose={handleLabelClose} >
+                    <View style={styles.applyBox}>
+                        <Text style={styles.diffeicultText}>Apply Filter</Text>
+                        <TouchableOpacity>
+                            <Text style={styles.clearAllText}>Clear all filters</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.lineBox} />
+                    <Text style={styles.diffecultyText}>Difficulty level</Text>
+                    <View style={styles.easyBox}>
+                        <View style={styles.difficultMainBox}>
+                            <Pressable style={styles.checkBoxMain} onPress={() => handleCheckStatus('1')}>
+                                <View style={[styles.checkBox, lebelCheck === '1' && { backgroundColor: Colors.primaryColor, borderWidth: 0 }]}>
+                                    {lebelCheck === '1' && <IconEntypo name='check' size={moderateScale(14.5)} color={Colors.white} />
+                                    }
+                                </View>
+                                <Text style={styles.easyText}>Easy</Text>
+                            </Pressable>
+                            <Pressable style={[styles.checkBoxMain, { marginLeft: moderateScale(30) }]} onPress={() => handleCheckStatus('2')}>
+                                <View style={[styles.checkBox, lebelCheck === '2' && { backgroundColor: Colors.primaryColor, borderWidth: 0 }]} >
+                                    {lebelCheck === '2' && <IconEntypo name='check' size={moderateScale(14.5)} color={Colors.white} />
+                                    }                                </View>
+                                <Text style={styles.easyText}>Medium</Text>
+                            </Pressable>
+                            <Pressable style={[styles.checkBoxMain, { marginLeft: moderateScale(30) }]} onPress={() => handleCheckStatus('3')}>
+                                <View style={[styles.checkBox, lebelCheck === '3' && { backgroundColor: Colors.primaryColor, borderWidth: 0 }]}>
+                                    {lebelCheck === '3' && <IconEntypo name='check' size={moderateScale(14.5)} color={Colors.white} />
+                                    }                                </View>
+                                <Text style={styles.easyText}>Hard</Text>
+                            </Pressable>
+                        </View>
+                    </View>
+                    <Text style={[styles.diffecultyText, { marginTop: moderateScale(20) }]}>Question Type</Text>
+                    <Pressable style={[styles.checkBoxMain, { justifyContent: "flex-start" }]} onPress={handleQuestionType}>
+                        <View style={[styles.checkBox, questionType && { backgroundColor: Colors.primaryColor, borderWidth: 0 }]}>
+                            {questionType && <IconEntypo name='check' size={moderateScale(14.5)} color={Colors.white} />}                                </View>
+                        <Text style={styles.easyText}>Numeric</Text>
+                    </Pressable>
 
-                {/* <AppModal visible={labelStatus} onClose={handleLabelClose} /> */}
+                    <Text style={[styles.diffecultyText, { marginTop: moderateScale(20) }]}>Books</Text>
+                   <View style={[styles.easyBox,{justifyContent:"space-between", marginHorizontal:moderateScale(16.8),marginTop:moderateScale(-10)}]}>
+                     <AppButton title="Cancel" style={{width:'46%'}}/>
+                    <AppButton title="Apply Filter"  style={{width:'46%'}}/>
+                   </View>
+                </AppModal>
             </SafeAreaView>
         </View>
     );
 };
-
 export default QuestionScreen;

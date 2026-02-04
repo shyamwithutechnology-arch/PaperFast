@@ -4,10 +4,14 @@ import { moderateScale, scale, verticalScale } from '../../../utils/responsiveSi
 import { Colors, Fonts } from '../../../theme'
 import { Images } from '../../../assets/images'
 import { Icons } from '../../../assets/icons'
+ export type payload = {
+    subId: string,
+    subName: string
+}
 interface Props {
     item: { id: string, label: string },
     selected: boolean,
-    onPress: (id: string) => void
+    onPress: (data:payload) => void
 }
 
 let randomColor = [
@@ -30,6 +34,8 @@ const getCardColor = (id: string) => {
 };
 
 const SubjectItem = React.memo(({ item, selected, onPress }: Props) => {
+    console.log('itemssssssssssss', item);
+
     const bgColor = React.useMemo(
         () => getCardColor(item.subject_id),
         [item.subject_id]
@@ -38,7 +44,7 @@ const SubjectItem = React.memo(({ item, selected, onPress }: Props) => {
         <TouchableOpacity style={[styles.card, selected && styles.selectedCard,
         { backgroundColor: bgColor },
         ]}
-            onPress={() => onPress(item?.subject_id)}
+            onPress={() => onPress({ subId: item?.subject_id, subName: item?.subject_name })}
             activeOpacity={0.7}>
             <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                 <View style={styles.subjectBox}>
@@ -48,7 +54,7 @@ const SubjectItem = React.memo(({ item, selected, onPress }: Props) => {
                     <Text style={styles.label} numberOfLines={1}>{item?.subject_name}</Text>
                 </View>
                 <View style={{ width: moderateScale(40), height: moderateScale(30) }}>
-                    <Image source={{uri:item?.subject_image}} style={{ width: moderateScale(36), height: moderateScale(36) }} resizeMode='contain' />
+                    <Image source={{ uri: item?.subject_image }} style={{ width: moderateScale(36), height: moderateScale(36) }} resizeMode='contain' />
                 </View>
             </View>
         </TouchableOpacity>

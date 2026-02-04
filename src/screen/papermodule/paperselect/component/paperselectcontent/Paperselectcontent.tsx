@@ -56,7 +56,7 @@ interface Props {
 const Paperselectcontent: React.FC<Props> = ({ data, handleNavigate, activeChapterId, selectedSummary }) => {
 
   // const [activeId, setActiveId] = useState<number | null>(null);
-  const [activeId, setActiveId] = useState<number | null>(activeChapterId); 
+  const [activeId, setActiveId] = useState<number | null>(activeChapterId);
 
   useEffect(() => {
     setActiveId(activeChapterId);
@@ -73,21 +73,21 @@ const Paperselectcontent: React.FC<Props> = ({ data, handleNavigate, activeChapt
 
   console.log('selectedSummary', selectedSummary)
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: Colors.white }}>
-      {data.map(item => {
-        const isOpen = activeId === item.id;
+    <ScrollView style={{ flex: 1, backgroundColor: Colors.white, marginTop:moderateScale(15) }}>
+      {data.map((item, chapterIndex) => {
+        const isOpen = activeId === chapterIndex;
         return (
-          <View key={item.id} style={styles.wrapper}>
+          <View key={chapterIndex} style={styles.wrapper}>
             {/* TITLE */}
             {/* <View style={{borderWidth:1, paddingVertical:moderateScale(1)}}> */}
             <TouchableOpacity
               style={styles.titleBox}
               activeOpacity={0.8}
-              onPress={() => toggle(item.id)}
+              onPress={() => toggle(chapterIndex)}
             >
               <View>
-                <Text style={styles.title}>{item.title}</Text>
-                <Text style={styles.chaptName}>{item.chapterName}</Text>
+                <Text style={styles.title}>{item?.question_chapter}</Text>
+                <Text style={styles.chaptName}>Chap 0{chapterIndex + 1}</Text>
               </View>
 
               <Image
@@ -103,12 +103,12 @@ const Paperselectcontent: React.FC<Props> = ({ data, handleNavigate, activeChapt
             {/* CONTENT */}
             {isOpen && (
               <View style={styles.contentBox}>
-                {item.questions.map((question, index) => {
-                  const isLast = index === item.questions.length - 1;
-                  // console.log('maaaaaaaaa', question)
+                {item?.questions?.map((question, qIndex) => {
+                  const isLast = qIndex === item?.questions?.length - 1;
+                  console.log('maaaaaaaaa', question)
 
                   return (
-                    <View key={question.id}>
+                    <View key={question?.id}>
                       <TouchableOpacity
                         style={{
                           flexDirection: "row",
@@ -118,18 +118,20 @@ const Paperselectcontent: React.FC<Props> = ({ data, handleNavigate, activeChapt
                         // onPress={handleNavigate}
                         onPress={() =>
                           handleNavigate({
-                            chapterId: item.id,
-                            questionId: question.id,
-                            questionMarks: question.questionMarks,
-                            label: question.label,
+                            chapterId: chapterIndex,
+                            questionId: question?.id,
+                            questionMarks: question?.questioncount,
+                            label: question?.label,
                           })
                         }
                       >
                         <Text style={styles.itemText}>
-                          {question?.id}. {question.label}
+                          {question?.id}. {question?.label}
                         </Text>
                         {/* {question.id === selectedSummary.questionId ? } */}
-                        <Text style={styles.questionSelectText}>{selectedSummary && selectedSummary?.chapterId === item.id && question.id === selectedSummary.questionId ? selectedSummary?.selectedQuestions?.length ?? 0 : 0}
+                        <Text style={styles.questionSelectText}>
+                          {question?.questioncount}
+                          {/* {selectedSummary && selectedSummary?.chapterId === chapterIndex && question?.id === selectedSummary?.questionId ? selectedSummary?.selectedQuestions?.length ?? 0 : 0} */}
                         </Text>
                       </TouchableOpacity>
                       {/* 
@@ -146,12 +148,15 @@ const Paperselectcontent: React.FC<Props> = ({ data, handleNavigate, activeChapt
                         })}
                       </View>
                       }</View> */}
-                      {question.id === selectedSummary?.questionId && selectedSummary?.chapterId === item.id && (
+                      {question?.id === selectedSummary?.questionId && selectedSummary?.chapterId === chapterIndex && (
                         <View style={styles.mcqBox}>
                           {selectedSummary?.selectedQuestions?.map(item => (
                             <View key={item} style={styles.powerRow}>
                               <Text style={styles.baseText}>{item}</Text>
-                              <SupPower>{selectedSummary.questionMarks}</SupPower>
+                              <SupPower>
+                                {/* {selectedSummary?.questionMarks} */}
+                                1
+                              </SupPower>
                             </View>
                           ))}
                         </View>
