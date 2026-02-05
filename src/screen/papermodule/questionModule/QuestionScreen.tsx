@@ -255,7 +255,7 @@ const QuestionScreen = () => {
                 chapterId,
                 questionId,
                 questionMarks,
-                selectedQuestions: Object.keys(questionNumber),
+                selectedQuestions: Object.keys(questionNumber)
             },
         });
     };
@@ -368,7 +368,7 @@ const QuestionScreen = () => {
                 }}>
                     <View style={{
                         flexDirection: 'row', alignItems: 'center',
-                        // marginTop:moderateScale(-106)
+                        // marginTop:moderateScale(-106)s
                     }}>
                         {/* OPTIONS */}
                         <TouchableOpacity
@@ -492,7 +492,7 @@ const QuestionScreen = () => {
                     </Pressable>
 
                     <Text style={[styles.diffecultyText, { marginTop: moderateScale(20) }]}>Books</Text>
-                   <View style={[styles.easyBox,{justifyContent:"space-between", marginHorizontal:moderateScale(16.8),marginTop:moderateScale(-10)}]}>
+                   <View style={[styles.easyBox,{justifyContent:"space-between", marginHorizontal:moderateScale(16.8),marginTop:moderateScale(50)}]}>
                      <AppButton title="Cancel" style={{width:'46%'}}/>
                     <AppButton title="Apply Filter"  style={{width:'46%'}}/>
                    </View>
