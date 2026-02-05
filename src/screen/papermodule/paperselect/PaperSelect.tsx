@@ -68,7 +68,6 @@ const PaperSelect = () => {
         try {
             const response = await GET(ApiEndPoint?.bookFetch);
             // console.log('resssssssbook', response);
-
             if (response?.status === 200) {
                 setBook(response?.result || []);
             } else {
@@ -194,9 +193,9 @@ const PaperSelect = () => {
                 // 'class_id': data?.standardId,
                 'subject_id': data?.subjectId,
             }
-            console.log('paramssssssssss', params);
+            // console.log('paramssssssssss', params);
             const response = await POST_FORM(ApiEndPoint?.questionChapter, params);
-            console.log('wwwwwwwwwwwwwww', response)
+            // console.log('wwwwwwwwwwwwwww', response)
             if (response?.status === 200) {
                 setChapterData(response?.result || [])
             } else {
