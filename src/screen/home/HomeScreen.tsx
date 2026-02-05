@@ -17,11 +17,12 @@ import { ApiEndPoint } from '../../api/endPoints';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Colors, Fonts } from '../../theme';
 import { showToast } from '../../utils/toast';
+import { showSnackbar } from '../../utils/showsnack';
 
 const HomeScreen = () => {
     const [selectedSubjectId, setSelectedSubjectId] = useState<null | string>(null)
     // console.log('seleeeeeeeeeee', selectedSubject);
-    
+
     const navigation = useNavigation();
     const [visible, setVisible] = useState(false);
     const [selectedBoard, setSelectedBoard] = useState<null | string>(null)
@@ -46,7 +47,7 @@ const HomeScreen = () => {
     }
     const handleBordCloseModal = () => {
         if (selectedBoard === null) {
-            showToast('error', 'Error', 'Please Select Board')
+            showSnackbar('Please Select Board', 'error')
             return false
         }
         if (selectedBoard !== null) {
@@ -54,12 +55,19 @@ const HomeScreen = () => {
         }
     }
     const handleSelectedBoard = async (board_name, borardIdMain, board_id) => {
-        // setBoardId(borardId);
         await localStorage.setItem(storageKeys.boardIdMain, borardIdMain);
         await localStorage.setItem(storageKeys.boardId, board_id);
         await localStorage.setItem(storageKeys.selectedBoard, board_name);
         setSelectedBoard(board_name);
-        //   setVisible(false);
+
+        // if (selectedBoard !== null) {
+        setVisible(false);
+        if (borardIdMain) {
+            await handleSubFetch(borardIdMain);
+        }
+        await handleMediumDataFetch();
+        setVisibleMedium(true)
+        // }
     };
 
     const getSectionedData = () => {
@@ -82,7 +90,7 @@ const HomeScreen = () => {
     // medium 
     const handleMediumOpenModal = async () => {
         if (selectedBoard === null) {
-            showToast('error', 'Error', 'Please Select Board')
+            showSnackbar('Please Select Board', 'error')
             return false
         }
         if (selectedBoard !== null) {
@@ -101,7 +109,7 @@ const HomeScreen = () => {
         setVisibleMedium(false)
         // }
     }
-    const handleSelectMedium = async (item: string) => {
+    const handleSelectMedium = async (item: string) => { 
         setSelectMedium(item?.medium_name)
         await localStorage.setItem(storageKeys.selectedMedium, item?.medium_name)
         await localStorage.setItem(storageKeys.selectedMediumId, item?.medium_id)
@@ -109,9 +117,9 @@ const HomeScreen = () => {
 
     const handleStandardOpenModal = async () => {
         if (selectedBoard === null) {
-            showToast('error', 'Error', 'Please Select Board')
+            showToast('error', 'Error', 'Please Select Board') 
             return false
-        }
+        } 
         if (selectMedium === null) {
             showToast('error', 'Error', 'Please Select Medium')
             return false
@@ -150,7 +158,7 @@ const HomeScreen = () => {
         await fetchBanners();
     };
 
-    const handleSelect = async ({subId,subName}:payload) => {
+    const handleSelect = async ({ subId, subName }: payload) => {
         setSelectedSubjectId(subId);
 
         // Save to localStorage
@@ -165,7 +173,7 @@ const HomeScreen = () => {
             const response = await GET(ApiEndPoint.Board);
             if (response && response.status === '1') {
                 setBoardData(response?.result || []);
-                const boardId = await localStorage.getItem(storageKeys.boardId)
+                const boardId = await localStorage.getItem(storageKeys?.boardIdMain)
                 if (boardId) {
                     await handleSubFetch(boardId);
                 }
@@ -338,7 +346,7 @@ const HomeScreen = () => {
             const boardId = await localStorage.getItem(storageKeys.boardIdMain)
             if (boardId) {
                 console.log('eeeeeeeeee', boardId);
-                
+
                 await handleSubFetch(boardId);
             }
         }
