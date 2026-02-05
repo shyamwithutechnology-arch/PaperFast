@@ -48,6 +48,8 @@ export const Icons = {
     standardImg: require('./standardImg.png'),
     megaphone: require('./megaphone.png'),
     back: require('./back.png'),
+    info: require('./info.png'),
+    danger: require('./danger.png'),
 
 
     //// home icon

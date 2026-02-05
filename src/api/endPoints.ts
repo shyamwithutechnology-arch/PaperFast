@@ -1,5 +1,4 @@
-
-    export const ApiEndPoint = {
+ export const ApiEndPoint = {
         LoGIN:'login-otp',
         LoGINROlE:'login',  
         Question:'question',  
@@ -12,4 +11,6 @@
         GetProfile:'get-profile',
         bookFetch:'book',
         questionChapter:'question-chapter',
+        difficultyLabel :'difficulty-level',
+        queationtype :'queation-type'
     }

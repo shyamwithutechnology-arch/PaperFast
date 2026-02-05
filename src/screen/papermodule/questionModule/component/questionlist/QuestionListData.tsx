@@ -7,11 +7,23 @@ import {
   Image,
   Dimensions,
   Pressable,
+  Modal,
+  Platform,
+  PermissionsAndroid,
+  TextInput,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MathJax from 'react-native-mathjax';
 import { moderateScale, verticalScale, scale } from '../../../../../utils/responsiveSize';
 import { Colors, Fonts } from '../../../../../theme';
+import { Icons } from '../../../../../assets/icons';
+import MediaPickerModal from '../../../../../component/mediapickermodal/MediaPickerModal';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import AppModal from '../../../../../component/modal/AppModal';
+import CloseIcon from "react-native-vector-icons/EvilIcons";
+import AddIcon from "react-native-vector-icons/MaterialIcons";
+import AppButton from '../../../../../component/button/AppButton';
+import UploadErrorModal from '../UploadErrorModal';
 
 // MathJax configuration
 const mathJaxOptions = {
@@ -324,6 +336,7 @@ const OptionItem = memo(({
 
         </View>
       }
+
     </View>
   );
 });
@@ -585,7 +598,8 @@ const QuestionItem = memo(({
   extractImages,
   listottomLineHide,
   currentPage,
-  limit
+  limit,
+  onInfoPress
 }: {
   item: Question;
   index: number;
@@ -596,8 +610,11 @@ const QuestionItem = memo(({
   extractImages: (html: string) => string[];
   listottomLineHide: any,
   currentPage: number,
-  limit: number
+  limit: number,
+  onInfoPress: () => void
 }) => {
+  console.log('itemddddddd', item)
+
   const images = extractImages(item.question_text);
   const questionTextWithoutImages = (item.question_text || '').replace(/<img[^>]*>/g, '');
 
@@ -665,23 +682,31 @@ const QuestionItem = memo(({
           images={images}
           isSelected={isSelected}
         />
-
         {/* Options Grid */}
         <View style={styles.optionsGrid}>
           {options.map((option) => {
             return (
-              <OptionItem
-                key={option.id}
-                id={option.id}
-                label={option.label}
-                isSelected={isSelected}
-                isCorrect={item.correct_option === option.id} // Pass correct option check
-                selectCheck={selectCheck} // Pass it here
-              />
+              <>
+                <OptionItem
+                  key={option.id}
+                  id={option.id}
+                  label={option.label}
+                  isSelected={isSelected}
+                  isCorrect={item.correct_option === option.id} // Pass correct option check
+                  selectCheck={selectCheck} // Pass it here
+                />
+              </>
             )
           }
           )}
         </View>
+        <View style={styles.mainLevelBox}>
+          <Text style={styles.lebalText}>Level : {item?.dlevel_name}</Text>
+          <Pressable style={{ borderWidth: 0 }} onPress={onInfoPress}>
+            <Image source={Icons.danger} style={styles.infoImg} resizeMode='contain' />
+          </Pressable>
+        </View>
+
 
         {/* Solution View */}
         {selectCheck === 'Solutions' && (
@@ -699,6 +724,7 @@ const QuestionItem = memo(({
 });
 
 // Main Component
+
 const QuestionListData: React.FC<Props> = ({
   selectCheck,
   selectedMap,
@@ -709,6 +735,10 @@ const QuestionListData: React.FC<Props> = ({
   questionNumber,
   setQuestionNumber,
 }) => {
+  const [openPicker, setOpenPicker] = useState<boolean>(false);
+  const handleCloseModal = () => {
+    setOpenPicker(false)
+  }
   // console.log('selectCheck',selectCheck);
   const extractBase64Images = useCallback((html: string): string[] => {
     const imgRegex = /<img[^>]+src="data:image\/[^;]+;base64,([^"]+)"[^>]*>/g;
@@ -744,39 +774,44 @@ const QuestionListData: React.FC<Props> = ({
 
   // }, [setSelectedMap, setQuestionNumber]);
   const toggleSelect = useCallback(
-  ({ id, questionNum }: TogglePayload) => {
+    ({ id, questionNum }: TogglePayload) => {
 
-    setSelectedMap(prev => {
-      const newMap = { ...prev };
-      if (newMap[id]) {
-        delete newMap[id];
-      } else {
-        newMap[id] = true;
-      }
-      return newMap;
-    });
+      setSelectedMap(prev => {
+        const newMap = { ...prev };
+        if (newMap[id]) {
+          delete newMap[id];
+        } else {
+          newMap[id] = true;
+        }
+        return newMap;
+      });
 
       if (!Number.isFinite(questionNum)) {
-      return;
-    }
-    setQuestionNumber(prev => {
-      const newNumber = { ...prev };
-      if (newNumber[questionNum]) {
-        delete newNumber[questionNum];
-      } else {
-        newNumber[questionNum] = true;
+        return;
       }
-      return newNumber;
-    });
+      setQuestionNumber(prev => {
+        const newNumber = { ...prev };
+        if (newNumber[questionNum]) {
+          delete newNumber[questionNum];
+        } else {
+          newNumber[questionNum] = true;
+        }
+        return newNumber;
+      });
 
-  },
-  []
-);
+    },
+    []
+  );
 
+
+  const openMediaPicker = useCallback(() => {
+    setOpenPicker(true);
+  }, []);
 
   const renderItem = useCallback(({ item, index }: { item: Question; index: number }) => {
     const isSelected = !!selectedMap[item.question_id];
     let langthList = index === questionsData?.length - 1;
+
     return (
       <QuestionItem
         item={item}
@@ -788,6 +823,7 @@ const QuestionListData: React.FC<Props> = ({
         listottomLineHide={langthList}
         currentPage={currentPage}
         limit={limit}
+        onInfoPress={openMediaPicker}   // ✅ pass function
       />
     );
   }, [selectedMap, selectCheck, toggleSelect, extractBase64Images, currentPage, limit, questionNumber]);
@@ -806,6 +842,105 @@ const QuestionListData: React.FC<Props> = ({
       </View>
     );
   }
+  const cameraOptions = {
+    mediaType: 'photo',
+    cameraType: 'back', // or 'front'
+    saveToPhotos: true,
+    quality: 0.8,
+  };
+
+  const galleryOptions = {
+    mediaType: 'photo',
+    selectionLimit: 1, // single image
+  };
+  // const openCamera = async () => {
+  //   setOpenPicker(false);
+
+  //   const result = await launchCamera(cameraOptions);
+
+  //   if (result.didCancel) return;
+  //   if (result.errorCode) {
+  //     console.log('Camera Error:', result.errorMessage);
+  //     return;
+  //   }
+
+  //   const photo = result.assets?.[0];
+  //   console.log('Camera image:', photo);
+
+  //   // 👉 Use photo.uri for preview / upload
+  // };
+  // const requestCameraPermission = async () => {
+  //   if (Platform.OS !== 'android') return true;
+
+  //   const granted = await PermissionsAndroid.request(
+  //     PermissionsAndroid.PERMISSIONS.CAMERA,
+  //     {
+  //       title: 'Camera Permission',
+  //       message: 'App needs camera access to take photos',
+  //       buttonPositive: 'OK',
+  //       buttonNegative: 'Cancel',
+  //     }
+  //   );
+
+  //   return granted === PermissionsAndroid.RESULTS.GRANTED;
+  // };
+  const requestCameraPermission = async () => {
+    if (Platform.OS !== 'android') return true;
+
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.CAMERA,
+      {
+        title: 'Camera Permission',
+        message: 'App needs camera access to take photos',
+        buttonPositive: 'OK',
+        buttonNegative: 'Cancel',
+      }
+    );
+
+    return granted === PermissionsAndroid.RESULTS.GRANTED;
+  };
+
+  const openCamera = async () => {
+    setOpenPicker(false);
+
+    const hasPermission = await requestCameraPermission();
+    if (!hasPermission) {
+      console.log('Camera permission denied');
+      return;
+    }
+    const result = await launchCamera({
+      mediaType: 'photo',
+      cameraType: 'back',
+      saveToPhotos: true,
+      quality: 0.8,
+    });
+
+    if (result.didCancel) return;
+    if (result.errorCode) {
+      console.log('Camera Error:', result.errorCode, result.errorMessage);
+      return;
+    }
+
+    const photo = result.assets?.[0];
+    console.log('Camera image:', photo);
+  };
+
+  const openGallery = async () => {
+    setOpenPicker(false);
+
+    const result = await launchImageLibrary(galleryOptions);
+
+    if (result.didCancel) return;
+    if (result.errorCode) {
+      console.log('Gallery Error:', result.errorMessage);
+      return;
+    }
+
+    const image = result.assets?.[0];
+    console.log('Gallery image:', image);
+
+    // 👉 Use image.uri for preview / upload
+  };
 
   return (
     <View style={styles.container}>
@@ -820,8 +955,66 @@ const QuestionListData: React.FC<Props> = ({
         removeClippedSubviews={true}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
-
       />
+      {/* <AppModal
+        visible={openPicker}
+        onClose={() => setOpenPicker(false)}
+        animation={'fade'}
+        overlayStyle={{ justifyContent: "center", boderRadius: 0 }}
+        containerStyle={{
+          borderRadius: moderateScale(10),
+          borderTopLeftRadius: moderateScale(10),
+          borderTopRightRadius: moderateScale(10),
+          marginHorizontal: moderateScale(10),
+          paddingHorizontal: scale(20),
+
+        }}
+      >
+        <View style={styles.sendMainBox}>
+          <Text style={styles.sendQuesetionText}>Send Question error</Text>
+          <Pressable onPress={handleCloseModal}>
+            <CloseIcon name="close" size={moderateScale(23)} color={Colors.InputText} />
+          </Pressable>
+
+        </View>
+        <View style={styles.lineBox} />
+        <Text style={styles.sendQuesetionText}>Error decription</Text>
+        <View style={styles.mainInputBox}>
+          <TextInput placeholder='Enter decription' style={styles.enterDecInput} multiline={true} />
+        </View>
+        <Text style={[styles.sendQuesetionText, { marginTop: moderateScale(20) }]}>Upload photo</Text>
+        <View style={styles.uploadBox}>
+          <Pressable style={[styles.uploadBox, {
+            height: scale(80), borderStyle: 'dotted', alignItems: 'center',
+            justifyContent: "center"
+          }]}>s
+            <View style={styles.addBox}>
+              <AddIcon name="add" color={Colors.white} size={moderateScale(20)} />
+            </View>
+          </Pressable>
+        </View>
+
+        <AppButton title='Submit' style={{ paddingHorizontal: moderateScale(20), width: '70%', borderRadius: moderateScale(10), marginTop: moderateScale(15) }} />
+      </AppModal> */}
+
+      <UploadErrorModal
+        visible={openPicker}
+        onClose={() => setOpenPicker(false)}
+      />
+      {/* <MediaPickerModal
+  visible={openPicker}
+  onClose={() => setOpenPicker(false)}
+  onCameraPress={() => {
+    setOpenPicker(false);
+    // open camera screen
+  }}
+  onGalleryPress={() => {
+    setOpenPicker(false);
+    // open image picker
+  }}
+
+/> */}
+
     </View>
   );
 };
@@ -1065,9 +1258,10 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(6),
   },
   solutionTitle: {
-    fontSize: moderateScale(12),
-    fontFamily: Fonts.InstrumentSansSemiBold,
-    color: Colors.black,
+    fontSize: moderateScale(13),
+    fontFamily: Fonts.InstrumentSansBold,
+    color: Colors.primaryColor,
+    marginTop:moderateScale(5)
   },
   textContainer: {
     marginLeft: 0
@@ -1106,9 +1300,9 @@ const styles = StyleSheet.create({
     marginTop: moderateScale(5)
   },
   answerLabel: {
-    fontFamily: Fonts.InstrumentSansSemiBold,
-    fontSize: moderateScale(12),
-    color: Colors.black
+    fontFamily: Fonts.InstrumentSansBold,
+    fontSize: moderateScale(14),
+    color: Colors.green
   },
   noSolutionText: {
     fontSize: moderateScale(13),
@@ -1164,57 +1358,82 @@ const styles = StyleSheet.create({
     height: moderateScale(90),
     borderRadius: moderateScale(6),
   },
+  mainLevelBox: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center"
+  },
+  lebalText: {
+    fontSize: moderateScale(13),
+    color: Colors.InputText,
+    fontFamily: Fonts?.InstrumentSansMedium
+  },
+  infoImg: {
+    width: moderateScale(18),
+    height: moderateScale(18),
+  },
+
+  // ????????????????????mode
+  sendQuesetionText: {
+    fontSize: moderateScale(18),
+    color: Colors.black,
+    fontFamily: Fonts.InterRegular
+  },
+  uploadBox: {
+    height: scale(100),
+    borderWidth: 1,
+    borderColor: Colors.InputStroke,
+    borderRadius: moderateScale(8),
+    marginTop: moderateScale(8),
+    paddingHorizontal: moderateScale(8),
+    marginHorizontal: moderateScale(1.6)
+  },
+  addBox: {
+    height: moderateScale(30),
+    width: moderateScale(30),
+    borderRadius: moderateScale(40),
+    borderWidth: 1,
+    backgroundColor: Colors.primaryColor,
+    alignItems: 'center',
+    justifyContent: "center"
+  },
+  submitBtn: {
+    width: '90%',
+    borderWidth: 1,
+    backgroundColor: Colors.primaryColor
+  },
+  enterDecInput: {
+    fontSize: moderateScale(16),
+    color: Colors.InputText,
+    fontFamily: Fonts.InterRegular,
+    verticalAlign: 'top',
+    flex: 1,
+    flexWrap: 'wrap',
+    // width:'90%'
+  },
+  mainInputBox: {
+    borderWidth: 1,
+    // paddingVertical: moderateScale(.1),
+    // minHeight:moderateScale(10),
+    height: moderateScale(110),
+    borderColor: Colors.InputStroke,
+    borderRadius: moderateScale(6),
+    marginTop: moderateScale(10),
+    paddingHorizontal: moderateScale(5)
+    // marginHorizontal:moderateScale(1.6)
+  },
+  lineBox: {
+    height: 1,
+    width: '100%',
+    backgroundColor: Colors.InputStroke,
+    marginVertical: moderateScale(24)
+  },
+  sendMainBox: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: "center",
+    marginHorizontal: moderateScale(4)
+  }
 
 });
 export default memo(QuestionListData);
-
-
-
-
-
-
-
-
-
-// ***********************************************
-// <View style={[styles.optionContent, { paddingVertical: moderateScale(0) }]}>
-//   {/* hasText && {  borderColor: selectOption && isCorrect ? Colors.questionSelect : '#fff'} */}
-//   <View style={[
-//     styles.optionLabelContainer, { marginLeft: moderateScale(4) },
-//     selectOption && isCorrect && styles.correctOptionBgColor
-//   ]}>
-//     <Text style={[
-//       styles.optionLabel,
-//       (selectOption && isCorrect && styles.correctOptionText
-//       )]}>
-//       {id}
-//     </Text>
-//   </View>
-//   <>
-//     {/* Option Text */}
-//     {hasText && (
-//       <View style={[
-//         styles.optionTextContainer,
-//         hasImages && styles.optionTextWithImages
-//       ]}>
-//         {hasMath ? (
-//           <MathJax
-//             mathJaxOptions={mathJaxOptions}
-//             html={formattedOptionText}
-//             style={[
-//               styles.optionMathJax,
-//               (selectOption && isCorrect && styles.correctOptionText)
-//             ]}
-//           />
-//         ) : (
-//           <Text style={[
-//             styles.optionText,
-//             (selectOption && isCorrect && styles.correctOptionText)
-//           ]}>
-//             {optionText}
-//           </Text>
-//         )}
-//       </View>
-//     )}
-//   </>
-// </View>

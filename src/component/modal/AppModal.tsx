@@ -11,18 +11,21 @@ type Props = {
   visible: boolean;
   onClose: () => void;
   children: React.ReactNode;
+  animation: string,
+  overlayStyle: object,
+  containerStyle: object
 };
 
-const AppModal = ({ visible, onClose, children }: Props) => {
+const AppModal = ({ visible, onClose, children, animation, overlayStyle, containerStyle }: Props) => {
   return (
     <Modal
       visible={visible}
       transparent
-      animationType="slide"
+      animationType={'fade'}
       statusBarTranslucent
     >
-      <Pressable style={styles.overlay} onPress={onClose}>
-        <Pressable style={styles.container}>
+      <Pressable style={[styles.overlay, overlayStyle]} onPress={onClose}>
+        <Pressable style={[styles.container, containerStyle]}>
           {children}
         </Pressable>
       </Pressable>

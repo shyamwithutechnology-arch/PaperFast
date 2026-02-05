@@ -14,6 +14,7 @@ export const Colors = {
     backgroundCOlor: '#3F6B9B',
     frameBgColor: "#3F6B9B",
     red: 'red',
+    green: 'green',
     yellow: 'yellow',
     homeCardBgColor: 'rgba(12, 64, 111, 0.05)',
     homeCardBoxStoke: 'rgba(12, 64, 111, 0.19)',
