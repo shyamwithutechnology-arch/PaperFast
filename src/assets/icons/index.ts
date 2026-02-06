@@ -50,6 +50,7 @@ export const Icons = {
     back: require('./back.png'),
     info: require('./info.png'),
     danger: require('./danger.png'),
+    down: require('./down.png'),
 
 
     //// home icon

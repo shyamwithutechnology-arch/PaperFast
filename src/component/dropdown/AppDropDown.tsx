@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import { moderateScale } from '../../utils/responsiveSize';
 import { Colors, Fonts } from '../../theme';
-import { DropDownItem } from '../../screen/mypdf/MyPdfScreen';
+import { DropDownItem } from '../../screen/mypdf/mypdf/MyPdfScreen';
 //   import AntDesign from '@expo/vector-icons/AntDesign';
 type AppDropDownProps = {
     data: DropDownItem[],

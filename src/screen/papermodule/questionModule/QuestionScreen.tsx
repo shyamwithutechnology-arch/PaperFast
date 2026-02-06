@@ -20,8 +20,7 @@ import AppButton from "../../../component/button/AppButton";
 import { ApiEndPoint } from "../../../api/endPoints";
 import { ScrollView } from "react-native-gesture-handler";
 import { launchImageLibrary } from "react-native-image-picker";
-import RNHTMLtoPDF from "react-native-html-to-pdf";
-import { buildPDFHtml } from "../../mypdf/component/buildPDFHtml";
+// import { buildPDFHtml } from "../../mypdf/component/buildPDFHtml";
 interface Difficulty {
     dlevel_id: string,
     dlevel_name: string
@@ -49,7 +48,6 @@ const QuestionScreen = () => {
         questionMarks: string;
         label: string;
     };
-
     const [selectCheck, setSelectedCheck] = useState('Options')
     const [selectedMap, setSelectedMap] = useState<Record<string, boolean>>({});
     const [questionNumber, setQuestionNumber] = useState<Record<string, boolean>>({});
@@ -202,6 +200,67 @@ const QuestionScreen = () => {
             setLoading(false);
         }
     };
+    // In QuestionScreen.tsx
+    // const handlePDFPress = () => {
+    //   const selectedQuestions = questionsData?.result?.filter(
+    //     q => selectedMap[q.question_id]
+    //   );
+
+    //   if (!selectedQuestions?.length) {
+    //     Alert.alert('No Selection', 'Please select at least one question');
+    //     return;
+    //   }
+
+    //   navigation.navigate('MyPdfScreen', {
+    //     selectedQuestions,
+    //     questionCount: selectedQuestions.length,
+    //     showSolutions: selectCheck === 'Solutions',
+    //     onGenerate: async (pdfSettings: PDFSettings) => {
+    //       // Optional: Handle PDF generation from here
+    //       setLoading(true);
+    //       try {
+    //         const result = await generateQuestionPaperPDF(
+    //           selectedQuestions,
+    //           selectCheck === 'Solutions',
+    //           pdfSettings
+    //         );
+
+    //         Alert.alert('Success', `PDF generated: ${result.fileName}`, [
+    //           { 
+    //             text: 'View', 
+    //             onPress: () => navigation.navigate('PDFViewer', { filePath: result.filePath }) 
+    //           },
+    //           { text: 'OK' },
+    //         ]);
+    //       } catch (error: any) {
+    //         Alert.alert('Error', error.message);
+    //       } finally {
+    //         setLoading(false);
+    //       }
+    //     }
+    //   });
+    // };
+
+    const handlePDFPress = () => {
+        const selectedQuestions = questionsData?.result?.filter(
+            q => selectedMap[q.question_id]
+        );
+
+        console.log('selectedQuestions for PDF:', selectedQuestions);
+
+        if (!selectedQuestions?.length) {
+            Alert.alert('No Selection', 'Please select at least one question');
+            return;
+        }
+
+        // Navigate to PDF customization screen
+        navigation.navigate('MyPdfScreen', {
+            selectedQuestions,
+            questionCount: selectedQuestions.length,
+            showSolutions: selectCheck === 'Solutions',
+        });
+    };
+
 
     const fetchQuestions = async (page: number = 1, limit: number = pagination?.limit, subject?: string | null) => {
         setLoading(true)
@@ -262,31 +321,64 @@ const QuestionScreen = () => {
     };
 
     /////pdf generate
-    const selectedQuestionsHH = questionsData?.result?.filter(
-        q => selectedMap[q.question_id]
-    );
+    // const selectedQuestionsHH = questionsData?.result?.filter(
+    //     q => selectedMap[q.question_id]
+    // );
+
+    // const generatePDF = async () => {
+    //     const selectedQuestions = questionsData?.result?.filter(
+    //         q => selectedMap[q.question_id]
+    //     );
+    //     console.log('ressssssqqqqq', selectedQuestions);
+
+    //     if (!selectedQuestions.length) {
+    //         Alert.alert('No questions selected');
+    //         return;
+    //     }
+
+    //     const html = buildPDFHtml(selectedQuestions, selectCheck);
+
+    //     const file = await RNHTMLtoPDF?.convert({
+    //         html,
+    //         fileName: 'Question_Paper',
+    //         base64: false,
+    //     });
+
+    //     console.log('PDF saved at:', file.filePath);
+    // };
 
     const generatePDF = async () => {
-        const selectedQuestions = questionsData?.result?.filter(
-            q => selectedMap[q.question_id]
-        );
-        console.log('ressssssqqqqq', selectedQuestions);
+        // try {
+        //     const selectedQuestions = questionsData?.result?.filter(
+        //         q => selectedMap[q.question_id]
+        //     );
 
-        if (!selectedQuestions.length) {
-            Alert.alert('No questions selected');
-            return;
-        }
+        //     if (!selectedQuestions?.length) {
+        //         Alert.alert('No questions selected');
+        //         return;
+        //     }
 
-        const html = buildPDFHtml(selectedQuestions, selectCheck);
+        //     const html = buildPDFHtml(selectedQuestions, selectCheck);
 
-        const file = await RNHTMLtoPDF?.convert({
-            html,
-            fileName: 'Question_Paper',
-            base64: false,
-        });
+        //     const file = await RNHTMLtoPDF.convert({
+        //         html,
+        //         fileName: 'Question_Paper',
+        //         directory: 'Documents',
+        //     });
 
-        console.log('PDF saved at:', file.filePath);
+        //     if (!file?.filePath) {
+        //         throw new Error('PDF generation failed');
+        //     }
+
+        //     console.log('PDF saved at:', file);
+        //     Alert.alert('PDF Created', file.filePath);
+
+        // } catch (error) {
+        //     console.log('PDF ERROR:', error);
+        //     Alert.alert('Error', 'Failed to generate PDF');
+        // }
     };
+
 
     useFocusEffect(
         useCallback(() => {
@@ -325,7 +417,7 @@ const QuestionScreen = () => {
                     title={paperType}
                     rightPress={() => navigation?.navigate('DraftPaperScreen')}
                     // rightPress2={() => navigation?.navigate('MyPdfScreen')}
-                    rightPress2={generatePDF}
+                    rightPress2={handlePDFPress}
                     leftIconPress={handleBack}
                 />
             </SafeAreaView>
@@ -378,7 +470,7 @@ const QuestionScreen = () => {
                     </View>
 
                     <View style={styles.filteMain} >
-                        <Text style={styles.questionSelected} onPress={selectedQuestionsHH}>
+                        <Text style={styles.questionSelected} onPress={() => { }}>
                             {Object.keys(selectedMap).map(Number).length ?? 0} Ques Selected
                         </Text>
                         <TouchableOpacity style={styles.filterBtn} onPress={handleLabelStatus}>
@@ -453,11 +545,11 @@ const QuestionScreen = () => {
                             textStyle={styles.applyText} onPress={handleApplyFilter} />
                     </View>
                 </AppModal>
-                {/* <AppModal visible={remarkVisibleModal} onClose={hanldeRemarkCloseModal}>
+                <AppModal visible={remarkVisibleModal} onClose={hanldeRemarkCloseModal}>
                     <Pressable onPress={openGallery}>
                         <Text>Upload photo</Text>
                     </Pressable>
-                </AppModal> */}
+                </AppModal>
             </SafeAreaView>
         </View>
     );
