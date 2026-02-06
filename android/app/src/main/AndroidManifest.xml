@@ -6,6 +6,9 @@
    <!-- Only storage permission since you don't need camera -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" /> <!-- Android 13+ -->
+    <!-- pdf -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- pdf -->
     <application
       android:name=".MainApplication"
       android:label="@string/app_name"

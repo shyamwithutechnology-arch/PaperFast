@@ -20,6 +20,8 @@ import AppButton from "../../../component/button/AppButton";
 import { ApiEndPoint } from "../../../api/endPoints";
 import { ScrollView } from "react-native-gesture-handler";
 import { launchImageLibrary } from "react-native-image-picker";
+import RNHTMLtoPDF from "react-native-html-to-pdf";
+import { buildPDFHtml } from "../../mypdf/component/buildPDFHtml";
 interface Difficulty {
     dlevel_id: string,
     dlevel_name: string
@@ -258,6 +260,34 @@ const QuestionScreen = () => {
         // Fetch data with new limit
         fetchQuestions(1, newLimit);
     };
+
+    /////pdf generate
+    const selectedQuestionsHH = questionsData?.result?.filter(
+        q => selectedMap[q.question_id]
+    );
+
+    const generatePDF = async () => {
+        const selectedQuestions = questionsData?.result?.filter(
+            q => selectedMap[q.question_id]
+        );
+        console.log('ressssssqqqqq', selectedQuestions);
+
+        if (!selectedQuestions.length) {
+            Alert.alert('No questions selected');
+            return;
+        }
+
+        const html = buildPDFHtml(selectedQuestions, selectCheck);
+
+        const file = await RNHTMLtoPDF?.convert({
+            html,
+            fileName: 'Question_Paper',
+            base64: false,
+        });
+
+        console.log('PDF saved at:', file.filePath);
+    };
+
     useFocusEffect(
         useCallback(() => {
             navigation.getParent()?.setOptions({
@@ -294,7 +324,8 @@ const QuestionScreen = () => {
                 <HeaderPaperModule
                     title={paperType}
                     rightPress={() => navigation?.navigate('DraftPaperScreen')}
-                    rightPress2={() => navigation?.navigate('MyPdfScreen')}
+                    // rightPress2={() => navigation?.navigate('MyPdfScreen')}
+                    rightPress2={generatePDF}
                     leftIconPress={handleBack}
                 />
             </SafeAreaView>
@@ -304,11 +335,11 @@ const QuestionScreen = () => {
                 style={{ flex: 1, backgroundColor: Colors.white }}
                 edges={["left", "right", "bottom"]}>
                 <Loader visible={loading} />
+
                 <View style={styles.optionsSectBox}>
                     <View style={{
                         flexDirection: 'row', alignItems: 'center'
                     }}>
-                        {/* OPTIONS */}
                         <TouchableOpacity
                             style={{ flexDirection: 'row', alignItems: 'center' }}
                             onPress={() => handleCheck('Options')}
@@ -327,7 +358,6 @@ const QuestionScreen = () => {
                             <Text style={styles.optionsText}>Options</Text>
                         </TouchableOpacity>
 
-                        {/* SOLUTIONS */}
                         <TouchableOpacity
                             style={styles.solutionMainBox}
                             onPress={() => handleCheck('Solutions')}
@@ -348,7 +378,7 @@ const QuestionScreen = () => {
                     </View>
 
                     <View style={styles.filteMain} >
-                        <Text style={styles.questionSelected}>
+                        <Text style={styles.questionSelected} onPress={selectedQuestionsHH}>
                             {Object.keys(selectedMap).map(Number).length ?? 0} Ques Selected
                         </Text>
                         <TouchableOpacity style={styles.filterBtn} onPress={handleLabelStatus}>
@@ -423,12 +453,11 @@ const QuestionScreen = () => {
                             textStyle={styles.applyText} onPress={handleApplyFilter} />
                     </View>
                 </AppModal>
-                <AppModal visible={remarkVisibleModal} onClose={hanldeRemarkCloseModal}>
+                {/* <AppModal visible={remarkVisibleModal} onClose={hanldeRemarkCloseModal}>
                     <Pressable onPress={openGallery}>
                         <Text>Upload photo</Text>
                     </Pressable>
-                </AppModal>
-
+                </AppModal> */}
             </SafeAreaView>
         </View>
     );

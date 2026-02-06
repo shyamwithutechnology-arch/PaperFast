@@ -1,209 +1,3 @@
-// import React, { useState } from 'react';
-// import {
-//     View,
-//     Text,
-//     Modal,
-//     Pressable,
-//     Image,
-//     TextInput,
-//     StyleSheet,
-//     Platform,
-// } from 'react-native';
-// import { launchImageLibrary } from 'react-native-image-picker';
-// import Icon from 'react-native-vector-icons/MaterialIcons';
-// import CloseIcon from 'react-native-vector-icons/EvilIcons';
-
-// const UploadErrorModal = ({ visible, onClose }: any) => {
-//     const [selectedImage, setSelectedImage] = useState<any>(null);
-//     const [description, setDescription] = useState('');
-
-//     const openPicker = () => {
-//         launchImageLibrary(
-//             {
-//                 mediaType: 'photo',
-//                 selectionLimit: 1,
-//             },
-//             (response) => {
-//                 if (response.didCancel) return;
-//                 if (response.errorCode) {
-//                     console.log(response.errorMessage);
-//                     return;
-//                 }
-//                 setSelectedImage(response.assets?.[0]);
-//             }
-//         );
-//     };
-
-//     const openSystemPicker = () => {
-//         launchImageLibrary(
-//             {
-//                 mediaType: 'photo',
-//                 selectionLimit: 1,
-//                 includeBase64: false,
-//             },
-//             (response) => {
-//                 if (response.didCancel) return;
-//                 if (response.errorCode) {
-//                     console.log(response.errorMessage);
-//                     return;
-//                 }
-
-//                 const image = response.assets?.[0];
-//                 setSelectedImage(image); // 👈 preview works
-//             }
-//         );
-//     };
-//     return (
-//         <Modal visible={visible} transparent animationType="fade">
-//             <View style={styles.overlay}>
-//                 <View style={styles.container}>
-
-//                     {/* HEADER */}
-//                     <View style={styles.header}>
-//                         <Text style={styles.title}>Send question error</Text>
-//                         <Pressable onPress={onClose}>
-//                             <CloseIcon name="close" size={26} color="#555" />
-//                         </Pressable>
-//                     </View>
-
-//                     <View style={styles.divider} />
-
-//                     {/* DESCRIPTION */}
-//                     <Text style={styles.label}>Error description</Text>
-//                     <TextInput
-//                         placeholder="Enter description"
-//                         value={description}
-//                         onChangeText={setDescription}
-//                         multiline
-//                         style={styles.input}
-//                     />
-
-//                     {/* UPLOAD */}
-//                     <Text style={[styles.label, { marginTop: 16 }]}>
-//                         Upload photo
-//                     </Text>
-
-//                     {/* <Pressable
-//             style={styles.uploadBox}
-//             onPress={openPicker}
-//             onLongPress={() => setSelectedImage(null)}
-//           >
-//             {selectedImage ? (
-//               <Image
-//                 source={{ uri: selectedImage.uri }}
-//                 style={styles.previewImage}
-//                 resizeMode="cover"
-//               />
-//             ) : (
-//               <View style={styles.addIconBox}>
-//                 <Icon name="add" size={24} color="#fff" />
-//               </View>
-//             )}
-//           </Pressable> */}
-//                     <Pressable style={styles.uploadBox} onPress={openSystemPicker}>
-//                         {selectedImage ? (
-//                             <Image
-//                                 source={{ uri: selectedImage.uri }}
-//                                 style={styles.previewImage}
-//                             />
-//                         ) : (
-//                             <View style={styles.addIconBox}>
-//                                 <Icon name="add" size={24} color="#fff" />
-//                             </View>
-//                         )}
-//                     </Pressable>
-
-
-//                     {/* SUBMIT */}
-//                     <Pressable style={styles.submitBtn}>
-//                         <Text style={styles.submitText}>Submit</Text>
-//                     </Pressable>
-
-//                 </View>
-//             </View>
-//         </Modal>
-//     );
-// };
-
-// export default UploadErrorModal;
-
-// const styles = StyleSheet.create({
-//     overlay: {
-//         flex: 1,
-//         backgroundColor: 'rgba(0,0,0,0.4)',
-//         justifyContent: 'center',
-//         alignItems: 'center',
-//     },
-//     container: {
-//         width: '90%',
-//         backgroundColor: '#fff',
-//         borderRadius: 12,
-//         padding: 16,
-//     },
-//     header: {
-//         flexDirection: 'row',
-//         justifyContent: 'space-between',
-//         alignItems: 'center',
-//     },
-//     title: {
-//         fontSize: 16,
-//         fontWeight: '600',
-//     },
-//     divider: {
-//         height: 1,
-//         backgroundColor: '#eee',
-//         marginVertical: 12,
-//     },
-//     label: {
-//         fontSize: 14,
-//         fontWeight: '500',
-//         marginBottom: 6,
-//     },
-//     input: {
-//         minHeight: 80,
-//         borderWidth: 1,
-//         borderColor: '#ddd',
-//         borderRadius: 8,
-//         padding: 10,
-//         textAlignVertical: 'top',
-//     },
-//     uploadBox: {
-//         height: 90,
-//         borderWidth: 1,
-//         borderStyle: 'dashed',
-//         borderColor: '#bbb',
-//         borderRadius: 8,
-//         justifyContent: 'center',
-//         alignItems: 'center',
-//     },
-//     addIconBox: {
-//         width: 36,
-//         height: 36,
-//         borderRadius: 18,
-//         backgroundColor: '#1E88E5',
-//         justifyContent: 'center',
-//         alignItems: 'center',
-//     },
-//     previewImage: {
-//         width: '100%',
-//         height: '100%',
-//         borderRadius: 8,
-//     },
-//     submitBtn: {
-//         backgroundColor: '#1E88E5',
-//         marginTop: 20,
-//         paddingVertical: 12,
-//         borderRadius: 8,
-//         alignItems: 'center',
-//     },
-//     submitText: {
-//         color: '#fff',
-//         fontWeight: '600',
-//         fontSize: 15,
-//     },
-// });
-
-
 import React, { useState } from 'react';
 import {
     View,
@@ -295,7 +89,7 @@ const UploadErrorModal = ({ visible, onClose }: any) => {
                     </Pressable>
 
                     {/* SUBMIT */}
-                    <Pressable style={styles.submitBtn}>
+                    <Pressable style={styles.submitBtn} onPress={onClose}>
                         <Text style={styles.submitText}>Submit</Text>
                     </Pressable>
                 </View>
@@ -331,10 +125,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     container: {
-        width: '90%',
+        width: '94%',
         backgroundColor: Colors.white,
         borderRadius: moderateScale(12),
         padding: moderateScale(16),
+        // marginHorizontal:moderateScale(30)
     },
     header: {
         flexDirection: 'row',
