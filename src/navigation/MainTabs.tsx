@@ -7,8 +7,9 @@ import { Icons } from '../assets/icons';
 import { moderateScale } from '../utils/responsiveSize';
 import { Fonts } from '../theme';
 import ProfileStack from './stacks/ProfileStack';
-import MyPdfScreen from '../screen/mypdf/MyPdfScreen';
+import MyPdfScreen from '../screen/mypdf/mypdf/MyPdfScreen';
 import DraftPaperScreen from '../screen/papermodule/draftpaper/DraftPaperScreen';
+import PdfStack from './stacks/PdfStack';
 
 const Tab = createBottomTabNavigator();
 
@@ -74,8 +75,8 @@ const MainTabs = () => {
       />
 
       <Tab.Screen
-        name="PdfTab"
-        component={MyPdfScreen}
+        name="MyPdfScreen"
+        component={PdfStack}
         options={{
           tabBarIcon: ({ focused }) => (
             <TabIcon focused={focused} icon={Icons.pdfFooter} label="My pdf" />

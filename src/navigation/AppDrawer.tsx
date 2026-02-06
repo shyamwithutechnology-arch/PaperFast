@@ -8,7 +8,7 @@ import PrivacyPolicyScreen from '../screen/privacy/PrivacyPolicyScreen';
 import TermandconditionScreen from '../screen/termandcondition/TermandconditionScreen';
 import AboutUsScreen from '../screen/aboutus/AboutUsScreen';
 import DraftPaperScreen from '../screen/papermodule/draftpaper/DraftPaperScreen';
-import MyPdfScreen from '../screen/mypdf/MyPdfScreen';
+import MyPdfScreen from '../screen/mypdf/mypdf/MyPdfScreen';
 import SubscriptionScreen from '../screen/subscription/SubscriptionScreen';
 import SupportScreen from '../screen/support/SupportScreen';
 

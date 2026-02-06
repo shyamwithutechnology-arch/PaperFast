@@ -5,10 +5,7 @@ import { Colors, Fonts } from '../../../../theme';
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
 export type DraftPaperListProps = {
-
 }
-
-
 export type DraftItem = {
     id: string;
     title: string;

@@ -613,7 +613,7 @@ const QuestionItem = memo(({
   limit: number,
   onInfoPress: () => void
 }) => {
-  console.log('itemddddddd', item)
+  // console.log('itemddddddd', item)
 
   const images = extractImages(item.question_text);
   const questionTextWithoutImages = (item.question_text || '').replace(/<img[^>]*>/g, '');
@@ -625,6 +625,24 @@ const QuestionItem = memo(({
     { id: 'D', label: item.option_d || '' },
   ];
   const questionNumber = (currentPage - 1) * limit + index + 1;
+  const textSty = () => {
+    if (item?.dlevel_name === 'Easy') {
+      return { color: Colors.green }
+    } else if (item?.dlevel_name === 'Difficult') {
+      return { color: Colors.red }
+    } else {
+      return { color: Colors.primaryColor }
+    }
+  }
+  // const textSty = (item: any) => {
+  //   if (item?.dlevel_name === 'Easy') {
+  //     return { color: Colors.primaryColor };
+  //   } else if (item?.dlevel_name === 'Difficult') {
+  //     return { color: Colors.warning };
+  //   } else {
+  //     return { color: Colors.red };
+  //   }
+  // };
 
   return (
     <Pressable
@@ -684,24 +702,21 @@ const QuestionItem = memo(({
         />
         {/* Options Grid */}
         <View style={styles.optionsGrid}>
-          {options.map((option) => {
-            return (
-              <>
-                <OptionItem
-                  key={option.id}
-                  id={option.id}
-                  label={option.label}
-                  isSelected={isSelected}
-                  isCorrect={item.correct_option === option.id} // Pass correct option check
-                  selectCheck={selectCheck} // Pass it here
-                />
-              </>
-            )
-          }
+          {options.map((option) => (
+            <OptionItem
+              key={option.id}
+              id={option.id}
+              label={option.label}
+              isSelected={isSelected}
+              isCorrect={item.correct_option === option.id} // Pass correct option check
+              selectCheck={selectCheck} // Pass it here
+            />)
           )}
         </View>
         <View style={styles.mainLevelBox}>
-          <Text style={styles.lebalText}>Level : {item?.dlevel_name}</Text>
+          <Text style={styles.lebalText}>Level : <Text style={[styles.lebalText, textSty(), { fontFamily: Fonts.InterBold }]}>
+            {item?.dlevel_name}
+          </Text></Text>
           <Pressable style={{ borderWidth: 0 }} onPress={onInfoPress}>
             <Image source={Icons.danger} style={styles.infoImg} resizeMode='contain' />
           </Pressable>
@@ -829,11 +844,11 @@ const QuestionListData: React.FC<Props> = ({
   }, [selectedMap, selectCheck, toggleSelect, extractBase64Images, currentPage, limit, questionNumber]);
 
   const keyExtractor = useCallback((item: Question) => item.question_id, []);
-
   const extraData = useMemo(() => ({
     selectedMap,
-    selectCheck
-  }), [selectedMap, selectCheck]);
+    selectCheck,
+    length: questionsData.length,
+  }), [selectedMap, selectCheck, questionsData.length]);
 
   if (!questionsData || questionsData.length === 0) {
     return (
@@ -949,10 +964,10 @@ const QuestionListData: React.FC<Props> = ({
         keyExtractor={keyExtractor}
         renderItem={renderItem}
         extraData={extraData}
-        initialNumToRender={5}
-        maxToRenderPerBatch={10}
-        windowSize={10}
-        removeClippedSubviews={true}
+        initialNumToRender={3}
+        maxToRenderPerBatch={5}
+        windowSize={21}
+        removeClippedSubviews={false}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
       />
@@ -1001,19 +1016,6 @@ const QuestionListData: React.FC<Props> = ({
         visible={openPicker}
         onClose={() => setOpenPicker(false)}
       />
-      {/* <MediaPickerModal
-  visible={openPicker}
-  onClose={() => setOpenPicker(false)}
-  onCameraPress={() => {
-    setOpenPicker(false);
-    // open camera screen
-  }}
-  onGalleryPress={() => {
-    setOpenPicker(false);
-    // open image picker
-  }}
-
-/> */}
 
     </View>
   );
@@ -1091,7 +1093,8 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(12),
     fontFamily: Fonts.InstrumentSansMedium,
     color: Colors.black,
-    alignSelf: 'stretch', // ✅ important
+    // alignSelf: 'stretch', // ✅ important
+    width:'100%',
     minHeight: moderateScale(20), // prevents collapse
     // borderWidth:1
   },
@@ -1261,7 +1264,7 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(13),
     fontFamily: Fonts.InstrumentSansBold,
     color: Colors.primaryColor,
-    marginTop:moderateScale(5)
+    marginTop: moderateScale(5)
   },
   textContainer: {
     marginLeft: 0
