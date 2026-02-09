@@ -20,6 +20,8 @@ import AppButton from "../../../component/button/AppButton";
 import { ApiEndPoint } from "../../../api/endPoints";
 import { ScrollView } from "react-native-gesture-handler";
 import { launchImageLibrary } from "react-native-image-picker";
+import { useDispatch } from "react-redux";
+import { setPDFQuestions } from "../../../redux/slices/pdfQuestionsSlice";
 // import { buildPDFHtml } from "../../mypdf/component/buildPDFHtml";
 interface Difficulty {
     dlevel_id: string,
@@ -70,7 +72,9 @@ const QuestionScreen = () => {
         total: 0,
     });
 
+    const dispatch = useDispatch();
     const handleCheck = (item: string) => {
+        // console.log('eeeeeee', item);
         setSelectedCheck(item)
     }
     const handleLabelStatus = async () => {
@@ -241,27 +245,68 @@ const QuestionScreen = () => {
     //   });
     // };
 
+    // const handlePDFPress = () => {
+    //     const selectedQuestions = questionsData?.result?.filter(
+    //         q => selectedMap[q.question_id]
+    //     );
+
+    //     console.log('selectedQuestions for PDF:', selectedQuestions);
+
+    //     if (!selectedQuestions?.length) {
+    //         Alert.alert('No Selection', 'Please select at least one question');
+    //         return;
+    //     }
+
+    //     // Navigate to PDF customization screen
+    //     navigation.navigate('PDFDetailsScreen', {
+    //         selectedQuestions,
+    //         questionCount: selectedQuestions.length,
+    //         showSolutions: selectCheck === 'Solutions',
+    //     });
+    // };
+    // const handlePDFPress = () => {
+    //     const selectedQuestions = questionsData?.result?.filter(
+    //         q => selectedMap[q.question_id]
+    //     );
+    //     dispatch(setPDFQuestions(selectedQuestions))
+
+    //     console.log('selectedQuestions for PDF:', selectedQuestions);
+
+    //     if (!selectedQuestions?.length) {
+    //         Alert.alert('No Selection', 'Please select at least one question');
+    //         return;
+    //     }
+
+    //     // Navigate to PDF customization screen
+    //     navigation.navigate('MyPDF', {
+    //         screen: 'PDFDetailsScreen',
+    //         selectedQuestions: JSON.parse(JSON.stringify(selectedQuestions)), // Deep copy to avoid reference issues
+    //         questionCount: selectedQuestions.length,
+    //         showSolutions: selectCheck === 'Solutions',
+    //     })
+    // }
     const handlePDFPress = () => {
+        // Get selected questions
         const selectedQuestions = questionsData?.result?.filter(
             q => selectedMap[q.question_id]
-        );
+        ) || [];
 
-        console.log('selectedQuestions for PDF:', selectedQuestions);
-
-        if (!selectedQuestions?.length) {
+        if (!selectedQuestions.length) {
             Alert.alert('No Selection', 'Please select at least one question');
             return;
         }
 
-        // Navigate to PDF customization screen
-        navigation.navigate('MyPdfScreen', {
-            selectedQuestions,
-            questionCount: selectedQuestions.length,
-            showSolutions: selectCheck === 'Solutions',
+        // SET: Store in Redux
+        dispatch(setPDFQuestions(selectedQuestions));
+
+        // Navigate
+        navigation.navigate('MyPDF', {
+            screen: 'PDFDetailsScreen',
+            params: {
+                showSolutions: selectCheck === 'Solutions',
+            }
         });
     };
-
-
     const fetchQuestions = async (page: number = 1, limit: number = pagination?.limit, subject?: string | null) => {
         setLoading(true)
         try {
@@ -319,33 +364,6 @@ const QuestionScreen = () => {
         // Fetch data with new limit
         fetchQuestions(1, newLimit);
     };
-
-    /////pdf generate
-    // const selectedQuestionsHH = questionsData?.result?.filter(
-    //     q => selectedMap[q.question_id]
-    // );
-
-    // const generatePDF = async () => {
-    //     const selectedQuestions = questionsData?.result?.filter(
-    //         q => selectedMap[q.question_id]
-    //     );
-    //     console.log('ressssssqqqqq', selectedQuestions);
-
-    //     if (!selectedQuestions.length) {
-    //         Alert.alert('No questions selected');
-    //         return;
-    //     }
-
-    //     const html = buildPDFHtml(selectedQuestions, selectCheck);
-
-    //     const file = await RNHTMLtoPDF?.convert({
-    //         html,
-    //         fileName: 'Question_Paper',
-    //         base64: false,
-    //     });
-
-    //     console.log('PDF saved at:', file.filePath);
-    // };
 
     const generatePDF = async () => {
         // try {
@@ -497,6 +515,7 @@ const QuestionScreen = () => {
                     limit={pagination.limit}
                     questionNumber={questionNumber}
                     setQuestionNumber={setQuestionNumber}
+                    isLoading={loading} // ✅ Pass loading state
                 />
                 <AppModal visible={labelStatus} onClose={handleLabelClose}>
                     <View style={styles.applyBox}>

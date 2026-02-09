@@ -14,7 +14,7 @@ import PaperListScreen from '../../screen/studentModule/QuestionListScreen';
 import QuestionListScreen from '../../screen/studentModule/QuestionListScreen';
 import OpenQuestionScreen from '../../screen/studentModule/openquestion/OpenQuestionScreen';
 import BookMarkScreen from '../../screen/studentModule/bookmark/BookMarkScreen';
-import PdfPreviewScreen from '../../screen/mypdf/PdfPreviewScreen';
+// import PdfPreviewScreen from '../../screen/mypdf/PDFPreviewScreen';
 const Stack = createNativeStackNavigator();
 
 const HomeStack = () => {
@@ -26,8 +26,8 @@ const HomeStack = () => {
             <Stack.Screen name="QuestionScreen" component={QuestionScreen} />
             <Stack.Screen name="DraftPaperScreen" component={DraftPaperScreen} />
             <Stack.Screen name="ChemistryData" component={ChemistryData} />
-            <Stack.Screen name="MyPdfScreen" component={MyPdfScreen} />
-            <Stack.Screen name="PdfPreviewScreen" component={PdfPreviewScreen} />
+            {/* <Stack.Screen name="MyPdfScreen" component={MyPdfScreen} /> */}
+            {/* <Stack.Screen name="PdfPreviewScreen" component={PdfPreviewScreen} /> */}
             {/* <Stack.Screen
                 name="PDFViewerScreen"
                 component={PDFViewerScreen}

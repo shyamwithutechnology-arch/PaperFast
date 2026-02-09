@@ -81,6 +81,8 @@ type Props = {
   questionsData: Question[];
   currentPage: number,
   limit: number;
+  hideContant: boolean;
+  isLoading: boolean;
 };
 
 // Helper to check if text contains math expressions
@@ -599,7 +601,8 @@ const QuestionItem = memo(({
   listottomLineHide,
   currentPage,
   limit,
-  onInfoPress
+  onInfoPress,
+  hideContant
 }: {
   item: Question;
   index: number;
@@ -611,9 +614,10 @@ const QuestionItem = memo(({
   listottomLineHide: any,
   currentPage: number,
   limit: number,
-  onInfoPress: () => void
+  onInfoPress: () => void,
+  hideContant: boolean
 }) => {
-  // console.log('itemddddddd', item)
+  console.log('itemdddddddhideContant', hideContant)
 
   const images = extractImages(item.question_text);
   const questionTextWithoutImages = (item.question_text || '').replace(/<img[^>]*>/g, '');
@@ -627,11 +631,11 @@ const QuestionItem = memo(({
   const questionNumber = (currentPage - 1) * limit + index + 1;
   const textSty = () => {
     if (item?.dlevel_name === 'Easy') {
-      return { color: Colors.green }
+      return { color: Colors.primaryColor }
     } else if (item?.dlevel_name === 'Difficult') {
       return { color: Colors.red }
     } else {
-      return { color: Colors.primaryColor }
+      return { color: Colors.green }
     }
   }
   // const textSty = (item: any) => {
@@ -646,19 +650,19 @@ const QuestionItem = memo(({
 
   return (
     <Pressable
-      style={[styles.cardMainBox, isSelected && styles.cardSelected,
+      style={[!hideContant && styles.cardMainBox, isSelected && styles.cardSelected,
       { flexDirection: "row", paddingLeft: moderateScale(3) }]}
       // onPress={() => onToggle({ id: item?.question_id, qsNumber: questionNumber })}
       onPress={() =>
-        onToggle({
+        !hideContant && onToggle({
           id: item.question_id,
           questionNum: questionNumber,
         })
       }
-    >
+      >
       <View style={[styles.questionNumberContainer, {}]}>
         <Text style={styles.questionNumber}> {questionNumber}</Text>
-        <View style={[
+        {!hideContant && <View style={[
           styles.checkBox,
           isSelected ? styles.checkBoxSelected : styles.checkBoxDefault
         ]}>
@@ -669,32 +673,9 @@ const QuestionItem = memo(({
               color={Colors.white}
             />
           )}
-        </View>
+        </View>}
       </View>
       <View style={[styles.card, isSelected && styles.cardSelected,]}>
-        {/* Question Row */}
-        {/* <View style={styles.questionRow}> */}
-        {/* <View style={[styles.questionNumberContainer]}>
-            <Text style={styles.questionNumber}> {index + 1}.</Text>
-            <View style={[
-              styles.checkBox,
-              isSelected ? styles.checkBoxSelected : styles.checkBoxDefault
-            ]}>
-              {isSelected && (
-                <Icon
-                  name="check"
-                  size={moderateScale(12)}
-                  color={Colors.white}
-                />
-              )}
-            </View>
-          </View> */}
-        {/* <QuestionContent
-            text={questionTextWithoutImages}
-            images={images}
-            isSelected={isSelected}
-          /> */}
-        {/* </View> */}
         <QuestionContent
           text={questionTextWithoutImages}
           images={images}
@@ -713,14 +694,14 @@ const QuestionItem = memo(({
             />)
           )}
         </View>
-        <View style={styles.mainLevelBox}>
+        {!hideContant && <View style={styles.mainLevelBox}>
           <Text style={styles.lebalText}>Level : <Text style={[styles.lebalText, textSty(), { fontFamily: Fonts.InterBold }]}>
             {item?.dlevel_name}
           </Text></Text>
           <Pressable style={{ borderWidth: 0 }} onPress={onInfoPress}>
             <Image source={Icons.danger} style={styles.infoImg} resizeMode='contain' />
           </Pressable>
-        </View>
+        </View>}
 
 
         {/* Solution View */}
@@ -749,6 +730,8 @@ const QuestionListData: React.FC<Props> = ({
   limit,
   questionNumber,
   setQuestionNumber,
+  hideContant,
+  isLoading
 }) => {
   const [openPicker, setOpenPicker] = useState<boolean>(false);
   const handleCloseModal = () => {
@@ -764,6 +747,39 @@ const QuestionListData: React.FC<Props> = ({
     }
     return images;
   }, []);
+
+
+  
+  // Render shimmer items when loading
+  const renderShimmerItem = useCallback(() => (
+    <View style={styles.shimmerContainer}>
+      {/* Question Shimmer */}
+      <View style={styles.shimmerRow}>
+        <View style={styles.shimmerNumber} />
+        <View style={styles.shimmerContent}>
+          <View style={styles.shimmerQuestionText} />
+          <View style={styles.shimmerQuestionTextShort} />
+        </View>
+      </View>
+      
+      {/* Options Shimmer */}
+      <View style={styles.shimmerOptionsGrid}>
+        {[1, 2, 3, 4].map((_, index) => (
+          <View key={`shimmer-opt-${index}`} style={styles.shimmerOptionContainer}>
+            <View style={styles.shimmerOptionLabel} />
+            <View style={styles.shimmerOptionText} />
+          </View>
+        ))}
+      </View>
+      
+      {/* Level Shimmer */}
+      {!hideContant && (
+        <View style={styles.shimmerLevelContainer}>
+          <View style={styles.shimmerLevelText} />
+        </View>
+      )}
+    </View>
+  ), [hideContant]);
 
   // const toggleSelect = useCallback((id: string, number: number) => {
   //   console.log('rssssssss', id);
@@ -838,7 +854,8 @@ const QuestionListData: React.FC<Props> = ({
         listottomLineHide={langthList}
         currentPage={currentPage}
         limit={limit}
-        onInfoPress={openMediaPicker}   // ✅ pass function
+        onInfoPress={openMediaPicker}
+        hideContant={hideContant}  // ✅ pass function
       />
     );
   }, [selectedMap, selectCheck, toggleSelect, extractBase64Images, currentPage, limit, questionNumber]);
@@ -850,6 +867,28 @@ const QuestionListData: React.FC<Props> = ({
     length: questionsData.length,
   }), [selectedMap, selectCheck, questionsData.length]);
 
+
+  
+  // Shimmer key extractor
+  const shimmerKeyExtractor = useCallback((_: any, index: number) => `shimmer-${index}`, []);
+
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <FlatList
+          data={Array(5).fill({})} // 5 shimmer items
+          keyExtractor={shimmerKeyExtractor}
+          renderItem={renderShimmerItem}
+          initialNumToRender={3}
+          maxToRenderPerBatch={5}
+          windowSize={21}
+          removeClippedSubviews={false}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.listContent}
+        />
+      </View>
+    );
+  }
   if (!questionsData || questionsData.length === 0) {
     return (
       <View style={styles.emptyContainer}>
@@ -950,10 +989,8 @@ const QuestionListData: React.FC<Props> = ({
       console.log('Gallery Error:', result.errorMessage);
       return;
     }
-
     const image = result.assets?.[0];
     console.log('Gallery image:', image);
-
     // 👉 Use image.uri for preview / upload
   };
 
@@ -1020,6 +1057,7 @@ const QuestionListData: React.FC<Props> = ({
     </View>
   );
 };
+export default memo(QuestionListData);
 
 const styles = StyleSheet.create({
   container: {
@@ -1094,7 +1132,7 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.InstrumentSansMedium,
     color: Colors.black,
     // alignSelf: 'stretch', // ✅ important
-    width:'100%',
+    width: '100%',
     minHeight: moderateScale(20), // prevents collapse
     // borderWidth:1
   },
@@ -1436,7 +1474,73 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: "center",
     marginHorizontal: moderateScale(4)
-  }
-
+  },
+    // Shimmer Styles
+  shimmerContainer: {
+    backgroundColor: '#f9fafb',
+    marginVertical: moderateScale(8),
+    padding: moderateScale(12),
+    borderRadius: moderateScale(4),
+  },
+  shimmerRow: {
+    flexDirection: 'row',
+    marginBottom: moderateScale(10),
+  },
+  shimmerNumber: {
+    width: moderateScale(30),
+    height: moderateScale(30),
+    backgroundColor: '#e0e0e0',
+    borderRadius: moderateScale(20),
+    marginRight: moderateScale(3),
+    // borderWidth:1
+  },
+  shimmerContent: {
+    flex: 1,
+  },
+  shimmerQuestionText: {
+    height: moderateScale(16),
+    backgroundColor: '#e0e0e0',
+    borderRadius: moderateScale(2),
+    marginBottom: moderateScale(8),
+    width: '94%',
+  },
+  shimmerQuestionTextShort: {
+    height: moderateScale(16),
+    backgroundColor: '#e0e0e0',
+    borderRadius: moderateScale(2),
+    width: '60%',
+  
+  },
+  shimmerOptionsGrid: {
+    marginBottom: moderateScale(12),
+  },
+  shimmerOptionContainer: {
+    flexDirection: 'row',
+    marginBottom: moderateScale(8),
+    alignItems: 'center',
+  },
+  shimmerOptionLabel: {
+    width: moderateScale(24),
+    height: moderateScale(24),
+    backgroundColor: '#e0e0e0',
+    borderRadius: moderateScale(12),
+    marginRight: moderateScale(8),
+  },
+  shimmerOptionText: {
+    height: moderateScale(30),
+    backgroundColor: '#e0e0e0',
+    borderRadius: moderateScale(2),
+    flex: 1,
+  },
+  shimmerLevelContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  shimmerLevelText: {
+    height: moderateScale(12),
+    width: moderateScale(80),
+    backgroundColor: '#e0e0e0',
+    borderRadius: moderateScale(2),
+  },
 });
-export default memo(QuestionListData);
