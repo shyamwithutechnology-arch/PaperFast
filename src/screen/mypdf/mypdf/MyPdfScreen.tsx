@@ -12,12 +12,10 @@ import { scale } from 'react-native-size-matters';
 import { Icons } from '../../../assets/icons';
 import ListItemComponent from './component/ListItemComponent';
 
-export type DraftPaperScreenProps = {
-
+export type MyPdfScreenProps = {
 }
 
-
-const DraftPaperScreen = (props: DraftPaperScreenProps) => {
+const MyPdfScreen = (props: MyPdfScreenProps) => {
     const navigation = useNavigation();
     const [selectedSubject, setSelectedSubject] = useState<null | string>(null)
     const [visible, setVisible] = useState(false);
@@ -146,7 +144,7 @@ const DraftPaperScreen = (props: DraftPaperScreenProps) => {
     )
 }
 
-export default DraftPaperScreen
+export default MyPdfScreen
 
 const styles = StyleSheet.create({
     container: {

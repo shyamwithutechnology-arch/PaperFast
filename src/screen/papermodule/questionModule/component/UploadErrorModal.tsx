@@ -223,7 +223,7 @@ const UploadErrorModal = ({ visible, onClose }: any) => {
                     <View style={styles.pickerBox}>
                         <Pressable style={styles.pickerItem} onPress={handleCamera}>
                             <Icon name="photo-camera" size={22} />
-                            <Text style={styles.pickerText}>Cameracc</Text>
+                            <Text style={styles.pickerText}>Camera</Text>
                         </Pressable>
 
                         <Pressable style={styles.pickerItem} onPress={handleGallery}>

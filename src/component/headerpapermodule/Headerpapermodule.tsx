@@ -25,11 +25,12 @@ interface HeaderpapermoduleProp {
     leftIconPress: () => void,
     titleStyle: object,
     subjectName: Text,
-    rightPress2: () => void
+    rightPress2: () => void,
+    headerContainerStyle:object
 }
-const HeaderPaperModule: React.FC = ({ title, rightPress, leftIconPress, titleStyle, subjectName, rightPress2 }: HeaderpapermoduleProp) => {
+const HeaderPaperModule: React.FC = ({ title, rightPress, leftIconPress, titleStyle, subjectName, rightPress2,headerContainerStyle }: HeaderpapermoduleProp) => {
     return (
-        <View style={styles.headerContainer}>
+        <View style={[styles.headerContainer,headerContainerStyle]}>
             <View style={{
                 flexDirection: 'row',
                 // paddingLeft: moderateScale(15),

@@ -75,7 +75,7 @@ const MainTabs = () => {
       />
 
       <Tab.Screen
-        name="MyPdfScreen"
+        name="MyPDF"
         component={PdfStack}
         options={{
           tabBarIcon: ({ focused }) => (

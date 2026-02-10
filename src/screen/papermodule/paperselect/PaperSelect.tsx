@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { View, StatusBar, TouchableOpacity, Text } from "react-native";
+import { View, StatusBar, TouchableOpacity, Text, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "../../../theme";
 import HeaderPaperModule from "../../../component/headerpapermodule/Headerpapermodule";
@@ -13,6 +13,8 @@ import { showToast } from "../../../utils/toast";
 import { GET, POST_FORM } from "../../../api/request";
 import { ApiEndPoint } from "../../../api/endPoints";
 import Loader from "../../../component/loader/Loader";
+import { useDispatch } from "react-redux";
+import { clearPDFQuestions } from "../../../redux/slices/pdfQuestionsSlice";
 
 type SelectedSummary = {
     chapterId: number;
@@ -26,6 +28,7 @@ type Book = {
 }
 const PaperSelect = () => {
     const navigation = useNavigation()
+    const dispatch = useDispatch();
     const route = useRoute();
     const [loading, setLoading] = useState<boolean>(false);
     const [book, setBook] = useState<Book[]>([]);
@@ -42,7 +45,30 @@ const PaperSelect = () => {
 
     const handleBack = async () => {
         await localStorage.removeItem(storageKeys?.selectedPaperType)
-        navigation.navigate('PaperTypeScreen')
+        // navigation.goBack();
+        Alert.alert(
+            'Clear',
+            'Are you sure you want to Clear Data?',
+            [
+                {
+                    text: 'Cancel',
+                    style: 'cancel',
+                },
+                {
+                    text: 'Clear',
+                    style: 'destructive',
+                    onPress: async () => {
+                        try {
+                            await dispatch(clearPDFQuestions());
+                            navigation.navigate('PaperTypeScreen')
+                        } catch (error) {
+                            console.log('Clear error:', error);
+                        }
+                    },
+                },
+            ],
+            { cancelable: true }
+        )
     }
     type PaperType = 'NCERT' | 'EXEMPLAR' | 'RD_SHARMA';
 
@@ -55,7 +81,7 @@ const PaperSelect = () => {
     }
     const handleQuestionSelect = (payload) => {
         navigation.navigate('QuestionScreen', {
-            ...payload, 
+            ...payload,
         });
     }
     const handleSelectedPaper = (id: PaperType) => {
@@ -184,6 +210,20 @@ const PaperSelect = () => {
     };
 
 
+    // Clear when going back
+    //   const handleBack = () => {
+    //     // CLEAR: Remove all data
+    //     dispatch(clearPDFQuestions());
+    //     navigation.goBack();
+    //   };
+
+    // Also clear when component unmounts
+    React.useEffect(() => {
+        return () => {
+            dispatch(clearPDFQuestions());
+        };
+    }, [dispatch]);
+
     const handleChapterFetch = async (data) => {
         setLoading(true)
         try {
@@ -280,7 +320,7 @@ const PaperSelect = () => {
 
             {/* HEADER + STATUS BAR SAME BACKGROUND */}
             <SafeAreaView edges={["top"]} style={{ backgroundColor: Colors.lightThemeBlue }}>
-                <HeaderPaperModule titleStyle={{fontSize:moderateScale(14)}} title={`${paperHeader}`} subjectName={`${subjectName}`} rightPress={() => { navigation.navigate('DraftPaperScreen') }} leftIconPress={handleBack} />
+                <HeaderPaperModule titleStyle={{ fontSize: moderateScale(14) }} title={`${paperHeader}`} subjectName={`${subjectName}`} rightPress={() => { navigation.navigate('DraftPaperScreen') }} leftIconPress={handleBack} />
             </SafeAreaView>
             {/* MAIN CONTENT */}
             <SafeAreaView

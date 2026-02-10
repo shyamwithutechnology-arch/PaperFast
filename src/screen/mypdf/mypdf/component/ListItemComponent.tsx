@@ -111,12 +111,12 @@ const styles = StyleSheet.create({
         color: Colors.black,
         fontFamily: Fonts.InstrumentSansMedium
     },
-
     decText: {
         fontSize: moderateScale(10),
         color: '#8D8D8D',
         fontFamily: Fonts.InterRegular,
-        marginVertical: moderateScale(8)
+        marginTop: moderateScale(4),
+        marginBottom: moderateScale(8)
     },
     deleteBox: {
         height: moderateScale(35),
@@ -143,6 +143,7 @@ const styles = StyleSheet.create({
         borderColor: '#B4DCFF',
         backgroundColor: '#E3F2FF',
         borderRadius: moderateScale(6),
+        justifyContent:"center"
     
         // marginTop: moderateScale(-60)
 
