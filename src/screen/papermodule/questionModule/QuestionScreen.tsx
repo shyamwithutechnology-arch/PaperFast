@@ -21,7 +21,7 @@ import { ApiEndPoint } from "../../../api/endPoints";
 import { ScrollView } from "react-native-gesture-handler";
 import { launchImageLibrary } from "react-native-image-picker";
 import { useDispatch } from "react-redux";
-import { setPDFQuestions } from "../../../redux/slices/pdfQuestionsSlice";
+import { addPDFQuestions, SelectedQuestion } from "../../../redux/slices/pdfQuestionsSlice";
 // import { buildPDFHtml } from "../../mypdf/component/buildPDFHtml";
 interface Difficulty {
     dlevel_id: string,
@@ -50,6 +50,13 @@ const QuestionScreen = () => {
         questionMarks: string;
         label: string;
     };
+    // console.log('ddddddwwwwwwwwwwwww', chapterId,
+    //     questionId,
+    //     questionMarks,
+    //     label,);
+    console.log('routevvvvvvv', route);
+
+
     const [selectCheck, setSelectedCheck] = useState('Options')
     const [selectedMap, setSelectedMap] = useState<Record<string, boolean>>({});
     const [questionNumber, setQuestionNumber] = useState<Record<string, boolean>>({});
@@ -108,7 +115,12 @@ const QuestionScreen = () => {
             await fetchQuestions(pagination.page, pagination?.limit);
         setLabelStatus(false)
     }
-    const handleBack = () => {
+    const handleBack = async () => {
+        const selectedQuestions = questionsData?.result?.filter(
+            q => selectedMap[q.question_id]
+        ) || [];
+
+        await dispatch(addPDFQuestions(selectedQuestions));
         navigation.navigate('PaperSelect', {
             selectedSummary: {
                 chapterId,
@@ -118,6 +130,8 @@ const QuestionScreen = () => {
             },
         });
     };
+
+    // In QuestionScreen.tsx
 
     const openGallery = () => {
         launchImageLibrary(
@@ -291,13 +305,16 @@ const QuestionScreen = () => {
             q => selectedMap[q.question_id]
         ) || [];
 
+
         if (!selectedQuestions.length) {
             Alert.alert('No Selection', 'Please select at least one question');
             return;
         }
 
+        // console.log('useSelectorssss', selectedQuestions);
+
         // SET: Store in Redux
-        dispatch(setPDFQuestions(selectedQuestions));
+        dispatch(addPDFQuestions(selectedQuestions));
 
         // Navigate
         navigation.navigate('MyPDF', {

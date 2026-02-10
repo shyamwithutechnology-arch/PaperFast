@@ -24,6 +24,8 @@ import CloseIcon from "react-native-vector-icons/EvilIcons";
 import AddIcon from "react-native-vector-icons/MaterialIcons";
 import AppButton from '../../../../../component/button/AppButton';
 import UploadErrorModal from '../UploadErrorModal';
+import { useDispatch, useSelector } from 'react-redux';
+import { removePDFQuestions, togglePDFQuestion } from '../../../../../redux/slices/pdfQuestionsSlice';
 
 // MathJax configuration
 const mathJaxOptions = {
@@ -617,7 +619,7 @@ const QuestionItem = memo(({
   onInfoPress: () => void,
   hideContant: boolean
 }) => {
-  console.log('itemdddddddhideContant', hideContant)
+  console.log('itemdddddddhideContant', item)
 
   const images = extractImages(item.question_text);
   const questionTextWithoutImages = (item.question_text || '').replace(/<img[^>]*>/g, '');
@@ -630,9 +632,11 @@ const QuestionItem = memo(({
   ];
   const questionNumber = (currentPage - 1) * limit + index + 1;
   const textSty = () => {
+    console.log('item?.dlevel_name', item?.dlevel_name);
+    
     if (item?.dlevel_name === 'Easy') {
       return { color: Colors.primaryColor }
-    } else if (item?.dlevel_name === 'Difficult') {
+    } else if (item?.dlevel_name === 'Hard') {
       return { color: Colors.red }
     } else {
       return { color: Colors.green }
@@ -655,11 +659,11 @@ const QuestionItem = memo(({
       // onPress={() => onToggle({ id: item?.question_id, qsNumber: questionNumber })}
       onPress={() =>
         !hideContant && onToggle({
-          id: item.question_id,
+          id: item?.question_id,
           questionNum: questionNumber,
         })
       }
-      >
+    >
       <View style={[styles.questionNumberContainer, {}]}>
         <Text style={styles.questionNumber}> {questionNumber}</Text>
         {!hideContant && <View style={[
@@ -733,6 +737,10 @@ const QuestionListData: React.FC<Props> = ({
   hideContant,
   isLoading
 }) => {
+  const selectedQuestions = useSelector((state: any) => state?.pdfQuestions || []);
+  console.log('rrrrrrrrrrrrrrrrrrraaaawwwwwwwwee', selectedQuestions?.questions);
+
+
   const [openPicker, setOpenPicker] = useState<boolean>(false);
   const handleCloseModal = () => {
     setOpenPicker(false)
@@ -749,7 +757,7 @@ const QuestionListData: React.FC<Props> = ({
   }, []);
 
 
-  
+
   // Render shimmer items when loading
   const renderShimmerItem = useCallback(() => (
     <View style={styles.shimmerContainer}>
@@ -761,7 +769,7 @@ const QuestionListData: React.FC<Props> = ({
           <View style={styles.shimmerQuestionTextShort} />
         </View>
       </View>
-      
+
       {/* Options Shimmer */}
       <View style={styles.shimmerOptionsGrid}>
         {[1, 2, 3, 4].map((_, index) => (
@@ -771,7 +779,7 @@ const QuestionListData: React.FC<Props> = ({
           </View>
         ))}
       </View>
-      
+
       {/* Level Shimmer */}
       {!hideContant && (
         <View style={styles.shimmerLevelContainer}>
@@ -804,44 +812,116 @@ const QuestionListData: React.FC<Props> = ({
   //   })
 
   // }, [setSelectedMap, setQuestionNumber]);
-  const toggleSelect = useCallback(
-    ({ id, questionNum }: TogglePayload) => {
+  // const toggleSelect = useCallback(
+  //   ({ id, questionNum }: TogglePayload) => {
+  //     // console.log('sssssssssssswwwwwww', selectedQuestions?.questions?.find(item => item?.question_id === id))
+  //     if (selectedQuestions?.questions?.find(item => item?.question_id == id)) {
+  //       removePDFQuestions([id])
+  //     }
+  //     setSelectedMap(prev => {
+  //       const newMap = { ...prev };
+  //       if (newMap[id]) {
+  //         delete newMap[id];
+  //       } else {
+  //         newMap[id] = true;
+  //       }
+  //       return newMap;
+  //     });
 
-      setSelectedMap(prev => {
-        const newMap = { ...prev };
-        if (newMap[id]) {
-          delete newMap[id];
-        } else {
-          newMap[id] = true;
-        }
-        return newMap;
-      });
-
-      if (!Number.isFinite(questionNum)) {
-        return;
-      }
-      setQuestionNumber(prev => {
-        const newNumber = { ...prev };
-        if (newNumber[questionNum]) {
-          delete newNumber[questionNum];
-        } else {
-          newNumber[questionNum] = true;
-        }
-        return newNumber;
-      });
-
-    },
-    []
-  );
-
-
+  //     if (!Number.isFinite(questionNum)) {
+  //       return;
+  //     }
+  //     setQuestionNumber(prev => {
+  //       const newNumber = { ...prev };
+  //       if (newNumber[questionNum]) {
+  //         delete newNumber[questionNum];
+  //       } else {
+  //         newNumber[questionNum] = true;
+  //       }
+  //       return newNumber;
+  //     });
+  //   },
+  //   []
+  // );
   const openMediaPicker = useCallback(() => {
     setOpenPicker(true);
   }, []);
 
+  const dispatch = useDispatch();
+
+  // ✅ Correct Redux state access
+  // const selectedQuestions = useSelector((state: any) => state?.pdfQuestions?.questions || []);
+
+  const toggleSelect = useCallback(
+    ({ id, questionNum }: TogglePayload) => {
+      console.log('🔄 Toggling question ID:', id);
+      console.log('📊 Current Redux state:', selectedQuestions?.questions?.map(q => q.question_id));
+
+      // 1. Find the question
+      const questionToToggle = questionsData?.find(item => item?.question_id === id);
+
+      if (!questionToToggle) {
+        console.log('❌ Question not found:', id);
+        return;
+      }
+
+      // 2. Check if already selected in Redux ✅ FIXED: Remove .questions
+      const isInRedux = selectedQuestions?.questions?.some(item => item?.question_id === id);
+      // console.log('📊 Is in Redux?', isInRedux);
+
+      if (isInRedux) {
+        // Remove from Redux
+        console.log('🗑️ Removing from Redux');
+        dispatch(removePDFQuestions([id]));
+      } 
+      // else {
+      //   // Add to Redux
+      //   console.log('➕ Adding to Redux');
+      //   dispatch(togglePDFQuestion(questionToToggle));
+      // }
+
+      // 3. Update local state
+      setSelectedMap(prev => {
+        const newMap = { ...prev };
+        const wasSelected = !!newMap[id];
+        if (wasSelected) {
+          delete newMap[id];
+          console.log('🗑️ Removed from local state');
+        } else {
+          newMap[id] = true;
+          console.log('➕ Added to local state');
+        }
+        return newMap;
+      });
+
+      // 4. Update question number
+      if (Number.isFinite(questionNum)) {
+        setQuestionNumber(prev => {
+          const newNumber = { ...prev };
+          if (newNumber[questionNum]) {
+            delete newNumber[questionNum];
+          } else {
+            newNumber[questionNum] = true;
+          }
+          return newNumber;
+        });
+      }
+
+      console.log('✅ Toggle complete');
+    },
+    [dispatch, selectedQuestions, questionsData, setSelectedMap, setQuestionNumber]
+  );
+
   const renderItem = useCallback(({ item, index }: { item: Question; index: number }) => {
-    const isSelected = !!selectedMap[item.question_id];
-    let langthList = index === questionsData?.length - 1;
+    const isLocallySelected = !!selectedMap[item?.question_id];
+
+    // ✅ FIXED: Remove .questions from here too
+    const isInRedux = selectedQuestions?.questions?.some((q: any) => q?.question_id === item?.question_id);
+
+    const isSelected = isLocallySelected || isInRedux;
+    const langthList = index === questionsData?.length - 1;
+
+    console.log(`Question ${item.question_id}: local=${isLocallySelected}, redux=${isInRedux}, selected=${isSelected}`);
 
     return (
       <QuestionItem
@@ -855,10 +935,10 @@ const QuestionListData: React.FC<Props> = ({
         currentPage={currentPage}
         limit={limit}
         onInfoPress={openMediaPicker}
-        hideContant={hideContant}  // ✅ pass function
+        hideContant={hideContant}
       />
     );
-  }, [selectedMap, selectCheck, toggleSelect, extractBase64Images, currentPage, limit, questionNumber]);
+  }, [selectedMap, selectedQuestions, selectCheck, toggleSelect, extractBase64Images, currentPage, limit, openMediaPicker, hideContant, questionsData]);
 
   const keyExtractor = useCallback((item: Question) => item.question_id, []);
   const extraData = useMemo(() => ({
@@ -868,7 +948,7 @@ const QuestionListData: React.FC<Props> = ({
   }), [selectedMap, selectCheck, questionsData.length]);
 
 
-  
+
   // Shimmer key extractor
   const shimmerKeyExtractor = useCallback((_: any, index: number) => `shimmer-${index}`, []);
 
@@ -1475,7 +1555,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginHorizontal: moderateScale(4)
   },
-    // Shimmer Styles
+  // Shimmer Styles
   shimmerContainer: {
     backgroundColor: '#f9fafb',
     marginVertical: moderateScale(8),
@@ -1509,7 +1589,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#e0e0e0',
     borderRadius: moderateScale(2),
     width: '60%',
-  
+
   },
   shimmerOptionsGrid: {
     marginBottom: moderateScale(12),

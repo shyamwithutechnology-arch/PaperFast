@@ -723,7 +723,6 @@ import { Colors } from '../../theme';
 import { moderateScale } from '../../utils/responsiveSize';
 import { localStorage, storageKeys } from '../../storage/storage';
 import QuestionListData from '../papermodule/questionModule/component/questionlist/QuestionListData';
-
 const PDFPreviewScreen = () => {
   const navigation = useNavigation();
   const route = useRoute<any>();

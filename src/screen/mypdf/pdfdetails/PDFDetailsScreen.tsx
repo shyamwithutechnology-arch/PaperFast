@@ -41,7 +41,7 @@ const PDFDetails = () => {
     const route = useRoute();
     const dispatch = useDispatch();
     // GET: Read questions from Redux
-    const pdfQuestions = useSelector((state: any) => state.pdfQuestions.questions || []);
+    const pdfQuestions = useSelector((state: any) => state?.pdfQuestions?.questions || []);
     const showSolutions = route.params?.showSolutions || false;
     console.log('reeeeeeeeeeselectedQuestionDatapdfQuestions', pdfQuestions);
     console.log('showSolutions', pdfQuestions);
@@ -322,7 +322,7 @@ const PDFDetails = () => {
 
     const handleBack = () => {
         // CLEAR: Remove all data
-        dispatch(clearPDFQuestions());
+        // dispatch(clearPDFQuestions());
         navigation.goBack();
     };
     // const handleBack = () => {
@@ -390,7 +390,17 @@ const PDFDetails = () => {
         );
     };
 
-
+//   const selectedQuestoin = useSelector((state: any) => state?.pdfQuestions);
+//   console.log('selectedQuestoinselectedQuestoinwww', selectedQuestoin);
+    // useEffect(() => {
+    //     // Alert.alert('sdaffffffffffffff', 'dfffffffffff')  
+    //     console.log('=== QuestionListData Debug ===');
+    //     const selectedQuestoin = useSelector((state: any) => state?.pdfQuestions);
+    //     console.log('selectedQuestoinselectedQuestoineee', selectedQuestoin);
+    //     console.log('Redux selected questions:', selectedQuestoin);
+    //     console.log('Redux questions count:', selectedQuestoin.length);
+    //     //   console.log('Local selectedMap count:', Object.keys(selectedMap).length);
+    // }, [])
     return (
         <View style={styles.container}>
             <StatusBar backgroundColor={Colors.primaryColor} barStyle="dark-content" />
