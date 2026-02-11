@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, StyleSheet, StatusBar, TouchableOpacity, FlatList, Image } from 'react-native';
+import { Text, View, StyleSheet, StatusBar, TouchableOpacity, FlatList, Image, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import HeaderPaperModule from '../../../component/headerpapermodule/Headerpapermodule';
 import { Colors, Fonts } from '../../../theme';
@@ -11,6 +11,7 @@ import { localStorage, storageKeys } from '../../../storage/storage';
 import { scale } from 'react-native-size-matters';
 import { Icons } from '../../../assets/icons';
 import ListItemComponent from './component/ListItemComponent';
+import { useSelector } from 'react-redux';
 
 export type MyPdfScreenProps = {
 }
@@ -131,6 +132,8 @@ const MyPdfScreen = (props: MyPdfScreenProps) => {
     const handleGoBack = () => {
         navigation.goBack()
     }
+
+    
     return (
         <View style={styles.container}>
             <StatusBar barStyle={'dark-content'} backgroundColor={Colors.lightThemeBlue} />
@@ -190,7 +193,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         alignSelf: "center",
         marginTop: moderateScale(15),
-        marginBottom:moderateScale(5    )
+        marginBottom: moderateScale(5)
     },
     bordIcon: {
         width: moderateScale(30),
