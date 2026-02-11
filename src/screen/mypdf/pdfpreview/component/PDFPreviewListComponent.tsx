@@ -11,23 +11,16 @@ import {
   Platform,
   PermissionsAndroid,
   TextInput,
-  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MathJax from 'react-native-mathjax';
-import { moderateScale, verticalScale, scale } from '../../../../../utils/responsiveSize';
-import { Colors, Fonts } from '../../../../../theme';
-import { Icons } from '../../../../../assets/icons';
-import MediaPickerModal from '../../../../../component/mediapickermodal/MediaPickerModal';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import AppModal from '../../../../../component/modal/AppModal';
 import CloseIcon from "react-native-vector-icons/EvilIcons";
 import AddIcon from "react-native-vector-icons/MaterialIcons";
-import AppButton from '../../../../../component/button/AppButton';
-import UploadErrorModal from '../UploadErrorModal';
 import { useDispatch, useSelector } from 'react-redux';
-import { removeChapterQuestions, removePDFQuestions, togglePDFQuestion } from '../../../../../redux/slices/pdfQuestionsSlice';
-import { showToast } from '../../../../../utils/toast';
+import { moderateScale, scale, verticalScale } from '../../../../utils/responsiveSize';
+import { Colors, Fonts } from '../../../../theme';
+import { Icons } from '../../../../assets/icons';
 
 // MathJax configuration
 const mathJaxOptions = {
@@ -88,7 +81,7 @@ type Props = {
   hideContant: boolean;
   isLoading: boolean;
   selectedQuestions: any[];
-  getAllRute:any
+  questionType:string
 };
 
 // Helper to check if text contains math expressions
@@ -623,7 +616,6 @@ const QuestionItem = memo(({
   onInfoPress: () => void,
   hideContant: boolean
 }) => {
-  console.log('itemdddddddhideContant', item)
 
   const images = extractImages(item.question_text);
   const questionTextWithoutImages = (item.question_text || '').replace(/<img[^>]*>/g, '');
@@ -636,8 +628,7 @@ const QuestionItem = memo(({
   ];
   const questionNumber = (currentPage - 1) * limit + index + 1;
   const textSty = () => {
-    console.log('item?.dlevel_name', item?.dlevel_name);
-
+    // console.log('item?.dlevel_name', item?.dlevel_name);
     if (item?.dlevel_name === 'Easy') {
       return { color: Colors.primaryColor }
     } else if (item?.dlevel_name === 'Hard') {
@@ -729,7 +720,7 @@ const QuestionItem = memo(({
 
 // Main Component
 
-const QuestionListData: React.FC<Props> = ({
+const PDFPreviewListComponent: React.FC<Props> = ({
   selectCheck,
   selectedMap,
   setSelectedMap,
@@ -741,12 +732,8 @@ const QuestionListData: React.FC<Props> = ({
   hideContant,
   isLoading,
   selectedQuestions,
-  getAllRute
+  questionType
 }) => {
-  // const selectedQuestions = useSelector((state: any) => state?.pdfQuestions || []);
-  console.log('wwwwwwwwww', selectedQuestions);
-
-
   const [openPicker, setOpenPicker] = useState<boolean>(false);
   const handleCloseModal = () => {
     setOpenPicker(false)
@@ -761,9 +748,6 @@ const QuestionListData: React.FC<Props> = ({
     }
     return images;
   }, []);
-
-
-
   // Render shimmer items when loading
   const renderShimmerItem = useCallback(() => (
     <View style={styles.shimmerContainer}>
@@ -794,140 +778,9 @@ const QuestionListData: React.FC<Props> = ({
       )}
     </View>
   ), [hideContant]);
-
-  // const toggleSelect = useCallback((id: string, number: number) => {
-  //   console.log('rssssssss', id);
-  //   setSelectedMap(prev => {
-  //     const newMap = { ...prev };
-  //     if (newMap[id]) {
-  //       delete newMap[id];
-  //     } else {
-  //       newMap[id] = true;
-  //     }
-  //     return newMap;
-  //   });
-
-  //   setQuestionNumber(pre => {
-  //     const newNumber = { ...pre };
-  //     if (newNumber[number]) {
-  //       delete newNumber[number]
-  //     } else {
-  //       newNumber[number] = true
-  //     }
-  //     return newNumber
-  //   })
-
-  // }, [setSelectedMap, setQuestionNumber]);
-  // const toggleSelect = useCallback(
-  //   ({ id, questionNum }: TogglePayload) => {
-  //     // console.log('sssssssssssswwwwwww', selectedQuestions?.questions?.find(item => item?.question_id === id))
-  //     if (selectedQuestions?.questions?.find(item => item?.question_id == id)) {
-  //       removePDFQuestions([id])
-  //     }
-  //     setSelectedMap(prev => {
-  //       const newMap = { ...prev };
-  //       if (newMap[id]) {
-  //         delete newMap[id];
-  //       } else {
-  //         newMap[id] = true;
-  //       }
-  //       return newMap;
-  //     });
-
-  //     if (!Number.isFinite(questionNum)) {
-  //       return;
-  //     }
-  //     setQuestionNumber(prev => {
-  //       const newNumber = { ...prev };
-  //       if (newNumber[questionNum]) {
-  //         delete newNumber[questionNum];
-  //       } else {
-  //         newNumber[questionNum] = true;
-  //       }
-  //       return newNumber;
-  //     });
-  //   },
-  //   []
-  // );
   const openMediaPicker = useCallback(() => {
     setOpenPicker(true);
   }, []);
-
-  const dispatch = useDispatch();
-
-  // ✅ Correct Redux state access
-  const questiondd = useSelector((state: any) => state?.pdfQuestions?.chapters || []);
-  console.log('questionddsss', questiondd);
-  console.log('getAllRute', getAllRute);
-
-  // const toggleSelect = useCallback(
-  //   ({ id, questionNum }: TogglePayload) => {
-  //     console.log('🔄 Toggling question ID:', id);
-  //     // console.log('📊 Current Redux state:', selectedQuestions?.questions?.map(q => q.question_id));
-
-  //     // 1. Find the question
-  //     const questionToToggle = questionsData?.find(item => item?.question_id === id);
-
-  //     if (!questionToToggle) {
-  //       console.log('❌ Question not found:', id);
-  //       return;
-  //     }
-
-  //     // 2. Check if already selected in Redux ✅ FIXED: Remove .questions
-  //     const isInRedux = selectedQuestions?.some(item => item?.question_id === id);
-  //     if (isInRedux) {
-  //       // Remove from Redux
-  //       console.log('🗑️ Removing from Redux');
-  //       dispatch(removePDFQuestions([id]));
-  //     }
-  //       // 3. Update local state
-  //     setSelectedMap(prev => {
-  //       const newMap = { ...prev };
-  //       const wasSelected = !!newMap[id];
-  //       if (wasSelected) {
-  //         delete newMap[id];
-  //         console.log('🗑️ Removed from local state');
-  //       } else {
-  //         newMap[id] = true;
-  //         console.log('➕ Added to local state');
-  //       }
-  //       return newMap;
-  //     });
-  //     // else {
-  //     //   // Add to Redux
-  //     //   console.log('➕ Adding to Redux');
-  //     //   dispatch(togglePDFQuestion(questionToToggle));
-  //     // }
-
-  //     // 4. Update question number
-  //     if (Number.isFinite(questionNum)) {
-  //       setQuestionNumber(prev => {
-  //         const newNumber = { ...prev };
-  //         if (newNumber[questionNum]) {
-  //           delete newNumber[questionNum];
-  //         } else {
-  //           newNumber[questionNum] = true;
-  //         }
-  //         return newNumber;
-  //       });
-  //     }
-
-  //     console.log('✅ Toggle complete');
-  //   },
-  //   [dispatch, selectedQuestions, questionsData, setSelectedMap, setQuestionNumber]
-  // );
-  // useEffect(() => {
-  //   if (selectedQuestions && selectedQuestions.length > 0) {
-  //     const initialMap: Record<string, boolean> = {};
-  //     selectedQuestions.forEach((question: any) => {
-  //       if (question?.question_id) {
-  //         initialMap[question.question_id] = true;
-  //       }
-  //     });
-  //     setSelectedMap(initialMap);
-  //   }
-  // }, [selectedQuestions]);
-  // Add this useEffect to sync with Redux changes
   useEffect(() => {
     if (selectedQuestions && selectedQuestions.length > 0) {
       const initialMap: Record<string, boolean> = {};
@@ -937,479 +790,61 @@ const QuestionListData: React.FC<Props> = ({
         }
       });
       setSelectedMap(initialMap);
-    } else {
-      // If selectedQuestions is empty, clear the map
-      setSelectedMap({});
-      setQuestionNumber({});
     }
-  }, [selectedQuestions]); // This will run when selectedQuestions changes
-
-  // const toggleSelect = useCallback(
-  //   ({ id, questionNum }: TogglePayload) => {
-  //     console.log('🔄 Toggling question ID:', id);
-
-  //     // 1. Check if this question is pre-selected from props
-  //     const isPreSelected = selectedQuestions?.some((q: any) => q?.question_id === id);
-
-  //     // 2. Check if it's currently selected in local state
-  //     const isCurrentlySelected = !!selectedMap[id];
-
-  //     // 3. If it's pre-selected AND currently selected, we want to remove it
-  //     if (isPreSelected && isCurrentlySelected) {
-  //       // Remove from Redux
-  //       dispatch(removePDFQuestions([id]));
-  //       // Also update local state
-  //       setSelectedMap(prev => {
-  //         const newMap = { ...prev };
-  //         delete newMap[id];
-  //         return newMap;
-  //       });
-
-  //       // Remove from question numbers
-  //       setQuestionNumber(prev => {
-  //         const newNumber = { ...prev };
-  //         delete newNumber[questionNum];
-  //         return newNumber;
-  //       });
-
-  //       console.log('🗑️ Removed pre-selected question');
-  //     }
-  //     // 4. If it's NOT pre-selected, toggle normally
-  //     else if (!isPreSelected) {
-  //       // Toggle local state
-  //       setSelectedMap(prev => {
-  //         const newMap = { ...prev };
-  //         if (newMap[id]) {
-  //           delete newMap[id];
-  //           console.log('🗑️ Removed from local state');
-  //         } else {
-  //           newMap[id] = true;
-  //           console.log('➕ Added to local state');
-  //         }
-  //         return newMap;
-  //       });
-
-  //       // Toggle question number
-  //       if (Number.isFinite(questionNum)) {
-  //         setQuestionNumber(prev => {
-  //           const newNumber = { ...prev };
-  //           if (newNumber[questionNum]) {
-  //             delete newNumber[questionNum];
-  //           } else {
-  //             newNumber[questionNum] = true;
-  //           }
-  //           return newNumber;
-  //         });
-  //       }
-  //     }
-  //     // 5. If it's pre-selected but NOT currently selected in local state
-  //     // This happens when useEffect hasn't run yet or there's a sync issue
-  //     else if (isPreSelected && !isCurrentlySelected) {
-  //       // Add it to local state but DON'T dispatch to Redux (it's already there)
-  //       setSelectedMap(prev => ({ ...prev, [id]: true }));
-  //       console.log('✅ Pre-selected question added to local state');
-
-  //       // Also add question number if needed
-  //       if (Number.isFinite(questionNum)) {
-  //         setQuestionNumber(prev => ({ ...prev, [questionNum]: true }));
-  //       }
-  //     }
-
-  //     console.log('✅ Toggle complete');
-  //   },
-  //   [dispatch, selectedQuestions, selectedMap, setSelectedMap, setQuestionNumber]
-  // );
-  // const toggleSelect = useCallback(
-  //   ({ id, questionNum }: TogglePayload) => {
-  //     console.log('🔄 Toggling question ID:', id);
-
-  //     // Check if already selected in local state
-  //     const isCurrentlySelected = !!selectedMap[id];
-
-  //     // If already selected, DO NOT REMOVE - just log
-  //     if (isCurrentlySelected) {
-  //       console.log('✅ Question already selected - maintaining selection');
-  //       return; // Don't remove, just exit
-  //     }
-
-  //     // If not currently selected, add it
-  //     console.log('➕ Adding new question to selection');
-
-  //     // Add to local state
-  //     setSelectedMap(prev => ({
-  //       ...prev,
-  //       [id]: true
-  //     }));
-
-  //     // Add to question numbers if valid
-  //     if (Number.isFinite(questionNum)) {
-  //       setQuestionNumber(prev => ({
-  //         ...prev,
-  //         [questionNum]: true
-  //       }));
-  //     }
-
-  //     // Add to Redux (if you're tracking selections there too)
-  //     // dispatch(addPDFQuestions([{ id, questionNum }]));
-
-  //     console.log('✅ New question added to selection');
-  //   },
-  //   [selectedMap, setSelectedMap, setQuestionNumber]
-  // );
-  // const toggleSelect = useCallback(
-  //   ({ id, questionNum }: TogglePayload) => {
-  //     console.log('🔄 Toggling question ID:', id);
-
-  //     // Check if this question is pre-saved in Redux
-  //     const isPreSaved = selectedQuestions?.some((q: any) => q?.question_id === id);
-
-  //     // Check if currently selected
-  //     const isCurrentlySelected = !!selectedMap[id];
-
-  //     // If it's pre-saved and currently selected, don't allow removal
-  //     // if (isPreSaved && isCurrentlySelected) {
-  //     //   // showToast('info', 'Cannot Remove', 'This question was previously saved and cannot be removed');
-  //     //   return;
-  //     // }
-
-  //     // Normal toggle for non-pre-saved questions
-  //     setSelectedMap(prev => {
-  //       const newMap = { ...prev };
-  //       if (newMap[id]) {
-  //         delete newMap[id];
-  //         dispatch(removePDFQuestions([id]));
-  //         console.log('🗑️ Removed from selection');
-  //       } else {
-  //         newMap[id] = true;
-  //         console.log('➕ Added to selection');
-  //       }
-  //       return newMap;
-  //     });
-
-  //     // Update question numbers
-  //     if (Number.isFinite(questionNum)) {
-  //       setQuestionNumber(prev => {
-  //         const newNumber = { ...prev };
-  //         if (newNumber[questionNum]) {
-  //           delete newNumber[questionNum];
-  //         } else {
-  //           newNumber[questionNum] = true;
-  //         }
-  //         return newNumber;
-  //       });
-  //     }
-  //   },
-  //   [selectedQuestions, selectedMap, setSelectedMap, setQuestionNumber]
-  // );
-
-  // const toggleSelect = useCallback(
-  //   ({ id, questionNum }: TogglePayload) => {
-  //     console.log('🔄 Toggling question ID:', id);
-
-  //     // Check if this question is pre-saved in Redux
-  //     const isPreSaved = selectedQuestions?.some((q: any) => q?.question_id === id);
-
-  //     // Check if currently selected
-  //     const isCurrentlySelected = !!selectedMap[id];
-
-  //     // If it's pre-saved and we're trying to remove, show confirmation
-  //     if (isPreSaved && isCurrentlySelected) {
-  //       // Show confirmation dialog
-  //       Alert.alert(
-  //         'Remove Question',
-  //         'This question was previously saved. Are you sure you want to remove it?',
-  //         [
-  //           { text: 'Cancel', style: 'cancel' },
-  //           {
-  //             text: 'Remove',
-  //             style: 'destructive',
-  //             onPress: () => {
-  //               // Remove from selection
-  //               setSelectedMap(prev => {
-  //                 const newMap = { ...prev };
-  //                 delete newMap[id];
-  //                 return newMap;
-  //               });
-
-  //               // Remove from question numbers
-  //               if (Number.isFinite(questionNum)) {
-  //                 setQuestionNumber(prev => {
-  //                   const newNumber = { ...prev };
-  //                   delete newNumber[questionNum];
-  //                   return newNumber;
-  //                 });
-  //               }
-  //               // Also remove from Redux if you want
-  //               dispatch(removePDFQuestions([id]));
-  //             }
-  //           }
-  //         ]
-  //       );
-  //       return;
-  //     }
-
-  //     // Normal toggle for other questions
-  //     setSelectedMap(prev => {
-  //       const newMap = { ...prev };
-  //       if (newMap[id]) {
-  //         delete newMap[id];
-  //         console.log('🗑️ Removed from selection');
-  //       } else {
-  //         newMap[id] = true;
-  //         console.log('➕ Added to selection');
-  //       }
-  //       return newMap;
-  //     });
-
-  //     // Update question numbers
-  //     if (Number.isFinite(questionNum)) {
-  //       setQuestionNumber(prev => {
-  //         const newNumber = { ...prev };
-  //         if (newNumber[questionNum]) {
-  //           delete newNumber[questionNum];
-  //         } else {
-  //           newNumber[questionNum] = true;
-  //         }
-  //         return newNumber;
-  //       });
-  //     }
-  //   },
-  //   [selectedQuestions, selectedMap, setSelectedMap, setQuestionNumber, dispatch, questionNumber]
-  // );
-  // const toggleSelect = useCallback(
-  //   ({ id, questionNum }: TogglePayload) => {
-  //     console.log('🔄 Toggling question ID:', id);
-
-  //     // Check if this question is pre-saved in Redux
-  //     const isPreSaved = selectedQuestions?.some((q: any) => q?.question_id === id);
-
-  //     // Check if currently selected
-  //     const isCurrentlySelected = !!selectedMap[id];
-
-  //     // If trying to REMOVE a pre-saved question, show confirmation
-  //     if (isPreSaved && isCurrentlySelected) {
-  //       Alert.alert(
-  //         'Remove Question',
-  //         'This question was previously saved. Are you sure you want to remove it?',
-  //         [
-  //           { text: 'Cancel', style: 'cancel' },
-  //           { 
-  //             text: 'Remove', 
-  //             style: 'destructive',
-  //             onPress: () => {
-  //               // Remove from selection
-  //               setSelectedMap(prev => {
-  //                 const newMap = { ...prev };
-  //                 delete newMap[id];
-  //                 return newMap;
-  //               });
-
-  //               // Remove from question numbers
-  //               if (Number.isFinite(questionNum)) {
-  //                 setQuestionNumber(prev => {
-  //                   const newNumber = { ...prev };
-  //                   delete newNumber[questionNum];
-  //                   return newNumber;
-  //                 });
-  //               }
-
-  //               // Also remove from Redux
-  //               dispatch(removePDFQuestions([id]));
-  //             }
-  //           }
-  //         ]
-  //       );
-  //       return;
-  //     }
-
-  //     // If trying to ADD a pre-saved question (but it's not currently selected)
-  //     if (isPreSaved && !isCurrentlySelected) {
-  //       setSelectedMap(prev => ({ ...prev, [id]: true }));
-
-  //       if (Number.isFinite(questionNum)) {
-  //         setQuestionNumber(prev => ({ ...prev, [questionNum]: true }));
-  //       }
-  //       return;
-  //     }
-
-  //     // Normal toggle for non-pre-saved questions
-  //     setSelectedMap(prev => {
-  //       const newMap = { ...prev };
-  //       if (newMap[id]) {
-  //         delete newMap[id];
-  //       } else {
-  //         newMap[id] = true;
-  //       }
-  //       return newMap;
-  //     });
-
-  //     if (Number.isFinite(questionNum)) {
-  //       setQuestionNumber(prev => {
-  //         const newNumber = { ...prev };
-  //         if (newNumber[questionNum]) {
-  //           delete newNumber[questionNum];
-  //         } else {
-  //           newNumber[questionNum] = true;
-  //         }
-  //         return newNumber;
-  //       });
-  //     }
-  //   },
-  //   [selectedQuestions, selectedMap, setSelectedMap, setQuestionNumber, dispatch]
-  // );
+  }, [selectedQuestions]);
   const toggleSelect = useCallback(
     ({ id, questionNum }: TogglePayload) => {
       console.log('🔄 Toggling question ID:', id);
 
-      // Check if this question is pre-saved in Redux
-      const isPreSaved = selectedQuestions?.some((q: any) => q?.question_id === id);
-
-      // Check if currently selected
+      // Check if already selected in local state
       const isCurrentlySelected = !!selectedMap[id];
 
-      // If trying to REMOVE a pre-saved question, show confirmation
-      if (isPreSaved && isCurrentlySelected) {
-        Alert.alert(
-          'Remove Question',
-          'This question was previously saved. Are you sure you want to remove it?',
-          [
-            { text: 'Cancel', style: 'cancel' },
-            {
-              text: 'Remove',
-              style: 'destructive',
-              onPress: () => {
-                // FIRST: Remove from Redux to trigger re-render
-                dispatch(removePDFQuestions([id]));
-
-                // THEN: Remove from local state
-                setSelectedMap(prev => {
-                  const newMap = { ...prev };
-                  delete newMap[id];
-                  return newMap;
-                });
-
-                // Remove from question numbers
-                if (Number.isFinite(questionNum)) {
-                  setQuestionNumber(prev => {
-                    const newNumber = { ...prev };
-                    delete newNumber[questionNum];
-                    return newNumber;
-                  });
-                }
-
-                console.log('🗑️ Removed pre-saved question');
-              }
-            }
-          ]
-        );
-        return;
+      // If already selected, DO NOT REMOVE - just log
+      if (isCurrentlySelected) {
+        console.log('✅ Question already selected - maintaining selection');
+        return; // Don't remove, just exit
       }
 
-      // If trying to ADD a pre-saved question (but it's not currently selected)
-      // This happens when component hasn't updated from Redux yet
-      if (isPreSaved && !isCurrentlySelected) {
-        setSelectedMap(prev => ({ ...prev, [id]: true }));
+      // If not currently selected, add it
+      console.log('➕ Adding new question to selection');
 
-        if (Number.isFinite(questionNum)) {
-          setQuestionNumber(prev => ({ ...prev, [questionNum]: true }));
-        }
-        console.log('✅ Re-added pre-saved question');
-        return;
-      }
+      // Add to local state
+      setSelectedMap(prev => ({
+        ...prev,
+        [id]: true
+      }));
 
-      // Normal toggle for non-pre-saved questions
-      setSelectedMap(prev => {
-        const newMap = { ...prev };
-        if (newMap[id]) {
-          delete newMap[id];
-          console.log('🗑️ Removed from selection');
-        } else {
-          newMap[id] = true;
-          console.log('➕ Added to selection');
-        }
-        return newMap;
-      });
-
+      // Add to question numbers if valid
       if (Number.isFinite(questionNum)) {
-        setQuestionNumber(prev => {
-          const newNumber = { ...prev };
-          if (newNumber[questionNum]) {
-            delete newNumber[questionNum];
-          } else {
-            newNumber[questionNum] = true;
-          }
-          return newNumber;
-        });
+        setQuestionNumber(prev => ({
+          ...prev,
+          [questionNum]: true
+        }));
       }
+
+      // Add to Redux (if you're tracking selections there too)
+      // dispatch(addPDFQuestions([{ id, questionNum }]));
+
+      console.log('✅ New question added to selection');
     },
-    [selectedQuestions, selectedMap, setSelectedMap, setQuestionNumber, dispatch]
+    [selectedMap, setSelectedMap, setQuestionNumber]
   );
-  // const renderItem = useCallback(({ item, index }: { item: Question; index: number }) => {
-  //   const isLocallySelected = !!selectedMap[item?.question_id];
 
-  //   // // ✅ FIXED: Remove .questions from here too
-  //   const isInRedux = selectedQuestions?.some((q: any) => q?.question_id === item?.question_id);
-  //   const isSelected = isLocallySelected || isInRedux;
-  //   const langthList = index === questionsData?.length - 1;
-  //   // console.log(`Question ${item.question_id}: local=${isLocallySelected}, redux=${isInRedux}, selected=${isSelected}`);
-  //   // const isLocallySelected = !!selectedMap[item?.question_id];
-  //   // // Check if it's pre-selected from props
-  //   // const isPreSelected = selectedQuestions?.some((q: any) => q?.question_id === item?.question_id);
-  //   // // Combine both checks
-  //   // const isSelected = isLocallySelected || isPreSelected;
-  //   // const langthList = index === questionsData?.length - 1;
-  //   // console.log(`Question ${item.question_id}: local=${isLocallySelected}, pre=${isPreSelected}, selected=${isSelected}`);
-  //   return (
-  //     <QuestionItem
-  //       item={item}
-  //       index={index}
-  //       isSelected={isSelected}
-  //       selectCheck={selectCheck}
-  //       onToggle={toggleSelect}
-  //       extractImages={extractBase64Images}
-  //       listottomLineHide={langthList}
-  //       currentPage={currentPage}
-  //       limit={limit}
-  //       onInfoPress={openMediaPicker}
-  //       hideContant={hideContant}
-  //     />
-  //   );
-  // }, [selectedMap, selectedQuestions, selectCheck, toggleSelect,
-  //   extractBase64Images, currentPage, limit, openMediaPicker, hideContant, questionsData, dispatch])
   const renderItem = useCallback(({ item, index }: { item: Question; index: number }) => {
-    // Get fresh data from Redux useSelector
-    // const reduxSelectedQuestions = useSelector((state: any) =>
-    //   state.pdfQuestions?.allQuestions || []
-    // );
-
-    // const isInRedux = questiondd?.map(qsId =>
-    //   qsId?.selectedQuestions.some((q: any) => q?.question_id === item?.question_id)
-    // )
-    // const isLocallySelected = !!selectedMap[item?.question_id];
-    // const isSelected = isLocallySelected || isInRedux;
-
-    // const langthList = index === questiondd?.length - 1;
-
-    // const isInRedux = questiondd?.some((chapter: any) =>
-    //   chapter?.selectedQuestions?.some((q: any) => q?.question_id === item?.question_id)
-    // );
-    // const isLocallySelected = !!selectedMap[item?.question_id];
-    // const isSelected = isLocallySelected || isInRedux;
-    // const langthList = index === questionsData?.length - 1;
-
-    // Find the current chapter for this screen (based on chapterId and questionId)
-    const currentChapter = questiondd?.find((chapter: any) =>
-      chapter?.chapterId === getAllRute?.chapterId &&
-      chapter?.questionTypeId === getAllRute?.questionId
-    );
-    // Check if the question is in the current chapter's selectedQuestions
-    const isInRedux = currentChapter?.selectedQuestions?.some((q: any) =>
-      q?.question_id === item?.question_id
-    );
-
     const isLocallySelected = !!selectedMap[item?.question_id];
+
+    // // ✅ FIXED: Remove .questions from here too
+    const isInRedux = selectedQuestions?.some((q: any) => q?.question_id === item?.question_id);
     const isSelected = isLocallySelected || isInRedux;
     const langthList = index === questionsData?.length - 1;
+    // console.log(`Question ${item.question_id}: local=${isLocallySelected}, redux=${isInRedux}, selected=${isSelected}`);
+    // const isLocallySelected = !!selectedMap[item?.question_id];
+    // // Check if it's pre-selected from props
+    // const isPreSelected = selectedQuestions?.some((q: any) => q?.question_id === item?.question_id);
+    // // Combine both checks
+    // const isSelected = isLocallySelected || isPreSelected;
+    // const langthList = index === questionsData?.length - 1;
+    // console.log(`Question ${item.question_id}: local=${isLocallySelected}, pre=${isPreSelected}, selected=${isSelected}`);
     return (
       <QuestionItem
         item={item}
@@ -1425,7 +860,9 @@ const QuestionListData: React.FC<Props> = ({
         hideContant={hideContant}
       />
     );
-  }, [selectedMap, selectCheck, toggleSelect, extractBase64Images, currentPage, limit, openMediaPicker, hideContant, questionsData]);
+  }, [selectedMap, selectedQuestions, selectCheck, toggleSelect,
+    extractBase64Images, currentPage, limit, openMediaPicker, hideContant, questionsData])
+
   const keyExtractor = useCallback((item: Question) => item.question_id, []);
   const extraData = useMemo(() => ({
     selectedMap,
@@ -1473,37 +910,6 @@ const QuestionListData: React.FC<Props> = ({
     mediaType: 'photo',
     selectionLimit: 1, // single image
   };
-  // const openCamera = async () => {
-  //   setOpenPicker(false);
-
-  //   const result = await launchCamera(cameraOptions);
-
-  //   if (result.didCancel) return;
-  //   if (result.errorCode) {
-  //     console.log('Camera Error:', result.errorMessage);
-  //     return;
-  //   }
-
-  //   const photo = result.assets?.[0];
-  //   console.log('Camera image:', photo);
-
-  //   // 👉 Use photo.uri for preview / upload
-  // };
-  // const requestCameraPermission = async () => {
-  //   if (Platform.OS !== 'android') return true;
-
-  //   const granted = await PermissionsAndroid.request(
-  //     PermissionsAndroid.PERMISSIONS.CAMERA,
-  //     {
-  //       title: 'Camera Permission',
-  //       message: 'App needs camera access to take photos',
-  //       buttonPositive: 'OK',
-  //       buttonNegative: 'Cancel',
-  //     }
-  //   );
-
-  //   return granted === PermissionsAndroid.RESULTS.GRANTED;
-  // };
   const requestCameraPermission = async () => {
     if (Platform.OS !== 'android') return true;
 
@@ -1574,56 +980,10 @@ const QuestionListData: React.FC<Props> = ({
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
       />
-      {/* <AppModal
-        visible={openPicker}
-        onClose={() => setOpenPicker(false)}
-        animation={'fade'}
-        overlayStyle={{ justifyContent: "center", boderRadius: 0 }}
-        containerStyle={{
-          borderRadius: moderateScale(10),
-          borderTopLeftRadius: moderateScale(10),
-          borderTopRightRadius: moderateScale(10),
-          marginHorizontal: moderateScale(10),
-          paddingHorizontal: scale(20),
-
-        }}
-      >
-        <View style={styles.sendMainBox}>
-          <Text style={styles.sendQuesetionText}>Send Question error</Text>
-          <Pressable onPress={handleCloseModal}>
-            <CloseIcon name="close" size={moderateScale(23)} color={Colors.InputText} />
-          </Pressable>
-
-        </View>
-        <View style={styles.lineBox} />
-        <Text style={styles.sendQuesetionText}>Error decription</Text>
-        <View style={styles.mainInputBox}>
-          <TextInput placeholder='Enter decription' style={styles.enterDecInput} multiline={true} />
-        </View>
-        <Text style={[styles.sendQuesetionText, { marginTop: moderateScale(20) }]}>Upload photo</Text>
-        <View style={styles.uploadBox}>
-          <Pressable style={[styles.uploadBox, {
-            height: scale(80), borderStyle: 'dotted', alignItems: 'center',
-            justifyContent: "center"
-          }]}>s
-            <View style={styles.addBox}>
-              <AddIcon name="add" color={Colors.white} size={moderateScale(20)} />
-            </View>
-          </Pressable>
-        </View>
-
-        <AppButton title='Submit' style={{ paddingHorizontal: moderateScale(20), width: '70%', borderRadius: moderateScale(10), marginTop: moderateScale(15) }} />
-      </AppModal> */}
-
-      <UploadErrorModal
-        visible={openPicker}
-        onClose={() => setOpenPicker(false)}
-      />
-
     </View>
   );
 };
-export default memo(QuestionListData);
+export default memo(PDFPreviewListComponent);
 
 const styles = StyleSheet.create({
   container: {
@@ -1644,6 +1004,9 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingVertical: moderateScale(8),
+    // borderWidth:1,
+    marginBottom:moderateScale(100)
+    // marginTop:moderateScale(-30)
   },
   card: {
     // backgroundColor: 'red',
@@ -1675,9 +1038,6 @@ const styles = StyleSheet.create({
     // borderWidth: 1
   },
   mathJaxWrapper: {
-    // flex: 1,
-    // marginTop: moderateScale(6),
-    // borderWidth: 1,
     paddingVertical: moderateScale(1),
     marginBottom: moderateScale(8)
   },
@@ -1685,13 +1045,7 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(14),
     fontFamily: Fonts.InstrumentSansMedium,
     color: Colors.black,
-    // borderWidth:1,
-
-    // lineHeight: moderateScale(18),
-    marginTop: moderateScale(1),
-    // marginLeft:moderateScale(-32)
-    // marginTop:moderateScale(10)
-
+    marginTop: moderateScale(1)
   },
   questionMathJax: {
     fontSize: moderateScale(12),
@@ -1722,9 +1076,6 @@ const styles = StyleSheet.create({
     // Your options grid styles
   },
   optionContainer: {
-    // flexDirection: 'row',
-    // alignItems: 'flex-start',
-    // justifyContent:"flex-start",
     marginBottom: moderateScale(8),
     backgroundColor: Colors.white,
     borderRadius: moderateScale(4),
@@ -1740,28 +1091,14 @@ const styles = StyleSheet.create({
   imageStyle: {
     flexDirection: 'column'
   },
-  // optionLabelContainer: {
-  // width: moderateScale(28),
-  // alignItems: 'center',
-  // justifyContent: "center",
-  // // justifyContent: 'flex-start',
-  // borderRadius: moderateScale(20),
-  // // borderColor: '#BFBFBF',
-  // // borderWidth: 1,
-  // height: moderateScale(28),
-  // backgroundColor: Colors?.lightThemeBlue,
-  // marginLeft: moderateScale(2)
-  // },
   correctOptionLabel: {
-    // backgroundColor: '#4CAF50',
     borderColor: '#1E88E5',
     borderWidth: 1.4
   },
   optionLabel: {
     fontSize: moderateScale(11),
     fontFamily: Fonts.InstrumentSansMedium,
-    color: Colors.black,
-    // textAlign:'center'
+    color: Colors.black
   },
   correctOptionText: {
     color: Colors?.white,
@@ -1770,41 +1107,10 @@ const styles = StyleSheet.create({
   correctOptionBgColor: {
     backgroundColor: Colors?.questionSelect,
   },
-  // optionContent: {
-  //   flex: 1,
-  //   // flexDirection:'row',
-  //   // flexDirection: 'row',
-  //   // alignItems:"center",
-  //   // justifyContent:"flex-start",
-  //   // overflow:"hidden"
-  //   borderRadius: moderateScale(2),
-  //   // borderWidth:1
-  // },
-  // optionImagesContainer: {
-  //   marginBottom: moderateScale(4),
-  //   // borderWidth: 1,
-  //   justifyContent: "flex-start",
-  //   alignItems: 'flex-start',
-  //   marginLeft: moderateScale(10)
-  // },
-  // optionImage: {
-  //   width: '100%',
-  //   height: '100%',
-  //   maxHeight: moderateScale(120),
-  //   borderRadius: moderateScale(4),
-  //   alignSelf: "flex-start"
-  //   // alignSelf: 'flex-start',
-  //   // resizeMode: 'contain',
-  // },
   optionTextContainer: {
-    // flex: 1,
-    // paddingVertical: moderateScale(.5),
-    // minHeight: moderateScale(40),
     flex: 1,
     marginLeft: moderateScale(3),
-    justifyContent: 'center', // ✅ center relative to ID
-    // borderWidth: 1,
-    // borderColor: 'green'
+    justifyContent: 'center', 
   },
   optionTextWithImages: {
     marginTop: moderateScale(4),
@@ -1813,15 +1119,12 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(13),
     fontFamily: Fonts.InstrumentSansMedium,
     color: Colors.black,
-    lineHeight: moderateScale(16),
-    // marginLeft: moderateScale(5),
-    // borderWidth: 1
+    lineHeight: moderateScale(16)
   },
   optionMathJax: {
     fontSize: moderateScale(13),
     fontFamily: Fonts.InstrumentSansMedium,
     color: Colors.black,
-    // alignSelf: 'flex-start', 
     borderWidth: 1
   },
   checkBox: {
@@ -1857,7 +1160,6 @@ const styles = StyleSheet.create({
     elevation: 30,
     marginVertical: moderateScale(1),
     shadowColor: 'rgba(0, 140, 227, 1)',
-    // borderRadius:moderateScale(10),
     backgroundColor: '#f9fafb'
   },
   solutionBox: {
@@ -1955,8 +1257,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',        // 🔥 allows multiple images
     marginLeft: moderateScale(10),
-    // gap: moderateScale(8),   // RN 0.71+
-    // borderWidth: 1
   },
 
   /* SINGLE IMAGE */

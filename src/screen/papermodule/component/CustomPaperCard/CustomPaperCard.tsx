@@ -13,6 +13,7 @@ import { GET } from '../../../../api/request';
 
 const CustomPaperCard = ({ onPress }) => {
   const navigation = useNavigation()
+  
   return (
     <View >
       <View style={styles.mainBox}>
@@ -23,7 +24,7 @@ const CustomPaperCard = ({ onPress }) => {
           <Text style={styles.title}>Manual Paper</Text>
           <Text style={styles.subtitle}>Select question of your {`\n`}choice</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.card,{backgroundColor:'#FFF6D4'}]} activeOpacity={0.8} onPress={() => onPress('Custom')}>
+        <TouchableOpacity style={[styles.card,{backgroundColor:'#FFF6D4'}]} activeOpacity={0.8} onPress={() => {}}>
           <View style={styles.imgeCurcel}>
             <Image source={Icons.custompaper} style={styles.icon} /></View>
           <Text style={styles.title}>Custom Paper</Text>
