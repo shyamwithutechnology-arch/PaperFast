@@ -41,10 +41,10 @@ const PDFDetails = () => {
     const route = useRoute();
     const dispatch = useDispatch();
     // GET: Read questions from Redux
-    const pdfQuestions = useSelector((state: any) => state?.pdfQuestions?.questions || []);
+    const pdfQuestions = useSelector((state: any) => state?.pdfQuestions?.allQuestions || []);
     const showSolutions = route.params?.showSolutions || false;
-    console.log('reeeeeeeeeeselectedQuestionDatapdfQuestions', pdfQuestions);
-    console.log('showSolutions', pdfQuestions);
+    // console.log('reeeeeeeeeeselectedQuestionDatapdfQuestions', pdfQuestions);
+    console.log('showSolutionsroute', route?.params?.questionType);
 
     // Logo upload states
     const [loading, setLoading] = useState(false);
@@ -53,15 +53,17 @@ const PDFDetails = () => {
     // Form states
     const [instituteName, setInstituteName] = useState('');
     const [testName, setTestName] = useState('');
-    const [time, setTime] = useState('2 Hours');
+    const [time, setTime] = useState('');
     const [hideDateTime, setHideDateTime] = useState(false);
     const [waterMarkType, setWaterMarkType] = useState('1');
     const [waterMarkPosition, setWaterMarkPosition] = useState('1');
     const [borderType, setBorderType] = useState('1');
     const [waterMarkLogo, setWaterMarkLogo] = useState<string | null>(null);
+    const [waterMarkText, setWaterMarkText] = useState<string | null>(null);
     const [borderImage, setBorderImage] = useState<string | null>(null);
     const [dropDownValue, setDropDownValue] = useState<string | null>(null);
 
+    console.log('dropDownValue', dropDownValue);
 
     // date picker
     const [date, setDate] = useState(new Date());
@@ -346,12 +348,45 @@ const PDFDetails = () => {
     // In PDFDetails.tsx - Update handlePreviewPdf function
     const handlePreviewPdf = () => {
         if (!logoUri) {
-            Alert.alert('Missing Logo', 'Please upload institute logo first');
+            showToast('error', 'Please upload institute logo first');
             return;
         }
 
         if (pdfQuestions.length === 0) {
             Alert.alert('No Questions', 'Please select questions first');
+            return;
+        }
+        if (instituteName.trim() === '' || !instituteName.trim()) {
+            showToast('error', 'Please enter institute name');
+            return;
+        }
+        if (testName.trim() === '' || !testName.trim()) {
+            showToast('error', 'Please enter test name');
+            return;
+        }
+
+        if (time.trim() === '' || !time.trim()) {
+            showToast('error', 'Please enter time');
+            return false
+        }
+        {
+            if (waterMarkType === '1') {
+                if (!waterMarkLogo && !waterMarkText) {
+                    showToast('error', 'Please upload water mark logo');
+                    return;
+                }
+            }
+        }
+
+        if (waterMarkType === '2') {
+            if (!waterMarkText && !waterMarkLogo) {
+                showToast('error', 'Please enter water mark text');
+                return;
+            }
+        }
+
+        if (!dropDownValue || dropDownValue === '') {
+            showToast('error', 'Please select test number');
             return;
         }
 
@@ -370,12 +405,15 @@ const PDFDetails = () => {
             borderImage,
             showSolutions,
             dropDownValue,
-            wishText: 'Wish you all the best',
+            questionType: route?.params?.questionType || 'ram',
+            waterMarkText:waterMarkText,
+            wishText: 'Wish you all the best'
         };
 
         // Navigate to Preview
         navigation.navigate('PDFPreviewScreen', {
             previewData,
+
         });
     };
 
@@ -390,8 +428,8 @@ const PDFDetails = () => {
         );
     };
 
-//   const selectedQuestoin = useSelector((state: any) => state?.pdfQuestions);
-//   console.log('selectedQuestoinselectedQuestoinwww', selectedQuestoin);
+    //   const selectedQuestoin = useSelector((state: any) => state?.pdfQuestions);
+    //   console.log('selectedQuestoinselectedQuestoinwww', selectedQuestoin);
     // useEffect(() => {
     //     // Alert.alert('sdaffffffffffffff', 'dfffffffffff')  
     //     console.log('=== QuestionListData Debug ===');
@@ -484,9 +522,8 @@ const PDFDetails = () => {
                             <View style={styles.dateTimeItem}>
                                 <Text style={styles.label}>Time</Text>
                                 <View style={{ flexDirection: 'row', alignItems: "center", justifyContent: 'space-between', borderWidth: 1, paddingHorizontal: moderateScale(10), borderRadius: moderateScale(4), borderColor: Colors.InputStroke, paddingVertical: moderateScale(1.5) }}>
-                                    <TextInput placeholder='Minute' inputMode='numeric' style={{ width: moderateScale(110) }} />
+                                    <TextInput placeholder='Minute' style={{ width: moderateScale(110) }} onChangeText={setTime} />
                                     <ClockIcon name="clock-rotate-left" size={17} color="#999" />
-
                                 </View>
 
                             </View>
@@ -568,7 +605,7 @@ const PDFDetails = () => {
                                 </View>
                             </>
                         ) : (
-                            <AppTextInput placeholder="Watermark text" />
+                            <AppTextInput placeholder="Watermark text" onChangeText={setWaterMarkText} />
                         )}
                     </View>
 
@@ -707,9 +744,10 @@ const styles = StyleSheet.create({
         // height: moderateScale(120),
         height: '100%',
         width: '100%',
-        borderRadius: moderateScale(4),
+        borderRadius: moderateScale(20),
         // marginBottom: moderateScale(10),
-        alignSelf: "center"
+        alignSelf: "center",
+
     },
     fileName: {
         fontSize: moderateScale(12),

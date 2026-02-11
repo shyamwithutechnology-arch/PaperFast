@@ -159,5 +159,32 @@ export const styles = StyleSheet.create({
   btnMain: {
     justifyContent: "space-between",
     marginHorizontal: moderateScale(16.8),
-  }
+  },
+
+
+  // ???????????????????????????????????????
+    tabContainer: {
+    flexDirection: 'row',
+    backgroundColor: Colors.white,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.lightThemeBlue,
+  },
+  tab: {
+    flex: 1,
+    paddingVertical: moderateScale(12),
+    alignItems: 'center',
+  },
+  activeTab: {
+    borderBottomWidth: 1.2,
+    borderBottomColor: Colors.primaryColor,
+  },
+  tabText: {
+    fontSize: moderateScale(14),
+    fontFamily: Fonts.InterMedium,
+    color: Colors.primaryColor,
+  },
+  activeTabText: {
+    color: Colors.primaryColor,
+    fontFamily: Fonts.InterSemiBold,
+  },
 })
