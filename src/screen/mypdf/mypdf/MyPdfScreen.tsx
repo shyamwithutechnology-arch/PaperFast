@@ -132,7 +132,6 @@ const MyPdfScreen = (props: MyPdfScreenProps) => {
     const handleGoBack = () => {
         navigation.goBack()
     }
-
     
     return (
         <View style={styles.container}>

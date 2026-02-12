@@ -22,13 +22,14 @@ import { Colors } from "../../theme";
 interface HeaderpapermoduleProp {
     title: string,
     rightPress: () => void,
+    rightPressDisable:boolean,
     leftIconPress: () => void,
     titleStyle: object,
     subjectName: Text,
     rightPress2: () => void,
     headerContainerStyle:object
 }
-const HeaderPaperModule: React.FC = ({ title, rightPress, leftIconPress, titleStyle, subjectName, rightPress2,headerContainerStyle }: HeaderpapermoduleProp) => {
+const HeaderPaperModule: React.FC = ({ title, rightPress,rightPressDisable, leftIconPress, titleStyle, subjectName, rightPress2,headerContainerStyle }: HeaderpapermoduleProp) => {
     return (
         <View style={[styles.headerContainer,headerContainerStyle]}>
             <View style={{
@@ -54,7 +55,7 @@ const HeaderPaperModule: React.FC = ({ title, rightPress, leftIconPress, titleSt
                 </Text>
             </View>
             <View style={{ flexDirection: "row", alignItems: 'center' }}>
-                {rightPress && <TouchableOpacity style={[styles.saveDraftBox, rightPress2 && { marginRight: moderateScale(10) }]} onPress={rightPress}>
+                {rightPress && <TouchableOpacity  disabled={rightPressDisable} style={[styles.saveDraftBox, rightPress2 && { marginRight: moderateScale(10) }]} onPress={rightPress}>
                     <Text style={[styles.saveDraftText, { color: Colors.black }]}>Save Draft</Text>
                 </TouchableOpacity>
                 }

@@ -15,6 +15,7 @@ import Loader from '../../../component/loader/Loader'
 import { POST_FORM } from '../../../api/request';
 import { ApiEndPoint } from '../../../api/endPoints';
 import { showToast } from '../../../utils/toast';
+import { setRole } from '../../../redux/slices/userRole';
 
 type NameFormData = {
     firstName: string;
@@ -33,12 +34,14 @@ const LoginScreenRole = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [errors, setErrors] = useState<NameFormErrors>({});
 
-    const handleRoleSelect = (status) => {
-        if (status === 'male') {
-            setSelectedRole(status)
-        } else if (status === 'female') {
-            setSelectedRole(status)
-        }
+    const handleRoleSelect = async (status) => {
+        // if (status === 'male') {
+        //     setSelectedRole(status)
+        // } else if (status === 'female') {
+        //     setSelectedRole(status)
+        // }
+        // dispatch(setRole(''))
+        setSelectedRole(status)
     }
     // LoginScreen.tsx
     // const handleLoggedIn = () => {
@@ -95,11 +98,12 @@ const LoginScreenRole = () => {
                 usr_first_name: input?.firstName,
                 usr_last_name: input?.lastName,
                 usr_phone: mobileNumber,
-                usr_role: selectedRole === 'male' ? 'student' : 'tutor',
+                usr_role: selectedRole === 'Teacher' ? 'tutor' : 'student',
                 usr_device_token: 'fdsaagdfhghjk'
             };
             const response = await POST_FORM(ApiEndPoint.LoGINROlE, payload);
             if (response && response.status === 200) {
+                dispatch(setRole(response?.result?.usr_role))
                 showToast('success', 'Success', 'Registration Successful');
                 await localStorage.setItem(storageKeys.userId, String(response?.result?.usr_id))
                 await reduxStorage.setItem('token', '1234')
@@ -176,18 +180,18 @@ const LoginScreenRole = () => {
                         <Text style={styles.forText}>For</Text>
 
                         <View style={styles.selectionBox}>
-                            <TouchableOpacity style={[styles.studentBox,]} onPress={() => handleRoleSelect('male')}>
-                                <View style={[styles.studentImgBox, { borderWidth: selectedRole === 'male' ? 1 : 0.1, backgroundColor: selectedRole === 'male' ? '#EBF6FD' : '#F3F3F3', borderColor: selectedRole === 'male' ? 'rgba(18, 70, 130, 0.47)' : Colors.InputStroke }]}>
-                                    <Image source={Icons.male} style={[styles.maleImg, { tintColor: selectedRole === 'male' ? Colors?.primaryColor : 'rgba(169, 169, 169, 0.56)' }]} />
+                            <TouchableOpacity style={[styles.studentBox,]} onPress={() => handleRoleSelect('Student')}>
+                                <View style={[styles.studentImgBox, { borderWidth: selectedRole === 'Student' ? 1 : 0.1, backgroundColor: selectedRole === 'Student' ? '#EBF6FD' : '#F3F3F3', borderColor: selectedRole === 'Student' ? 'rgba(18, 70, 130, 0.47)' : Colors.InputStroke }]}>
+                                    <Image source={Icons.male} style={[styles.maleImg, { tintColor: selectedRole === 'Student' ? Colors?.primaryColor : 'rgba(169, 169, 169, 0.56)' }]} />
                                 </View>
-                                <Text style={[styles.studentText, { fontFamily: selectedRole === 'male' ? Fonts.InstrumentSansBold : Fonts.InstrumentSansRegular, color: selectedRole === 'male' ? Colors?.primaryColor : Colors?.InputText }]}>Student</Text>
+                                <Text style={[styles.studentText, { fontFamily: selectedRole === 'Student' ? Fonts.InstrumentSansBold : Fonts.InstrumentSansRegular, color: selectedRole === 'Student' ? Colors?.primaryColor : Colors?.InputText }]}>Student</Text>
                             </TouchableOpacity>
 
-                            <TouchableOpacity style={[styles.studentBox, { marginLeft: moderateScale(30) }]} onPress={() => handleRoleSelect('female')}>
-                                <View style={[styles.studentImgBox, { borderWidth: selectedRole === 'female' ? 1 : 0.1, backgroundColor: selectedRole === 'female' ? '#EBF6FD' : '#F3F3F3', borderColor: selectedRole === 'female' ? 'rgba(18, 70, 130, 0.47)' : Colors.InputStroke }]}>
-                                    <Image source={Icons.female} style={[styles.maleImg, { tintColor: selectedRole === 'female' ? Colors?.primaryColor : 'rgba(169, 169, 169, 0.56)' }]} />
+                            <TouchableOpacity style={[styles.studentBox, { marginLeft: moderateScale(30) }]} onPress={() => handleRoleSelect('Teacher')}>
+                                <View style={[styles.studentImgBox, { borderWidth: selectedRole === 'Teacher' ? 1 : 0.1, backgroundColor: selectedRole === 'Teacher' ? '#EBF6FD' : '#F3F3F3', borderColor: selectedRole === 'Teacher' ? 'rgba(18, 70, 130, 0.47)' : Colors.InputStroke }]}>
+                                    <Image source={Icons.female} style={[styles.maleImg, { tintColor: selectedRole === 'Teacher' ? Colors?.primaryColor : 'rgba(169, 169, 169, 0.56)' }]} />
                                 </View>
-                                <Text style={[styles.studentText, { fontFamily: selectedRole === 'female' ? Fonts.InstrumentSansBold : Fonts.InstrumentSansRegular, color: selectedRole === 'female' ? Colors?.primaryColor : Colors?.InputText }]}>Teacher</Text>
+                                <Text style={[styles.studentText, { fontFamily: selectedRole === 'Teacher' ? Fonts.InstrumentSansBold : Fonts.InstrumentSansRegular, color: selectedRole === 'Teacher' ? Colors?.primaryColor : Colors?.InputText }]}>Teacher</Text>
                             </TouchableOpacity>
                         </View>
 

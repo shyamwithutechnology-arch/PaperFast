@@ -152,7 +152,7 @@ const OptionItem = memo(({
   const formattedOptionText = useMemo(() => {
     return `
     <div style="
-      font-size: 11px;
+      font-size: 6px;
       line-height: 20px;
       border: 0px solid #000;
       paddingVertical:4px 0,
@@ -388,7 +388,7 @@ const QuestionContent = memo(({
   body {
     margin: 0 !important;
     padding: 0 !important;
-    font-size: ${moderateScale(12)}px;
+    font-size: ${moderateScale(10)}px;
     color: #000;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     line-height: ${moderateScale(18)}px;
@@ -1042,13 +1042,13 @@ const styles = StyleSheet.create({
     marginBottom: moderateScale(8)
   },
   questionText: {
-    fontSize: moderateScale(14),
+    fontSize: moderateScale(10),
     fontFamily: Fonts.InstrumentSansMedium,
     color: Colors.black,
     marginTop: moderateScale(1)
   },
   questionMathJax: {
-    fontSize: moderateScale(12),
+    fontSize: moderateScale(10),
     fontFamily: Fonts.InstrumentSansMedium,
     color: Colors.black,
     // alignSelf: 'stretch', // ✅ important
@@ -1065,7 +1065,7 @@ const styles = StyleSheet.create({
   },
   questionImage: {
     width: '100%',
-    height: moderateScale(98),
+    height: moderateScale(40),
     maxHeight: verticalScale(250),
     borderRadius: moderateScale(2),
     backgroundColor: Colors?.white,
@@ -1096,7 +1096,7 @@ const styles = StyleSheet.create({
     borderWidth: 1.4
   },
   optionLabel: {
-    fontSize: moderateScale(11),
+    fontSize: moderateScale(9),
     fontFamily: Fonts.InstrumentSansMedium,
     color: Colors.black
   },
@@ -1116,13 +1116,13 @@ const styles = StyleSheet.create({
     marginTop: moderateScale(4),
   },
   optionText: {
-    fontSize: moderateScale(13),
+    fontSize: moderateScale(10),
     fontFamily: Fonts.InstrumentSansMedium,
     color: Colors.black,
     lineHeight: moderateScale(16)
   },
   optionMathJax: {
-    fontSize: moderateScale(13),
+    fontSize: moderateScale(10),
     fontFamily: Fonts.InstrumentSansMedium,
     color: Colors.black,
     borderWidth: 1
@@ -1240,8 +1240,8 @@ const styles = StyleSheet.create({
 
   /* LEFT ID BOX */
   optionLabelContainer: {
-    width: moderateScale(26),
-    height: moderateScale(26),
+    width: moderateScale(22),
+    height: moderateScale(22),
     borderRadius: moderateScale(16),
     alignItems: 'center',
     justifyContent: 'center',
@@ -1410,3 +1410,4 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(2),
   },
 });
+

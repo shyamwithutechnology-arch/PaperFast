@@ -1259,7 +1259,7 @@ const QuestionListData: React.FC<Props> = ({
   // );
   const toggleSelect = useCallback(
     ({ id, questionNum }: TogglePayload) => {
-      console.log('🔄 Toggling question ID:', id);
+      // console.log('🔄 Toggling question ID:', id);
 
       // Check if this question is pre-saved in Redux
       const isPreSaved = selectedQuestions?.some((q: any) => q?.question_id === id);

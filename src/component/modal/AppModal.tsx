@@ -21,7 +21,8 @@ const AppModal = ({ visible, onClose, children, animation, overlayStyle, contain
     <Modal
       visible={visible}
       transparent
-      animationType={'fade'}
+      // animationType={'fade'}
+      animationType={animation}
       statusBarTranslucent
     >
       <Pressable style={[styles.overlay, overlayStyle]} onPress={onClose}>
