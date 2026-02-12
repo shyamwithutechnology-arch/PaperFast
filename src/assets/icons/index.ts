@@ -51,6 +51,7 @@ export const Icons = {
     info: require('./info.png'),
     danger: require('./danger.png'),
     down: require('./down.png'),
+    close: require('./close.png'),
 
 
     //// home icon

@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { moderateScale } from '../../../../utils/responsiveSize';
 import { Colors, Fonts } from '../../../../theme';
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import { localStorage, storageKeys } from '../../../../storage/storage';
+import { GET, POST_FORM } from '../../../../api/request';
+import { ApiEndPoint } from '../../../../api/endPoints';
+import { showToast } from '../../../../utils/toast';
 
 export type DraftPaperListProps = {
 }
@@ -46,6 +50,32 @@ const DraftPaperList = (props: DraftPaperListProps) => {
         },
     ]);
 
+    const [userId, setUserId] = useState<string | null>('')
+    const [draftList, setDraftList] = useState<[]>([])
+    const [loading, setLoading] = useState<boolean>(false)
+
+    const handleFetchDraftData = async (id: string) => {
+        try {
+            const params = {
+                user_id: id ?? userId,
+            }
+            setLoading(true)
+            const response = await POST_FORM(ApiEndPoint.draftList, params);
+            if (response.status === 200) {
+
+                console.log('resssrrrrr', response)
+            }
+        } catch (error) {
+            if (error.offline) {
+                return
+            }
+            const errorMessage = error.msg || 'Something went wrong. Please try again'
+            showToast('error', 'Error', errorMessage);
+        } finally {
+            setLoading(false)
+        }
+    }
+
     const handleRendamItem = () => {
         return (
             <View style={styles.draftContent}>
@@ -55,12 +85,23 @@ const DraftPaperList = (props: DraftPaperListProps) => {
                     <Text style={styles.decText}>3.0 Marks</Text>
                     <Text style={styles.decText}>Last Updates 23-12-2025</Text>
                 </View>
-                <TouchableOpacity style={styles.deleteBox}>
+                <TouchableOpacity style={styles.deleteBox} >
                     <MaterialIcons name='delete-outline' size={moderateScale(25)} color={'#EA5858'} />
                 </TouchableOpacity>
             </View>
         )
     }
+
+    useEffect(() => {
+        const getId = async () => {
+            let userId = await localStorage.getItem(storageKeys.userId)
+            setUserId(userId)
+            if (userId) {
+                handleFetchDraftData(userId)
+            }
+        }
+        getId()
+    })
     return (
         <View>
             {/* <Text>DraftPaperList component</Text> */}

@@ -22,6 +22,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { launchImageLibrary } from "react-native-image-picker";
 import { useDispatch } from "react-redux";
 import { addChapterQuestions, addPDFQuestions, SelectedQuestion } from "../../../redux/slices/pdfQuestionsSlice";
+import DraftModal from "../draftpaper/component/DraftModal";
 // import { buildPDFHtml } from "../../mypdf/component/buildPDFHtml";
 interface Difficulty {
     dlevel_id: string,
@@ -58,13 +59,14 @@ const QuestionScreen = () => {
     //     questionId,
     //     questionMarks,
     //     label,);
-    console.log('routevvvvvvvww', questionId);
 
     const [activeTab, setActiveTab] = useState('all');
 
     const [selectCheck, setSelectedCheck] = useState('Options')
-    const [selectedMap, setSelectedMap] = useState<Record<string, boolean>>({});
+    const [selectedMap, setSelectedMap] = useState({});
+    console.log('wwwwwwwwwwwwwwwwwwwwwwwww', Object.keys(selectedMap));
     const [questionNumber, setQuestionNumber] = useState<Record<string, boolean>>({});
+    const [visibleDraft, setVisibleDraft] = useState<boolean>(false);
     const [questionsData, setQuestionsData] = useState<any>({});
     const [loading, setLoading] = useState<boolean>(false);
     const [labelStatus, setLabelStatus] = useState(false);
@@ -84,6 +86,7 @@ const QuestionScreen = () => {
         total: 0,
     });
 
+    const questionLenght = Object.keys(selectedMap)?.length
     const dispatch = useDispatch();
     const handleCheck = (item: string) => {
         // console.log('eeeeeee', item);
@@ -119,6 +122,13 @@ const QuestionScreen = () => {
             setQuestionTypeSelect(null),
             await fetchQuestions(pagination.page, pagination?.limit);
         setLabelStatus(false)
+    }
+    const handleCloseDraftModal = () => {
+        setVisibleDraft(false)
+    }
+    const handleOpenDraftModal = () => {
+        setVisibleDraft(true)
+        // () => navigation?.navigate('DraftPaperScreen')
     }
     // const handleBack = async () => {
     //     const selectedQuestions = questionsData?.result?.filter(
@@ -314,87 +324,7 @@ const QuestionScreen = () => {
             setLoading(false);
         }
     };
-    // In QuestionScreen.tsx
-    // const handlePDFPress = () => {
-    //   const selectedQuestions = questionsData?.result?.filter(
-    //     q => selectedMap[q.question_id]
-    //   );
 
-    //   if (!selectedQuestions?.length) {
-    //     Alert.alert('No Selection', 'Please select at least one question');
-    //     return;
-    //   }
-
-    //   navigation.navigate('MyPdfScreen', {
-    //     selectedQuestions,
-    //     questionCount: selectedQuestions.length,
-    //     showSolutions: selectCheck === 'Solutions',
-    //     onGenerate: async (pdfSettings: PDFSettings) => {
-    //       // Optional: Handle PDF generation from here
-    //       setLoading(true);
-    //       try {
-    //         const result = await generateQuestionPaperPDF(
-    //           selectedQuestions,
-    //           selectCheck === 'Solutions',
-    //           pdfSettings
-    //         );
-
-    //         Alert.alert('Success', `PDF generated: ${result.fileName}`, [
-    //           { 
-    //             text: 'View', 
-    //             onPress: () => navigation.navigate('PDFViewer', { filePath: result.filePath }) 
-    //           },
-    //           { text: 'OK' },
-    //         ]);
-    //       } catch (error: any) {
-    //         Alert.alert('Error', error.message);
-    //       } finally {
-    //         setLoading(false);
-    //       }
-    //     }
-    //   });
-    // };
-
-    // const handlePDFPress = () => {
-    //     const selectedQuestions = questionsData?.result?.filter(
-    //         q => selectedMap[q.question_id]
-    //     );
-
-    //     console.log('selectedQuestions for PDF:', selectedQuestions);
-
-    //     if (!selectedQuestions?.length) {
-    //         Alert.alert('No Selection', 'Please select at least one question');
-    //         return;
-    //     }
-
-    //     // Navigate to PDF customization screen
-    //     navigation.navigate('PDFDetailsScreen', {
-    //         selectedQuestions,
-    //         questionCount: selectedQuestions.length,
-    //         showSolutions: selectCheck === 'Solutions',
-    //     });
-    // };
-    // const handlePDFPress = () => {
-    //     const selectedQuestions = questionsData?.result?.filter(
-    //         q => selectedMap[q.question_id]
-    //     );
-    //     dispatch(setPDFQuestions(selectedQuestions))
-
-    //     console.log('selectedQuestions for PDF:', selectedQuestions);
-
-    //     if (!selectedQuestions?.length) {
-    //         Alert.alert('No Selection', 'Please select at least one question');
-    //         return;
-    //     }
-
-    //     // Navigate to PDF customization screen
-    //     navigation.navigate('MyPDF', {
-    //         screen: 'PDFDetailsScreen',
-    //         selectedQuestions: JSON.parse(JSON.stringify(selectedQuestions)), // Deep copy to avoid reference issues
-    //         questionCount: selectedQuestions.length,
-    //         showSolutions: selectCheck === 'Solutions',
-    //     })
-    // }
     const handlePDFPress = () => {
         // Get selected questions
         const selectedQuestions = questionsData?.result?.filter(
@@ -403,15 +333,12 @@ const QuestionScreen = () => {
 
 
         if (!selectedQuestions.length) {
-            Alert.alert('No Selection', 'Please select at least one question');
+            // Alert.alert('No Selection', 'Please select at least one question');
+            showToast('error', 'Please select at least one question')
             return;
         }
-
-        // console.log('useSelectorssss', selectedQuestions);
-
         // SET: Store in Redux
         dispatch(addPDFQuestions(selectedQuestions));
-
         // Navigate
         navigation.navigate('MyPDF', {
             screen: 'PDFDetailsScreen',
@@ -431,7 +358,7 @@ const QuestionScreen = () => {
                 'page': page?.toString(),
                 'limit': limit?.toString()
             }
-            // console.log('ppppppppp', params);
+            console.log('ppppppppp', params);
 
             const response = await POST_FORM('question', params)
             if (response?.status === 200) {
@@ -547,7 +474,8 @@ const QuestionScreen = () => {
             <SafeAreaView edges={["top"]} style={{ backgroundColor: Colors.lightThemeBlue }}>
                 <HeaderPaperModule
                     title={paperType || ''}
-                    rightPress={() => navigation?.navigate('DraftPaperScreen')}
+                    rightPress={handleOpenDraftModal}
+                    rightPressDisable={questionLenght <= 0 && true}
                     // rightPress2={() => navigation?.navigate('MyPdfScreen')}
                     rightPress2={handlePDFPress}
                     leftIconPress={handleBack}
@@ -578,7 +506,6 @@ const QuestionScreen = () => {
 
                 <View style={{ flex: 1 }}>
                     {activeTab === 'all' ? (
-                        // <AllQuestionsTab {...props} />
                         <>
                             <View style={styles.optionsSectBox}>
                                 <View style={{
@@ -652,53 +579,7 @@ const QuestionScreen = () => {
                                 selectedQuestions={selectedQuestions}
                                 getAllRute={route?.params}
                             />
-                            {/* <AppModal visible={labelStatus} onClose={handleLabelClose}>
-                                <View style={styles.applyBox}>
-                                    <Text style={styles.diffeicultText}>Apply Filter</Text>
-                                    <TouchableOpacity onPress={handleClearFilter} style={{ padding: moderateScale(1) }}>
-                                        <Text style={styles.clearAllText}>Clear all filters</Text>
-                                    </TouchableOpacity>
-                                </View>
-                                <ScrollView style={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
-                                    <View style={styles.lineBox} />
-                                    <Text style={styles.diffecultyText}>Difficulty level</Text>
-                                    <View style={styles.easyBox}>
-                                        <View style={styles.difficultMainBox}>
-                                            {difficultyLabel?.map(item => (
-                                                <Pressable key={item?.dlevel_id} style={styles.checkBoxMain} onPress={() => handleCheckStatus(item?.dlevel_id)}>
-                                                    <View style={[styles.checkBox, lebelCheck === item?.dlevel_id && { backgroundColor: Colors.primaryColor, borderWidth: 0 }]}>
-                                                        {lebelCheck === item?.dlevel_id && <IconEntypo name='check' size={moderateScale(14.5)} color={Colors.white} />
-                                                        }
-                                                    </View>
-                                                    <Text style={styles.easyText}>{item?.dlevel_name}</Text>
-                                                </Pressable>))}
-                                        </View>
-                                    </View>
-                                    <Text style={[styles.diffecultyText, { marginTop: moderateScale(20) }]}>Question Type</Text>
-                                    {questionType?.map(item => (
-                                        <Pressable style={[styles.checkBoxMain, { justifyContent: "flex-start" }]} onPress={() => handleQuestionTypeSelect(item?.qp_id)}>
-                                            <View style={[styles.checkBox, questionTypeSelect === item?.qp_id && { backgroundColor: Colors.primaryColor, borderWidth: 0 }]}>
-                                                {questionTypeSelect === item?.qp_id && <IconEntypo name='check' size={moderateScale(14.5)} color={Colors.white} />}                                </View>
-                                            <Text style={styles.easyText}>{item?.qp_name}</Text>
-                                        </Pressable>
-                                    ))}
 
-                                    <Text style={[styles.diffecultyText, { marginTop: moderateScale(20) }]}>Books</Text>
-                                    {book?.map(item => (
-                                        <Pressable style={[styles.checkBoxMain, { justifyContent: "flex-start" }]} onPress={() => handleBookSelect(item?.book_id)}>
-                                            <View style={[styles.checkBox, bookSelect === item?.book_id && { backgroundColor: Colors.primaryColor, borderWidth: 0 }]}>
-                                                {bookSelect === item?.book_id && <IconEntypo name='check' size={moderateScale(14.5)} color={Colors.white} />}                                </View>
-                                            <Text style={styles.easyText}>{item?.book_name}</Text>
-                                        </Pressable>
-                                    ))}
-                                </ScrollView>
-                                <View style={[styles.lineBox]} />
-                                <View style={[styles.easyBox, styles.btnMain]}>
-                                    <AppButton title="Cancel" style={styles.cancelBtn} textStyle={styles.cancelText} onPress={handleFilterClose} />
-                                    <AppButton title="Apply Filter" style={styles.applyFilterBox}
-                                        textStyle={styles.applyText} onPress={handleApplyFilter} />
-                                </View>
-                            </AppModal> */}
                             <AppModal visible={labelStatus} onClose={handleLabelClose}>
                                 <View style={styles.applyBox}>
                                     <Text style={styles.diffeicultText}>Apply Filter</Text>
@@ -763,6 +644,7 @@ const QuestionScreen = () => {
                                     <Text>Upload photo</Text>
                                 </Pressable>
                             </AppModal>
+                            <DraftModal activeDraft={visibleDraft} onClose={handleCloseDraftModal} questionId={Object.keys(selectedMap)} />
                         </>
                     ) : (
                         <>

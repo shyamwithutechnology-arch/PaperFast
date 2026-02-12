@@ -12,5 +12,8 @@
         bookFetch:'book',
         questionChapter:'question-chapter',
         difficultyLabel :'difficulty-level',
-        queationtype :'queation-type'
+        queationtype :'queation-type',
+        updateRole :'update-role',
+        draftAdd :'draft-add',
+        draftList :'draft-list',
     }

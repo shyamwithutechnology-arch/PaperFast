@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
     View,
     Text,
@@ -17,11 +17,16 @@ import { Icons } from '../../assets/icons';
 import { Images } from '../../assets/images';
 import { WorkletsModule } from 'react-native-worklets';
 import { logout } from '../../redux/slices/authSlice';
-import { useDispatch } from 'react-redux';
-import { localStorage, reduxStorage } from '../../storage/storage';
+import { useDispatch, useSelector } from 'react-redux';
+import { localStorage, reduxStorage, storageKeys } from '../../storage/storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AppHeader from '../header/AppHeader';
 import { useNavigation } from '@react-navigation/native';
+import { showToast } from '../../utils/toast';
+import { POST_FORM } from '../../api/request';
+import { ApiEndPoint } from '../../api/endPoints';
+import Loader from '../loader/Loader';
+import { setRole } from '../../redux/slices/userRole';
 
 const MENU = [
     { id: 1, title: 'My Profile', icon: Icons.profile, route: 'ProfileScreen' },
@@ -38,9 +43,14 @@ const MENU = [
 
 
 const CustomDrawer = ({ navigation }) => {
-    const [role, setRole] = React.useState<'Teacher' | 'Student'>('Teacher');
-    // const navigation = useNavigation()
     const dispatch = useDispatch()
+    const userRole = useSelector((state: any) => state.userRole?.role);
+    const [selectRole, setSelectRole] = React.useState<'Teacher' | 'Student'>(userRole === 'tutor' ? 'Teacher' : 'Student');
+    const [loading, setLoading] = useState<boolean>(false);
+    const [userId, setUserId] = useState<number | string>('');
+    console.log('rolerr', userRole === 'tutor');
+
+    // const navigation = useNavigation()
     // const handleLoggeOut = async () => {
     // Alert.alert('', 'Are You Sure You Want to LogOut')
     //     await reduxStorage.removeItem('token');
@@ -69,8 +79,8 @@ const CustomDrawer = ({ navigation }) => {
     };
 
     const menuData = useMemo(
-        () => MENU.filter(item => !HIDDEN_ROUTES[role]?.includes(item.route)),
-        [role]
+        () => MENU.filter(item => !HIDDEN_ROUTES[selectRole]?.includes(item.route)),
+        [selectRole]
     );
     console.log('rrrrr', menuData);
 
@@ -101,12 +111,64 @@ const CustomDrawer = ({ navigation }) => {
         );
     };
 
+
+    const handleChangeRole = async (role: string) => {
+        setLoading(true);
+        try {
+            let params = {
+                usr_id: userId,
+                usr_role: role === 'Student' ? 'student' : 'tutor'
+            }
+            const response = await POST_FORM(ApiEndPoint.updateRole, params);
+            if (response && response.status === 200) {
+                console.log('resssssss', response);
+                showToast('success', response?.msg || 'Role Update Successfully')
+                await localStorage.setItem(storageKeys.userId, String(response?.result?.usr_id))
+                dispatch(setRole(response?.result?.usr_role))
+                navigation.closeDrawer();
+            } else {
+                const errorMessage = response?.msg;
+                showToast('error', "Error", errorMessage);
+            }
+
+        } catch (error: any) {
+            if (error?.offline) {
+                return;
+            }
+            const errorMessage = error?.response?.data?.msg ||
+                error?.msg ||
+                'Something went wrong. Please try again.';
+            showToast('error', "Error", errorMessage);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const changeRole = async (role: string) => {
+        await handleChangeRole(role)
+        setSelectRole(role)
+    }
+
+    useEffect(() => {
+        const useId = async () => {
+            let userId = await localStorage.getItem(storageKeys.userId);
+            setUserId(userId)
+        }
+        useId()
+    }, [])
+    useEffect(() => {
+        if (userRole === 'tutor') {
+            setSelectRole('Teacher');
+        } else if (userRole === 'student') {
+            setSelectRole('Student');
+        }
+    }, [userRole]);
+
     return (
         <SafeAreaView
-            style={styles.mainContainer}
-        //  edges={['left', 'right', 'bottom']}
-        >
+            style={styles.mainContainer}>
             <View style={{ flex: 1, backgroundColor: '#fff' }}>
+                <Loader visible={loading} />
                 <View style={styles.profileBox}>
                     <Image
                         source={Icons.withoutBgLogo}
@@ -137,7 +199,7 @@ const CustomDrawer = ({ navigation }) => {
                                     {/* Left icon + text */}
                                     <View style={styles.iconTextContainer}>
                                         <View style={styles.iconBox}>
-                                            <Image source={item.icon} style={styles.iconSty} resizeMode='contain'/>
+                                            <Image source={item.icon} style={styles.iconSty} resizeMode='contain' />
                                         </View>
                                         <Text style={styles.menuText}>{item.title}</Text>
                                     </View>
@@ -146,19 +208,19 @@ const CustomDrawer = ({ navigation }) => {
                                     {isSwitchRole ? (
                                         <View style={styles.container1}>
                                             <TouchableOpacity
-                                                style={[styles.button, role === 'Teacher' && styles.active]}
-                                                onPress={() => setRole('Teacher')}>
+                                                style={[styles.button, selectRole === 'Teacher' && styles.active]}
+                                                onPress={() => changeRole('Teacher')}>
                                                 <Text
-                                                    style={[styles.text, role === 'Teacher' && styles.activeText]}>
+                                                    style={[styles.text, selectRole === 'Teacher' && styles.activeText]}>
                                                     Teacher
                                                 </Text>
                                             </TouchableOpacity>
 
                                             <TouchableOpacity
-                                                style={[styles.button, role === 'Student' && styles.active]}
-                                                onPress={() => setRole('Student')}>
+                                                style={[styles.button, selectRole === 'Student' && styles.active]}
+                                                onPress={() => changeRole('Student')}>
                                                 <Text
-                                                    style={[styles.text, role === 'Student' && styles.activeText]}>
+                                                    style={[styles.text, selectRole === 'Student' && styles.activeText]}>
                                                     Student
                                                 </Text>
                                             </TouchableOpacity>

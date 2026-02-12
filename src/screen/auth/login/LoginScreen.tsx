@@ -12,7 +12,7 @@ import Loader from "../../../component/loader/Loader";
 import { localStorage, reduxStorage, storageKeys } from "../../../storage/storage";
 import { useNavigation } from "@react-navigation/native";
 import { POST_FORM } from "../../../api/request";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess } from "../../../redux/slices/authSlice";
 import { showToast } from "../../../utils/toast";
 import { styles } from "./styles";
@@ -25,7 +25,13 @@ const LoginScreen = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [errors, setErrors] = useState({});
     const navigation = useNavigation()
-    console.log('errors', errors);
+    // Get role from userRole slice
+    const userRole = useSelector((state: any) => state.userRole?.role);
+    // OR get the entire userRole slice
+    const roleState = useSelector((state: any) => state);
+
+    console.log('User role:', userRole);
+    console.log('Role state:', roleState);
 
     const handlePhoneChange = (text: string) => {
         const digitsOnly = text.replace(/\D/g, '');
