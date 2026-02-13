@@ -1567,10 +1567,11 @@ const QuestionListData: React.FC<Props> = ({
         keyExtractor={keyExtractor}
         renderItem={renderItem}
         extraData={extraData}
-        initialNumToRender={3}
-        maxToRenderPerBatch={5}
-        windowSize={21}
-        removeClippedSubviews={false}
+        initialNumToRender={10}
+        maxToRenderPerBatch={10}
+        windowSize={10}
+        removeClippedSubviews={true}
+        updateCellsBatchingPeriod={50} // Slows down the frequency of renders
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
       />

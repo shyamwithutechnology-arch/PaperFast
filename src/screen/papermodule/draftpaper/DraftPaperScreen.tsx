@@ -296,7 +296,6 @@ const DraftPaperScreen = (props: DraftPaperScreenProps) => {
                         marginBottom: moderateScale(40)
                     }} />
                 </AppModal>
-                {/* <FlatList data={}/> */}
                 <DraftPaperList />
             </SafeAreaView>
         </View>
@@ -337,7 +336,7 @@ const styles = StyleSheet.create({
     },
     boardBox: {
         height: verticalScale(95),
-        width: scale(102),
+        width: scale(100.5),
         borderWidth: 1,
         marginHorizontal: moderateScale(5.5),
         backgroundColor: Colors.homeCardBgColor,

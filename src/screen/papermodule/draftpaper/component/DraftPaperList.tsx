@@ -7,6 +7,8 @@ import { localStorage, storageKeys } from '../../../../storage/storage';
 import { GET, POST_FORM } from '../../../../api/request';
 import { ApiEndPoint } from '../../../../api/endPoints';
 import { showToast } from '../../../../utils/toast';
+import Loader from '../../../../component/loader/Loader';
+import DeleteDractModal from './DeleteDractModal';
 
 export type DraftPaperListProps = {
 }
@@ -20,50 +22,22 @@ export type DraftItem = {
     difficulty?: 'easy' | 'medium' | 'hard';
 };
 const DraftPaperList = (props: DraftPaperListProps) => {
-    const [drafts, setDrafts] = useState<DraftItem[]>([
-        {
-            id: '1',
-            title: 'Mydraft',
-            subject: 'STD 6 Maths',
-            marks: '3.0 Marks',
-            lastUpdated: '23-12-2025',
-            status: 'draft',
-            difficulty: 'medium',
-        },
-        {
-            id: '2',
-            title: 'Final Draft',
-            subject: 'STD 7 Science',
-            marks: '5.0 Marks',
-            lastUpdated: '24-12-2025',
-            status: 'published',
-            difficulty: 'hard',
-        },
-        {
-            id: '3',
-            title: 'Mid Term',
-            subject: 'STD 8 Physics',
-            marks: '4.0 Marks',
-            lastUpdated: '25-12-2025',
-            status: 'archived',
-            difficulty: 'easy',
-        },
-    ]);
-
     const [userId, setUserId] = useState<string | null>('')
     const [draftList, setDraftList] = useState<[]>([])
+    const [openDraft, setOpenDraft] = useState<boolean>(false)
+    const [dratId, setDratId] = useState<string | null>(null)
     const [loading, setLoading] = useState<boolean>(false)
 
     const handleFetchDraftData = async (id: string) => {
+        setLoading(true)
         try {
             const params = {
                 user_id: id ?? userId,
             }
             setLoading(true)
             const response = await POST_FORM(ApiEndPoint.draftList, params);
-            if (response.status === 200) {
-
-                console.log('resssrrrrr', response)
+            if (response?.status === 200) {
+                setDraftList(response?.result || [])
             }
         } catch (error) {
             if (error.offline) {
@@ -76,18 +50,50 @@ const DraftPaperList = (props: DraftPaperListProps) => {
         }
     }
 
-    const handleRendamItem = () => {
+
+    const handleRemoveDraft = async (id: string) => {
+        setLoading(true)
+        try {
+            const params = {
+                user_id: id ?? userId,
+            }
+            setLoading(true)
+            const response = await POST_FORM(ApiEndPoint.draftDelete, params);
+            if (response?.status === 200) {
+                setDraftList(response?.result || [])
+            }
+        } catch (error) {
+            if (error.offline) {
+                return
+            }
+            const errorMessage = error.msg || 'Something went wrong. Please try again'
+            showToast('error', 'Error', errorMessage);
+        } finally {
+            setLoading(false)
+        }
+    }
+    const handleOpenDraft = (id:string) => {
+        setOpenDraft(true)
+        setDratId(id)
+    }
+    const handleCloseDraft = () => {
+        setOpenDraft(false)
+    }
+
+    const handleRendamItem = ({ item }) => {
+        // console.log('rrrrsssss',item );
         return (
             <View style={styles.draftContent}>
                 <View>
                     <Text style={styles.myDraftText}>Mydraft</Text>
-                    <Text style={styles.myDraftSecText}>STD 6 Maths</Text>
+                    <Text style={styles.myDraftSecText}>{item?.drf_title}</Text>
                     <Text style={styles.decText}>3.0 Marks</Text>
-                    <Text style={styles.decText}>Last Updates 23-12-2025</Text>
+                    <Text style={styles.decText}>Last Updates {item?.drf_created}</Text>
                 </View>
-                <TouchableOpacity style={styles.deleteBox} >
+                <TouchableOpacity style={styles.deleteBox} onPress={() => handleOpenDraft(item?.drf_id)} >
                     <MaterialIcons name='delete-outline' size={moderateScale(25)} color={'#EA5858'} />
                 </TouchableOpacity>
+                <DeleteDractModal activeDraft={openDraft} onClose={handleCloseDraft} dratId={dratId}/>
             </View>
         )
     }
@@ -101,13 +107,20 @@ const DraftPaperList = (props: DraftPaperListProps) => {
             }
         }
         getId()
-    })
+    }, [])
+    console.log('draftList', draftList);
+
     return (
         <View>
-            {/* <Text>DraftPaperList component</Text> */}
-            <FlatList data={drafts} renderItem={handleRendamItem}
-                windowSize={4}
-                initialNumToRender={10} />
+            <Loader visible={loading} />
+            <FlatList data={draftList} renderItem={handleRendamItem}
+                windowSize={10}
+                initialNumToRender={10}
+                maxToRenderPerBatch={10}
+                removeClippedSubviews={true}
+                updateCellsBatchingPeriod={50} 
+                showsVerticalScrollIndicator={false}
+            />
         </View>
     )
 }

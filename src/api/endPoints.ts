@@ -16,4 +16,5 @@
         updateRole :'update-role',
         draftAdd :'draft-add',
         draftList :'draft-list',
+        draftDelete :'draft-delete',
     }

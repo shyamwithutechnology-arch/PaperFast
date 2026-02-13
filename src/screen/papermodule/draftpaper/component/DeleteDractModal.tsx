@@ -3,14 +3,8 @@ import {
     View,
     Text,
     Modal,
-    Pressable,
-    Image,
-    TextInput,
-    StyleSheet,
-    Alert,
-    Platform,
-    PermissionsAndroid,
     TouchableOpacity,
+    StyleSheet,
 } from 'react-native';
 import CloseIcon from 'react-native-vector-icons/EvilIcons';
 import { Colors, Fonts } from '../../../../theme';
@@ -22,42 +16,28 @@ import { POST_FORM } from '../../../../api/request';
 import { ApiEndPoint } from '../../../../api/endPoints';
 import { localStorage, storageKeys } from '../../../../storage/storage';
 import { useDispatch, useSelector } from 'react-redux';
+import Loader from '../../../../component/loader/Loader';
 
-
-export type DraftModalProps = {
+export type DeleteDractModalProps = {
     activeDraft: boolean,
     onClose: () => void
-    questionId: object
+    dratId: string
 }
-const DraftModal = ({ activeDraft, onClose, questionId }: DraftModalProps) => {
-    console.log('activeDraft, onClose ,questionId', activeDraft, onClose, questionId);
-    const [userId, setUserId] = useState<string | null>('')
-    const [title, setTitle] = useState<string | null>('')
-    const [loading, setLoading] = useState(false)
 
-    const dispatch = useDispatch()
+const DeleteDractModal = ({ activeDraft, onClose, dratId }: DeleteDractModalProps) => {
+    console.log('activeDraft, onClose ,questionId', activeDraft, onClose, dratId);
+    const [loading, setLoading] = useState(false)
     const userRole = useSelector((state: any) => state.userRole?.role);
     console.log('userRoleeee', userRole);
 
-    const handleDraftSet = async () => {
+    const handleDraftDelete = async () => {
         try {
-
-            if (title?.trim() === '' || !title?.trim()) {
-                showToast('error', 'Please enter title')
-                return
-            }
             const params = {
-                user_id: userId,
-                title: title,
-                question_id: questionId || [],
-                role: userRole
-            }
-            console.log('para', params);
-            
+                drf_id: dratId,
+            }            
             const response = await POST_FORM(ApiEndPoint.draftAdd, params)
             if (response.status === 200) {
                 showToast('success', response?.msg)
-                console.log('rsssssssssssssss', response)
                 onClose()
             }
         } catch (error) {
@@ -73,50 +53,42 @@ const DraftModal = ({ activeDraft, onClose, questionId }: DraftModalProps) => {
             setLoading(false)
         }
     }
-    const [description, setDescription] = useState('');
-    const handleSubmit = () => {
-    };
-
-    useEffect(() => {
-        const getId = async () => {
-            let userId = await localStorage.getItem(storageKeys.userId)
-            setUserId(userId)
-        }
-        getId()
-    })
+    
     return (
         <Modal visible={activeDraft} transparent animationType="fade">
+            <Loader visible={loading}/>
             <View style={styles.overlay}>
                 <View style={styles.container}>
-
                     {/* HEADER */}
                     <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
                         <CloseIcon name="close" size={26} color="#555" />
                     </TouchableOpacity>
-                    <Text style={styles.enterDraftText}>Enter Draft Name</Text>
-                    <AppTextInput placeHolderText='Enter Draft name' style={{ with: '100%', }} value={title} onChangeText={setTitle} containerStyle={{ paddingVertical: moderateScale(11) }} />
-
-                    <View style={styles.mainBtnBox} >
+                    
+                    <Text style={styles.enterDraftText}>Delete Draft</Text>
+                    <View style={styles.lineBox}/>
+                    <Text style={[styles.enterDraftText,{color:'rgba(0,0,0,.4)',marginTop:moderateScale(10)}]}>Do you want to delete this {'\n'} Draft Paper?</Text>
+                    <View style={styles.mainBtnBox}>
                         <TouchableOpacity style={styles.cancelBtn} onPress={onClose}>
-                            <Text style={styles.cancelText}>Cancel </Text>
+                            <Text style={styles.cancelText}>Cancel</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={[styles.cancelBtn, { backgroundColor: Colors.primaryColor }]} onPress={handleDraftSet}>
-                            <Text style={[styles.cancelText, { color: Colors.white }]}>Yes </Text>
+                        <TouchableOpacity 
+                            style={[styles.cancelBtn, { backgroundColor: Colors.primaryColor }]} 
+                            onPress={handleDraftDelete}>
+                            <Text style={[styles.cancelText, { color: Colors.white }]}>Delete</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
             </View>
-
         </Modal>
     );
 };
 
-export default DraftModal;
+export default DeleteDractModal;
 
 const styles = StyleSheet.create({
     overlay: {
         flex: 1,
-        backgroundColor: 'rgba(0,0,0,.8)',
+        backgroundColor: 'rgba(0,0,0,.2)',
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -132,13 +104,14 @@ const styles = StyleSheet.create({
     },
     enterDraftText: {
         fontSize: moderateScale(14),
-        color: Colors.black,
+        color: 'rgba(0,0,0,.6)',
         fontFamily: Fonts.InterSemiBold,
         alignSelf: 'center',
-        marginBottom: moderateScale(10)
+        marginBottom: moderateScale(10),
+        textAlign:'center'
     },
     cancelBtn: {
-        width: scale(90),
+        width: scale(120),
         height: verticalScale(42),
         alignItems: 'center',
         justifyContent: 'center',
@@ -149,12 +122,17 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-evenly',
         alignItems: 'center',
-        marginHorizontal: moderateScale(60),
+        marginHorizontal: moderateScale(30),
         marginTop: moderateScale(25)
     },
     cancelText: {
         fontSize: moderateScale(13),
         color: 'rgba(0,0,0,0.4)',
         fontFamily: Fonts.InstrumentSansMedium
+    },
+    lineBox:{
+    height:1.5,
+    backgroundColor:'rgba(0,0,0,.1)',
+    width:'100%'
     }
 });
