@@ -9,7 +9,7 @@ import { moderateScale } from '../../utils/responsiveSize';
 import HomeBannerSlider from './component/homebanner/HomeBannerSlider';
 import AppModal from '../../component/modal/AppModal';
 import AppButton from '../../component/button/AppButton';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
 import { localStorage, storageKeys } from '../../storage/storage';
 import Loader from '../../component/loader/Loader';
 import { GET, POST_FORM } from '../../api/request';
@@ -18,11 +18,14 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { Colors, Fonts } from '../../theme';
 import { showToast } from '../../utils/toast';
 import { showSnackbar } from '../../utils/showsnack';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSelectedSubId } from '../../redux/slices/selectedSubSlice';
 
 const HomeScreen = () => {
-    const [selectedSubjectId, setSelectedSubjectId] = useState<null | string>(null)
+    // const [selectedSubjectId, setSelectedSubjectId] = useState<null | string>(null)
     // console.log('seleeeeeeeeeee', selectedSubject);
-
+    const dispatch = useDispatch()
+    const IsFocus = useIsFocused()
     const navigation = useNavigation();
     const [visible, setVisible] = useState(false);
     const [selectedBoard, setSelectedBoard] = useState<null | string>(null)
@@ -37,6 +40,8 @@ const HomeScreen = () => {
     const [subData, setSubData] = useState([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [banners, setBanners] = useState([]);
+    const selectedSubjectId = useSelector((state) => state?.selectedSubId?.selectedSubId)
+    console.log('selectedSubjectIdrrrrrr', selectedSubjectId);
 
     // board
     const handleBordOpenModal = async () => {
@@ -109,7 +114,7 @@ const HomeScreen = () => {
         setVisibleMedium(false)
         // }
     }
-    const handleSelectMedium = async (item: string) => { 
+    const handleSelectMedium = async (item: string) => {
         setSelectMedium(item?.medium_name)
         await localStorage.setItem(storageKeys.selectedMedium, item?.medium_name)
         await localStorage.setItem(storageKeys.selectedMediumId, item?.medium_id)
@@ -117,9 +122,9 @@ const HomeScreen = () => {
 
     const handleStandardOpenModal = async () => {
         if (selectedBoard === null) {
-            showToast('error', 'Error', 'Please Select Board') 
+            showToast('error', 'Error', 'Please Select Board')
             return false
-        } 
+        }
         if (selectMedium === null) {
             showToast('error', 'Error', 'Please Select Medium')
             return false
@@ -159,10 +164,11 @@ const HomeScreen = () => {
     };
 
     const handleSelect = async ({ subId, subName }: payload) => {
-        setSelectedSubjectId(subId);
+        // setSelectedSubjectId(subId);
 
         // Save to localStorage
-        await localStorage.setItem(storageKeys.selectedSubId, subId);
+        // await localStorage.setItem(storageKeys.selectedSubId, subId);
+        dispatch(setSelectedSubId(subId))
         await localStorage.setItem(storageKeys.selectedSubject, subName);
         navigation.navigate('PaperTypeScreen')
     }
@@ -345,8 +351,6 @@ const HomeScreen = () => {
         const subId = async () => {
             const boardId = await localStorage.getItem(storageKeys.boardIdMain)
             if (boardId) {
-                console.log('eeeeeeeeee', boardId);
-
                 await handleSubFetch(boardId);
             }
         }
@@ -355,13 +359,33 @@ const HomeScreen = () => {
 
     useEffect(() => {
         const restoreSelectedSubject = async () => {
-            const savedSubject = await localStorage.getItem(storageKeys.selectedSubId);
-            if (savedSubject) {
-                setSelectedSubjectId(savedSubject);
-            }
+            // const savedSubject = await localStorage.getItem(storageKeys.selectedSubId);
+            // if (!savedSubject) {
+            //     setSelectedSubjectId(null);
+            // } else {
+            //     setSelectedSubjectId(savedSubject);
+            // }
+            // const saveSubSubject = useSelector((state) => state.selectedSubId)
+            // console.log('saveSubSubject',saveSubSubject);
+
         };
         restoreSelectedSubject();
-    }, []);
+    }, [IsFocus]);
+
+    // useFocusEffect(
+    //     useCallback(() => {
+    //         const restoreSelectedSubject = async () => {
+    //             const savedSubject = await localStorage.getItem(storageKeys.selectedSubId);
+    //             // console.log('ressss', savedSubject);
+    //             if (!savedSubject) {
+    //                 setSelectedSubjectId(null);
+    //             } else {
+    //                 setSelectedSubjectId(savedSubject);
+    //             }
+    //         };
+    //         restoreSelectedSubject();
+    //     }, [])
+    // )
     return (
         <SafeAreaView
             style={styles.mainContainer}

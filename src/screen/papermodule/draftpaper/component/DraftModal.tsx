@@ -22,6 +22,8 @@ import { POST_FORM } from '../../../../api/request';
 import { ApiEndPoint } from '../../../../api/endPoints';
 import { localStorage, storageKeys } from '../../../../storage/storage';
 import { useDispatch, useSelector } from 'react-redux';
+import Snackbar from 'react-native-snackbar';
+import { showSnackbar } from '../../../../utils/showsnack';
 
 
 export type DraftModalProps = {
@@ -38,30 +40,35 @@ const DraftModal = ({ activeDraft, onClose, questionId }: DraftModalProps) => {
     const dispatch = useDispatch()
     const userRole = useSelector((state: any) => state.userRole?.role);
     console.log('userRoleeee', userRole);
+    console.log('questionId', questionId);
 
     const handleDraftSet = async () => {
         try {
 
             if (title?.trim() === '' || !title?.trim()) {
-                showToast('error', 'Please enter title')
+                showSnackbar('Please enter title', 'error')
                 return
             }
+            if (title?.trim().length < 4) {
+                showSnackbar('Please lenght then this text to 4 charactors or more', 'error')
+                return
+            }
+
             const params = {
                 user_id: userId,
                 title: title,
-                question_id: questionId || [],
+                question_id: JSON.stringify(questionId) || [],
                 role: userRole
             }
-            console.log('para', params);
-            
+            console.log('para3333', params);
+
             const response = await POST_FORM(ApiEndPoint.draftAdd, params)
             if (response.status === 200) {
                 showToast('success', response?.msg)
-                console.log('rsssssssssssssss', response)
+                setTitle('')
                 onClose()
             }
         } catch (error) {
-            console.log('errwwwwwwwwww', error)
             if (error?.offline) {
                 return;
             }
@@ -73,7 +80,6 @@ const DraftModal = ({ activeDraft, onClose, questionId }: DraftModalProps) => {
             setLoading(false)
         }
     }
-    const [description, setDescription] = useState('');
     const handleSubmit = () => {
     };
 

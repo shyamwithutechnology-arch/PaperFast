@@ -21,12 +21,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { localStorage, reduxStorage, storageKeys } from '../../storage/storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AppHeader from '../header/AppHeader';
-import { useNavigation } from '@react-navigation/native';
+import { CommonActions, useNavigation } from '@react-navigation/native';
 import { showToast } from '../../utils/toast';
 import { POST_FORM } from '../../api/request';
 import { ApiEndPoint } from '../../api/endPoints';
 import Loader from '../loader/Loader';
 import { setRole } from '../../redux/slices/userRole';
+import { removeSelectedSubId } from '../../redux/slices/selectedSubSlice';
 
 const MENU = [
     { id: 1, title: 'My Profile', icon: Icons.profile, route: 'ProfileScreen' },
@@ -82,7 +83,6 @@ const CustomDrawer = ({ navigation }) => {
         () => MENU.filter(item => !HIDDEN_ROUTES[selectRole]?.includes(item.route)),
         [selectRole]
     );
-    console.log('rrrrr', menuData);
 
     const handleLoggeOut = () => {
         Alert.alert(
@@ -121,16 +121,17 @@ const CustomDrawer = ({ navigation }) => {
             }
             const response = await POST_FORM(ApiEndPoint.updateRole, params);
             if (response && response.status === 200) {
-                console.log('resssssss', response);
                 showToast('success', response?.msg || 'Role Update Successfully')
                 await localStorage.setItem(storageKeys.userId, String(response?.result?.usr_id))
+                await localStorage.setItem(storageKeys.selectedSubId, '')
                 dispatch(setRole(response?.result?.usr_role))
+                dispatch(removeSelectedSubId())
                 navigation.closeDrawer();
+
             } else {
                 const errorMessage = response?.msg;
                 showToast('error', "Error", errorMessage);
             }
-
         } catch (error: any) {
             if (error?.offline) {
                 return;

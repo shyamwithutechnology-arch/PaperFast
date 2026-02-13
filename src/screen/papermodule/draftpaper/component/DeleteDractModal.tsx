@@ -10,60 +10,28 @@ import CloseIcon from 'react-native-vector-icons/EvilIcons';
 import { Colors, Fonts } from '../../../../theme';
 import { moderateScale } from 'react-native-size-matters';
 import { scale, verticalScale } from '../../../../utils/responsiveSize';
-import { showToast } from '../../../../utils/toast';
-import AppTextInput from '../../../../component/apptextinput/AppTextInput';
-import { POST_FORM } from '../../../../api/request';
-import { ApiEndPoint } from '../../../../api/endPoints';
-import { localStorage, storageKeys } from '../../../../storage/storage';
-import { useDispatch, useSelector } from 'react-redux';
-import Loader from '../../../../component/loader/Loader';
+import { useSelector } from 'react-redux';
 
 export type DeleteDractModalProps = {
     activeDraft: boolean,
     onClose: () => void
-    dratId: string
+    deleteFn: () => void
 }
 
-const DeleteDractModal = ({ activeDraft, onClose, dratId }: DeleteDractModalProps) => {
-    console.log('activeDraft, onClose ,questionId', activeDraft, onClose, dratId);
+const DeleteDractModal = ({ activeDraft, onClose, deleteFn }: DeleteDractModalProps) => {
+    console.log('activeDraft, onClose ,questionId', activeDraft, onClose, deleteFn);
     const [loading, setLoading] = useState(false)
     const userRole = useSelector((state: any) => state.userRole?.role);
     console.log('userRoleeee', userRole);
 
-    const handleDraftDelete = async () => {
-        try {
-            const params = {
-                drf_id: dratId,
-            }            
-            const response = await POST_FORM(ApiEndPoint.draftAdd, params)
-            if (response.status === 200) {
-                showToast('success', response?.msg)
-                onClose()
-            }
-        } catch (error) {
-            console.log('errwwwwwwwwww', error)
-            if (error?.offline) {
-                return;
-            }
-            const errorMessage = error?.response?.data?.message ||
-                error?.message ||
-                'Something went wrong. Please try again.';
-            showToast('error', 'Error', errorMessage);
-        } finally {
-            setLoading(false)
-        }
-    }
-    
     return (
         <Modal visible={activeDraft} transparent animationType="fade">
-            <Loader visible={loading}/>
             <View style={styles.overlay}>
                 <View style={styles.container}>
                     {/* HEADER */}
                     <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
                         <CloseIcon name="close" size={26} color="#555" />
                     </TouchableOpacity>
-                    
                     <Text style={styles.enterDraftText}>Delete Draft</Text>
                     <View style={styles.lineBox}/>
                     <Text style={[styles.enterDraftText,{color:'rgba(0,0,0,.4)',marginTop:moderateScale(10)}]}>Do you want to delete this {'\n'} Draft Paper?</Text>
@@ -73,7 +41,7 @@ const DeleteDractModal = ({ activeDraft, onClose, dratId }: DeleteDractModalProp
                         </TouchableOpacity>
                         <TouchableOpacity 
                             style={[styles.cancelBtn, { backgroundColor: Colors.primaryColor }]} 
-                            onPress={handleDraftDelete}>
+                            onPress={deleteFn}>
                             <Text style={[styles.cancelText, { color: Colors.white }]}>Delete</Text>
                         </TouchableOpacity>
                     </View>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, FlatList, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { moderateScale } from '../../../../utils/responsiveSize';
 import { Colors, Fonts } from '../../../../theme';
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
@@ -9,6 +9,8 @@ import { ApiEndPoint } from '../../../../api/endPoints';
 import { showToast } from '../../../../utils/toast';
 import Loader from '../../../../component/loader/Loader';
 import DeleteDractModal from './DeleteDractModal';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
+import EmptyComponent from "../../../../component/emptyComponent";
 
 export type DraftPaperListProps = {
 }
@@ -27,9 +29,9 @@ const DraftPaperList = (props: DraftPaperListProps) => {
     const [openDraft, setOpenDraft] = useState<boolean>(false)
     const [dratId, setDratId] = useState<string | null>(null)
     const [loading, setLoading] = useState<boolean>(false)
-
+    const isFocused = useIsFocused()
+    const navigation = useNavigation()
     const handleFetchDraftData = async (id: string) => {
-        setLoading(true)
         try {
             const params = {
                 user_id: id ?? userId,
@@ -50,29 +52,53 @@ const DraftPaperList = (props: DraftPaperListProps) => {
         }
     }
 
-
-    const handleRemoveDraft = async (id: string) => {
-        setLoading(true)
+    const handleDraftDelete = async () => {
         try {
             const params = {
-                user_id: id ?? userId,
+                drf_id: dratId,
             }
             setLoading(true)
-            const response = await POST_FORM(ApiEndPoint.draftDelete, params);
-            if (response?.status === 200) {
-                setDraftList(response?.result || [])
+            const response = await POST_FORM(ApiEndPoint.draftDelete, params)
+            if (response.status === 200) {
+                showToast('success', response?.msg)
+                handleFetchDraftData(userId)
+                setOpenDraft(false)
             }
         } catch (error) {
-            if (error.offline) {
-                return
+            if (error?.offline) {
+                return;
             }
-            const errorMessage = error.msg || 'Something went wrong. Please try again'
+            const errorMessage = error?.response?.data?.message ||
+                error?.message ||
+                'Something went wrong. Please try again.';
             showToast('error', 'Error', errorMessage);
         } finally {
             setLoading(false)
         }
     }
-    const handleOpenDraft = (id:string) => {
+
+    // const handleRemoveDraft = async (id: string) => {
+    //     setLoading(true)
+    //     try {
+    //         const params = {
+    //             user_id: id ?? userId,
+    //         }
+    //         setLoading(true)
+    //         const response = await POST_FORM(ApiEndPoint.draftDelete, params);
+    //         if (response?.status === 200) {
+    //             setDraftList(response?.result || [])
+    //         }
+    //     } catch (error) {
+    //         if (error.offline) {
+    //             return
+    //         }
+    //         const errorMessage = error.msg || 'Something went wrong. Please try again'
+    //         showToast('error', 'Error', errorMessage);
+    //     } finally {
+    //         setLoading(false)
+    //     }
+    // }
+    const handleOpenDraft = (id: string) => {
         setOpenDraft(true)
         setDratId(id)
     }
@@ -81,9 +107,22 @@ const DraftPaperList = (props: DraftPaperListProps) => {
     }
 
     const handleRendamItem = ({ item }) => {
-        // console.log('rrrrsssss',item );
         return (
-            <View style={styles.draftContent}>
+            <Pressable style={styles.draftContent} onPress={() =>
+                navigation.navigate('HomeTab', {
+                    screen: 'QuestionScreen',
+                    params: {  // ⚠️ IMPORTANT: Wrap screen params in 'params' object
+                        chapterId: 0,
+                        questionId: 'A',
+                        questionMarks: 859,
+                        label: "M.C.Q",
+                        selectedQuestions: item?.drf_question_id.map(id => ({
+                            question_id: id.toString()
+                        }))
+                        // chapterTitle: item?.drf_title || 'Draft',
+                    }
+                })
+            }>
                 <View>
                     <Text style={styles.myDraftText}>Mydraft</Text>
                     <Text style={styles.myDraftSecText}>{item?.drf_title}</Text>
@@ -93,8 +132,7 @@ const DraftPaperList = (props: DraftPaperListProps) => {
                 <TouchableOpacity style={styles.deleteBox} onPress={() => handleOpenDraft(item?.drf_id)} >
                     <MaterialIcons name='delete-outline' size={moderateScale(25)} color={'#EA5858'} />
                 </TouchableOpacity>
-                <DeleteDractModal activeDraft={openDraft} onClose={handleCloseDraft} dratId={dratId}/>
-            </View>
+            </Pressable>
         )
     }
 
@@ -107,20 +145,27 @@ const DraftPaperList = (props: DraftPaperListProps) => {
             }
         }
         getId()
-    }, [])
-    console.log('draftList', draftList);
+    }, [isFocused])
 
     return (
-        <View>
+        <View style={{
+            flex: 1,
+        }}>
             <Loader visible={loading} />
             <FlatList data={draftList} renderItem={handleRendamItem}
-                windowSize={10}
+                windowSize={5}
                 initialNumToRender={10}
                 maxToRenderPerBatch={10}
                 removeClippedSubviews={true}
-                updateCellsBatchingPeriod={50} 
+                updateCellsBatchingPeriod={50}
                 showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.containerStyle}
+                ListEmptyComponent={EmptyComponent}
             />
+            <DeleteDractModal
+                activeDraft={openDraft}
+                onClose={handleCloseDraft}
+                deleteFn={handleDraftDelete} />
         </View>
     )
 }
@@ -162,5 +207,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFE0E0',
         alignItems: 'center',
         justifyContent: "center"
+    },
+    containerStyle: {
+        paddingBottom: moderateScale(5),
+        paddingHorizontal: moderateScale(0),
     }
 })

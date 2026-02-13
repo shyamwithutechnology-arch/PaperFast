@@ -27,7 +27,9 @@ const QuestionListScreen = (props: QuestionListScreenProps) => {
         pages: 1,
         total: 0,
     });
-
+    const handleBack = () => {
+        navigation?.goBack()
+    }
     // Handle page change
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= pagination.pages) {
@@ -103,7 +105,7 @@ const QuestionListScreen = (props: QuestionListScreenProps) => {
         <View style={styles.container}>
             <StatusBar barStyle={'dark-content'} backgroundColor={Colors.lightThemeBlue} />
             <SafeAreaView style={{ backgroundColor: Colors.lightThemeBlue }} edges={['top']}>
-                <HeaderPaperModule title={'Numer System - M.C.Q [1 Marks Each]'} />
+                <HeaderPaperModule title={'Numer System - M.C.Q [1 Marks Each]'} leftIconPress={handleBack}/>
             </SafeAreaView>
 
             <SafeAreaView style={styles.homeContainer} edges={['left', 'right', 'bottom']}>

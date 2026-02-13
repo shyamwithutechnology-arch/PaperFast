@@ -20,7 +20,7 @@ import AppButton from "../../../component/button/AppButton";
 import { ApiEndPoint } from "../../../api/endPoints";
 import { ScrollView } from "react-native-gesture-handler";
 import { launchImageLibrary } from "react-native-image-picker";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addChapterQuestions, addPDFQuestions, SelectedQuestion } from "../../../redux/slices/pdfQuestionsSlice";
 import DraftModal from "../draftpaper/component/DraftModal";
 // import { buildPDFHtml } from "../../mypdf/component/buildPDFHtml";
@@ -55,16 +55,10 @@ const QuestionScreen = () => {
         chapterTitle: string;
         selectedQuestions: any[]
     };
-    // console.log('ddddddwwwwwwwwwwwww', chapterId,
-    //     questionId,
-    //     questionMarks,
-    //     label,);
-
+    const selectedSubjectId = useSelector((state) => state?.selectedSubId?.selectedSubId)
     const [activeTab, setActiveTab] = useState('all');
-
     const [selectCheck, setSelectedCheck] = useState('Options')
     const [selectedMap, setSelectedMap] = useState({});
-    console.log('wwwwwwwwwwwwwwwwwwwwwwwww', Object.keys(selectedMap));
     const [questionNumber, setQuestionNumber] = useState<Record<string, boolean>>({});
     const [visibleDraft, setVisibleDraft] = useState<boolean>(false);
     const [questionsData, setQuestionsData] = useState<any>({});
@@ -85,11 +79,11 @@ const QuestionScreen = () => {
         pages: 1,
         total: 0,
     });
+console.log('paperType', paperType);
 
     const questionLenght = Object.keys(selectedMap)?.length
     const dispatch = useDispatch();
     const handleCheck = (item: string) => {
-        // console.log('eeeeeee', item);
         setSelectedCheck(item)
     }
     const handleLabelStatus = async () => {
@@ -128,7 +122,6 @@ const QuestionScreen = () => {
     }
     const handleOpenDraftModal = () => {
         setVisibleDraft(true)
-        // () => navigation?.navigate('DraftPaperScreen')
     }
     // const handleBack = async () => {
     //     const selectedQuestions = questionsData?.result?.filter(
@@ -167,8 +160,6 @@ const QuestionScreen = () => {
                 questions: selectedQuestions || [],
                 questionNumbers: selectedQuestionNumbers
             }));
-
-            // showToast('success', 'Success', `${selectedQuestions.length} questions saved`);
         }
 
         // Navigate back with summary
@@ -183,61 +174,6 @@ const QuestionScreen = () => {
             },
         });
     };
-
-    // const handleBack = async () => {
-    //     // Get selected questions from this chapter and question type
-    //     const selectedQuestions = Object?.keys(questionsData)?.filter(
-    //         q => selectedMap[q.question_id]
-    //     ) || [];
-
-    //     // Get question numbers for selected questions
-    //     const selectedQuestionNumbers = Object.keys(selectedMap)
-    //         .filter(key => selectedMap[key])
-    //         .map(key => {
-    //             // Find the question index in questionsData
-    //             const questionIndex = Object?.keys(questionsData)?.findIndex(q => q.question_id === key);
-    //             if (questionIndex !== -1) {
-    //                 // Calculate question number based on index
-    //                 return questionIndex + 1;
-    //             }
-    //             return null;
-    //         })
-    //         .filter(num => num !== null) as number[];
-
-    //     console.log('Selected Questions:', selectedQuestions.length);
-    //     console.log('Selected Question Numbers:', selectedQuestionNumbers);
-
-    //     if (selectedQuestions.length > 0) {
-    //         // Store in Redux with chapter information
-    //         dispatch(addChapterQuestions({
-    //             chapterTitle: chapterTitle || `Chapter ${chapterId + 1}`,
-    //             chapterId,
-    //             questionTypeId: questionId,
-    //             questionMarks,
-    //             label,
-    //             questions: selectedQuestions || [],
-    //             questionNumbers: selectedQuestionNumbers
-    //         }));
-
-    //         showToast('success', 'Success', `${selectedQuestions.length} questions saved`);
-    //     }
-
-    //     // Navigate back with summary
-    //     navigation.navigate('PaperSelect', {
-    //         selectedSummary: {
-    //             chapterId,
-    //             questionId,
-    //             questionMarks,
-    //             label,
-    //             selectedQuestions: selectedQuestions,
-    //             chapterTitle: chapterTitle || `Chapter ${chapterId + 1}`,
-    //             questionNumbers: selectedQuestionNumbers
-    //         },
-    //     });
-    // };
-
-
-    // In QuestionScreen.tsx
 
     const openGallery = () => {
         launchImageLibrary(
@@ -352,7 +288,7 @@ const QuestionScreen = () => {
         setLoading(true)
         try {
             let params = {
-                'subject_id': subject ?? subId,
+                'subject_id': subject ?? selectedSubjectId,
                 'difficulty': lebelCheck || '3',
                 // 'easy': '3',
                 'page': page?.toString(),
@@ -362,6 +298,8 @@ const QuestionScreen = () => {
 
             const response = await POST_FORM('question', params)
             if (response?.status === 200) {
+                console.log('resssssssssssssssss', response);
+                
                 setQuestionsData(response || {});
                 if (response?.pagination) {
                     setPagination({
@@ -373,6 +311,8 @@ const QuestionScreen = () => {
                 }
             }
         } catch (error: any) {
+            console.log('ppppppppperrr',error);
+            
             if (error?.offline) {
                 return;
             }
@@ -455,12 +395,12 @@ const QuestionScreen = () => {
         // if()
         const init = async () => {
             const paperType = await localStorage.getItem(storageKeys?.selectedPaperType)
-            const subjectId = await localStorage.getItem(storageKeys.selectedSubId);
-            setSubId(subjectId)
+            // const subjectId = await localStorage.getItem(storageKeys.selectedSubId);
+            // setSubId(subjectId)
             setPaperType(paperType || '')
-            if (subjectId) {
-                console.log('subjectId', subjectId);
-                await fetchQuestions(pagination.page, pagination?.limit, subjectId);
+            if (selectedSubjectId) {
+                console.log('subjectId', selectedSubjectId);
+                await fetchQuestions(pagination.page, pagination?.limit, selectedSubjectId);
             }
         }
         init()
