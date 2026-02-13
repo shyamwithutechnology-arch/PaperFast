@@ -166,6 +166,9 @@ const DraftPaperScreen = (props: DraftPaperScreenProps) => {
                         </View>
                     </TouchableOpacity>
                 </View>
+                <View style={styles.listWrapper}>
+                    <DraftPaperList />
+                </View>
 
 
                 {/* board */}
@@ -214,7 +217,7 @@ const DraftPaperScreen = (props: DraftPaperScreenProps) => {
                     <AppButton title='Submit' onPress={handleMediumOpenModal} style={{
                         width: "96%",
                         marginTop: moderateScale(15),
-                        marginBottom: moderateScale(40)
+                        marginBottom: moderateScale(40),
                     }} />
                 </AppModal>
 
@@ -244,9 +247,10 @@ const DraftPaperScreen = (props: DraftPaperScreenProps) => {
                     </TouchableOpacity>
 
                     <AppButton title='Submit' onPress={handleStandardOpenModal} style={{
-                        width: "100%",
+                        width: "93%",
                         marginTop: moderateScale(15),
                         marginBottom: moderateScale(40),
+                        // borderRadius: moderateScale(0),
                         // borderRadius:0,
                         // marginTop:moderateScale(-40)
                     }} />
@@ -296,14 +300,12 @@ const DraftPaperScreen = (props: DraftPaperScreenProps) => {
                         marginBottom: moderateScale(40)
                     }} />
                 </AppModal>
-                <DraftPaperList />
             </SafeAreaView>
         </View>
     )
 }
 
 export default DraftPaperScreen
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -348,7 +350,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         alignSelf: "center",
         marginTop: moderateScale(15),
-        marginBottom:moderateScale(5    )
+        marginBottom: moderateScale(5)
     },
     bordIcon: {
         width: moderateScale(30),
@@ -465,6 +467,9 @@ const styles = StyleSheet.create({
     //         borderRadius:moderateScale(20),
     //         alignSelf:"flex-end",
     //     }
+    listWrapper: {
+        flex: 1,
+    },
     lineMainBox: {
         flexDirection: "row",
         alignItems: "center",
@@ -490,6 +495,9 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         borderRadius: moderateScale(20),
+        // borderWidth:1,
+        // marginLeft:moderateScale(-40)
+        // marginRight:moderateScale(10)
     },
 
     cancleIcon: {
@@ -501,7 +509,7 @@ const styles = StyleSheet.create({
         fontFamily: Fonts.InstrumentSansMedium,
         color: Colors.black,
         marginTop: moderateScale(10),
-        marginLeft: moderateScale(8),
+        marginLeft: moderateScale(12),
         marginBottom: moderateScale(10)
     },
     selectStanBox: {
@@ -559,7 +567,9 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(12, 64, 111, 0.19)',
         alignItems: 'center',
         justifyContent: 'center',
-        marginVertical: moderateScale(8)
+        marginVertical: moderateScale(8),
+        marginHorizontal:moderateScale(12),
+    
     },
     englishText: {
         fontFamily: Fonts.InstrumentSansRegular,

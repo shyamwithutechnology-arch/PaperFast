@@ -18,7 +18,7 @@ import rootReducer from '../rootReducer/rootReducer'
 const persistConfig = {
   key: 'root',
   storage: reduxStorage,
-  whitelist: ['auth', 'pdfQuestions', 'userRole'],
+  whitelist: ['auth', 'pdfQuestions', 'userRole', 'selectedSubId'],
 }
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)

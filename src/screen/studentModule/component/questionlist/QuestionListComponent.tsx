@@ -103,7 +103,7 @@ const extractImagesFromHtml = (html: string): { text: string; images: string[] }
 
 
 // Memoized Option Component with image support
-const OptionItem = memo(({
+export const OptionItem = memo(({
   id,
   label,
   isSelected,
@@ -240,7 +240,7 @@ const OptionItem = memo(({
 OptionItem.displayName = 'OptionItem';
 
 // Memoized Question Content Component
-const QuestionContent = memo(({
+export const QuestionContent = memo(({
   text,
   images,
   isSelected
@@ -349,7 +349,7 @@ ${cleanText}
 
 QuestionContent.displayName = 'QuestionContent';
 
-const SolutionView = memo(({
+export const SolutionView = memo(({
   explanation,
   correctOption,
   isSelected
@@ -552,6 +552,7 @@ const QuestionListComponent: React.FC<Props> = ({
   currentPage,
   limit,
 }) => {
+  const navigation = useNavigation()
   const extractBase64Images = useCallback((html: string): string[] => {
     const imgRegex = /<img[^>]+src="data:image\/[^;]+;base64,([^"]+)"[^>]*>/g;
     const images: string[] = [];
@@ -562,20 +563,50 @@ const QuestionListComponent: React.FC<Props> = ({
     return images;
   }, []);
 
+  // const toggleSelect = useCallback((id: string) => {
+  //   setSelectedMap(prev => {
+  //     // const newMap = { ...prev };
+  //     // if (newMap[id]) {
+  //     //   delete newMap[id];
+  //     // } else {
+  //     //   newMap[id] = true;
+  //     // }
+  //     // return newMap;
+  //     // Create empty object (deselect all)
+  //     const newMap = {};
+  //     // If the clicked item is not already selected, select it
+  //     if (!prev[id]) {
+  //       newMap[id] = true;
+  //     }
+  //     return newMap;
+  //   });
+  //   // setSelectedMap([id])
+  //   navigation.navigate('OpenQuestionScreen')
+
+  // }, [setSelectedMap]);
+
   const toggleSelect = useCallback((id: string) => {
+    // Update selected map
     setSelectedMap(prev => {
-      const newMap = { ...prev };
-      if (newMap[id]) {
-        delete newMap[id];
-      } else {
+      const newMap = {};
+      if (!prev[id]) {
         newMap[id] = true;
       }
       return newMap;
     });
-    navigation.navigate('OpenQuestionScreen')
-    
-  }, [setSelectedMap]);
 
+    // Navigate to OpenQuestionScreen with all data
+    navigation.navigate('OpenQuestionScreen', {
+      questions: questionsData,
+      currentIndex: questionsData.findIndex(q => q.question_id === id),
+      totalQuestions: questionsData.length,
+      selectedMap: { ...selectedMap, [id]: true },
+      onQuestionChange: (newIndex: number) => {
+        // This will be handled in OpenQuestionScreen
+      },
+      selectCheck: selectCheck
+    });
+  }, [setSelectedMap, navigation, questionsData, selectedMap, selectCheck]);
   const renderItem = useCallback(({ item, index }: { item: Question; index: number }) => {
     const isSelected = !!selectedMap[item.question_id];
     let langthList = index === questionsData?.length - 1;
@@ -609,7 +640,6 @@ const QuestionListComponent: React.FC<Props> = ({
     );
   }
 
-  const navigation = useNavigation()
   return (
     <View style={styles.container}>
       <FlatList
@@ -970,14 +1000,6 @@ const styles = StyleSheet.create({
 
 });
 export default memo(QuestionListComponent);
-
-
-
-
-
-
-
-
 
 // ***********************************************
 // <View style={[styles.optionContent, { paddingVertical: moderateScale(0) }]}>

@@ -24,7 +24,7 @@ const CustomPaperCard = ({ onPress }) => {
           <Text style={styles.title}>Manual Paper</Text>
           <Text style={styles.subtitle}>Select question of your {`\n`}choice</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.card,{backgroundColor:'#FFF6D4'}]} activeOpacity={0.8} onPress={() => {}}>
+        <TouchableOpacity style={[styles.card,{backgroundColor:'#FFF6D4'}]} activeOpacity={0.8} >
           <View style={styles.imgeCurcel}>
             <Image source={Icons.custompaper} style={styles.icon} /></View>
           <Text style={styles.title}>Custom Paper</Text>
