@@ -32,7 +32,6 @@ const PDFPreviewScreen = () => {
   const navigation = useNavigation();
   const route = useRoute<any>();
   const { previewData } = route.params || {};
-  console.log('ffffffff', previewData);
 
   const [subName, setSubName] = useState('');
 
@@ -44,7 +43,6 @@ const PDFPreviewScreen = () => {
   const questionsee = useSelector((state: any) => state.pdfQuestions
   );
 
-  console.log('qqqwwwwwwwwwwchapterData', questionsee);
 
   /* ---------------- PINCH ZOOM ---------------- */
   // const scale = useSharedValue(1);
@@ -105,13 +103,12 @@ const animatedStyle = useAnimatedStyle(() => {
           {/* HEADER */}
           <SafeAreaView
             edges={['top']}
-            style={{ backgroundColor: Colors.lightThemeBlue }}
-          >
+            style={{ backgroundColor: Colors.lightThemeBlue }}>
 
             <HeaderPaperModule
               title="Preview"
               leftIconPress={() => navigation.goBack()}
-              rightPress2={() => navigation.navigate('MyPdfScreen')}
+              // rightPress2={() => navigation.navigate('MyPdfScreen')}
             />
           </SafeAreaView>
                 <GestureDetector gesture={pinchGesture}>

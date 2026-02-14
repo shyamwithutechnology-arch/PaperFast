@@ -41,7 +41,8 @@ const HomeScreen = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [banners, setBanners] = useState([]);
     const selectedSubjectId = useSelector((state) => state?.selectedSubId?.selectedSubId)
-    console.log('selectedSubjectIdrrrrrr', selectedSubjectId);
+    const userRole = useSelector((state) => state?.userRole?.role)
+    // console.log('userRole', us/erRole);
 
     // board
     const handleBordOpenModal = async () => {
@@ -304,6 +305,8 @@ const HomeScreen = () => {
             }
 
         } catch (error: any) {
+            // console.log('resss', error);
+            
             if (error?.offline) {
                 return;
             }
@@ -391,7 +394,8 @@ const HomeScreen = () => {
             style={styles.mainContainer}
             edges={['left', 'right', 'bottom']}>
             <Loader visible={loading} />
-            <AppHeader title="Paper Fast" leftIcon={Icons.drawer} onBackPress={() => navigation.openDrawer()} discriptionText='(For Teacher)' rightIcon={Icons.notification} onRightPress={() => navigation.navigate('NotificationScreen')} />
+            {/* rightIcon={Icons.notification} onRightPress={() => navigation.navigate('NotificationScreen')} */}
+            <AppHeader title="Paper Fast" leftIcon={Icons.drawer} onBackPress={() => navigation.openDrawer()} discriptionText={`(For ${userRole || 'User'})`}  /> 
             <View style={styles.innerMainContainer}>
                 <FlatList
                     data={subData}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, FlatList, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, FlatList, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { moderateScale } from '../../../../utils/responsiveSize';
 import { Colors, Fonts } from '../../../../theme';
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
@@ -11,6 +11,7 @@ import Loader from '../../../../component/loader/Loader';
 import DeleteDractModal from './DeleteDractModal';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import EmptyComponent from "../../../../component/emptyComponent";
+import { Icons } from '../../../../assets/icons';
 
 export type DraftPaperListProps = {
 }
@@ -124,13 +125,20 @@ const DraftPaperList = (props: DraftPaperListProps) => {
                 })
             }>
                 <View>
-                    <Text style={styles.myDraftText}>Mydraft</Text>
                     <Text style={styles.myDraftSecText}>{item?.drf_title}</Text>
-                    <Text style={styles.decText}>3.0 Marks</Text>
                     <Text style={styles.decText}>Last Updates {item?.drf_created}</Text>
                 </View>
-                <TouchableOpacity style={styles.deleteBox} onPress={() => handleOpenDraft(item?.drf_id)} >
+                {/* <TouchableOpacity style={styles.deleteBox} onPress={() => handleOpenDraft(item?.drf_id)} >
                     <MaterialIcons name='delete-outline' size={moderateScale(25)} color={'#EA5858'} />
+                </TouchableOpacity> */}
+
+                <TouchableOpacity style={styles.cancleBox} onPress={() => handleOpenDraft(item?.drf_id)}>
+                    <Image
+                        source={Icons.cancel}
+                        style={styles.cancleIcon}
+                        resizeMode="contain"
+                        tintColor={'#EA5858'}
+                    />
                 </TouchableOpacity>
             </Pressable>
         )
@@ -175,15 +183,35 @@ export default DraftPaperList
 const styles = StyleSheet.create({
     draftContent: {
         // height:moderateScale()
+        // paddingVertical: moderateScale(15),
+        // paddingHorizontal: moderateScale(15),
+        // borderWidth: 1,
+        // marginHorizontal: moderateScale(16),
+        // flexDirection: 'row',
+        // justifyContent: 'space-between',
+        // borderColor: Colors.InputStroke,
+        // marginTop: moderateScale(15),
+        // borderRadius: moderateScale(4),
+        // elevation: 40,
+        // shadowColor: 'rgba(0, 140, 227, .9)',
+        // height:moderateScale()
         paddingVertical: moderateScale(15),
         paddingHorizontal: moderateScale(15),
-        borderWidth: 1,
+        // borderWidth: 1,
         marginHorizontal: moderateScale(16),
         flexDirection: 'row',
         justifyContent: 'space-between',
-        borderColor: Colors.InputStroke,
+        // borderColor: Colors.InputStroke,
         marginTop: moderateScale(15),
-        borderRadius: moderateScale(4)
+        borderRadius: moderateScale(4),
+        backgroundColor: Colors.white,
+        // elevation: 30,
+        shadowColor: 'rgba(0, 140, 227, .9)',
+        // Android Shadow
+        elevation: 30,
+        borderWidth: 1,
+        borderColor: 'rgba(0, 140, 227, 0.11)',
+        borderTopWidth: .5,
     },
     myDraftText: {
         fontSize: moderateScale(12),
@@ -211,5 +239,21 @@ const styles = StyleSheet.create({
     containerStyle: {
         paddingBottom: moderateScale(5),
         paddingHorizontal: moderateScale(0),
-    }
+    },
+    cancleBox: {
+        width: moderateScale(30),
+        height: moderateScale(30),
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: moderateScale(4),
+        backgroundColor: '#FFE0E0'
+        // borderWidth:1,
+        // marginLeft:moderateScale(-40)
+        // marginRight:moderateScale(10)
+    },
+
+    cancleIcon: {
+        width: moderateScale(12),
+        height: moderateScale(12),
+    },
 })

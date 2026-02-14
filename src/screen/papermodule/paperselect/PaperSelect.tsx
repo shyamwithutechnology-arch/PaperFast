@@ -250,7 +250,7 @@ const PaperSelect = () => {
                 'subject_id': data?.subjectId,
             }
             const response = await POST_FORM(ApiEndPoint?.questionChapter, params);
-            if (response?.status === 200) {
+            if (response?.status === 200) {                
                 setChapterData(response?.result || [])
             } else {
                 showToast('error', 'Error', response.msg || "Chapter fetch faild")
@@ -335,7 +335,7 @@ const PaperSelect = () => {
 
             {/* HEADER + STATUS BAR SAME BACKGROUND */}
             <SafeAreaView edges={["top"]} style={{ backgroundColor: Colors.lightThemeBlue }}>
-                <HeaderPaperModule titleStyle={{ fontSize: moderateScale(14) }} title={`${paperHeader}`} subjectName={`${subjectName}`} rightPress={() => { navigation.navigate('DraftPaperScreen') }} leftIconPress={handleBack} />
+                <HeaderPaperModule titleStyle={{ fontSize: moderateScale(14) }} title={`${paperHeader}`} subjectName={`${subjectName}`}   rightPress={() => { navigation.navigate('DraftPaperScreen') }} leftIconPress={handleBack} />
             </SafeAreaView>
             {/* MAIN CONTENT */}
             <Loader visible={loading} />

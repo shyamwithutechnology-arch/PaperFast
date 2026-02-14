@@ -43,9 +43,6 @@ const PDFDetails = () => {
     // GET: Read questions from Redux
     const pdfQuestions = useSelector((state: any) => state?.pdfQuestions?.allQuestions || []);
     const showSolutions = route.params?.showSolutions || false;
-    // console.log('reeeeeeeeeeselectedQuestionDatapdfQuestions', pdfQuestions);
-    console.log('showSolutionsroute', route?.params?.questionType);
-
     // Logo upload states
     const [loading, setLoading] = useState(false);
     const [logoUri, setLogoUri] = useState<string | null>(null);
@@ -278,7 +275,8 @@ const PDFDetails = () => {
                 );
 
                 setWaterMarkLogo(resized.uri);
-                Alert.alert('Success', 'Watermark added');
+                // Alert.alert('Success', 'Watermark added');
+                showToast('success', 'Success', 'Watermark added');
             }
         } catch (error) {
             Alert.alert('Error', 'Failed to select watermark');
@@ -406,7 +404,7 @@ const PDFDetails = () => {
             showSolutions,
             dropDownValue,
             questionType: route?.params?.questionType || 'ram',
-            waterMarkText:waterMarkText,
+            waterMarkText: waterMarkText,
             wishText: 'Wish you all the best'
         };
 
@@ -504,8 +502,6 @@ const PDFDetails = () => {
                         value={testName}
                         onChangeText={setTestName}
                         containerStyle={{ width: '91.5%' }}
-
-                    // style={{ marginTop: moderateScale(15) }}
                     />
 
                     {/* Date/Time Section */}
@@ -886,7 +882,7 @@ const styles = StyleSheet.create({
         // height: moderateScale(80),
         width: '100%',
         height: '100%',
-        borderRadius: moderateScale(4),
+        borderRadius: moderateScale(8),
     },
     uploadTextSmall: {
         fontSize: moderateScale(14),

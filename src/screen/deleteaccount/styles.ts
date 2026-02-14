@@ -83,7 +83,6 @@ export const styles = StyleSheet.create({
         paddingLeft: moderateScale(10),
         flexDirection: 'row',
         alignItems: 'center',
-        marginVertical: moderateScale(14),
     }
     ,
     countryImgStyle: {

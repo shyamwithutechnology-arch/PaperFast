@@ -8,13 +8,15 @@ import QuestionScreen from '../../screen/papermodule/questionModule/QuestionScre
 import PDFDetailsScreen from '../../screen/mypdf/pdfdetails/PDFDetailsScreen';
 import MyPdfScreen from '../../screen/mypdf/mypdf/MyPdfScreen';
 import PDFPreviewScreen from '../../screen/mypdf/pdfpreview/PDFPreviewScreen';
+import QuestionListScreen from '../../screen/studentModule/QuestionListScreen';
 
 const Stack = createNativeStackNavigator();
 
 const PdfStack = () => {
     return (
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="MyPdfScreen" component={MyPdfScreen} />
+            {/* <Stack.Screen name="MyPdfScreen" component={MyPdfScreen} /> */}
+            <Stack.Screen name="QuestionListScreen" component={QuestionListScreen} />
             <Stack.Screen name="PDFDetailsScreen" component={PDFDetailsScreen} />
             <Stack.Screen name="PDFPreviewScreen" component={PDFPreviewScreen} />
             {/* <Stack.Screen name="PDFPreviewListComponent" component={PDFPreviewListComponent} /> */}

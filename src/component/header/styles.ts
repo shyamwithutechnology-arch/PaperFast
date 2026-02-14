@@ -33,10 +33,11 @@ export const styles = StyleSheet.create({
     fontSize: moderateScale(13),
     fontFamily: Fonts.InterMedium,
     color: Colors.secondaryColor,
+    textTransform: 'capitalize'
   },
-  leftImg:{
-     width: moderateScale(40),
-      height: moderateScale(40)
+  leftImg: {
+    width: moderateScale(40),
+    height: moderateScale(40)
   }
 })
 

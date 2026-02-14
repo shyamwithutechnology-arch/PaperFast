@@ -83,55 +83,54 @@ const Pagination: React.FC<PaginationProps> = ({
     //     }
     //     return visiblePages;
     // };
+
+    // Function to generate visible page numbers
     const getVisiblePages = () => {
         const visiblePages: (number | string)[] = [];
-        const maxVisible = 5; // 想要显示的页码数量（包括省略号）
 
-        if (pages <= maxVisible) {
-            // 如果总页数小于等于5，显示所有页码
+        if (pages <= 4) {
+            // If 4 or fewer pages, show all pages
             for (let i = 1; i <= pages; i++) {
                 visiblePages.push(i);
             }
         } else {
-            // 总是显示第一页
-            visiblePages.push(1);
-
-            // 计算开始和结束页码
-            let startPage = Math.max(2, page - 1);
-            let endPage = Math.min(pages - 1, page + 1);
-
-            // 调整显示范围，确保始终显示5个项目（包括省略号）
-            if (page <= 3) {
-                // 靠近开始：显示 1,2,3,4,...,10
-                startPage = 2;
-                endPage = 4;
-            } else if (page >= pages - 2) {
-                // 靠近结束：显示 1,...,7,8,9,10
-                startPage = pages - 3;
-                endPage = pages - 1;
-            } else {
-                // 中间：显示 1,...,4,5,6,...,10
-                startPage = page - 1;
-                endPage = page + 1;
-            }
-
-            // 添加左边的省略号
-            if (startPage > 2) {
+            if (page === 1) {
+                // First page: show 1, 2, ..., last
+                visiblePages.push(1);
+                visiblePages.push(2);
                 visiblePages.push('...');
+                visiblePages.push(pages);
             }
-
-            // 添加中间的页码
-            for (let i = startPage; i <= endPage; i++) {
-                visiblePages.push(i);
-            }
-
-            // 添加右边的省略号
-            if (endPage < pages - 1) {
+            else if (page === 2) {
+                // Second page: show 2, 3, ..., last
+                visiblePages.push(2);
+                visiblePages.push(3);
                 visiblePages.push('...');
+                visiblePages.push(pages);
             }
-
-            // 总是显示最后一页
-            visiblePages.push(pages);
+            else if (page === pages) {
+                // Last page: show 1, ..., last-1, last
+                visiblePages.push(1);
+                visiblePages.push('...');
+                if (pages - 1 > 1) {
+                    visiblePages.push(pages - 1);
+                }
+                visiblePages.push(pages);
+            }
+            else if (page === pages - 1) {
+                // Second last page: show 1, ..., last-1, last
+                visiblePages.push(1);
+                visiblePages.push('...');
+                visiblePages.push(pages - 1);
+                visiblePages.push(pages);
+            }
+            else {
+                // Middle pages: show current, current+1, ..., last
+                visiblePages.push(page);
+                visiblePages.push(page + 1);
+                visiblePages.push('...');
+                visiblePages.push(pages);
+            }
         }
 
         return visiblePages;
