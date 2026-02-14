@@ -13,9 +13,7 @@ import { scale } from 'react-native-size-matters';
 import { Icons } from '../../../assets/icons';
 
 export type DraftPaperScreenProps = {
-
 }
-
 
 const DraftPaperScreen = (props: DraftPaperScreenProps) => {
     const navigation = useNavigation();
@@ -140,7 +138,7 @@ const DraftPaperScreen = (props: DraftPaperScreenProps) => {
                 <HeaderPaperModule title='Draft Papers' leftIconPress={handleGoBack} />
             </SafeAreaView>
             <SafeAreaView style={styles.container} edges={['left', 'right', 'bottom']}>
-                <View style={styles.cardMainBox}>
+                {/* <View style={styles.cardMainBox}>
                     <TouchableOpacity style={styles.boardBox} onPress={handleBordOpenModal}>
                         <Image source={Icons.board} style={styles.bordIcon} />
                         <Text style={styles.boardText}>Board</Text>
@@ -165,20 +163,15 @@ const DraftPaperScreen = (props: DraftPaperScreenProps) => {
                             <Image source={Icons.downArrow} style={styles.downIcon} />
                         </View>
                     </TouchableOpacity>
-                </View>
+                </View> */}
                 <View style={styles.listWrapper}>
                     <DraftPaperList />
                 </View>
 
 
                 {/* board */}
-                <AppModal visible={visible} onClose={handleBordCloseModal}>
-                    {/* <View style={styles.lineMainBox}>
-                            <View style={styles.lineBox}/>
-                            <TouchableOpacity style={styles.cancleBox}>
-                                <Image source={Icons.cancel} style={styles.cancleIcon} resizeMode='contain' />
-                            </TouchableOpacity>
-                        </View> */}
+                {/* <AppModal visible={visible} onClose={handleBordCloseModal}>
+
                     <View style={styles.lineMainBox}>
                         <View style={styles.lineCenterWrapper}>
                             <View style={styles.lineBox} />
@@ -219,11 +212,11 @@ const DraftPaperScreen = (props: DraftPaperScreenProps) => {
                         marginTop: moderateScale(15),
                         marginBottom: moderateScale(40),
                     }} />
-                </AppModal>
+                </AppModal> */}
 
 
                 {/*  medium */}
-                <AppModal visible={visibleMedium} onClose={handleMediumCloseModal}>
+                {/* <AppModal visible={visibleMedium} onClose={handleMediumCloseModal}>
                     <View style={styles.lineMainBox}>
                         <View style={styles.lineCenterWrapper}>
                             <View style={styles.lineBox} />
@@ -254,11 +247,11 @@ const DraftPaperScreen = (props: DraftPaperScreenProps) => {
                         // borderRadius:0,
                         // marginTop:moderateScale(-40)
                     }} />
-                </AppModal>
+                </AppModal> */}
 
 
                 {/* standard */}
-                <AppModal visible={visibleStandard} onClose={handleStandardCloseModal}>
+                {/* <AppModal visible={visibleStandard} onClose={handleStandardCloseModal}>
                     <View style={styles.lineMainBox}>
                         <View style={styles.lineCenterWrapper}>
                             <View style={styles.lineBox} />
@@ -299,7 +292,7 @@ const DraftPaperScreen = (props: DraftPaperScreenProps) => {
                         marginTop: moderateScale(15),
                         marginBottom: moderateScale(40)
                     }} />
-                </AppModal>
+                </AppModal> */}
             </SafeAreaView>
         </View>
     )

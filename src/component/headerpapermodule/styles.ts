@@ -16,9 +16,12 @@ export const styles = StyleSheet.create({
         fontSize: moderateScale(15),
         color: Colors.black,
         fontFamily: Fonts.InstrumentSansMedium,
+        // borderWidth:1,
+        // width:moderateScale(300)
         // marginLeft: moderateScale(5)
         // paddingRight:moderateScale(8)
     },
+
     saveDraftText:{
         fontFamily:Fonts.InstrumentSansMedium,
         color:Colors.white,
@@ -41,6 +44,5 @@ export const styles = StyleSheet.create({
     backImg:{
         width:moderateScale(20),
         height:moderateScale(20),
-        
-    }
+    },
 })

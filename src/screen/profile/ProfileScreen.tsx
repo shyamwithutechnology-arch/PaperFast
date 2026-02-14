@@ -136,7 +136,7 @@ const ProfileScreen = () => {
 
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
-            showToast('success', 'Error', 'Please fill all required fields');
+            showToast('error', 'Error', 'Please fill all required fields');
             return;
         }
         setLoading(true);

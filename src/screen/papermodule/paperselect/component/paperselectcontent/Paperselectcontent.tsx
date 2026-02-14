@@ -78,9 +78,9 @@ const Paperselectcontent: React.FC<Props> = ({ data, handleNavigate, activeChapt
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: Colors.white, marginTop: moderateScale(15) }}>
-      {data.map((item, chapterIndex) => {
+      {data?.map((item, chapterIndex) => {
         const isOpen = activeId === chapterIndex;
-        console.log('item', item);
+        console.log('itemfffffff', item);
 
         return (
           <View key={chapterIndex} style={styles.wrapper}>
@@ -97,7 +97,7 @@ const Paperselectcontent: React.FC<Props> = ({ data, handleNavigate, activeChapt
                 if (userRole === 'tutor') {
                   toggle(chapterIndex)
                 } else if (userRole === 'student') {
-                  navigation.navigate('QuestionListScreen')
+                  navigation.navigate('QuestionListScreen', {chapterName:item?.question_chapter})
                 }
               }}
             >
@@ -107,7 +107,7 @@ const Paperselectcontent: React.FC<Props> = ({ data, handleNavigate, activeChapt
                   Chap 0{chapterIndex + 1}
                 </Text>}
                 {userRole === 'student' && <Text style={[styles.chaptName, { color: Colors.black }]}>
-                  {item?.question_count}
+                 Q - {item?.question_count}
                 </Text>}
               </View>
               {/* {
@@ -160,7 +160,7 @@ const Paperselectcontent: React.FC<Props> = ({ data, handleNavigate, activeChapt
                         </Text>
                         {/* {question.id === selectedSummary.questionId ? } */}
                         <Text style={styles.questionSelectText}>
-                          {question?.questioncount}
+                          Q - {question?.questioncount}
                           {/* {selectedSummary && selectedSummary?.chapterId === chapterIndex && question?.id === selectedSummary?.questionId ? selectedSummary?.selectedQuestions?.length ?? 0 : 0} */}
                         </Text>
                       </TouchableOpacity>

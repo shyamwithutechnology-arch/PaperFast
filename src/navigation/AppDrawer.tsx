@@ -11,31 +11,33 @@ import DraftPaperScreen from '../screen/papermodule/draftpaper/DraftPaperScreen'
 import MyPdfScreen from '../screen/mypdf/mypdf/MyPdfScreen';
 import SubscriptionScreen from '../screen/subscription/SubscriptionScreen';
 import SupportScreen from '../screen/support/SupportScreen';
+import QuestionListScreen from '../screen/studentModule/QuestionListScreen';
 
 const Drawer = createDrawerNavigator();
 const { width } = Dimensions.get('window');
 
 const AppDrawer = () => {
   return (
-    <Drawer.Navigator  screenOptions={{
-        headerShown: false,
-        drawerType: 'front',              // 👈 drawer comes over screen
-        drawerStyle: {
-          width: width,                  // 👈 FULL SCREEN
-        },
-        overlayColor: 'rgba(0,0,0,0.5)',  // 👈 background dim
-      }}
+    <Drawer.Navigator screenOptions={{
+      headerShown: false,
+      drawerType: 'front',              // 👈 drawer comes over screen
+      drawerStyle: {
+        width: width,                  // 👈 FULL SCREEN
+      },
+      overlayColor: 'rgba(0,0,0,0.5)',  // 👈 background dim
+    }}
       drawerContent={(props) => <CustomDrawer {...props} />}>
       <Drawer.Screen name="MainTabs" component={MainTabs} />
-      <Drawer.Screen name='ProfileScreen' component={ProfileScreen}/>
-      <Drawer.Screen name='DeleteAccountScreen' component={DeleteAccountScreen}/>
-      <Drawer.Screen name='PrivacyPolicyScreen' component={PrivacyPolicyScreen}/>
-      <Drawer.Screen name='TermandconditionScreen' component={TermandconditionScreen}/>
-      <Drawer.Screen name='AboutUsScreen' component={AboutUsScreen}/>
-      <Drawer.Screen name='DraftPaperScreen' component={DraftPaperScreen}/>
-      <Drawer.Screen name='MyPdfScreen' component={MyPdfScreen}/>
-      <Drawer.Screen name='SubscriptionScreen' component={SubscriptionScreen}/>
-      <Drawer.Screen name='SupportScreen' component={SupportScreen}/>
+      <Drawer.Screen name='ProfileScreen' component={ProfileScreen} />
+      <Drawer.Screen name='DeleteAccountScreen' component={DeleteAccountScreen} />
+      <Drawer.Screen name='PrivacyPolicyScreen' component={PrivacyPolicyScreen} />
+      <Drawer.Screen name='TermandconditionScreen' component={TermandconditionScreen} />
+      <Drawer.Screen name='AboutUsScreen' component={AboutUsScreen} />
+      <Drawer.Screen name='DraftPaperScreen' component={DraftPaperScreen} />
+      <Drawer.Screen name='MyPdfScreen' component={MyPdfScreen} />
+      {/* <Drawer.Screen name='SubscriptionScreen' component={SubscriptionScreen} /> */}
+      <Drawer.Screen name='SupportScreen' component={SupportScreen} />
+      <Drawer.Screen name="QuestionListScreen" component={QuestionListScreen} />
     </Drawer.Navigator>
   );
 }
