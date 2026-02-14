@@ -43,46 +43,99 @@ const Pagination: React.FC<PaginationProps> = ({
     const { page, pages, total, limit } = paginationData;
 
     // Function to generate visible page numbers
+    // const getVisiblePages = () => {
+    //     const visiblePages: (number | string)[] = [];
+    //     // const maxVisible = 5;
+    //     const maxVisible = 5;
+
+    //     if (pages <= maxVisible) {
+    //         for (let i = 1; i <= pages; i++) {
+    //             visiblePages.push(i);
+    //         }
+    //     } else {
+    //         visiblePages.push(1);
+
+    //         let startPage = Math.max(2, page - 1);
+    //         let endPage = Math.min(pages - 1, page + 1);
+
+    //         if (page <= 3) {
+    //             startPage = 2;
+    //             endPage = Math.min(4, pages - 1); // 4
+    //         }
+
+    //         if (page >= pages - 2) {
+    //             startPage = Math.max(2, pages - 3);
+    //             endPage = pages - 1;
+    //         }
+
+    //         if (startPage > 2) {
+    //             visiblePages.push('...');
+    //         }
+
+    //         for (let i = startPage; i <= endPage; i++) {
+    //             visiblePages.push(i);
+    //         }
+
+    //         if (endPage < pages - 1) {
+    //             visiblePages.push('...');
+    //         }
+    //         visiblePages.push(pages);
+    //     }
+    //     return visiblePages;
+    // };
     const getVisiblePages = () => {
         const visiblePages: (number | string)[] = [];
-        const maxVisible = 5;
+        const maxVisible = 5; // 想要显示的页码数量（包括省略号）
 
         if (pages <= maxVisible) {
+            // 如果总页数小于等于5，显示所有页码
             for (let i = 1; i <= pages; i++) {
                 visiblePages.push(i);
             }
         } else {
+            // 总是显示第一页
             visiblePages.push(1);
 
+            // 计算开始和结束页码
             let startPage = Math.max(2, page - 1);
             let endPage = Math.min(pages - 1, page + 1);
 
+            // 调整显示范围，确保始终显示5个项目（包括省略号）
             if (page <= 3) {
+                // 靠近开始：显示 1,2,3,4,...,10
                 startPage = 2;
-                endPage = Math.min(4, pages - 1);
-            }
-
-            if (page >= pages - 2) {
-                startPage = Math.max(2, pages - 3);
+                endPage = 4;
+            } else if (page >= pages - 2) {
+                // 靠近结束：显示 1,...,7,8,9,10
+                startPage = pages - 3;
                 endPage = pages - 1;
+            } else {
+                // 中间：显示 1,...,4,5,6,...,10
+                startPage = page - 1;
+                endPage = page + 1;
             }
 
+            // 添加左边的省略号
             if (startPage > 2) {
                 visiblePages.push('...');
             }
 
+            // 添加中间的页码
             for (let i = startPage; i <= endPage; i++) {
                 visiblePages.push(i);
             }
 
+            // 添加右边的省略号
             if (endPage < pages - 1) {
                 visiblePages.push('...');
             }
+
+            // 总是显示最后一页
             visiblePages.push(pages);
         }
+
         return visiblePages;
     };
-
     const handleLimitSelect = (selectedLimit: number) => {
         // setSelectedLimit(selectedLimit);
         if (onLimitChange) {
@@ -143,7 +196,7 @@ const Pagination: React.FC<PaginationProps> = ({
                     style={styles.paginationBox}
                     onPress={handlePageSizePress}
                     ref={paginationBoxRef}>
-                    <Text style={[styles.totalText, { fontSize: moderateScale(13.5) }]}>
+                    <Text style={[styles.totalText, { fontSize: moderateScale(12) }]}>
                         {limit}{' '}
                     </Text>
                     <Image
@@ -171,7 +224,7 @@ const Pagination: React.FC<PaginationProps> = ({
                                                 position: 'absolute',
                                                 // top: dropdownPosition.x,
                                                 // left: dropdownPosition.y,
-                                                top: moderateScale(155),
+                                                top: moderateScale(125),
                                                 left: moderateScale(82)
                                             }]}>
                                         {PAGE_SIZE_OPTIONS.map((option) => (
@@ -259,7 +312,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: moderateScale(16.5),
         paddingVertical: moderateScale(6),
         backgroundColor: '#EBF6FF',
-        width: '100%',
+        width: '82%',
     },
     leftContainer: {
         flexDirection: 'row',
@@ -270,6 +323,7 @@ const styles = StyleSheet.create({
         fontSize: moderateScale(12),
         color: Colors.black,
         fontFamily: Fonts.InstrumentSansMedium,
+        textAlignVertical: "center"
     },
     arrow: {
         height: moderateScale(15),
@@ -277,8 +331,8 @@ const styles = StyleSheet.create({
         tintColor: Colors.primaryColor,
     },
     paginationBox: {
-        width: moderateScale(50),
-        paddingHorizontal: moderateScale(6),
+        width: moderateScale(40),
+        paddingHorizontal: moderateScale(5),
         // marginHorizontal:moderateScale(4),
         paddingVertical: moderateScale(2),
         flexDirection: "row",
@@ -286,8 +340,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#EFEFEF',
         borderRadius: moderateScale(2),
         elevation: 0.2,
-        marginLeft: moderateScale(8),
-        // borderWidth:1
+        marginLeft: moderateScale(10),
+        marginRight: moderateScale(15),
+        // borderWidth:1,
     },
     // Modal and Dropdown styles
     modalOverlay: {

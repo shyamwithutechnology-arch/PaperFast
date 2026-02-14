@@ -174,7 +174,7 @@ const Pagination: React.FC<PaginationProps> = ({
                                                 position: 'absolute',
                                                 // top: dropdownPosition.x,
                                                 // left: dropdownPosition.y,
-                                                top:moderateScale(155),
+                                                top:moderateScale(210),
                                                 left:moderateScale(82)
                                             }
                                         ]}
