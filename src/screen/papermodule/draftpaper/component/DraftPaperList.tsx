@@ -61,7 +61,7 @@ const DraftPaperList = (props: DraftPaperListProps) => {
             setLoading(true)
             const response = await POST_FORM(ApiEndPoint.draftDelete, params)
             if (response.status === 200) {
-                showToast('success', response?.msg)
+                showToast('success', 'Success', response?.msg)
                 handleFetchDraftData(userId)
                 setOpenDraft(false)
             }
@@ -168,7 +168,7 @@ const DraftPaperList = (props: DraftPaperListProps) => {
                 updateCellsBatchingPeriod={50}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.containerStyle}
-                ListEmptyComponent={EmptyComponent}
+                ListEmptyComponent={() => EmptyComponent({title:'No draft found'})}
             />
             <DeleteDractModal
                 activeDraft={openDraft}
@@ -239,6 +239,7 @@ const styles = StyleSheet.create({
     containerStyle: {
         paddingBottom: moderateScale(5),
         paddingHorizontal: moderateScale(0),
+        flexGrow:1
     },
     cancleBox: {
         width: moderateScale(30),

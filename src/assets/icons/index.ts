@@ -53,6 +53,7 @@ export const Icons = {
     down: require('./down.png'),
     close: require('./close.png'),
     setting: require('./setting.png'),
+    reject: require('./reject.png'),
 
 
     //// home icon

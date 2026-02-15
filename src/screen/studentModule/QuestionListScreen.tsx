@@ -241,7 +241,7 @@ return (
     <View style={styles.container}>
         <StatusBar barStyle={'dark-content'} backgroundColor={Colors.lightThemeBlue} />
         <SafeAreaView style={{ backgroundColor: Colors.lightThemeBlue }} edges={['top']}>
-            <HeaderPaperModule title={`${finalChapterName}`} leftIconPress={handleBack} />
+            <HeaderPaperModule title={`${finalChapterName}`} leftIconPress={handleBack}  />
         </SafeAreaView>
 
         <SafeAreaView style={styles.homeContainer} edges={['left', 'right', 'bottom']}>

@@ -35,7 +35,7 @@ const MENU = [
     { id: 3, title: 'My Draft Paper', icon: Icons.draft, route: 'DraftPaperScreen' },
     // { id: 4, title: 'My PDFs', icon: Icons.pdf, route: 'MyPdfScreen' },
     { id: 4, title: 'My PDFs', icon: Icons.pdf, route: 'QuestionListScreen' },
-    { id: 5, title: 'Subscription', icon: Icons.subscription, route: 'SubscriptionScreen' },
+    // { id: 5, title: 'Subscription', icon: Icons.subscription, route: 'SubscriptionScreen' },
     { id: 6, title: 'About Us', icon: Icons.about, route: 'AboutUsScreen' },
     { id: 7, title: 'Terms & Conditions', icon: Icons.termAndService, route: 'TermandconditionScreen' },
     { id: 8, title: 'Privacy Policy', icon: Icons.privacy, route: 'PrivacyPolicyScreen' },

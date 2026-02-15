@@ -12,9 +12,10 @@ const App = () => {
     <SafeAreaProvider>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <NavigationContainer> 
-            <RootStack/>
-            <Toast config={toastConfig}/> 
+          <NavigationContainer>
+            <RootStack />
+            {/* <Toast config={toastConfig}/>  */}
+            <Toast config={toastConfig} />
           </NavigationContainer>
         </PersistGate>
       </Provider>

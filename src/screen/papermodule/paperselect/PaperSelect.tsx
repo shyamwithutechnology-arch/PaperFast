@@ -50,7 +50,7 @@ const PaperSelect = () => {
     const questionData = useSelector((state: any) => state?.pdfQuestions?.allQuestions);
     let formated = questionData.map(item => (item?.question_id))
     // const formteQuestion = 
-    //   console.log('cahwwwwwwwwwww',questionData?.allQuestions);
+    //   console.log('chapterDatachapterData',chapterData);
 
     const handleCloseDraftModal = () => {
         setVisibleDraft(false)
@@ -92,7 +92,7 @@ const PaperSelect = () => {
         } else {
             // navigation.goBack();
             // Alert.alert('', 'esafasdfasdf')
-            navigation.navigate('HomeTab', { screen: 'PaperTypeScreen' })
+            navigation.navigate('PaperTypeScreen')
         }
     };
     type PaperType = 'NCERT' | 'EXEMPLAR' | 'RD_SHARMA';
@@ -248,9 +248,9 @@ const PaperSelect = () => {
                 'medium_id': data?.mediumId,
                 // 'class_id': data?.standardId,
                 'subject_id': data?.subjectId,
-            }
-            const response = await POST_FORM(ApiEndPoint?.questionChapter, params);
-            if (response?.status === 200) {                
+            }            
+            const response = await POST_FORM(ApiEndPoint?.questionChapter, params);            
+            if (response?.status === 200) {
                 setChapterData(response?.result || [])
             } else {
                 showToast('error', 'Error', response.msg || "Chapter fetch faild")
@@ -335,7 +335,7 @@ const PaperSelect = () => {
 
             {/* HEADER + STATUS BAR SAME BACKGROUND */}
             <SafeAreaView edges={["top"]} style={{ backgroundColor: Colors.lightThemeBlue }}>
-                <HeaderPaperModule titleStyle={{ fontSize: moderateScale(14) }} title={`${paperHeader}`} subjectName={`${subjectName}`}   rightPress={() => { navigation.navigate('DraftPaperScreen') }} leftIconPress={handleBack} />
+                <HeaderPaperModule titleStyle={{ fontSize: moderateScale(14) }} title={`${paperHeader}`} subjectName={`${subjectName}`} rightPress={() => { navigation.navigate('DraftPaperScreen') }} leftIconPress={handleBack} />
             </SafeAreaView>
             {/* MAIN CONTENT */}
             <Loader visible={loading} />
