@@ -74,7 +74,7 @@ const QuestionScreen = () => {
     const [subId, setSubId] = useState<string | null>('');
     const [remarkVisibleModal, setRemarkVisibleModal] = useState<boolean>(false);
     const [pagination, setPagination] = useState({
-        limit: 10,
+        limit: 50,
         page: 1,
         pages: 1,
         total: 0,
@@ -87,11 +87,31 @@ console.log('paperType', paperType);
         setSelectedCheck(item)
     }
     const handleLabelStatus = async () => {
+        setLoading(true)
         await handleFilterModal()
         await handleQuestionType()
         await handleBookFetch()
         setLabelStatus(true)
     }
+    //   const handleLabelStatus = async () => {
+    //     setLabelStatus(true); // Show modal immediately
+    //     setLoading(true); // Show loading indicator
+        
+    //     try {
+    //         // Fetch all data in parallel for better performance
+    //         await Promise.all([
+    //             handleFilterModal(),
+    //             handleQuestionType(),
+    //             handleBookFetch()
+    //         ]);
+    //     } catch (error) {
+    //         console.log('Error fetching filter data:', error);
+    //         showToast('error', 'Error', 'Failed to load filter options');
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // }
+
     const handleLabelClose = () => {
         setLabelStatus(false)
     }
@@ -108,6 +128,7 @@ console.log('paperType', paperType);
         setLabelStatus(false)
     }
     const handleApplyFilter = async () => {
+        setLoading(true)
         await fetchQuestions(pagination.page, pagination?.limit);
         setLabelStatus(false)
     }
@@ -181,8 +202,7 @@ console.log('paperType', paperType);
             (response) => {
                 if (response.didCancel) return;
                 if (response.errorCode) return;
-
-                console.log('rrrrrrrrrrrrr', response.assets?.[0]);
+                // console.log('rrrrrrrrrrrrr', response.assets?.[0]);
                 if (response.assets?.length) {
                     console.log('eeeeeeeeeeeeeee', response.assets[0].uri);
                 }
@@ -205,7 +225,7 @@ console.log('paperType', paperType);
             if (response?.status === 200) {
                 setDifficultyLabel(response?.result || []);
             }
-        } catch (error: any) {
+        } catch (error: any) {            
             if (error?.offline) {
                 return;
             }
@@ -294,12 +314,8 @@ console.log('paperType', paperType);
                 'page': page?.toString(),
                 'limit': limit?.toString()
             }
-            console.log('ppppppppp', params);
-
             const response = await POST_FORM('question', params)
             if (response?.status === 200) {
-                console.log('resssssssssssssssss', response);
-                
                 setQuestionsData(response || {});
                 if (response?.pagination) {
                     setPagination({
@@ -311,8 +327,6 @@ console.log('paperType', paperType);
                 }
             }
         } catch (error: any) {
-            console.log('ppppppppperrr',error);
-            
             if (error?.offline) {
                 return;
             }
@@ -325,16 +339,12 @@ console.log('paperType', paperType);
         }
     };
 
-    // Handle page change
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= pagination.pages) {
             fetchQuestions(newPage);
-            // Optional: Scroll to top when page changes
-            // scrollViewRef.current?.scrollTo({ y: 0, animated: true });
         }
     };
 
-    // Handle limit change
     const handleLimitChange = (newLimit: number) => {
         setPagination(prev => ({
             ...prev,
@@ -409,7 +419,7 @@ console.log('paperType', paperType);
     return (
         <View style={{ flex: 1, backgroundColor: Colors.white }}>
             <StatusBar
-                backgroundColor={Colors.primaryColor}
+                backgroundColor={Colors.lightThemeBlue}
                 barStyle="dark-content" />
             <SafeAreaView edges={["top"]} style={{ backgroundColor: Colors.lightThemeBlue }}>
                 <HeaderPaperModule
@@ -538,7 +548,7 @@ console.log('paperType', paperType);
                                                 <Pressable key={item?.dlevel_id} style={styles.checkBoxMain} onPress={() => handleCheckStatus(item?.dlevel_id)}>
                                                     <View style={[styles.checkBox, lebelCheck === item?.dlevel_id && { backgroundColor: Colors.primaryColor, borderWidth: 0 }]}>
                                                         {lebelCheck === item?.dlevel_id && (
-                                                            <IconEntypo name='check' size={moderateScale(14.5)} color={Colors.white} />
+                                                            <IconEntypo name='check' size={moderateScale(14)} color={Colors.white} />
                                                         )}
                                                     </View>
                                                     <Text style={styles.easyText}>{item?.dlevel_name}</Text>
@@ -552,7 +562,7 @@ console.log('paperType', paperType);
                                         <Pressable key={item?.qp_id} style={[styles.checkBoxMain, { justifyContent: "flex-start" }]} onPress={() => handleQuestionTypeSelect(item?.qp_id)}>
                                             <View style={[styles.checkBox, questionTypeSelect === item?.qp_id && { backgroundColor: Colors.primaryColor, borderWidth: 0 }]}>
                                                 {questionTypeSelect === item?.qp_id && (
-                                                    <IconEntypo name='check' size={moderateScale(14.5)} color={Colors.white} />
+                                                    <IconEntypo name='check' size={moderateScale(14)} color={Colors.white} />
                                                 )}
                                             </View>
                                             <Text style={styles.easyText}>{item?.qp_name}</Text>
@@ -564,7 +574,7 @@ console.log('paperType', paperType);
                                         <Pressable key={item?.book_id} style={[styles.checkBoxMain, { justifyContent: "flex-start" }]} onPress={() => handleBookSelect(item?.book_id)}>
                                             <View style={[styles.checkBox, bookSelect === item?.book_id && { backgroundColor: Colors.primaryColor, borderWidth: 0 }]}>
                                                 {bookSelect === item?.book_id && (
-                                                    <IconEntypo name='check' size={moderateScale(14.5)} color={Colors.white} />
+                                                    <IconEntypo name='check' size={moderateScale(14)} color={Colors.white} />
                                                 )}
                                             </View>
                                             <Text style={styles.easyText}>{item?.book_name}</Text>
@@ -579,6 +589,7 @@ console.log('paperType', paperType);
                                     <AppButton title="Apply Filter" style={styles.applyFilterBox} textStyle={styles.applyText} onPress={handleApplyFilter} />
                                 </View>
                             </AppModal>
+                             
                             <AppModal visible={remarkVisibleModal} onClose={hanldeRemarkCloseModal}>
                                 <Pressable onPress={openGallery}>
                                     <Text>Upload photo</Text>
@@ -724,7 +735,7 @@ console.log('paperType', paperType);
 export default QuestionScreen;
 
 
-// <***********************************
+// // <***********************************
 // import React, { useCallback, useEffect, useState } from "react";
 // import { View, StatusBar, TouchableOpacity, Text, Image, Pressable, Alert } from "react-native";
 // import { SafeAreaView } from "react-native-safe-area-context";
@@ -859,10 +870,27 @@ export default QuestionScreen;
 //         setLabelStatus(false)
 //     }
 
+//     // const handleApplyFilter = async () => {
+//     //     await fetchQuestions(pagination.page, pagination?.limit);
+//     //     setLabelStatus(false)
+//     // }
+
 //     const handleApplyFilter = async () => {
-//         await fetchQuestions(pagination.page, pagination?.limit);
-//         setLabelStatus(false)
-//     }
+//     setQuestionsData({}); // Reset data
+//     setPagination(prev => ({ ...prev, page: 1 })); // Reset to page 1
+//     await fetchQuestions(1, pagination?.limit);
+//     setLabelStatus(false)
+// }
+
+//     // Add this new function
+//     const handleTabChange = (tab: string) => {
+//         setActiveTab(tab);
+//         setQuestionsData({}); // Reset data when switching tabs
+//         setSelectedMap({}); // Optional: clear selected questions when switching tabs
+//         setQuestionNumber({}); // Optional: clear question numbers
+//         setPagination(prev => ({ ...prev, page: 1 })); // Reset to page 1
+//         fetchQuestions(1, pagination?.limit); // Fetch new data for the selected tab
+//     };
 
 //     const handleClearFilter = async () => {
 //         setLabelCheck(null),
@@ -1042,6 +1070,115 @@ export default QuestionScreen;
 //     };
 
 //   // In QuestionScreen.tsx - Simplified fix for the fetchQuestions function
+// // const fetchQuestions = async (
+// //     page: number = 1,
+// //     limit: number = pagination?.limit,
+// //     subject?: string | null,
+// //     isLoadMore: boolean = false
+// // ) => {
+// //     if (isLoadMore) {
+// //         setIsLoadingMore(true);
+// //     } else {
+// //         setLoading(true);
+// //     }
+    
+// //     try {
+// //         let params = {
+// //             'subject_id': subject ?? selectedSubjectId,
+// //             'difficulty': lebelCheck || '3',
+// //             'page': page?.toString(),
+// //             'limit': limit?.toString()
+// //         }
+
+// //         console.log('paramssssss', params);
+        
+// //         const response = await POST_FORM('question', params)
+        
+// //         if (response?.status === 200) {
+// //             // if (isLoadMore) {
+// //             //     // IMPORTANT: Use a Set to ensure unique question IDs
+// //             //     setQuestionsData((prev: any) => {
+// //             //         const existingQuestions = prev?.result || [];
+// //             //         const newQuestions = response?.result || [];
+                    
+// //             //         // Create a Set of existing IDs for quick lookup
+// //             //         const existingIds = new Set(existingQuestions.map((q: any) => q.question_id));
+                    
+// //             //         // Only add questions that don't already exist
+// //             //         const uniqueNewQuestions = newQuestions.filter(
+// //             //             (q: any) => !existingIds.has(q.question_id)
+// //             //         );
+                    
+// //             //         console.log(`Adding ${uniqueNewQuestions.length} new unique questions`);
+                    
+// //             //         return {
+// //             //             ...response,
+// //             //             result: [...existingQuestions, ...uniqueNewQuestions]
+// //             //         };
+// //             //     });
+// //             // } else {
+// //             //     setQuestionsData(response || {});
+// //             // }
+// //              if (isLoadMore) {
+// //                     setQuestionsData((prev: any) => {
+// //                         const existingQuestions = prev?.result || [];
+// //                         const newQuestions = response?.result || [];
+                        
+// //                         // Better duplicate checking - check by multiple fields
+// //                         const existingIds = new Set(existingQuestions.map((q: any) => q.question_id));
+// //                         const existingTexts = new Set(existingQuestions.map((q: any) => q.question_text));
+                        
+// //                         // Filter out duplicates based on both ID and text
+// //                         const uniqueNewQuestions = newQuestions.filter((q: any) => {
+// //                             const isDuplicateId = existingIds.has(q.question_id);
+// //                             const isDuplicateText = existingTexts.has(q.question_text);
+                            
+// //                             if (isDuplicateId || isDuplicateText) {
+// //                                 console.log('Duplicate found:', q.question_id, q.question_text.substring(0, 30));
+// //                                 return false;
+// //                             }
+// //                             return true;
+// //                         });
+                        
+// //                         console.log(`Existing: ${existingQuestions.length}, New: ${newQuestions.length}, Unique: ${uniqueNewQuestions.length}`);
+                        
+// //                         // If no unique questions found, we might have reached the end
+// //                         if (uniqueNewQuestions.length === 0) {
+// //                             setHasMoreData(false);
+// //                             return prev;
+// //                         }
+                        
+// //                         return {
+// //                             ...response,
+// //                             result: [...existingQuestions, ...uniqueNewQuestions]
+// //                         };
+// //                     });
+// //                 } else {
+// //                     setQuestionsData(response || {});
+// //                 }
+
+// //             if (response?.pagination) {
+// //                 setPagination({
+// //                     limit: response.pagination.limit,
+// //                     page: response.pagination.page,
+// //                     pages: response.pagination.pages,
+// //                     total: response.pagination.total,
+// //                 });
+// //                 setHasMoreData(response.pagination.page < response.pagination.pages);
+// //             }
+// //         }
+// //     } catch (error: any) {
+// //         console.log('Error:', error);
+// //         showToast('error', 'Error', errorMessage);
+// //     } finally {
+// //         if (isLoadMore) {
+// //             setIsLoadingMore(false);
+// //         } else {
+// //             setLoading(false);
+// //         }
+// //     }
+// // };
+
 // const fetchQuestions = async (
 //     page: number = 1,
 //     limit: number = pagination?.limit,
@@ -1062,28 +1199,43 @@ export default QuestionScreen;
 //             'limit': limit?.toString()
 //         }
 
+//         console.log('paramssssss', params);
+        
 //         const response = await POST_FORM('question', params)
         
 //         if (response?.status === 200) {
 //             if (isLoadMore) {
-//                 // IMPORTANT: Use a Set to ensure unique question IDs
 //                 setQuestionsData((prev: any) => {
 //                     const existingQuestions = prev?.result || [];
 //                     const newQuestions = response?.result || [];
                     
-//                     // Create a Set of existing IDs for quick lookup
-//                     const existingIds = new Set(existingQuestions.map((q: any) => q.question_id));
+//                     // Create a Map using question_id as key to ensure uniqueness
+//                     const questionMap = new Map();
                     
-//                     // Only add questions that don't already exist
-//                     const uniqueNewQuestions = newQuestions.filter(
-//                         (q: any) => !existingIds.has(q.question_id)
-//                     );
+//                     // Add existing questions to map
+//                     existingQuestions.forEach((q: any) => {
+//                         questionMap.set(q.question_id, q);
+//                     });
                     
-//                     console.log(`Adding ${uniqueNewQuestions.length} new unique questions`);
+//                     // Add new questions to map (this will automatically overwrite duplicates)
+//                     newQuestions.forEach((q: any) => {
+//                         questionMap.set(q.question_id, q);
+//                     });
+                    
+//                     // Convert map back to array
+//                     const uniqueQuestions = Array.from(questionMap.values());
+                    
+//                     console.log(`Existing: ${existingQuestions.length}, New: ${newQuestions.length}, Unique: ${uniqueQuestions.length}`);
+                    
+//                     // Check if we got any new unique questions
+//                     if (uniqueQuestions.length === existingQuestions.length) {
+//                         setHasMoreData(false);
+//                         return prev;
+//                     }
                     
 //                     return {
 //                         ...response,
-//                         result: [...existingQuestions, ...uniqueNewQuestions]
+//                         result: uniqueQuestions
 //                     };
 //                 });
 //             } else {
@@ -1102,6 +1254,7 @@ export default QuestionScreen;
 //         }
 //     } catch (error: any) {
 //         console.log('Error:', error);
+//         const errorMessage = error?.response?.data?.message || error?.message || 'Something went wrong';
 //         showToast('error', 'Error', errorMessage);
 //     } finally {
 //         if (isLoadMore) {
@@ -1111,7 +1264,6 @@ export default QuestionScreen;
 //         }
 //     }
 // };
-
 //     const generatePDF = async () => {
 //         // try {
 //         //     const selectedQuestions = questionsData?.result?.filter(
@@ -1193,14 +1345,16 @@ export default QuestionScreen;
 //                 <View style={styles.tabContainer}>
 //                     <TouchableOpacity
 //                         style={[styles.tab, activeTab === 'all' && styles.activeTab]}
-//                         onPress={() => setActiveTab('all')}>
+//                         // onPress={() => setActiveTab('all')}>
+//                             onPress={() => handleTabChange('all')}> 
 //                         <Text style={[styles.tabText, activeTab === 'all' && styles.activeTabText]}>
 //                             All Questions
 //                         </Text>
 //                     </TouchableOpacity>
 //                     <TouchableOpacity
 //                         style={[styles.tab, activeTab === 'topic' && styles.activeTab]}
-//                         onPress={() => setActiveTab('topic')}>
+//                         // onPress={() => setActiveTab('topic')}>
+//                             onPress={() => handleTabChange('topic')}>
 //                         <Text style={[styles.tabText, activeTab === 'topic' && styles.activeTabText]}>
 //                             Topic Wise
 //                         </Text>

@@ -71,7 +71,7 @@ export const styles = StyleSheet.create({
     fontFamily: Fonts.InstrumentSansMedium
   },
   diffeicultText: {
-    fontSize: moderateScale(20),
+    fontSize: moderateScale(18),
     color: Colors.primaryColor,
     fontFamily: Fonts.InstrumentSansSemiBold
   },
@@ -93,14 +93,14 @@ export const styles = StyleSheet.create({
     // marginHorizontal:moderateScale(16)
   },
   diffecultyText: {
-    fontSize: moderateScale(16),
-    color: Colors.black,
-    fontFamily: Fonts.InstrumentSansRegular,
+    fontSize: moderateScale(15),
+    color: Colors.primaryColor,
+    fontFamily: Fonts.InstrumentSansMedium,
     marginLeft: moderateScale(16)
   },
   checkBox: {
-    height: moderateScale(18),
-    width: moderateScale(18),
+    height: moderateScale(16.5),
+    width: moderateScale(16.5),
     borderWidth: 1,
     borderRadius: moderateScale(3),
     alignItems: 'center',
@@ -114,7 +114,7 @@ export const styles = StyleSheet.create({
   //   borderRadius: moderateScale(3)
   // },
   easyText: {
-    fontSize: moderateScale(14),
+    fontSize: moderateScale(13),
     color: Colors.black,
     fontFamily: Fonts.InstrumentSansMedium,
     marginLeft: moderateScale(11)
@@ -149,11 +149,11 @@ export const styles = StyleSheet.create({
   cancelBtn: {
     width: '46%',
     backgroundColor: 'rgba(0,0,0,.2)',
-    paddingVertical: moderateScale(12.2)
+    paddingVertical: moderateScale(10)
   },
   applyFilterBox: {
     width: '46%',
-    paddingVertical: moderateScale(12.2)
+    paddingVertical: moderateScale(10)
 
   },
   btnMain: {
@@ -163,7 +163,7 @@ export const styles = StyleSheet.create({
 
 
   // ???????????????????????????????????????
-    tabContainer: {
+  tabContainer: {
     flexDirection: 'row',
     backgroundColor: Colors.white,
     borderBottomWidth: 1,
@@ -186,5 +186,32 @@ export const styles = StyleSheet.create({
   activeTabText: {
     color: Colors.primaryColor,
     fontFamily: Fonts.InterSemiBold,
+  },
+
+
+  /////////////// filter modal
+  // Add to your existing styles
+  loaderContainer: {
+    paddingVertical: moderateScale(50),
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: moderateScale(200),
+  },
+
+  loadingText: {
+    fontSize: moderateScale(14),
+    fontFamily: Fonts.InstrumentSansMedium,
+    color: Colors.gray,
+    marginTop: moderateScale(10),
+    textAlign: 'center',
+  },
+
+  noDataText: {
+    fontSize: moderateScale(14),
+    fontFamily: Fonts.InstrumentSansMedium,
+    color: Colors.gray,
+    paddingVertical: moderateScale(10),
+    paddingHorizontal: moderateScale(15),
+    textAlign: 'center',
   },
 })

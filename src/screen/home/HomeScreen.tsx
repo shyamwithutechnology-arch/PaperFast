@@ -394,7 +394,8 @@ const HomeScreen = () => {
             edges={['left', 'right', 'bottom']}>
             <Loader visible={loading} />
             {/* rightIcon={Icons.notification} onRightPress={() => navigation.navigate('NotificationScreen')} */}
-            <AppHeader title="Paper Fast" leftIcon={Icons.drawer} onBackPress={() => navigation.openDrawer()} discriptionText={`(For ${userRole || 'User'})`} />
+            <AppHeader title="Paper Fast" leftIcon={Icons.drawer} onBackPress={() => navigation?.openDrawer()} discriptionText={`(${userRole || 'User'})`} rightIcon={Icons.notification} onRightPress={() => navigation.navigate('NotificationScreen')}
+            />
             <View style={styles.innerMainContainer}>
                 <FlatList
                     data={subData}

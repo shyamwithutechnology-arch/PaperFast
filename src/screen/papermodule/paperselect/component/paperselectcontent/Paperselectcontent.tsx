@@ -112,7 +112,7 @@ const Paperselectcontent: React.FC<Props> = ({ data, handleNavigate, activeChapt
                   Chap 0{chapterIndex + 1}
                 </Text>}
                 {userRole === 'student' && <Text style={[styles.chaptName, { color: Colors.black }]}>
-                  Q - {item?.question_count}
+                  Qs - {item?.question_count}
                 </Text>}
               </View>
               {/* {
@@ -165,7 +165,7 @@ const Paperselectcontent: React.FC<Props> = ({ data, handleNavigate, activeChapt
                         </Text>
                         {/* {question.id === selectedSummary.questionId ? } */}
                         <Text style={styles.questionSelectText}>
-                          Q - {question?.questioncount}
+                          Qs - {question?.questioncount}
                           {/* {selectedSummary && selectedSummary?.chapterId === chapterIndex && question?.id === selectedSummary?.questionId ? selectedSummary?.selectedQuestions?.length ?? 0 : 0} */}
                         </Text>
                       </TouchableOpacity>
@@ -238,8 +238,6 @@ const Paperselectcontent: React.FC<Props> = ({ data, handleNavigate, activeChapt
                           if (chap?.chapterId === chapterIndex) {
                             // Check if this chapter has the matching question type
                             if (chap?.questionTypeId === question?.id) {
-                              console.log('selectedSummary', chap?.questionNumbers)
-
                               return (
                                 <View style={styles.mcqBox} key={`${chapterIndex}-${question?.id}`}>
                                   {/* {(chap?.questionNumbers || selectedSummary?.selectedQuestions)?.map((item, idx) => ( */}

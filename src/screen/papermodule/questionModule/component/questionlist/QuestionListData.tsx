@@ -680,7 +680,7 @@ const QuestionListData: React.FC<Props> = ({
   // Add footer loader component
   const  renderFooter = () => {
     if (!isLoadingMore) return null;
-    
+
     return (
       <View style={styles.footerLoader}>
         <ActivityIndicator size="large" color={Colors.primaryColor} />
@@ -692,7 +692,7 @@ const QuestionListData: React.FC<Props> = ({
   // Add empty footer when no more data
   const renderEmptyFooter = () => {
     if (questionsData.length === 0 || isLoading) return null;
-    
+
     if (!hasMoreData && questionsData.length > 0) {
       return (
         <View style={styles.endOfListContainer}>
@@ -909,13 +909,13 @@ const QuestionListData: React.FC<Props> = ({
           contentContainerStyle={styles.listContent}
 
 
-          
+
         // Add these props for infinite scrolling
         onEndReached={handleEndReached}
         onEndReachedThreshold={0.3} // Trigger when 30% from bottom
         ListFooterComponent={renderFooter}
         ListFooterComponentStyle={styles.footerContainer}
-        
+
         // Optional: Add empty component
         ListEmptyComponent={
           !isLoading && questionsData.length === 0 ? (
@@ -1438,6 +1438,8 @@ const styles = StyleSheet.create({
     width: '60%',
 
   },
+
+  // '#e0e0e0'
   shimmerOptionsGrid: {
     marginBottom: moderateScale(12),
   },
@@ -1498,8 +1500,6 @@ const styles = StyleSheet.create({
     color: Colors.gray,
   },
 });
-
-
 
 // ***********************************
 // import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
@@ -1620,6 +1620,7 @@ const styles = StyleSheet.create({
 //   }
 
 //   text = text
+//     // .replace(/<br\s*\/?>\s*<br\s*\/?>/gi, '\n\n')
 //     .replace(/<br\s*\/?>\s*<br\s*\/?>/gi, '\n\n')
 //     .replace(/<br\s*\/?>/gi, ' ')
 //     .replace(/&lt;/g, '<')
@@ -2001,7 +2002,7 @@ const styles = StyleSheet.create({
 //     { id: 'D', label: item.option_d || '' },
 //   ];
 //   const questionNumber = (currentPage - 1) * limit + index + 1;
-  
+
 //   const textSty = () => {
 //     if (item?.dlevel_name === 'Easy') {
 //       return { color: Colors.primaryColor }
@@ -2098,7 +2099,7 @@ const styles = StyleSheet.create({
 //   isLoadingMore = false,
 // }) => {
 //   const [openPicker, setOpenPicker] = useState<boolean>(false);
-  
+
 //   const handleCloseModal = () => {
 //     setOpenPicker(false)
 //   }
@@ -2116,7 +2117,7 @@ const styles = StyleSheet.create({
 //   // Add footer loader component
 //   const renderFooter = () => {
 //     if (!isLoadingMore) return null;
-    
+
 //     return (
 //       <View style={styles.footerLoader}>
 //         <ActivityIndicator size="large" color={Colors.primaryColor} />
@@ -2128,7 +2129,7 @@ const styles = StyleSheet.create({
 //   // Add empty footer when no more data
 //   const renderEmptyFooter = () => {
 //     if (questionsData.length === 0 || isLoading) return null;
-    
+
 //     if (!hasMoreData && questionsData.length > 0) {
 //       return (
 //         <View style={styles.endOfListContainer}>
@@ -2270,7 +2271,7 @@ const styles = StyleSheet.create({
 //       chapter?.chapterId === getAllRute?.chapterId &&
 //       chapter?.questionTypeId === getAllRute?.questionId
 //     );
-    
+
 //     const isInRedux = currentChapter?.selectedQuestions?.some((q: any) =>
 //       q?.question_id === item?.question_id
 //     );
@@ -2278,7 +2279,7 @@ const styles = StyleSheet.create({
 //     const isLocallySelected = !!selectedMap[item?.question_id];
 //     const isSelected = isLocallySelected || isInRedux;
 //     const langthList = index === questionsData?.length - 1;
-    
+
 //     return (
 //       <QuestionItem
 //         item={item}
@@ -2296,12 +2297,22 @@ const styles = StyleSheet.create({
 //     );
 //   }, [selectedMap, selectCheck, toggleSelect, extractBase64Images, currentPage, limit, openMediaPicker, hideContant, questionsData, questiondd, getAllRute]);
 
-//   const keyExtractor = useCallback((item: Question) => item.question_id, []);
-  
+//   // const keyExtractor = useCallback((item: Question) => item.question_id, []);
+
+//   // const extraData = useMemo(() => ({
+//   //   selectedMap,
+//   //   selectCheck,
+//   //   length: questionsData.length,
+//   // }), [selectedMap, selectCheck, questionsData.length]);
+//   const keyExtractor = useCallback((item: Question) => {
+//     // Ensure unique key by combining with timestamp or index if needed
+//     return `question-${item.question_id}-${item.question_text?.substring(0, 10)}`;
+//   }, []);
+
 //   const extraData = useMemo(() => ({
 //     selectedMap,
 //     selectCheck,
-//     length: questionsData.length,
+//     questionsDataLength: questionsData.length,
 //   }), [selectedMap, selectCheck, questionsData.length]);
 
 //   const shimmerKeyExtractor = useCallback((_: any, index: number) => `shimmer-${index}`, []);

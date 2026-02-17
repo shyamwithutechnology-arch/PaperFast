@@ -54,6 +54,9 @@ export const Icons = {
     close: require('./close.png'),
     setting: require('./setting.png'),
     reject: require('./reject.png'),
+    right: require('./right.png'),
+    avgicon: require('./avgicon.png'),
+    wrong: require('./wrong.png'),
 
 
     //// home icon

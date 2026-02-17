@@ -7,7 +7,8 @@ import {
     Platform,
     TouchableOpacity,
     KeyboardAvoidingView,
-    ScrollView
+    ScrollView,
+    Pressable
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -24,13 +25,20 @@ import { useFocusEffect, useIsFocused, useNavigation, useRoute } from '@react-na
 import { showToast } from "../../utils/toast";
 import { POST_FORM } from "../../api/request";
 import { ApiEndPoint } from "../../api/endPoints";
+import { useDispatch, useSelector } from "react-redux";
+import { setRole } from "../../redux/slices/userRole";
+import { removeSelectedSubId } from "../../redux/slices/selectedSubSlice";
 
 const ProfileScreen = () => {
     const navigation = useNavigation()
     const [phone, setPhone] = useState<string>("");
     const [profileData, setProfileData] = useState({})
     const [date, setDate] = useState(new Date())
-    const [showDatePicker, setShowDatePicker] = useState(false) 
+    const [showDatePicker, setShowDatePicker] = useState(false)
+    const dispatch = useDispatch()
+    const userRole = useSelector((state: any) => state.userRole?.role);
+    const [selectRole, setSelectRole] = React.useState<'Teacher' | 'Student'>(userRole === 'tutor' ? 'Teacher' : 'Student');
+    const [userId, setUserId] = useState<number | string>('');
     const [input, setInput] = useState({
         firstName: '',
         lastName: '',
@@ -199,6 +207,42 @@ const ProfileScreen = () => {
         }
     };
 
+    const handleChangeRole = async (role: string) => {
+        setLoading(true);
+        try {
+            let params = {
+                usr_id: userProfileId,
+                usr_role: role === 'Student' ? 'student' : 'tutor'
+            }
+            const response = await POST_FORM(ApiEndPoint.updateRole, params);
+            if (response && response.status === 200) {
+                showToast('success', 'Success', response?.msg || 'Role Update Successfully')
+                await localStorage.setItem(storageKeys.userId, String(response?.result?.usr_id))
+                await localStorage.setItem(storageKeys.selectedSubId, '')
+                dispatch(setRole(response?.result?.usr_role))
+                dispatch(removeSelectedSubId())
+            } else {
+                const errorMessage = response?.msg;
+                showToast('error', "Error", errorMessage);
+            }
+        } catch (error: any) {
+            if (error?.offline) {
+                return;
+            }
+            const errorMessage = error?.response?.data?.msg ||
+                error?.msg ||
+                'Something went wrong. Please try again.';
+            showToast('error', "Error", errorMessage);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const changeRole = async (role: string) => {
+        await handleChangeRole(role)
+        setSelectRole(role)
+    }
+
     const handleFirstNameChange = (text) => {
         setInput(prev => ({ ...prev, firstName: text }));
         if (errors.firstName) {
@@ -220,6 +264,9 @@ const ProfileScreen = () => {
         }
     };
 
+    // const handleRoleChange = (role) => {
+    //     setSelectRole(role)
+    // }
     // Platform-specific date picker styles
     const getDatePickerDisplay = () => {
         if (Platform.OS === 'ios') {
@@ -238,6 +285,7 @@ const ProfileScreen = () => {
         }
         getData()
     }, [])
+
 
     useFocusEffect(
         useCallback(() => {
@@ -272,8 +320,7 @@ const ProfileScreen = () => {
     return (
         <SafeAreaView
             style={styles.mainContainer}
-            edges={['left', 'right', 'bottom']}
-        >
+            edges={['left', 'right', 'bottom']}>
             <Loader visible={loading} />
             <AppHeader
                 title="Paper Fast"
@@ -300,18 +347,15 @@ const ProfileScreen = () => {
                             }}
                             keyboardShouldPersistTaps="handled"
                             showsVerticalScrollIndicator={true}>
-
                             <Text style={styles.loginText}>My Profile</Text>
                             <Text style={styles.subHeading}>Update your personal details</Text>
-
                             <View style={{ marginTop: moderateScale(4) }}>
                                 <View style={{ marginBottom: moderateScale(15) }}>
                                     <AppTextInput
                                         placeHolderText={'Enter Name'}
                                         value={input?.firstName}
                                         onChangeText={handleFirstNameChange}
-                                        containerStyle={{}}
-                                    />
+                                        containerStyle={{}} />
                                     {errors?.firstName && (
                                         <Text style={{
                                             fontSize: moderateScale(12),
@@ -423,13 +467,32 @@ const ProfileScreen = () => {
                                         </Text>
                                     )}
                                 </View>
-                            </View>
 
+                                <Text style={styles.selectRoleText}>Select Role</Text>
+                                <View style={styles.mainRoleBox}>
+                                    <Pressable style={styles.teacherBox} onPress={() => changeRole('Teacher')}>
+                                        <View style={styles.redioBtn}>
+                                            {selectRole === 'Teacher' &&
+                                                <View style={styles.innerBox} />
+                                            }
+                                        </View>
+                                        <Text style={styles.teacherText}>Teacher{selectRole === 'Teacher' && ` (You)`}</Text>
+                                    </Pressable>
+                                    <Pressable style={styles.teacherBox} onPress={() => changeRole('Student')}>
+                                        <View style={styles.redioBtn}>
+                                            {selectRole === 'Student' &&
+                                                <View style={styles.innerBox} />
+                                            }
+                                        </View>
+                                        <Text style={styles.teacherText}>Student{selectRole === 'Student' && ` (You)`}</Text>
+                                    </Pressable>
+                                </View>
+                            </View>
                             <AppButton
                                 title="Submit"
                                 style={{
                                     paddingHorizontal: moderateScale(133),
-                                    marginTop: moderateScale(14)
+                                    marginTop:moderateScale(40)
                                 }}
                                 onPress={handleProfileRequest}
                             />

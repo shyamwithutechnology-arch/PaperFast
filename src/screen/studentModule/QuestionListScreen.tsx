@@ -17,6 +17,7 @@ import AppModal from '../../component/modal/AppModal';
 import { ScrollView } from 'react-native-gesture-handler';
 import IconEntypo from "react-native-vector-icons/FontAwesome5";
 import AppButton from '../../component/button/AppButton';
+import BookMark from "react-native-vector-icons/Ionicons";
 
 // import Pagination from '../papermodule/questionModule/component/Pagination';
 
@@ -40,284 +41,299 @@ const QuestionListScreen = (props: QuestionListScreenProps) => {
     const navigation = useNavigation()
     const route = useRoute();
     // const { chapterName  ?? ''} = route?.params
-//     const { chapterName === '' ? '' : chapterName
-// } = route?.params || {};
-const { chapterName } = route?.params || {};
-const finalChapterName = chapterName === undefined ? 'Numeric' : chapterName;
+    //     const { chapterName === '' ? '' : chapterName
+    // } = route?.params || {};
+    const { chapterName } = route?.params || {};
+    const finalChapterName = chapterName === undefined ? 'Numeric' : chapterName;
 
-const selectedSubjectId = useSelector((state) => state?.selectedSubId?.selectedSubId)
-const [selectCheck, setSelectedCheck] = useState('Options')
-const [selectedMap, setSelectedMap] = useState<Record<string, boolean>>({});
-const [questionsData, setQuestionsData] = useState<any>({});
-const [questionTypeSelect, setQuestionTypeSelect] = useState<string | null>(null);
-const [bookSelect, setBookSelect] = useState<string | null>(null);
-const [difficultyLabel, setDifficultyLabel] = useState<Difficulty[]>([]);
-const [questionType, setQuestionType] = useState<QuestionType[]>([]);
-const [book, setBook] = useState<Book[]>([]);
-const [labelStatus, setLabelStatus] = useState(false);
-const [lebelCheck, setLabelCheck] = useState<string | null>(null);
-const [loading, setLoading] = useState(false);
+    const selectedSubjectId = useSelector((state) => state?.selectedSubId?.selectedSubId)
+    const [selectCheck, setSelectedCheck] = useState('Options')
+    const [selectedMap, setSelectedMap] = useState<Record<string, boolean>>({});
+    const [questionsData, setQuestionsData] = useState<any>({});
+    const [questionTypeSelect, setQuestionTypeSelect] = useState<string | null>(null);
+    const [bookSelect, setBookSelect] = useState<string | null>(null);
+    const [difficultyLabel, setDifficultyLabel] = useState<Difficulty[]>([]);
+    const [questionType, setQuestionType] = useState<QuestionType[]>([]);
+    const [book, setBook] = useState<Book[]>([]);
+    const [labelStatus, setLabelStatus] = useState(false);
+    const [lebelCheck, setLabelCheck] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
 
-const [pagination, setPagination] = useState({
-    limit: 10,
-    page: 1,
-    pages: 1,
-    total: 0,
-});
-const handleBack = () => {
-    navigation?.goBack()
-}
-// Handle page change
-const handlePageChange = (newPage: number) => {
-    if (newPage >= 1 && newPage <= pagination.pages) {
-
-        fetchQuestions(newPage);
-        // Optional: Scroll to top when page changes
-        // scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+    const [pagination, setPagination] = useState({
+        limit: 10,
+        page: 1,
+        pages: 1,
+        total: 0,
+    });
+    const handleBack = () => {
+        navigation?.goBack()
     }
-};
+    // Handle page change
+    const handlePageChange = (newPage: number) => {
+        if (newPage >= 1 && newPage <= pagination.pages) {
 
-// Handle limit change
-const handleLimitChange = (newLimit: number) => {
-    setPagination(prev => ({
-        ...prev,
-        limit: newLimit,
-        page: 1 // Reset to first page
-    }));
-    // Fetch data with new limit
-    fetchQuestions(1, newLimit);
-};
-const fetchQuestions = async (page: number = 1, limit: number = pagination?.limit, subject?: string | null) => {
-    setLoading(true)
-    try {
-        let params = {
-            'subject_id': subject ?? selectedSubjectId,
-            'difficulty': lebelCheck || '3',
-            // 'easy': '3',
-            'page': page?.toString(),
-            'limit': limit?.toString()
-            // 'subject_id': selectedSubjectId || 6,
-            // 'difficulty': '3',
-            // // 'easy': '3',
-            // 'page': page?.toString(),
-            // 'limit': limit?.toString()
+            fetchQuestions(newPage);
+            // Optional: Scroll to top when page changes
+            // scrollViewRef.current?.scrollTo({ y: 0, animated: true });
         }
-        const response = await POST_FORM('question', params)
-        if (response?.status === 200) {
-            setQuestionsData(response || {});
-            if (response?.pagination) {
-                setPagination({
-                    limit: response.pagination.limit,
-                    page: response.pagination.page,
-                    pages: response.pagination.pages,
-                    total: response.pagination.total,
-                });
+    };
+
+    // Handle limit change
+    const handleLimitChange = (newLimit: number) => {
+        setPagination(prev => ({
+            ...prev,
+            limit: newLimit,
+            page: 1 // Reset to first page
+        }));
+        // Fetch data with new limit
+        fetchQuestions(1, newLimit);
+    };
+    const fetchQuestions = async (page: number = 1, limit: number = pagination?.limit, subject?: string | null) => {
+        setLoading(true)
+        try {
+            let params = {
+                'subject_id': subject ?? selectedSubjectId,
+                'difficulty': lebelCheck || '3',
+                // 'easy': '3',
+                'page': page?.toString(),
+                'limit': limit?.toString()
+                // 'subject_id': selectedSubjectId || 6,
+                // 'difficulty': '3',
+                // // 'easy': '3',
+                // 'page': page?.toString(),
+                // 'limit': limit?.toString()
             }
+            const response = await POST_FORM('question', params)
+            if (response?.status === 200) {
+                setQuestionsData(response || {});
+                if (response?.pagination) {
+                    setPagination({
+                        limit: response.pagination.limit,
+                        page: response.pagination.page,
+                        pages: response.pagination.pages,
+                        total: response.pagination.total,
+                    });
+                }
+            }
+        } catch (error: any) {
+            if (error?.offline) {
+                return;
+            }
+            const errorMessage = error?.response?.data?.message ||
+                error?.message ||
+                'Something went wrong. Please try again.';
+            showToast('error', 'Error', errorMessage);
+        } finally {
+            setLoading(false)
         }
-    } catch (error: any) {
-        if (error?.offline) {
-            return;
+    };
+    // difficulty type
+    const handleFilterModal = async () => {
+        setLoading(true)
+        try {
+            const response = await GET(ApiEndPoint.difficultyLabel)
+            if (response?.status === 200) {
+                setDifficultyLabel(response?.result || []);
+            }
+        } catch (error: any) {
+            if (error?.offline) {
+                return;
+            }
+            const errorMessage = error?.response?.data?.message ||
+                error?.message ||
+                'Something went wrong. Please try again.';
+            showToast('error', 'Error', errorMessage);
+        } finally {
+            setLoading(false)
         }
-        const errorMessage = error?.response?.data?.message ||
-            error?.message ||
-            'Something went wrong. Please try again.';
-        showToast('error', 'Error', errorMessage);
-    } finally {
-        setLoading(false)
-    }
-};
-// difficulty type
-const handleFilterModal = async () => {
-    setLoading(true)
-    try {
-        const response = await GET(ApiEndPoint.difficultyLabel)
-        if (response?.status === 200) {
-            setDifficultyLabel(response?.result || []);
+    };
+    // question type
+    const handleQuestionType = async () => {
+        setLoading(true)
+        try {
+            const response = await GET(ApiEndPoint.queationtype)
+            if (response?.status === 200) {
+                setQuestionType(response?.result || []);
+            }
+        } catch (error: any) {
+            if (error?.offline) {
+                return;
+            }
+            const errorMessage = error?.response?.data?.message ||
+                error?.message ||
+                'Something went wrong. Please try again.';
+            showToast('error', 'Error', errorMessage);
+        } finally {
+            setLoading(false)
         }
-    } catch (error: any) {
-        if (error?.offline) {
-            return;
-        }
-        const errorMessage = error?.response?.data?.message ||
-            error?.message ||
-            'Something went wrong. Please try again.';
-        showToast('error', 'Error', errorMessage);
-    } finally {
-        setLoading(false)
-    }
-};
-// question type
-const handleQuestionType = async () => {
-    setLoading(true)
-    try {
-        const response = await GET(ApiEndPoint.queationtype)
-        if (response?.status === 200) {
-            setQuestionType(response?.result || []);
-        }
-    } catch (error: any) {
-        if (error?.offline) {
-            return;
-        }
-        const errorMessage = error?.response?.data?.message ||
-            error?.message ||
-            'Something went wrong. Please try again.';
-        showToast('error', 'Error', errorMessage);
-    } finally {
-        setLoading(false)
-    }
-};
+    };
 
-// bookFetch
-const handleBookFetch = async () => {
-    setLoading(true);
-    try {
-        const response = await GET(ApiEndPoint?.bookFetch);
-        // console.log('resssssssbook', response);
+    // bookFetch
+    const handleBookFetch = async () => {
+        setLoading(true);
+        try {
+            const response = await GET(ApiEndPoint?.bookFetch);
+            // console.log('resssssssbook', response);
 
-        if (response?.status === 200) {
-            setBook(response?.result || []);
-        } else {
-            showToast('error', 'Error', response?.msg || 'Book not found');
-            setBook([]);
+            if (response?.status === 200) {
+                setBook(response?.result || []);
+            } else {
+                showToast('error', 'Error', response?.msg || 'Book not found');
+                setBook([]);
+            }
+        } catch (error) {
+            if (error.offline) {
+                return
+            }
+            showToast('error', 'Error', 'Something went wrong')
+        } finally {
+            setLoading(false);
         }
-    } catch (error) {
-        if (error.offline) {
-            return
-        }
-        showToast('error', 'Error', 'Something went wrong')
-    } finally {
-        setLoading(false);
+    };
+
+    const handleLabelStatus = async () => {
+        await handleFilterModal()
+        await handleQuestionType()
+        await handleBookFetch()
+        setLabelStatus(true)
     }
-};
-
-const handleLabelStatus = async () => {
-    await handleFilterModal()
-    await handleQuestionType()
-    await handleBookFetch()
-    setLabelStatus(true)
-}
-const handleLabelClose = () => {
-    setLabelStatus(false)
-}
-const handleCheckStatus = (item: string) => {
-    setLabelCheck(item)
-}
-const handleQuestionTypeSelect = (item: string) => {
-    setQuestionTypeSelect(item)
-}
-const handleBookSelect = (item: string) => {
-    setBookSelect(item)
-}
-const handleFilterClose = async () => {
-    setLabelStatus(false)
-}
-const handleApplyFilter = async () => {
-    await fetchQuestions(pagination.page, pagination?.limit);
-    setLabelStatus(false)
-}
-const handleClearFilter = async () => {
-    setLabelCheck(null),
-        setQuestionTypeSelect(null),
+    const handleLabelClose = () => {
+        setLabelStatus(false)
+    }
+    const handleCheckStatus = (item: string) => {
+        setLabelCheck(item)
+    }
+    const handleQuestionTypeSelect = (item: string) => {
+        setQuestionTypeSelect(item)
+    }
+    const handleBookSelect = (item: string) => {
+        setBookSelect(item)
+    }
+    const handleFilterClose = async () => {
+        setLabelStatus(false)
+    }
+    const handleApplyFilter = async () => {
         await fetchQuestions(pagination.page, pagination?.limit);
-    setLabelStatus(false)
-}
-useFocusEffect(
-    useCallback(() => {
-        navigation.getParent()?.setOptions({
-            tabBarStyle: { display: 'none' },
-        });
-        return () => {
+        setLabelStatus(false)
+    }
+    const handleClearFilter = async () => {
+        setLabelCheck(null),
+            setQuestionTypeSelect(null),
+            await fetchQuestions(pagination.page, pagination?.limit);
+        setLabelStatus(false)
+    }
+    useFocusEffect(
+        useCallback(() => {
             navigation.getParent()?.setOptions({
-                tabBarStyle: { display: 'flex' },
+                tabBarStyle: { display: 'none' },
             });
-        };
-    }, []))
+            return () => {
+                navigation.getParent()?.setOptions({
+                    tabBarStyle: { display: 'flex' },
+                });
+            };
+        }, []))
 
-useEffect(() => {
-    fetchQuestions(pagination.page, pagination?.limit);
-}, []);
-
-return (
-    <View style={styles.container}>
-        <StatusBar barStyle={'dark-content'} backgroundColor={Colors.lightThemeBlue} />
-        <SafeAreaView style={{ backgroundColor: Colors.lightThemeBlue }} edges={['top']}>
+    useEffect(() => {
+        fetchQuestions(pagination.page, pagination?.limit);
+    }, []);
+    return (
+        <View style={styles.container}>
+            <StatusBar barStyle={'dark-content'} backgroundColor={Colors.lightThemeBlue} />
+            {/* <SafeAreaView style={{ backgroundColor: Colors.lightThemeBlue }} edges={['top']}>
             <HeaderPaperModule title={`${finalChapterName}`} leftIconPress={handleBack}  />
-        </SafeAreaView>
-
-        <SafeAreaView style={styles.homeContainer} edges={['left', 'right', 'bottom']}>
-            <Loader visible={loading} />
-            <View style={{ borderColor: '#000', marginVertical: moderateScale(20), flexDirection: 'row', alignItems: "center" }}>
-                {pagination.pages > 1 && (
-                    <Pagination
-                        paginationData={pagination}
-                        onPageChange={handlePageChange}
-                        onLimitChange={handleLimitChange}
-                    />
-                )}
-                {loading === false && <TouchableOpacity style={styles.filterBtn} onPress={handleLabelStatus}>
-                    <Image source={Icons.filter} resizeMode="contain" style={styles.filteImg} />
-                </TouchableOpacity>}
-            </View>
-
-            {/* <Text style={styles.paperText}>PaperListScreen component</Text> */}
-            <QuestionListComponent
-                selectCheck={selectCheck}
-                selectedMap={selectedMap}
-                setSelectedMap={setSelectedMap}
-                questionsData={questionsData?.result ?? []}
-                currentPage={pagination?.page}
-                limit={pagination.limit}
-            />
-            <AppModal visible={labelStatus} onClose={handleLabelClose}>
-                <View style={styles.applyBox}>
-                    <Text style={styles.diffeicultText}>Apply Filter</Text>
-                    <TouchableOpacity onPress={handleClearFilter} style={{ padding: moderateScale(1) }}>
-                        <Text style={styles.clearAllText}>Clear all filters</Text>
-                    </TouchableOpacity>
-                </View>
-                <ScrollView style={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
-                    <View style={styles.lineBox} />
-                    <Text style={styles.diffecultyText}>Difficulty level</Text>
-                    <View style={styles.easyBox}>
-                        <View style={styles.difficultMainBox}>
-                            {difficultyLabel?.map(item => (
-                                <Pressable key={item?.dlevel_id} style={styles.checkBoxMain} onPress={() => handleCheckStatus(item?.dlevel_id)}>
-                                    <View style={[styles.checkBox, lebelCheck === item?.dlevel_id && { backgroundColor: Colors.primaryColor, borderWidth: 0 }]}>
-                                        {lebelCheck === item?.dlevel_id && <IconEntypo name='check' size={moderateScale(14.5)} color={Colors.white} />
-                                        }
-                                    </View>
-                                    <Text style={styles.easyText}>{item?.dlevel_name}</Text>
-                                </Pressable>))}
-                        </View>
+        </SafeAreaView> */}
+            <SafeAreaView style={styles.headerSafe} edges={['top']}>
+                <View style={styles.qsBox}>
+                    {/* <View style={{borderWid}}/> */}
+                    <View style={{ flexDirection: "row", alignItems: 'center' }}>
+                        <TouchableOpacity onPress={handleBack} style={styles.arrowBox}>
+                            <Image source={Icons?.back} style={styles.backImg} resizeMode="contain" />
+                        </TouchableOpacity>
+                        <Text style={[styles.title]} numberOfLines={1}>
+                            {`${finalChapterName}`}
+                        </Text>
                     </View>
-                    <Text style={[styles.diffecultyText, { marginTop: moderateScale(20) }]}>Question Type</Text>
-                    {questionType?.map(item => (
-                        <Pressable key={item?.qp_id} style={[styles.checkBoxMain, { justifyContent: "flex-start" }]} onPress={() => handleQuestionTypeSelect(item?.qp_id)}>
-                            <View style={[styles.checkBox, questionTypeSelect === item?.qp_id && { backgroundColor: Colors.primaryColor, borderWidth: 0 }]}>
-                                {questionTypeSelect === item?.qp_id && <IconEntypo name='check' size={moderateScale(14.5)} color={Colors.white} />}                                </View>
-                            <Text style={styles.easyText}>{item?.qp_name}</Text>
-                        </Pressable>
-                    ))}
-
-                    <Text style={[styles.diffecultyText, { marginTop: moderateScale(20) }]}>Books</Text>
-                    {book?.map(item => (
-                        <Pressable key={item?.book_id} style={[styles.checkBoxMain, { justifyContent: "flex-start" }]} onPress={() => handleBookSelect(item?.book_id)}>
-                            <View style={[styles.checkBox, bookSelect === item?.book_id && { backgroundColor: Colors.primaryColor, borderWidth: 0 }]}>
-                                {bookSelect === item?.book_id && <IconEntypo name='check' size={moderateScale(14.5)} color={Colors.white} />}                                </View>
-                            <Text style={styles.easyText}>{item?.book_name}</Text>
-                        </Pressable>
-                    ))}
-                </ScrollView>
-                <View style={[styles.lineBox]} />
-                <View style={[styles.easyBox, styles.btnMain]}>
-                    <AppButton title="Cancel" style={styles.cancelBtn} textStyle={styles.cancelText} onPress={handleFilterClose} />
-                    <AppButton title="Apply Filter" style={styles.applyFilterBox}
-                        textStyle={styles.applyText} onPress={handleApplyFilter} />
+                    <Pressable style={{ borderWidth: 0 }} onPress={() => navigation.navigate('BookMarkScreen')}>
+                        <BookMark name='bookmark-outline' size={moderateScale(22)} color={Colors.primaryColor} />
+                    </Pressable>
                 </View>
-            </AppModal>
-        </SafeAreaView>
-    </View>
-)
+            </SafeAreaView>
+
+            <SafeAreaView style={styles.homeContainer} edges={['left', 'right', 'bottom']}>
+                <Loader visible={loading} />
+                <View style={{ borderColor: '#000', marginVertical: moderateScale(20), flexDirection: 'row', alignItems: "center" }}>
+                    {pagination.pages > 1 && (
+                        <Pagination
+                            paginationData={pagination}
+                            onPageChange={handlePageChange}
+                            onLimitChange={handleLimitChange}
+                        />
+                    )}
+                    {loading === false && <TouchableOpacity style={styles.filterBtn} onPress={handleLabelStatus}>
+                        <Image source={Icons.filter} resizeMode="contain" style={styles.filteImg} />
+                    </TouchableOpacity>}
+                </View>
+
+                {/* <Text style={styles.paperText}>PaperListScreen component</Text> */}
+                <QuestionListComponent
+                    selectCheck={selectCheck}
+                    selectedMap={selectedMap}
+                    setSelectedMap={setSelectedMap}
+                    questionsData={questionsData?.result ?? []}
+                    currentPage={pagination?.page}
+                    limit={pagination.limit}
+                />
+                <AppModal visible={labelStatus} onClose={handleLabelClose}>
+                    <View style={styles.applyBox}>
+                        <Text style={styles.diffeicultText}>Apply Filter</Text>
+                        <TouchableOpacity onPress={handleClearFilter} style={{ padding: moderateScale(1) }}>
+                            <Text style={styles.clearAllText}>Clear all filters</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <ScrollView style={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
+                        <View style={styles.lineBox} />
+                        <Text style={styles.diffecultyText}>Difficulty level</Text>
+                        <View style={styles.easyBox}>
+                            <View style={styles.difficultMainBox}>
+                                {difficultyLabel?.map(item => (
+                                    <Pressable key={item?.dlevel_id} style={styles.checkBoxMain} onPress={() => handleCheckStatus(item?.dlevel_id)}>
+                                        <View style={[styles.checkBox, lebelCheck === item?.dlevel_id && { backgroundColor: Colors.primaryColor, borderWidth: 0 }]}>
+                                            {lebelCheck === item?.dlevel_id && <IconEntypo name='check' size={moderateScale(14.5)} color={Colors.white} />
+                                            }
+                                        </View>
+                                        <Text style={styles.easyText}>{item?.dlevel_name}</Text>
+                                    </Pressable>))}
+                            </View>
+                        </View>
+                        <Text style={[styles.diffecultyText, { marginTop: moderateScale(20) }]}>Question Type</Text>
+                        {questionType?.map(item => (
+                            <Pressable key={item?.qp_id} style={[styles.checkBoxMain, { justifyContent: "flex-start" }]} onPress={() => handleQuestionTypeSelect(item?.qp_id)}>
+                                <View style={[styles.checkBox, questionTypeSelect === item?.qp_id && { backgroundColor: Colors.primaryColor, borderWidth: 0 }]}>
+                                    {questionTypeSelect === item?.qp_id && <IconEntypo name='check' size={moderateScale(14.5)} color={Colors.white} />}                                </View>
+                                <Text style={styles.easyText}>{item?.qp_name}</Text>
+                            </Pressable>
+                        ))}
+
+                        <Text style={[styles.diffecultyText, { marginTop: moderateScale(20) }]}>Books</Text>
+                        {book?.map(item => (
+                            <Pressable key={item?.book_id} style={[styles.checkBoxMain, { justifyContent: "flex-start" }]} onPress={() => handleBookSelect(item?.book_id)}>
+                                <View style={[styles.checkBox, bookSelect === item?.book_id && { backgroundColor: Colors.primaryColor, borderWidth: 0 }]}>
+                                    {bookSelect === item?.book_id && <IconEntypo name='check' size={moderateScale(14.5)} color={Colors.white} />}                                </View>
+                                <Text style={styles.easyText}>{item?.book_name}</Text>
+                            </Pressable>
+                        ))}
+                    </ScrollView>
+                    <View style={[styles.lineBox]} />
+                    <View style={[styles.easyBox, styles.btnMain]}>
+                        <AppButton title="Cancel" style={styles.cancelBtn} textStyle={styles.cancelText} onPress={handleFilterClose} />
+                        <AppButton title="Apply Filter" style={styles.applyFilterBox}
+                            textStyle={styles.applyText} onPress={handleApplyFilter} />
+                    </View>
+                </AppModal>
+            </SafeAreaView>
+        </View>
+    )
 }
 
 export default QuestionListScreen
@@ -437,5 +453,39 @@ const styles = StyleSheet.create({
         color: Colors.red,
         fontFamily: Fonts.InstrumentSansRegular
     },
+    headerSafe: {
+        backgroundColor: Colors.lightThemeBlue,
+        paddingHorizontal: moderateScale(16),
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingBottom: moderateScale(10),
+        paddingTop: moderateScale(10),
+        // borderWidth:1/
+    },
+    arrowBox: {
+        paddingLeft: moderateScale(1),
+        width: moderateScale(24),
+        // borderWidth:1
+    },
+    qsBox: {
+        flexDirection: 'row',
+        // borderWidth: 1,
+        justifyContent: "space-between",
+        alignItems: "center",
+        flex: 1
+    },
+    backImg: {
+        width: moderateScale(20),
+        height: moderateScale(20),
+    },
 
+    title: {
+        fontSize: moderateScale(15),
+        color: Colors.black,
+        fontFamily: Fonts.InstrumentSansMedium,
+        // flex: 1,
+        textAlign: 'left',
+        // marginLeft: moderateScale(2)
+    },
 })

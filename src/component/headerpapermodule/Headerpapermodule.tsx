@@ -31,7 +31,6 @@ interface HeaderpapermoduleProp {
 }
 const HeaderPaperModule: React.FC = ({ title, rightPress, rightPressDisable, leftIconPress, titleStyle, subjectName, rightPress2, headerContainerStyle }: HeaderpapermoduleProp) => {
     const formtedText = (text, limit) => {
-        // let textFormate = 
         if (text.length > limit) {
             return text.substring(0, limit) + '...'
         }
@@ -42,17 +41,11 @@ const HeaderPaperModule: React.FC = ({ title, rightPress, rightPressDisable, lef
         <View style={[styles.headerContainer, headerContainerStyle]}>
             <View style={{
                 flexDirection: 'row',
-                // paddingLeft: moderateScale(15),
                 alignItems: "center",
-                // borderWidth:1,
-                // marginBottom:moderateScale(-80)
             }}>
-                <TouchableOpacity onPress={leftIconPress} style={{ paddingLeft: moderateScale(1), borderWidth: 0, paddingRight: moderateScale(10), paddingVertical: moderateScale(10) }}>
-                    {/* <FontAwesome6 name="arrow-left" size={moderateScale(20)} color="#000"
-                    /> */}
+                <TouchableOpacity onPress={leftIconPress} style={styles?.leftIcon}>
                     <Image source={Icons?.back} style={styles.backImg} resizeMode="contain" />
                 </TouchableOpacity>
-                {/* <Text style={[styles.title, titleStyle]}>{title}</Text> */}
                 <Text style={[styles.title, titleStyle]}>
                     {visibleText}
                     {subjectName && (
@@ -76,4 +69,4 @@ const HeaderPaperModule: React.FC = ({ title, rightPress, rightPressDisable, lef
     );
 };
 
-export default HeaderPaperModule;
+export default HeaderPaperModule

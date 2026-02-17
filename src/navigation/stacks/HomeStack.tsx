@@ -9,11 +9,11 @@
     import ChemistryData from '../../screen/papermodule/ChemistryData';
     import MyPdfScreen from '../../screen/mypdf/mypdf/MyPdfScreen';
     import NotificationScreen from '../../screen/notification/NotificationScreen';
-    import ScoreBoardScreen from '../../screen/scrollboard/ScoreBoardScreen';
     import PaperListScreen from '../../screen/studentModule/QuestionListScreen';
     import QuestionListScreen from '../../screen/studentModule/QuestionListScreen';
     import BookMarkScreen from '../../screen/studentModule/bookmark/BookMarkScreen';
 import OpenQuestionScreen from '../../screen/studentModule/openquestion/OpenQuestionScreen';
+import ScoreCardScreen from '../../screen/scrollcard/ScoreCardScreen';
     // import PdfPreviewScreen from '../../screen/mypdf/PDFPreviewScreen';
     const Stack = createNativeStackNavigator();
 
@@ -34,7 +34,7 @@ import OpenQuestionScreen from '../../screen/studentModule/openquestion/OpenQues
                     options={{ title: 'PDF Viewer' }}
                 />             */}
                 <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
-                <Stack.Screen name="ScoreBoardScreen" component={ScoreBoardScreen} />
+                <Stack.Screen name="ScoreCardScreen" component={ScoreCardScreen} />
                 <Stack.Screen name="QuestionListScreen" component={QuestionListScreen} />
                 <Stack.Screen name="OpenQuestionScreen" component={OpenQuestionScreen} />
                 <Stack.Screen name="BookMarkScreen" component={BookMarkScreen} />

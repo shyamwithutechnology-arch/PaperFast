@@ -182,7 +182,7 @@ const LoginScreen = () => {
                                     <Text style={styles.supportText}>Support</Text>
                                     <View style={styles.numberTextBox}>
                                         <Image source={Icons.plus} style={styles.plusImg} />
-                                        <Text style={styles.supportNumberText}>91 8709952350</Text>
+                                        <Text style={styles.supportNumberText}>91 9510779200</Text>
                                     </View>
                                 </View>
                             </View>

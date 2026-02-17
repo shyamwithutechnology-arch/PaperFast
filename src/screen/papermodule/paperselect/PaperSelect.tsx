@@ -248,8 +248,8 @@ const PaperSelect = () => {
                 'medium_id': data?.mediumId,
                 // 'class_id': data?.standardId,
                 'subject_id': data?.subjectId,
-            }            
-            const response = await POST_FORM(ApiEndPoint?.questionChapter, params);            
+            }
+            const response = await POST_FORM(ApiEndPoint?.questionChapter, params);
             if (response?.status === 200) {
                 setChapterData(response?.result || [])
             } else {
@@ -384,7 +384,6 @@ const PaperSelect = () => {
                         {/* <TouchableOpacity 
   style={styles.exportBox} 
   onPress={() => {
-    
     if (hasQuestions) {
       navigation.navigate('QuestionScreen');
     } else {
