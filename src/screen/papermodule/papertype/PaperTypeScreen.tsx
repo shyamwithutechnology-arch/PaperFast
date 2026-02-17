@@ -73,6 +73,7 @@ import { localStorage, storageKeys } from "../../../storage/storage";
 const PaperTypeScreen = () => {
   const navigation = useNavigation()
   const [loading, setLoading] = useState<boolean>(false);
+  const [selectedSubId, setSelectedSubId] = useState<string | null>(null);
   const [banners, setBanners] = useState([]);
 
   console.log('bannersdddd', banners);
@@ -119,6 +120,11 @@ const PaperTypeScreen = () => {
 
   useEffect(() => {
     fetchBanners();
+    let tillSubject = async () => {
+      let sub = await localStorage.getItem(storageKeys.selectedSubject);
+      setSelectedSubId(sub)
+    }
+    tillSubject()
   }, []);
   return (
     <View style={{ flex: 1, backgroundColor: Colors.white }}>
@@ -131,14 +137,14 @@ const PaperTypeScreen = () => {
       {/* HEADER + STATUS BAR SHARE SAME BACKGROUND */}
       <View style={{ backgroundColor: Colors.lightThemeBlue }}>
         <SafeAreaView edges={["top"]}>
-          <HeaderPaperModule title='Create Exam Paper - Maths' leftIconPress={handleBack} />
+          <HeaderPaperModule title={`Create Exam Paper - ${selectedSubId}`} leftIconPress={handleBack} />
         </SafeAreaView>
       </View>
 
       {/* SCREEN CONTENT */}
       <SafeAreaView style={{ flex: 1 }} edges={["left", "right", "bottom"]}>
         <Loader visible={loading} />
-        <CustomPaperCard onPress={handleSelectPaperType}/>
+        <CustomPaperCard onPress={handleSelectPaperType} />
         <View style={{ marginTop: moderateScale(6) }}>
           <HomeBannerSlider
             banners={banners}
@@ -156,7 +162,7 @@ const PaperTypeScreen = () => {
                 <Text style={styles.supportText}>Support</Text>
                 <View style={styles.numberTextBox}>
                   <Image source={Icons.plus} style={styles.plusImg} />
-                  <Text style={styles.supportNumberText}>91 8709952350</Text>
+                  <Text style={styles.supportNumberText}>91 9510779200</Text>
                 </View>
               </View>
             </View>

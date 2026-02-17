@@ -94,7 +94,7 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         // borderWidth: 1,
-        borderBottomWidth:1,
+        borderBottomWidth: 1,
         borderColor: 'rgba(12, 64, 111, 0.19)',
         borderTopLeftRadius: moderateScale(5),
         borderTopRightRadius: moderateScale(5),
@@ -115,7 +115,7 @@ export const styles = StyleSheet.create({
         // backgroundColor:'red'
         flex: 1,
         flexWrap: 'wrap',
-        paddingVertical:moderateScale(5)
+        paddingVertical: moderateScale(5)
     },
     notificationdec: {
         fontSize: moderateScale(10),
@@ -132,8 +132,8 @@ export const styles = StyleSheet.create({
         alignItems: "center",
         // marginTop: moderateScale(10),
         // borderWidth:1,
-        marginHorizontal:moderateScale(2),
-        marginBottom:moderateScale(20)
+        marginHorizontal: moderateScale(2),
+        marginBottom: moderateScale(20)
     },
 
     lineCenterWrapper: {
@@ -207,7 +207,7 @@ export const styles = StyleSheet.create({
         marginTop: moderateScale(8), // -28
         marginBottom: moderateScale(3)
     },
-    sectionContainer:{
+    sectionContainer: {
         // borderWidth:1,
         // marginBottom:moderateScale(-39)
     },
@@ -233,7 +233,7 @@ export const styles = StyleSheet.create({
         paddingHorizontal: scale(8),
         width: moderateScale(160),
         // marginVertical:moderateScale(0)
-        marginBottom:moderateScale(-2)
+        marginBottom: moderateScale(-2)
     },
     mediumBox: {
         flex: 1,
@@ -256,7 +256,7 @@ export const styles = StyleSheet.create({
         // borderWidth:1,
         width: moderateScale(110),
     },
-     mediumModalText: {
+    mediumModalText: {
         fontSize: moderateScale(15),
         // textAlign: "center",
         fontFamily: Fonts.InstrumentSansRegular,

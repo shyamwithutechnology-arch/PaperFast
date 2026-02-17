@@ -4,7 +4,9 @@ import { localStorage } from '../storage/storage';
 import { showToast } from '../utils/toast';
 
 const api = axios.create({
-  baseURL: 'https://www.papers.withupartners.in/api/',
+  // baseURL: 'https://www.papers.withupartners.in/api/',
+  baseURL: 'https://www.paperfast.in/api/',
+
   timeout: 20000,
   headers: {
     Accept: 'application/json',

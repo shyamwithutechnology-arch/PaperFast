@@ -155,6 +155,46 @@ export const styles = StyleSheet.create({
         // marginBottom: 'auto'
         // marginVertical: moderateScale(10)
         marginTop: 'auto'
+    },
+    selectRoleText: {
+        fontSize: moderateScale(15.5),
+        fontFamily: Fonts.InstrumentSansMedium,
+        color: Colors.black,
+        marginLeft: moderateScale(16),
+        marginTop:moderateScale(5)
+    },
+    redioBtn: {
+        height: moderateScale(13),
+        width: moderateScale(13),
+        borderWidth: 1,
+        borderRadius: moderateScale(20),
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    innerBox: {
+        height: moderateScale(8),
+        width: moderateScale(8),
+        borderWidth: 1,
+        borderRadius: moderateScale(20),
+        backgroundColor: Colors.primaryColor
+    },
+    teacherText: {
+        fontSize: moderateScale(14),
+        color: Colors.black,
+        fontFamily: Fonts.InterRegular,
+        marginLeft:moderateScale(10)
+    },
+    teacherBox: {
+        flexDirection: 'row',
+        // justifyContent: "space-around",
+        alignItems: "center",
+        marginLeft:moderateScale(16),
+        marginTop:moderateScale(4)
+    },
+    mainRoleBox:{
+        flexDirection:'row',
+        alignItems:'center',
+
     }
 }
 )

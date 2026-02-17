@@ -33,7 +33,7 @@ import { Fonts } from "../../theme/fonts";
 export const styles = StyleSheet.create({
   button: {
     backgroundColor: Colors.primaryColor,
-    paddingVertical: moderateScale(14),
+    paddingVertical: moderateScale(11.5),
     paddingHorizontal: moderateScale(24),
     borderRadius: moderateScale(50),
     alignItems: "center",

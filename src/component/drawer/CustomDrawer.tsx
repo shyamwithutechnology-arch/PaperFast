@@ -4,24 +4,16 @@ import {
     Text,
     Image,
     TouchableOpacity,
-    StyleSheet,
-    StatusBar,
     Alert,
 } from 'react-native';
-import { DrawerContent, DrawerContentScrollView } from '@react-navigation/drawer';
-import { Colors } from '../../theme/color';
-import { Fonts } from '../../theme/fonts';
+import { DrawerContentScrollView } from '@react-navigation/drawer';
 import { moderateScale } from '../../utils/responsiveSize';
 import { styles } from './styles';
 import { Icons } from '../../assets/icons';
-import { Images } from '../../assets/images';
-import { WorkletsModule } from 'react-native-worklets';
 import { logout } from '../../redux/slices/authSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { localStorage, reduxStorage, storageKeys } from '../../storage/storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import AppHeader from '../header/AppHeader';
-import { CommonActions, useNavigation } from '@react-navigation/native';
 import { showToast } from '../../utils/toast';
 import { POST_FORM } from '../../api/request';
 import { ApiEndPoint } from '../../api/endPoints';
@@ -35,7 +27,7 @@ const MENU = [
     { id: 3, title: 'My Draft Paper', icon: Icons.draft, route: 'DraftPaperScreen' },
     // { id: 4, title: 'My PDFs', icon: Icons.pdf, route: 'MyPdfScreen' },
     { id: 4, title: 'My PDFs', icon: Icons.pdf, route: 'QuestionListScreen' },
-    { id: 5, title: 'Subscription', icon: Icons.subscription, route: 'SubscriptionScreen' },
+    // { id: 5, title: 'Subscription', icon: Icons.subscription, route: 'SubscriptionScreen' },
     { id: 6, title: 'About Us', icon: Icons.about, route: 'AboutUsScreen' },
     { id: 7, title: 'Terms & Conditions', icon: Icons.termAndService, route: 'TermandconditionScreen' },
     { id: 8, title: 'Privacy Policy', icon: Icons.privacy, route: 'PrivacyPolicyScreen' },
@@ -50,8 +42,6 @@ const CustomDrawer = ({ navigation }) => {
     const [selectRole, setSelectRole] = React.useState<'Teacher' | 'Student'>(userRole === 'tutor' ? 'Teacher' : 'Student');
     const [loading, setLoading] = useState<boolean>(false);
     const [userId, setUserId] = useState<number | string>('');
-    console.log('rolerr', userRole === 'tutor');
-
     // const navigation = useNavigation()
     // const handleLoggeOut = async () => {
     // Alert.alert('', 'Are You Sure You Want to LogOut')
@@ -112,7 +102,6 @@ const CustomDrawer = ({ navigation }) => {
         );
     };
 
-
     const handleChangeRole = async (role: string) => {
         setLoading(true);
         try {
@@ -120,20 +109,21 @@ const CustomDrawer = ({ navigation }) => {
                 usr_id: userId,
                 usr_role: role === 'Student' ? 'student' : 'tutor'
             }
+            console.log('paraaa', params);
+
             const response = await POST_FORM(ApiEndPoint.updateRole, params);
+            console.log('resssssssssssss', response);
             if (response && response.status === 200) {
-                showToast('success', response?.msg || 'Role Update Successfully')
+
+                showToast('success', 'Success', response?.msg || 'Role Update Successfully')
                 await localStorage.setItem(storageKeys.userId, String(response?.result?.usr_id))
                 await localStorage.setItem(storageKeys.selectedSubId, '')
                 dispatch(setRole(response?.result?.usr_role))
                 dispatch(removeSelectedSubId())
                 navigation.closeDrawer();
-
-            } else {
-                const errorMessage = response?.msg;
-                showToast('error', "Error", errorMessage);
             }
         } catch (error: any) {
+            console.log('ressssssssssssserror', error);
             if (error?.offline) {
                 return;
             }
@@ -158,6 +148,7 @@ const CustomDrawer = ({ navigation }) => {
         }
         useId()
     }, [])
+
     useEffect(() => {
         if (userRole === 'tutor') {
             setSelectRole('Teacher');
@@ -165,7 +156,6 @@ const CustomDrawer = ({ navigation }) => {
             setSelectRole('Student');
         }
     }, [userRole]);
-
     return (
         <SafeAreaView
             style={styles.mainContainer}>
@@ -260,7 +250,7 @@ const CustomDrawer = ({ navigation }) => {
                                 <Text style={styles.supportText}>Support</Text>
                                 <View style={styles.numberTextBox} >
                                     <Image source={Icons.plus} style={styles.plusImg} />
-                                    <Text style={styles.supportNumberText}>913445764523</Text>
+                                    <Text style={styles.supportNumberText}>91 9510779200</Text>
                                 </View>
                             </View>
                         </View>

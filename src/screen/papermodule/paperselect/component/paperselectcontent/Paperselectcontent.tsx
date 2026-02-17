@@ -16,6 +16,8 @@ import { Colors } from "../../../../../theme";
 import SupPower from "../../../../../component/SupPower";
 import { useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
+import EmptyComponent from "../../../../../component/emptyComponent";
+
 
 if (Platform.OS === "android") {
   UIManager.setLayoutAnimationEnabledExperimental?.(true);
@@ -60,6 +62,8 @@ const Paperselectcontent: React.FC<Props> = ({ data, handleNavigate, activeChapt
   const chapterData = useSelector((state: any) => state?.pdfQuestions);
   const userRole = useSelector((state: any) => state?.userRole?.role);
   const navigation = useNavigation()
+  console.log('data', data);
+
   // const [activeId, setActiveId] = useState<number | null>(null);
   const [activeId, setActiveId] = useState<number | null>(activeChapterId);
 
@@ -72,16 +76,17 @@ const Paperselectcontent: React.FC<Props> = ({ data, handleNavigate, activeChapt
     setActiveId(prev => (prev === id ? null : id));
   };
 
+  // if (!data?.length) {
+  //   return () => EmptyComponent({ title: 'No draft found' })
+  // }
   if (!data?.length) {
-    return <Text style={{ textAlign: "center", fontSize: moderateScale(14), color: Colors.black }}>No Data</Text>;
+    return <EmptyComponent title='No data found' />  // ✅ Returns JSX
   }
-
   return (
     <ScrollView style={{ flex: 1, backgroundColor: Colors.white, marginTop: moderateScale(15) }}>
       {data?.map((item, chapterIndex) => {
         const isOpen = activeId === chapterIndex;
         console.log('itemfffffff', item);
-
         return (
           <View key={chapterIndex} style={styles.wrapper}>
             {/* TITLE */}
@@ -97,7 +102,7 @@ const Paperselectcontent: React.FC<Props> = ({ data, handleNavigate, activeChapt
                 if (userRole === 'tutor') {
                   toggle(chapterIndex)
                 } else if (userRole === 'student') {
-                  navigation.navigate('QuestionListScreen', {chapterName:item?.question_chapter})
+                  navigation.navigate('QuestionListScreen', { chapterName: item?.question_chapter })
                 }
               }}
             >
@@ -107,7 +112,7 @@ const Paperselectcontent: React.FC<Props> = ({ data, handleNavigate, activeChapt
                   Chap 0{chapterIndex + 1}
                 </Text>}
                 {userRole === 'student' && <Text style={[styles.chaptName, { color: Colors.black }]}>
-                 Q - {item?.question_count}
+                  Qs - {item?.question_count}
                 </Text>}
               </View>
               {/* {
@@ -160,7 +165,7 @@ const Paperselectcontent: React.FC<Props> = ({ data, handleNavigate, activeChapt
                         </Text>
                         {/* {question.id === selectedSummary.questionId ? } */}
                         <Text style={styles.questionSelectText}>
-                          Q - {question?.questioncount}
+                          Qs - {question?.questioncount}
                           {/* {selectedSummary && selectedSummary?.chapterId === chapterIndex && question?.id === selectedSummary?.questionId ? selectedSummary?.selectedQuestions?.length ?? 0 : 0} */}
                         </Text>
                       </TouchableOpacity>
@@ -233,8 +238,6 @@ const Paperselectcontent: React.FC<Props> = ({ data, handleNavigate, activeChapt
                           if (chap?.chapterId === chapterIndex) {
                             // Check if this chapter has the matching question type
                             if (chap?.questionTypeId === question?.id) {
-                              console.log('selectedSummary', chap?.questionNumbers)
-
                               return (
                                 <View style={styles.mcqBox} key={`${chapterIndex}-${question?.id}`}>
                                   {/* {(chap?.questionNumbers || selectedSummary?.selectedQuestions)?.map((item, idx) => ( */}

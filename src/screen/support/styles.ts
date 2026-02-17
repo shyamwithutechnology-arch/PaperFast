@@ -89,11 +89,11 @@ export const styles = StyleSheet.create({
         resizeMode: 'contain',
         marginRight: moderateScale(8),
     },
-    numberTextBox: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        flexWrap: 'wrap',
-        },
+    // numberTextBox: {
+    //     flexDirection: 'row',
+    //     alignItems: 'center',
+    //     flexWrap: 'wrap',
+    //     },
     plusImg: {
         height: moderateScale(25),
         width: moderateScale(25),
@@ -115,36 +115,36 @@ export const styles = StyleSheet.create({
     },
     mainMaskView: {
         backgroundColor: "rgba(12, 64, 111, 0.07)",
-        paddingVertical: moderateScale(12),
+        paddingVertical: moderateScale(10),
+        alignItems: 'center',
         flexDirection: 'row',
-        justifyContent: 'space-around',
-        alignItems: 'center',
         width: '100%',
-        paddingHorizontal: moderateScale(10),
-        marginTop:'auto'
+        paddingHorizontal: moderateScale(50),
+        marginTop: 'auto'
     },
-    navItem: {
-        alignItems: 'center',
-    },
-    navIcon: {
-        width: moderateScale(22),
-        height: moderateScale(22),
-        resizeMode: 'contain',
-        marginBottom: moderateScale(2),
-    },
-    navText: {
-        fontSize: moderateScale(11),
-        color: Colors.black,
+    havingText: {
+        color: Colors.ParagraphAndShortTexts,
         fontFamily: Fonts.InterRegular,
     },
-
+    supportBox: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginHorizontal: moderateScale(14),
+        // borderWidth:1
+    },
+    numberTextBox: {
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    versionText: {
+        fontSize: moderateScale(14),
+        color: "#454545",
+        fontFamily: Fonts.InterRegular,
+        alignSelf: 'center',
+        marginVertical: moderateScale(10)
+    },
 
     // ???????????????? bottom
-    
-  havingText: {
-    color: Colors.ParagraphAndShortTexts,
-    fontFamily: Fonts.InterRegular,
-  },
   maskGroupImag: {
     width: moderateScale(60),
     aspectRatio: 1.5,

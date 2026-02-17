@@ -12,6 +12,7 @@ import DeleteDractModal from './DeleteDractModal';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import EmptyComponent from "../../../../component/emptyComponent";
 import { Icons } from '../../../../assets/icons';
+import { useSelector } from 'react-redux';
 
 export type DraftPaperListProps = {
 }
@@ -32,10 +33,13 @@ const DraftPaperList = (props: DraftPaperListProps) => {
     const [loading, setLoading] = useState<boolean>(false)
     const isFocused = useIsFocused()
     const navigation = useNavigation()
+    const userRole = useSelector((state: any) => state.userRole?.role);
+
     const handleFetchDraftData = async (id: string) => {
         try {
             const params = {
                 user_id: id ?? userId,
+                role: userRole
             }
             setLoading(true)
             const response = await POST_FORM(ApiEndPoint.draftList, params);
@@ -43,6 +47,8 @@ const DraftPaperList = (props: DraftPaperListProps) => {
                 setDraftList(response?.result || [])
             }
         } catch (error) {
+            console.log('weeeeeeeeeeeee', error);
+
             if (error.offline) {
                 return
             }
@@ -61,11 +67,13 @@ const DraftPaperList = (props: DraftPaperListProps) => {
             setLoading(true)
             const response = await POST_FORM(ApiEndPoint.draftDelete, params)
             if (response.status === 200) {
-                showToast('success', response?.msg)
+                showToast('success', 'Success', response?.msg)
                 handleFetchDraftData(userId)
                 setOpenDraft(false)
             }
         } catch (error) {
+            console.log();
+
             if (error?.offline) {
                 return;
             }
@@ -168,7 +176,7 @@ const DraftPaperList = (props: DraftPaperListProps) => {
                 updateCellsBatchingPeriod={50}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.containerStyle}
-                ListEmptyComponent={EmptyComponent}
+                ListEmptyComponent={() => EmptyComponent({ title: 'No draft found' })}
             />
             <DeleteDractModal
                 activeDraft={openDraft}
@@ -239,6 +247,7 @@ const styles = StyleSheet.create({
     containerStyle: {
         paddingBottom: moderateScale(5),
         paddingHorizontal: moderateScale(0),
+        flexGrow: 1
     },
     cancleBox: {
         width: moderateScale(30),

@@ -18,4 +18,7 @@
         draftList :'draft-list',
         draftDelete :'draft-delete',
         DeleteAccount :'deleteAccount',
+        privacyPolicy :'privacy-policy',
+        aboutUs :'about-us',
+        termCondition :'term-condition',
     }

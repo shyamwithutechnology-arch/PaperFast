@@ -5,12 +5,14 @@ import {
     Modal,
     TouchableOpacity,
     StyleSheet,
+    Image,
 } from 'react-native';
 import CloseIcon from 'react-native-vector-icons/EvilIcons';
 import { Colors, Fonts } from '../../../../theme';
 import { moderateScale } from 'react-native-size-matters';
 import { scale, verticalScale } from '../../../../utils/responsiveSize';
 import { useSelector } from 'react-redux';
+import { Icons } from '../../../../assets/icons';
 
 export type DeleteDractModalProps = {
     activeDraft: boolean,
@@ -19,11 +21,6 @@ export type DeleteDractModalProps = {
 }
 
 const DeleteDractModal = ({ activeDraft, onClose, deleteFn }: DeleteDractModalProps) => {
-    console.log('activeDraft, onClose ,questionId', activeDraft, onClose, deleteFn);
-    const [loading, setLoading] = useState(false)
-    const userRole = useSelector((state: any) => state.userRole?.role);
-    console.log('userRoleeee', userRole);
-
     return (
         <Modal visible={activeDraft} transparent animationType="fade">
             <View style={styles.overlay}>
@@ -33,14 +30,15 @@ const DeleteDractModal = ({ activeDraft, onClose, deleteFn }: DeleteDractModalPr
                         <CloseIcon name="close" size={26} color="#555" />
                     </TouchableOpacity>
                     <Text style={styles.enterDraftText}>Delete Draft</Text>
-                    <View style={styles.lineBox}/>
-                    <Text style={[styles.enterDraftText,{color:'rgba(0,0,0,.4)',marginTop:moderateScale(10)}]}>Do you want to delete this {'\n'} Draft Paper?</Text>
+                    <Image source={Icons.reject} resizeMode='contain' style={styles.rejectImg} />
+                    <View style={styles.lineBox} />
+                    <Text style={[styles.enterDraftText, { color: 'rgba(0,0,0,.4)', marginTop: moderateScale(10) }]}>Do you want to delete this {'\n'} Draft Paper?</Text>
                     <View style={styles.mainBtnBox}>
                         <TouchableOpacity style={styles.cancelBtn} onPress={onClose}>
                             <Text style={styles.cancelText}>Cancel</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity 
-                            style={[styles.cancelBtn, { backgroundColor: Colors.primaryColor }]} 
+                        <TouchableOpacity
+                            style={[styles.cancelBtn, { backgroundColor: Colors.primaryColor }]}
                             onPress={deleteFn}>
                             <Text style={[styles.cancelText, { color: Colors.white }]}>Delete</Text>
                         </TouchableOpacity>
@@ -76,7 +74,14 @@ const styles = StyleSheet.create({
         fontFamily: Fonts.InterSemiBold,
         alignSelf: 'center',
         marginBottom: moderateScale(10),
-        textAlign:'center'
+        textAlign: 'center'
+    },
+    rejectImg: {
+        height: moderateScale(50),
+        width: moderateScale(50),
+        alignSelf: 'center',
+        marginBottom:moderateScale(25),
+        marginTop:moderateScale(10)
     },
     cancelBtn: {
         width: scale(120),
@@ -98,9 +103,9 @@ const styles = StyleSheet.create({
         color: 'rgba(0,0,0,0.4)',
         fontFamily: Fonts.InstrumentSansMedium
     },
-    lineBox:{
-    height:1.5,
-    backgroundColor:'rgba(0,0,0,.1)',
-    width:'100%'
+    lineBox: {
+        height: 1.5,
+        backgroundColor: 'rgba(0,0,0,.1)',
+        width: '100%'
     }
 });

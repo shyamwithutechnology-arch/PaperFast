@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: moderateScale(16),
-    paddingBottom: moderateScale(20),
+    paddingBottom: moderateScale(13.5),
     backgroundColor: Colors.primaryColor,
   },
 
@@ -21,6 +21,7 @@ export const styles = StyleSheet.create({
   centerBox: {
     flex: 1,
     alignItems: 'center',
+    // borderWidth:1
   },
 
   title: {

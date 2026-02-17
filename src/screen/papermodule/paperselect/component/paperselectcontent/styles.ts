@@ -14,11 +14,8 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    // elevation: 1,
     marginHorizontal: moderateScale(14),
-    // borderColor: 'rgba(0, 140, 227, 0.11)',
-    // shadowColor: ''
-
+    
     // iOS Shadow
     shadowColor: 'rgba(0, 140, 227, .9)',
     shadowOffset: {
@@ -42,17 +39,15 @@ export const styles = StyleSheet.create({
   },
 
   chaptName: {
-    fontFamily: Fonts.InterRegular,
-    fontSize: moderateScale(13),
+    fontFamily: Fonts.InstrumentSansMedium,
+    fontSize: moderateScale(12),
     color: Colors.ParagraphAndShortTexts,
   },
-
   arrow: {
     height: moderateScale(18),
     width: moderateScale(18),
     tintColor: Colors.primaryColor,
   },
-
   /* CONTENT CARD */
   contentBox: {
     marginTop: moderateScale(8), // 🔥 space between title & content
@@ -63,7 +58,6 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(0, 140, 227, 0.11)",
     marginHorizontal: moderateScale(14),
-
   },
 
   itemText: {
@@ -80,21 +74,10 @@ export const styles = StyleSheet.create({
     color: '#2A2A2A'
   },
   mcqBox: {
-    // width: moderateScale(28),
-    // height: moderateScale(28),
-    // borderRadius: moderateScale(3),
-    // // borderWidth:1, 
-    // backgroundColor: 'rgba(0, 140, 227, 0.1)',
-    // alignItems: 'center',
-    // justifyContent: "center",
-    // marginBottom:moderateScale(10),
     flexDirection: 'row',
-    flexWrap: 'wrap',           // ✅ makes row responsive
-    // alignItems: 'center',
+    flexWrap: 'wrap',          
     marginTop: moderateScale(6),
-    gap: moderateScale(8),
-    // paddingHorizontal:moderateScale(10),
-    // borderWidth:1
+    gap: moderateScale(8)
   },
 
   questionText: {
@@ -105,15 +88,10 @@ export const styles = StyleSheet.create({
   powerRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    //    flexDirection: 'row',
-    // alignItems: 'center',
     backgroundColor: '#EBF6FF',
     paddingHorizontal: moderateScale(8),
     paddingVertical: moderateScale(4),
     borderRadius: moderateScale(4),
-    // width: moderateScale(28),
-    // height: moderateScale(28),
-    // borderWidth:1,
     elevation: 1
 
   },
@@ -122,7 +100,6 @@ export const styles = StyleSheet.create({
     fontSize: moderateScale(12),
     fontFamily: Fonts.InterRegular,
     color: Colors.black,
-    // lineHeight: moderateScale(14),
   },
 
   supText: {

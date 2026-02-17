@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess } from "../../../redux/slices/authSlice";
 import { showToast } from "../../../utils/toast";
 import { styles } from "./styles";
+import { setRole } from "../../../redux/slices/userRole";
 
 const LoginScreen = () => {
     const dispatch = useDispatch()
@@ -56,6 +57,7 @@ const LoginScreen = () => {
             if (response.status === 200) {
                 // console.log('response?.result?.usr_id',response?.result?.usr_id);
                 showToast('success', 'Success', 'Logged in successfully')
+                dispatch(setRole(response?.result?.usr_role))
                 await localStorage.setItem(storageKeys.userId, String(response?.result?.usr_id))
                 await reduxStorage.setItem('token', '1234')
                 await dispatch(loginSuccess('1234'));
@@ -101,20 +103,9 @@ const LoginScreen = () => {
             }
 
             const response = await POST_FORM(ApiEndPoint?.LoGIN, params);
-            // setTimeout(() => {
-            //     console.log('rrrrrrrrrrrrrrrrrrrddd', response);
-            // }, 2000)
             if (response?.status === 200) {
-
                 if (response?.user_exist === 1) {
-
-                    // const token = '1234';
-                    // reduxStorage.setItem('token', token)
-                    // await handleLoginVerify();
-                    // dispatch(loginSuccess(token));
                     await handleLoginVerify();
-                    // setTimeout(() => {
-                    // }, 2000)
                 } else {
                     showToast('success', 'Success', response?.msg)
                     await localStorage.setItem(storageKeys.mobileNumber, phoneInput)
@@ -152,21 +143,36 @@ const LoginScreen = () => {
                         <Image source={Icons.country} style={styles.countryImgStyle} />
                         <View style={{ marginLeft: moderateScale(10), alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}>
                             <View style={{ height: moderateScale(18), width: moderateScale(2), backgroundColor: 'rgba(0, 140, 227, 0.31)', }} />
-                            <Text style={styles.prefix}>{'  '}+91</Text>
+                            <Text style={styles.prefix}>  +91</Text>
                             <TextInput style={styles.phoneInput} maxLength={10} keyboardType="phone-pad" onChangeText={handlePhoneChange} value={phoneInput} />
                         </View>
                     </View>
                     {errors?.phone && <Text style={{ fontSize: moderateScale(12), color: Colors.red, fontFamily: Fonts.InterMedium, marginLeft: moderateScale(20) }}>{errors?.phone}</Text>}
-
                     {/* // button */}
                     <AppButton title="Send Verification OTP" onPress={handleLogin} style={{ paddingHorizontal: moderateScale(82), marginTop: moderateScale(20), }} />
 
-                    <View style={styles.privacyBox}>
+                    {/* <View style={styles.privacyBox}>
                         <Text style={styles.byRegisterText}>By registering, you agree to the
                             <Text style={[styles.byRegisterText, { fontFamily: Fonts.InterSemiBold }]} onPress={() => navigation.navigate('TermandconditionScreen')}>Terms of Service,{`\n`}
                                 <Text style={[styles.byRegisterText, { fontFamily: Fonts.InterSemiBold }]} onPress={() => navigation.navigate('PrivacyPolicyScreen')}>
                                     Privacy Policy </Text>
-                            </Text> and <Text style={[styles.byRegisterText, { fontFamily: Fonts.InterSemiBold }]}>Cookie Policy.</Text></Text>  </View>
+                            </Text> and <Text style={[styles.byRegisterText, { fontFamily: Fonts.InterSemiBold }]}>Cookie Policy.</Text></Text>  </View> */}
+                    <View style={styles.privacyBox}>
+                        <Text style={styles.byRegisterText}>
+                            By registering, you agree to the{' '}
+                            <Text style={[styles.byRegisterText, { fontFamily: Fonts.InterSemiBold }]} onPress={() => navigation.navigate('TermandconditionScreen')}>
+                                Terms of Service,
+                            </Text>
+                            {'\n'}
+                            <Text style={[styles.byRegisterText, { fontFamily: Fonts.InterSemiBold }]} onPress={() => navigation.navigate('PrivacyPolicyScreen')}>
+                                Privacy Policy{' '}
+                            </Text>
+                            and{' '}
+                            <Text style={[styles.byRegisterText, { fontFamily: Fonts.InterSemiBold }]} onPress={() => navigation.navigate('CookiePolicyScreen')}>
+                                Cookie Policy.
+                            </Text>
+                        </Text>
+                    </View>
                     <View style={styles.mainMaskView}>
                         <Image source={Icons.MaskGroup} style={styles.maskGroupImag} />
                         <View style={{}}>
@@ -176,7 +182,7 @@ const LoginScreen = () => {
                                     <Text style={styles.supportText}>Support</Text>
                                     <View style={styles.numberTextBox}>
                                         <Image source={Icons.plus} style={styles.plusImg} />
-                                        <Text style={styles.supportNumberText}>91 8709952350</Text>
+                                        <Text style={styles.supportNumberText}>91 9510779200</Text>
                                     </View>
                                 </View>
                             </View>

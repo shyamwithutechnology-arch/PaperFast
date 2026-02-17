@@ -178,9 +178,7 @@ export const OptionItem = memo(({
               />
             ))}
           </View>
-        </View>
-      }
-
+        </View>}
 
       {hasText &&
         <View style={[styles.optionContent, { paddingVertical: moderateScale(0) }]}>

@@ -10,6 +10,7 @@ import {
 } from 'react-native'
 import { styles } from './styles'
 import { moderateScale } from '../../utils/responsiveSize'
+import { Colors } from '../../theme'
 interface AppHeaderProps {
   title: string
   discriptionText: string
@@ -36,8 +37,8 @@ const AppHeader: React.FC<AppHeaderProps> = ({
     <>
       {/* STATUS BAR */}
       <StatusBar
-        translucent
-        backgroundColor="transparent"
+        translucent={false}
+        backgroundColor={Colors.primaryColor}
         barStyle="light-content"
       />
 
@@ -45,15 +46,15 @@ const AppHeader: React.FC<AppHeaderProps> = ({
       <ImageBackground
         source={require('../../assets/images/headerBg.png')}
         style={[styles.headerImg, { paddingTop: STATUS_BAR_HEIGHT }]}
-        resizeMode="cover"
-      >
+        resizeMode="cover">
+          {/* <View style={{borderWidth:1}}> */}
         {/* LEFT */}
         <View style={styles.side}>
           {onBackPress && leftIcon && (
             <TouchableOpacity onPress={onBackPress}>
               <Image
                 source={leftIcon}
-                style={[styles.leftImg, leftIconStyle]} 
+                style={[styles.leftImg, leftIconStyle]}
               />
             </TouchableOpacity>
           )}
@@ -76,6 +77,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
             </TouchableOpacity>
           )}
         </View>
+        {/* </View> */}
       </ImageBackground>
     </>
   )

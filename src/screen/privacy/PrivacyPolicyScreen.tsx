@@ -8,65 +8,77 @@ import HeaderPaperModule from "../../component/headerpapermodule/Headerpapermodu
 import HtmlView from "../../component/htmlview/HtmlView";
 import { showSnackbar } from "../../utils/toastConfig";
 import Loader from "../../component/loader/Loader"; // If you have a Loader component
+import { GET } from "../../api/request";
+import { ApiEndPoint } from "../../api/endPoints";
+import { showToast } from "../../utils/toast";
 
 const PrivacyPolicyScreen = () => {
   const navigation = useNavigation();
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(true);
-console.log('content',content);
+  console.log('content', content);
 
   const handleBack = () => {
     navigation.goBack();
   };
 
+  // const handlePrivacyRequest = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const response = await fetch('https://www.papers.withupartners.in/api/privacy-policy', {
+  //       method: 'GET',
+  //     });
+
+  //     const newRes = await response.json();
+  //     if (newRes.status === '1' || newRes.success) {
+  //       if (newRes.result[0]?.page_description) {
+  //         setContent(newRes.result[0]?.page_description);
+  //       } else {
+  //         // If response doesn't have expected structure, use the whole response
+  //         setContent(JSON.stringify(newRes, null, 2));
+  //       }
+  //     } else {
+  //       showSnackbar(newRes?.msg || 'Failed to load privacy policy', 'error');
+  //     }
+
+  //   } catch (error) {
+  //     console.error('API Error:', error);
+  //     if (error.message?.includes('Network')) {
+  //       showSnackbar('No internet connection', 'error');
+  //     } else {
+  //       showSnackbar(error.message || 'Something went wrong', 'error');
+  //     }
+  //     // Fallback content
+  //     setContent(`
+  //       <h1>Privacy Policy</h1>
+  //       <p>Unable to load privacy policy at the moment. Please check your internet connection and try again.</p>
+  //       <p>Paper Fast respects your privacy and ensures all your data is secure.</p>
+  //     `);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handlePrivacyRequest = async () => {
-    setLoading(true);
+    setLoading(true)
     try {
-      const response = await fetch('https://www.papers.withupartners.in/api/privacy-policy', {
-        method: 'GET',
-      });
-
-      console.log('Response status:', response.status);
-
-      // Check if response is OK
-      // if (!response.ok) {
-      //   throw new Error(`HTTP ${response.status}: Request failed`);
-      // }
-
-      const newRes = await response.json();
-      console.log('API Response:', newRes);
-
-      // Handle response based on your API structure
-      if (newRes.status === '1' || newRes.success) {
-        // Check where the content is in the response
-        // It might be in newRes.data, newRes.result, newRes.content, etc.
-        if (newRes.result[0]?.page_description) {
-          setContent(newRes.result[0]?.page_description);
-        } else {
-          // If response doesn't have expected structure, use the whole response
-          setContent(JSON.stringify(newRes, null, 2));
-        }
-      } else {
-        showSnackbar(newRes?.msg || 'Failed to load privacy policy', 'error');
+      const response = await GET(ApiEndPoint.privacyPolicy);
+      if (response?.status === '1' || 200) {
+        setContent(response?.result[0]?.page_description);
       }
-
-    } catch (error) {
-      console.error('API Error:', error);
-      if (error.message?.includes('Network')) {
-        showSnackbar('No internet connection', 'error');
-      } else {
-        showSnackbar(error.message || 'Something went wrong', 'error');
+    } catch (error: any) {
+      if (error?.offline) {
+        return;
       }
-      // Fallback content
-      setContent(`
-        <h1>Privacy Policy</h1>
-        <p>Unable to load privacy policy at the moment. Please check your internet connection and try again.</p>
-        <p>Paper Fast respects your privacy and ensures all your data is secure.</p>
-      `);
+      const errorMessage = error?.response?.data?.message ||
+        error?.message ||
+        'Something went wrong. Please try again.';
+      showToast('error', 'Error', errorMessage);
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+
+  }
 
   useEffect(() => {
     handlePrivacyRequest();
@@ -76,18 +88,18 @@ console.log('content',content);
     <View style={{ flex: 1, backgroundColor: Colors.white }}>
       {/* Loader */}
       <Loader visible={loading} />
-      
-      <StatusBar 
-        backgroundColor={Colors.lightThemeBlue} 
-        barStyle="dark-content" 
+
+      <StatusBar
+        backgroundColor={Colors.lightThemeBlue}
+        barStyle="dark-content"
       />
-      
+
       {/* Header Section */}
       <View style={{ backgroundColor: Colors.lightThemeBlue }}>
         <SafeAreaView edges={["top"]}>
-          <HeaderPaperModule 
-            title="Privacy Policy" 
-            leftIconPress={handleBack} 
+          <HeaderPaperModule
+            title="Privacy Policy"
+            leftIconPress={handleBack}
           />
         </SafeAreaView>
       </View>

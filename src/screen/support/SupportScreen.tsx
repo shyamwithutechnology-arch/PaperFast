@@ -1,117 +1,3 @@
-// import React from 'react';
-// import {
-//     View,
-//     Text,
-//     StyleSheet,
-//     Image,
-//     StatusBar,
-//     TouchableOpacity,
-// } from 'react-native';
-// import { useNavigation } from '@react-navigation/native';
-// import { Colors, Fonts } from '../../theme';
-// import { moderateScale } from '../../utils/responsiveSize';
-// import { Icons } from '../../assets/icons';
-// import { SafeAreaView } from 'react-native-safe-area-context';
-// import AppHeader from '../../component/header/AppHeader';
-// import HeaderPaperModule from '../../component/headerpapermodule/Headerpapermodule';
-
-// const SupportScreen = () => {
-//     const navigation = useNavigation();
-
-//     return (
-//         <SafeAreaView style={styles.container}>
-//             {/* <AppHeader/> */}
-//             <StatusBar barStyle={'dark-content'} backgroundColor={Colors.lightThemeBlue} />
-
-//             {/* <SafeAreaView style={{ backgroundColor: Colors.lightThemeBlue }} edges={['top']}>
-//                 <HeaderPaperModule title='Draft Papers' />
-//             </SafeAreaView> */}
-//             <View style={styles.content}>
-//                 {/* Icon */}
-//                 {/* <View style={styles.iconContainer}>
-//           <Image
-//             source={Icons.clockIcon}
-//             style={styles.icon}
-//             resizeMode="contain"
-//           />
-//         </View> */}
-
-//                 {/* Title */}
-//                 <Text style={styles.title}>Coming Soon!</Text>
-
-//                 {/* Message */}
-//                 <Text style={styles.message}>
-//                     This feature is currently under development.{'\n'}
-//                     We're working hard to bring it to you soon.
-//                 </Text>
-
-//                 {/* Back Button */}
-//                 <TouchableOpacity
-//                     style={styles.backButton}
-//                     onPress={() => navigation.goBack()}
-//                 >
-//                     <Text style={styles.backButtonText}>Go Back</Text>
-//                 </TouchableOpacity>
-//             </View>
-//         </SafeAreaView>
-//     );
-// };
-
-// const styles = StyleSheet.create({
-//     container: {
-//         flex: 1,
-//         backgroundColor: Colors.white,
-//     },
-//     content: {
-//         flex: 1,
-//         justifyContent: 'center',
-//         alignItems: 'center',
-//         paddingHorizontal: moderateScale(24),
-//     },
-//     iconContainer: {
-//         width: moderateScale(120),
-//         height: moderateScale(120),
-//         borderRadius: moderateScale(60),
-//         backgroundColor: Colors.lightThemeBlue + '20', // 20 = 12% opacity
-//         justifyContent: 'center',
-//         alignItems: 'center',
-//         marginBottom: moderateScale(32),
-//     },
-//     icon: {
-//         width: moderateScale(60),
-//         height: moderateScale(60),
-//         tintColor: Colors.primaryColor,
-//     },
-//     title: {
-//         fontSize: moderateScale(25),
-//         fontFamily: Fonts.InterBold,
-//         color: Colors.black,
-//         textAlign: 'center',
-//         marginBottom: moderateScale(16),
-//     },
-//     message: {
-//         fontSize: moderateScale(14),
-//         fontFamily: Fonts.InterRegular,
-//         color: Colors.ParagraphAndShortTexts,
-//         textAlign: 'center',
-//         lineHeight: moderateScale(24),
-//         marginBottom: moderateScale(40),
-//     },
-//     backButton: {
-//         backgroundColor: Colors.primaryColor,
-//         paddingHorizontal: moderateScale(25),
-//         paddingVertical: moderateScale(10),
-//         borderRadius: moderateScale(8),
-//     },
-//     backButtonText: {
-//         fontSize: moderateScale(16),
-//         fontFamily: Fonts.InterSemiBold,
-//         color: Colors.white,
-//     },
-// });
-
-// export default SupportScreen;
-
 import React, { useState } from "react";
 import { View, Text, Image, TextInput, Platform, KeyboardAvoidingView, ScrollView, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -122,11 +8,10 @@ import AppButton from "../../component/button/AppButton";
 import { Colors } from "../../theme";
 import Loader from "../../component/loader/Loader";
 import { useNavigation } from '@react-navigation/native';
-import Toast from 'react-native-toast-message';
 import { POST_FORM } from "../../api/request";
 import { ApiEndPoint } from "../../api/endPoints";
 import { styles } from "./styles";
-import { showToast } from "../../utils/toast";
+import { showToast } from '../../utils/toast';
 const SupportScreen = () => {
     const navigation = useNavigation();
     const [loading, setLoading] = useState<boolean>(false);
@@ -173,52 +58,52 @@ const SupportScreen = () => {
     };
 
     // API call for creating ticket
-    const handleCreateTicket = async () => {
-        // Validate form first
-        if (!validateForm()) {
-            return;
-        }
+    // const handleCreateTicket = async () => {
+    //     // Validate form first
+    //     if (!validateForm()) {
+    //         return;
+    //     }
 
-        setLoading(true);
-        try {
-            let params = {
-                subject: input.subject,
-                message: input.comment,
-            };
+    //     setLoading(true);
+    //     try {
+    //         let params = {
+    //             subject: input.subject,
+    //             message: input.comment,
+    //         };
 
-            const response = await POST_FORM(ApiEndPoint.CreateTicket, params);
+    //         const response = await POST_FORM(ApiEndPoint.CreateTicket, params);
 
-            if (response && response.status === 200) {
-                showToast('success', 'Success', 'Ticket created successfully')
-                    navigation.goBack();
-                // Clear form
-                setInput({
-                    subject: '',
-                    comment: '',
-                });
+    //         if (response && response.status === 200) {
+    //             showToast('success', 'Success', 'Ticket created successfully')
+    //                 navigation.goBack();
+    //             // Clear form
+    //             setInput({
+    //                 subject: '',
+    //                 comment: '',
+    //             });
 
-                // Navigate back after 2 seconds
-                setTimeout(() => {
-                    navigation.goBack();
-                }, 2000);
+    //             // Navigate back after 2 seconds
+    //             setTimeout(() => {
+    //                 navigation.goBack();
+    //             }, 2000);
 
-            } else {
-                const errorMessage = response?.msg || 'Failed to create ticket. Please try again.';
-                showToast('error', 'Error', errorMessage);
-            }
+    //         } else {
+    //             const errorMessage = response?.msg || 'Failed to create ticket. Please try again.';
+    //             showToast('error', 'Error', errorMessage);
+    //         }
 
-        } catch (error: any) {
-            if (error?.offline) {
-                return;
-            }
-            const errorMessage = error?.response?.data?.msg ||
-                error?.msg ||
-                'Something went wrong. Please try again.';
-            showToast('error', 'Error', errorMessage);
-        } finally {
-            setLoading(false);
-        }
-    };
+    //     } catch (error: any) {
+    //         if (error?.offline) {
+    //             return;
+    //         }
+    //         const errorMessage = error?.response?.data?.msg ||
+    //             error?.msg ||
+    //             'Something went wrong. Please try again.';
+    //         showToast('error', 'Error', errorMessage);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
     // For demo/static purposes
     const handleStaticCreateTicket = () => {
@@ -228,10 +113,9 @@ const SupportScreen = () => {
 
         setLoading(true);
 
-        setTimeout(() => {
+        let time = setTimeout(() => {
             setLoading(false);
             showToast('success', 'Success', 'Ticket created successfully');
-
             setInput({
                 subject: '',
                 comment: '',
@@ -242,13 +126,14 @@ const SupportScreen = () => {
             }, 2000);
 
         }, 1500);
+        return () => clearTimeout(time)
     };
+
 
     return (
         <SafeAreaView
             style={styles.mainContainer}
-            edges={['left', 'right', 'bottom']}
-        >
+            edges={['left', 'right', 'bottom']}>
             <Loader visible={loading} />
             <AppHeader
                 title="Create Ticket"
@@ -327,7 +212,7 @@ const SupportScreen = () => {
                             {/* Support Information - Bottom Section */}
                             {/* <View style={styles.supportContainer}>
                                 <View style={styles.scrachLine} />
-                                
+
                                 <View style={styles.supportBox}>
                                     <Image source={Icons.support} style={styles.supportIcon} />
                                     <View style={styles.numberTextBox}>
@@ -343,17 +228,17 @@ const SupportScreen = () => {
                                             <Image source={Icons.home} style={styles.navIcon} />
                                             <Text style={styles.navText}>Home</Text>
                                         </TouchableOpacity>
-                                        
+
                                         <TouchableOpacity style={styles.navItem}>
                                             <Image source={Icons.profile} style={styles.navIcon} />
                                             <Text style={styles.navText}>Profile</Text>
                                         </TouchableOpacity>
-                                        
+
                                         <TouchableOpacity style={styles.navItem}>
                                             <Image source={Icons.order} style={styles.navIcon} />
                                             <Text style={styles.navText}>Order</Text>
                                         </TouchableOpacity>
-                                        
+
                                         <TouchableOpacity style={styles.navItem}>
                                             <Image source={Icons.notification} style={styles.navIcon} />
                                             <Text style={styles.navText}>Notification</Text>
@@ -371,7 +256,7 @@ const SupportScreen = () => {
                                             <Text style={styles.supportText}>Support</Text>
                                             <View style={styles.numberTextBox} >
                                                 <Image source={Icons.plus} style={styles.plusImg} />
-                                                <Text style={styles.supportNumberText}>913445764523</Text>
+                                                <Text style={styles.supportNumberText}>91 9510779200</Text>
                                             </View>
                                         </View>
                                     </View>
@@ -381,7 +266,6 @@ const SupportScreen = () => {
                     </KeyboardAvoidingView>
                 </View>
             </View>
-            <Toast />
         </SafeAreaView>
     );
 };
