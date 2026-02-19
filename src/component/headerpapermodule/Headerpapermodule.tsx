@@ -19,6 +19,7 @@ import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
 import { moderateScale } from "../../utils/responsiveSize";
 import { Icons } from "../../assets/icons";
 import { Colors } from "../../theme";
+import { useSelector } from "react-redux";
 interface HeaderpapermoduleProp {
     title: string,
     rightPress: () => void,
@@ -37,6 +38,9 @@ const HeaderPaperModule: React.FC = ({ title, rightPress, rightPressDisable, lef
         return text
     }
     let visibleText = formtedText(title, 35)
+    const userRole = useSelector(state => state?.userRole.role)
+    console.log('userrrrrrrreee', userRole);
+
     return (
         <View style={[styles.headerContainer, headerContainerStyle]}>
             <View style={{
@@ -56,7 +60,7 @@ const HeaderPaperModule: React.FC = ({ title, rightPress, rightPressDisable, lef
                 </Text>
             </View>
             <View style={{ flexDirection: "row", alignItems: 'center' }}>
-                {rightPress && <TouchableOpacity disabled={rightPressDisable} style={[styles.saveDraftBox, rightPress2 && { marginRight: moderateScale(10) }]} onPress={rightPress}>
+                {userRole === 'tutor' && rightPress && <TouchableOpacity disabled={rightPressDisable} style={[styles.saveDraftBox, rightPress2 && { marginRight: moderateScale(10) }]} onPress={rightPress}>
                     <Text style={[styles.saveDraftText, { color: Colors.black }]}>Save Draft</Text>
                 </TouchableOpacity>
                 }

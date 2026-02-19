@@ -30,17 +30,11 @@ const LoginScreenRole = () => {
         firstName: '',
         lastName: ''
     });
-    const [selectedRole, setSelectedRole] = useState('')
     const [loading, setLoading] = useState<boolean>(false);
     const [errors, setErrors] = useState<NameFormErrors>({});
-
+    
+    const [selectedRole, setSelectedRole] = useState('')
     const handleRoleSelect = async (status) => {
-        // if (status === 'male') {
-        //     setSelectedRole(status)
-        // } else if (status === 'female') {
-        //     setSelectedRole(status)
-        // }
-        // dispatch(setRole(''))
         setSelectedRole(status)
     }
     // LoginScreen.tsx

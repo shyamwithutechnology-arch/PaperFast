@@ -64,19 +64,17 @@ import { Icons } from "../../../assets/icons";
 import { moderateScale } from "../../../utils/responsiveSize";
 import { useNavigation } from "@react-navigation/native";
 import Loader from "../../../component/loader/Loader";
-import { showSnackbar } from "../../../utils/toastConfig";
 import { GET } from "../../../api/request";
 import { ApiEndPoint } from "../../../api/endPoints";
 import HomeBannerSlider from "../../home/component/homebanner/HomeBannerSlider";
 import { localStorage, storageKeys } from "../../../storage/storage";
+import { showToast } from "../../../utils/toast";
 
 const PaperTypeScreen = () => {
   const navigation = useNavigation()
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedSubId, setSelectedSubId] = useState<string | null>(null);
   const [banners, setBanners] = useState([]);
-
-  console.log('bannersdddd', banners);
 
   const handleSelectPaperType = async (payload) => {
     await localStorage.setItem(storageKeys.selectedPaperType, payload)
@@ -99,20 +97,20 @@ const PaperTypeScreen = () => {
       } else {
         const errorMessage = response?.message ||
           'Data not fetch. Please try again.';
-        showSnackbar(errorMessage, 'error');
+        showToast('error', 'Error', errorMessage);
         setBanners([]);
 
       }
 
     } catch (error: any) {
       if (error?.offline) {
-        showSnackbar('No internet connection', 'error');
+        showToast('error', 'Error', 'No internet connection');
         return;
       }
       const errorMessage = error?.response?.data?.message ||
         error?.message ||
         'Something went wrong. Please try again.';
-      showSnackbar(errorMessage, 'error');
+      showToast('error', 'Error', errorMessage);
     } finally {
       setLoading(false);
     }

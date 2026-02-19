@@ -37,7 +37,7 @@ const ProfileScreen = () => {
     const [showDatePicker, setShowDatePicker] = useState(false)
     const dispatch = useDispatch()
     const userRole = useSelector((state: any) => state.userRole?.role);
-    const [selectRole, setSelectRole] = React.useState<'Teacher' | 'Student'>(userRole === 'tutor' ? 'Teacher' : 'Student');
+    // const [selectRole, setSelectRole] = React.useState<'Teacher' | 'Student'>(userRole === 'tutor' ? 'Teacher' : 'Student');
     const [userId, setUserId] = useState<number | string>('');
     const [input, setInput] = useState({
         firstName: '',
@@ -47,11 +47,16 @@ const ProfileScreen = () => {
         email: ''
     })
 
-    console.log('profileData', profileData);
-
     const [loading, setLoading] = useState<boolean>(false);
     const [errors, setErrors] = useState({});
     const [userProfileId, setUserProfileId] = useState('');
+    console.log('userProfileId', userProfileId);
+    
+    const [selectedRole, setSelectedRole] = useState<string>('');
+    const handleRoleSelect = async (role) => {
+        await handleChangeRole(role)
+    }
+
     const timeoutRef = useRef(null);
     const isfocus = useIsFocused()
 
@@ -238,10 +243,10 @@ const ProfileScreen = () => {
         }
     };
 
-    const changeRole = async (role: string) => {
-        await handleChangeRole(role)
-        setSelectRole(role)
-    }
+    // const changeRole = async (role: string) => {
+    //     await handleChangeRole(role)
+    //     setSelectRole(role)
+    // }
 
     const handleFirstNameChange = (text) => {
         setInput(prev => ({ ...prev, firstName: text }));
@@ -263,11 +268,6 @@ const ProfileScreen = () => {
             setErrors(prev => ({ ...prev, email: '' }));
         }
     };
-
-    // const handleRoleChange = (role) => {
-    //     setSelectRole(role)
-    // }
-    // Platform-specific date picker styles
     const getDatePickerDisplay = () => {
         if (Platform.OS === 'ios') {
             return 'spinner';
@@ -277,15 +277,23 @@ const ProfileScreen = () => {
         return 'default';
     };
 
+    const handlegoBack = () => {
+        navigation.goBack()
+    }
+
     useEffect(() => {
         const getData = async () => {
             let getUserId = await localStorage.getItem(storageKeys.userId)
-            console.log('dsf', getUserId);
             setUserProfileId(getUserId)
         }
         getData()
     }, [])
 
+    useEffect(() => {
+        if (userRole) {
+            setSelectedRole(userRole === 'tutor' ? 'Teacher' : 'Student')
+        }
+    }, [userRole])
 
     useFocusEffect(
         useCallback(() => {
@@ -326,7 +334,7 @@ const ProfileScreen = () => {
                 title="Paper Fast"
                 discriptionText='Paper Generate In Minute'
                 leftIcon={Icons.arrowLeft}
-                onBackPress={() => navigation.goBack()}
+                onBackPress={handlegoBack}
                 leftIconStyle={{
                     width: moderateScale(20),
                     height: moderateScale(20)
@@ -468,7 +476,7 @@ const ProfileScreen = () => {
                                     )}
                                 </View>
 
-                                <Text style={styles.selectRoleText}>Select Role</Text>
+                                {/* <Text style={styles.selectRoleText}>Select Role</Text>
                                 <View style={styles.mainRoleBox}>
                                     <Pressable style={styles.teacherBox} onPress={() => changeRole('Teacher')}>
                                         <View style={styles.redioBtn}>
@@ -486,13 +494,30 @@ const ProfileScreen = () => {
                                         </View>
                                         <Text style={styles.teacherText}>Student{selectRole === 'Student' && ` (You)`}</Text>
                                     </Pressable>
+                                </View> */}
+
+                                <Text style={styles.forText}>Select Role</Text>
+                                <View style={styles.selectionBox}>
+                                    <TouchableOpacity style={[styles.studentBox,]} onPress={() => handleRoleSelect('Student')}>
+                                        <View style={[styles.studentImgBox, { borderWidth: selectedRole === 'Student' ? 1 : 0.1, backgroundColor: selectedRole === 'Student' ? '#e9eaeb' : '#e1dfdf', borderColor: selectedRole === 'Student' ? 'rgba(18, 70, 130, 0.47)' : Colors.InputStroke }]}>
+                                            <Image source={Icons.male} style={[styles.maleImg, { tintColor: selectedRole === 'Student' ? Colors?.primaryColor : 'rgba(169, 169, 169, 1)' }]} />
+                                        </View>
+                                        <Text style={[styles.studentText, { fontFamily: selectedRole === 'Student' ? Fonts.InstrumentSansBold : Fonts.InstrumentSansRegular, color: selectedRole === 'Student' ? Colors?.primaryColor : Colors?.InputText }]}>Student</Text>
+                                    </TouchableOpacity>
+
+                                    <TouchableOpacity style={[styles.studentBox, { marginLeft: moderateScale(30) }]} onPress={() => handleRoleSelect('Teacher')}>
+                                        <View style={[styles.studentImgBox, { borderWidth: selectedRole === 'Teacher' ? 1 : 0.1, backgroundColor: selectedRole === 'Teacher' ? '#EBF6FD' : '#e1dfdf', borderColor: selectedRole === 'Teacher' ? 'rgba(18, 70, 130, 0.47)' : Colors.InputStroke }]}>
+                                            <Image source={Icons.female} style={[styles.maleImg, { tintColor: selectedRole === 'Teacher' ? Colors?.primaryColor : 'rgba(169, 169, 169, 0.56)' }]} />
+                                        </View>
+                                        <Text style={[styles.studentText, { fontFamily: selectedRole === 'Teacher' ? Fonts.InstrumentSansBold : Fonts.InstrumentSansRegular, color: selectedRole === 'Teacher' ? Colors?.primaryColor : Colors?.InputText }]}>Teacher</Text>
+                                    </TouchableOpacity>
                                 </View>
                             </View>
                             <AppButton
                                 title="Submit"
                                 style={{
                                     paddingHorizontal: moderateScale(133),
-                                    marginTop:moderateScale(40)
+                                    marginTop: moderateScale(30)
                                 }}
                                 onPress={handleProfileRequest}
                             />

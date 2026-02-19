@@ -161,7 +161,7 @@ export const styles = StyleSheet.create({
         fontFamily: Fonts.InstrumentSansMedium,
         color: Colors.black,
         marginLeft: moderateScale(16),
-        marginTop:moderateScale(5)
+        marginTop: moderateScale(5)
     },
     redioBtn: {
         height: moderateScale(13),
@@ -182,19 +182,64 @@ export const styles = StyleSheet.create({
         fontSize: moderateScale(14),
         color: Colors.black,
         fontFamily: Fonts.InterRegular,
-        marginLeft:moderateScale(10)
+        marginLeft: moderateScale(10)
     },
     teacherBox: {
-        flexDirection: 'row',
-        // justifyContent: "space-around",
-        alignItems: "center",
-        marginLeft:moderateScale(16),
-        marginTop:moderateScale(4)
-    },
-    mainRoleBox:{
-        flexDirection:'row',
-        alignItems:'center',
+        // flexDirection: 'row',
+        // // justifyContent: "space-around",
+        // alignItems: "center",
+        // marginLeft:moderateScale(16),
+        // marginTop:moderateScale(4)
+        borderWidth: 1,
 
-    }
+    },
+    mainRoleBox: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+
+
+    // ???????????????????????????
+    forText: {
+        fontSize: moderateScale(16),
+        fontFamily: Fonts.InterSemiBold,
+        color: Colors.black,
+        marginLeft: moderateScale(20),
+        marginTop: moderateScale(5)
+    },
+    selectionBox: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingLeft: moderateScale(20),
+        marginTop: moderateScale(15),
+        marginBottom: moderateScale(22)
+    },
+    studentText: {
+        fontFamily: Fonts.InterRegular,
+        fontSize: moderateScale(14),
+        color: Colors.InputText,
+    },
+    studentBox: {
+        flexDirection: 'column',
+        alignItems: 'center',
+        // justifyContent: "center",
+        // borderWidth: 1
+    },
+    studentImgBox: {
+        borderWidth: .1,
+        borderRadius: moderateScale(60),
+        borderColor: Colors.InputStroke,
+        height: moderateScale(60),
+        width: moderateScale(60),
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+
+    maleImg: {
+        width: moderateScale(35),
+        height: moderateScale(35),
+        resizeMode: 'contain',
+        // marginLeft: moderateScale(20)
+    },
 }
 )

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import { Text, View, StyleSheet, StatusBar, TouchableOpacity, Image, Pressable } from 'react-native';
 import { Colors, Fonts } from '../../theme';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -18,7 +18,8 @@ import { ScrollView } from 'react-native-gesture-handler';
 import IconEntypo from "react-native-vector-icons/FontAwesome5";
 import AppButton from '../../component/button/AppButton';
 import BookMark from "react-native-vector-icons/Ionicons";
-
+import TextTicker from "react-native-text-ticker";
+import { localStorage } from '../../storage/storage';
 // import Pagination from '../papermodule/questionModule/component/Pagination';
 
 export type QuestionListScreenProps = {
@@ -37,15 +38,42 @@ interface Book {
     book_id: string,
     book_name: string
 }
-const QuestionListScreen = (props: QuestionListScreenProps) => {
-    const navigation = useNavigation()
+const QuestionListScreen = ({ navigation }) => {
+    // Keep this single useFocusEffect at the top level (after all useState calls)
+    // useFocusEffect(
+    //     useCallback(() => {
+    //         // Safety check for navigation parent
+    //         const parent = navigation.getParent();
+    //         if (parent) {
+    //             // Hide tab bar
+    //             parent.setOptions({
+    //                 tabBarStyle: { display: 'none' },
+    //             });
+    //         }
+
+    //         // Load answer stats
+    //         loadAnswerStats();
+
+    //         return () => {
+    //             // Safety check for navigation parent on cleanup
+    //             const parent = navigation.getParent();
+    //             if (parent) {
+    //                 // Show tab bar when leaving screen
+    //                 parent.setOptions({
+    //                     tabBarStyle: { display: 'flex' },
+    //                 });
+    //             }
+    //         };
+    //     }, [navigation])
+    // );
+    // const navigation = useNavigation()
     const route = useRoute();
     // const { chapterName  ?? ''} = route?.params
     //     const { chapterName === '' ? '' : chapterName
     // } = route?.params || {};
     const { chapterName } = route?.params || {};
     const finalChapterName = chapterName === undefined ? 'Numeric' : chapterName;
-
+    const [activeTab, setActiveTab] = useState('all');
     const selectedSubjectId = useSelector((state) => state?.selectedSubId?.selectedSubId)
     const [selectCheck, setSelectedCheck] = useState('Options')
     const [selectedMap, setSelectedMap] = useState<Record<string, boolean>>({});
@@ -58,9 +86,23 @@ const QuestionListScreen = (props: QuestionListScreenProps) => {
     const [labelStatus, setLabelStatus] = useState(false);
     const [lebelCheck, setLabelCheck] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
+    const [answerStats, setAnswerStats] = useState({
+        correct: [] as string[],
+        incorrect: [] as string[]
+    });
 
+    const loadAnswerStats = async () => {
+        try {
+            const saved = await localStorage.getItem('answerStats');
+            if (saved) {
+                setAnswerStats(JSON.parse(saved));
+            }
+        } catch (error) {
+            console.error('Error loading stats:', error);
+        }
+    };
     const [pagination, setPagination] = useState({
-        limit: 10,
+        limit: 50,
         page: 1,
         pages: 1,
         total: 0,
@@ -222,115 +264,231 @@ const QuestionListScreen = (props: QuestionListScreenProps) => {
             await fetchQuestions(pagination.page, pagination?.limit);
         setLabelStatus(false)
     }
-    useFocusEffect(
-        useCallback(() => {
-            navigation.getParent()?.setOptions({
+
+// Use useLayoutEffect for immediate UI changes before paint
+    useLayoutEffect(() => {
+        const parent = navigation.getParent();
+        if (parent) {
+            parent.setOptions({
                 tabBarStyle: { display: 'none' },
             });
-            return () => {
-                navigation.getParent()?.setOptions({
-                    tabBarStyle: { display: 'flex' },
-                });
-            };
-        }, []))
+        }
 
+        // Cleanup: Show the tab bar again when leaving the screen
+        return () => {
+            if (parent) {
+                parent.setOptions({
+                    tabBarStyle: { display: 'flex' }, // Or your original style object
+                });
+            }
+        };
+    }, [navigation]);
+
+    // Keep useFocusEffect ONLY for data fetching/logic if needed
+    useFocusEffect(
+        useCallback(() => {
+            loadAnswerStats();
+        }, [])
+    );
     useEffect(() => {
         fetchQuestions(pagination.page, pagination?.limit);
     }, []);
+
     return (
         <View style={styles.container}>
             <StatusBar barStyle={'dark-content'} backgroundColor={Colors.lightThemeBlue} />
-            {/* <SafeAreaView style={{ backgroundColor: Colors.lightThemeBlue }} edges={['top']}>
-            <HeaderPaperModule title={`${finalChapterName}`} leftIconPress={handleBack}  />
-        </SafeAreaView> */}
             <SafeAreaView style={styles.headerSafe} edges={['top']}>
                 <View style={styles.qsBox}>
-                    {/* <View style={{borderWid}}/> */}
                     <View style={{ flexDirection: "row", alignItems: 'center' }}>
                         <TouchableOpacity onPress={handleBack} style={styles.arrowBox}>
                             <Image source={Icons?.back} style={styles.backImg} resizeMode="contain" />
                         </TouchableOpacity>
-                        <Text style={[styles.title]} numberOfLines={1}>
+                        <TextTicker style={styles.title}
+                            duration={8000}
+                            loop
+                            bounce
+                            repeatSpacer={50}
+                            marqueeDelay={1500}>
                             {`${finalChapterName}`}
-                        </Text>
+                        </TextTicker>
+
                     </View>
                     <Pressable style={{ borderWidth: 0 }} onPress={() => navigation.navigate('BookMarkScreen')}>
                         <BookMark name='bookmark-outline' size={moderateScale(22)} color={Colors.primaryColor} />
                     </Pressable>
                 </View>
             </SafeAreaView>
-
             <SafeAreaView style={styles.homeContainer} edges={['left', 'right', 'bottom']}>
                 <Loader visible={loading} />
-                <View style={{ borderColor: '#000', marginVertical: moderateScale(20), flexDirection: 'row', alignItems: "center" }}>
-                    {pagination.pages > 1 && (
-                        <Pagination
-                            paginationData={pagination}
-                            onPageChange={handlePageChange}
-                            onLimitChange={handleLimitChange}
-                        />
+                <View style={styles.tabContainer}>
+                    <TouchableOpacity
+                        style={[styles.tab, activeTab === 'all' && styles.activeTab]}
+                        onPress={() => setActiveTab('all')}>
+                        <Text style={[styles.tabText, activeTab === 'all' && styles.activeTabText]}>
+                            All Questions
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[styles.tab, activeTab === 'topic' && styles.activeTab]}
+                        onPress={() => setActiveTab('topic')}>
+                        <Text style={[styles.tabText, activeTab === 'topic' && styles.activeTabText]}>
+                            Topic Wise
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={{ flex: 1 }}>
+
+                    {activeTab === 'all' ? (
+                        <>
+                            <View style={{ borderColor: '#000', marginVertical: moderateScale(20), flexDirection: 'row', alignItems: "center" }}>
+                                {pagination.pages > 1 && (
+                                    <Pagination
+                                        paginationData={pagination}
+                                        onPageChange={handlePageChange}
+                                        onLimitChange={handleLimitChange}
+                                    />
+                                )}
+                                {loading === false && <TouchableOpacity style={styles.filterBtn} onPress={handleLabelStatus}>
+                                    <Image source={Icons.filter} resizeMode="contain" style={styles.filteImg} />
+                                </TouchableOpacity>}
+                            </View>
+
+                            <QuestionListComponent
+                                selectCheck={selectCheck}
+                                selectedMap={selectedMap}
+                                setSelectedMap={setSelectedMap}
+                                questionsData={questionsData?.result ?? []}
+                                currentPage={pagination?.page}
+                                limit={pagination.limit}
+                                correctAnswers={answerStats.correct}
+                                incorrectAnswers={answerStats.incorrect}
+                                isLoading={loading}
+                            />
+                            <AppModal visible={labelStatus} onClose={handleLabelClose}>
+                                <View style={styles.applyBox}>
+                                    <Text style={styles.diffeicultText}>Apply Filter</Text>
+                                    <TouchableOpacity onPress={handleClearFilter} style={{ padding: moderateScale(1) }}>
+                                        <Text style={styles.clearAllText}>Clear all filters</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <ScrollView style={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
+                                    <View style={styles.lineBox} />
+                                    <Text style={styles.diffecultyText}>Difficulty level</Text>
+                                    <View style={styles.easyBox}>
+                                        <View style={styles.difficultMainBox}>
+                                            {difficultyLabel?.map(item => (
+                                                <Pressable key={item?.dlevel_id} style={styles.checkBoxMain} onPress={() => handleCheckStatus(item?.dlevel_id)}>
+                                                    <View style={[styles.checkBox, lebelCheck === item?.dlevel_id && { backgroundColor: Colors.primaryColor, borderWidth: 0 }]}>
+                                                        {lebelCheck === item?.dlevel_id && <IconEntypo name='check' size={moderateScale(14.5)} color={Colors.white} />
+                                                        }
+                                                    </View>
+                                                    <Text style={styles.easyText}>{item?.dlevel_name}</Text>
+                                                </Pressable>))}
+                                        </View>
+                                    </View>
+                                    <Text style={[styles.diffecultyText, { marginTop: moderateScale(20) }]}>Question Type</Text>
+                                    {questionType?.map(item => (
+                                        <Pressable key={item?.qp_id} style={[styles.checkBoxMain, { justifyContent: "flex-start" }]} onPress={() => handleQuestionTypeSelect(item?.qp_id)}>
+                                            <View style={[styles.checkBox, questionTypeSelect === item?.qp_id && { backgroundColor: Colors.primaryColor, borderWidth: 0 }]}>
+                                                {questionTypeSelect === item?.qp_id && <IconEntypo name='check' size={moderateScale(14.5)} color={Colors.white} />}                                </View>
+                                            <Text style={styles.easyText}>{item?.qp_name}</Text>
+                                        </Pressable>
+                                    ))}
+
+                                    <Text style={[styles.diffecultyText, { marginTop: moderateScale(20) }]}>Books</Text>
+                                    {book?.map(item => (
+                                        <Pressable key={item?.book_id} style={[styles.checkBoxMain, { justifyContent: "flex-start" }]} onPress={() => handleBookSelect(item?.book_id)}>
+                                            <View style={[styles.checkBox, bookSelect === item?.book_id && { backgroundColor: Colors.primaryColor, borderWidth: 0 }]}>
+                                                {bookSelect === item?.book_id && <IconEntypo name='check' size={moderateScale(14.5)} color={Colors.white} />}                                </View>
+                                            <Text style={styles.easyText}>{item?.book_name}</Text>
+                                        </Pressable>
+                                    ))}
+                                </ScrollView>
+                                <View style={[styles.lineBox]} />
+                                <View style={[styles.easyBox, styles.btnMain]}>
+                                    <AppButton title="Cancel" style={styles.cancelBtn} textStyle={styles.cancelText} onPress={handleFilterClose} />
+                                    <AppButton title="Apply Filter" style={styles.applyFilterBox}
+                                        textStyle={styles.applyText} onPress={handleApplyFilter} />
+                                </View>
+                            </AppModal>
+                        </>
+                    ) : (
+                        <>
+                            <View style={{ borderColor: '#000', marginVertical: moderateScale(20), flexDirection: 'row', alignItems: "center" }}>
+                                {pagination.pages > 1 && (
+                                    <Pagination
+                                        paginationData={pagination}
+                                        onPageChange={handlePageChange}
+                                        onLimitChange={handleLimitChange}
+                                    />
+                                )}
+                                {loading === false && <TouchableOpacity style={styles.filterBtn} onPress={handleLabelStatus}>
+                                    <Image source={Icons.filter} resizeMode="contain" style={styles.filteImg} />
+                                </TouchableOpacity>}
+                            </View>
+
+                            <QuestionListComponent
+                                selectCheck={selectCheck}
+                                selectedMap={selectedMap}
+                                setSelectedMap={setSelectedMap}
+                                questionsData={questionsData?.result ?? []}
+                                currentPage={pagination?.page}
+                                limit={pagination.limit}
+                                correctAnswers={answerStats.correct}
+                                incorrectAnswers={answerStats.incorrect}
+                                isLoading={loading}
+                            />
+                            <AppModal visible={labelStatus} onClose={handleLabelClose}>
+                                <View style={styles.applyBox}>
+                                    <Text style={styles.diffeicultText}>Apply Filter</Text>
+                                    <TouchableOpacity onPress={handleClearFilter} style={{ padding: moderateScale(1) }}>
+                                        <Text style={styles.clearAllText}>Clear all filters</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <ScrollView style={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
+                                    <View style={styles.lineBox} />
+                                    <Text style={styles.diffecultyText}>Difficulty level</Text>
+                                    <View style={styles.easyBox}>
+                                        <View style={styles.difficultMainBox}>
+                                            {difficultyLabel?.map(item => (
+                                                <Pressable key={item?.dlevel_id} style={styles.checkBoxMain} onPress={() => handleCheckStatus(item?.dlevel_id)}>
+                                                    <View style={[styles.checkBox, lebelCheck === item?.dlevel_id && { backgroundColor: Colors.primaryColor, borderWidth: 0 }]}>
+                                                        {lebelCheck === item?.dlevel_id && <IconEntypo name='check' size={moderateScale(14.5)} color={Colors.white} />
+                                                        }
+                                                    </View>
+                                                    <Text style={styles.easyText}>{item?.dlevel_name}</Text>
+                                                </Pressable>))}
+                                        </View>
+                                    </View>
+                                    <Text style={[styles.diffecultyText, { marginTop: moderateScale(20) }]}>Question Type</Text>
+                                    {questionType?.map(item => (
+                                        <Pressable key={item?.qp_id} style={[styles.checkBoxMain, { justifyContent: "flex-start" }]} onPress={() => handleQuestionTypeSelect(item?.qp_id)}>
+                                            <View style={[styles.checkBox, questionTypeSelect === item?.qp_id && { backgroundColor: Colors.primaryColor, borderWidth: 0 }]}>
+                                                {questionTypeSelect === item?.qp_id && <IconEntypo name='check' size={moderateScale(14.5)} color={Colors.white} />}                                </View>
+                                            <Text style={styles.easyText}>{item?.qp_name}</Text>
+                                        </Pressable>
+                                    ))}
+
+                                    <Text style={[styles.diffecultyText, { marginTop: moderateScale(20) }]}>Books</Text>
+                                    {book?.map(item => (
+                                        <Pressable key={item?.book_id} style={[styles.checkBoxMain, { justifyContent: "flex-start" }]} onPress={() => handleBookSelect(item?.book_id)}>
+                                            <View style={[styles.checkBox, bookSelect === item?.book_id && { backgroundColor: Colors.primaryColor, borderWidth: 0 }]}>
+                                                {bookSelect === item?.book_id && <IconEntypo name='check' size={moderateScale(14.5)} color={Colors.white} />}                                </View>
+                                            <Text style={styles.easyText}>{item?.book_name}</Text>
+                                        </Pressable>
+                                    ))}
+                                </ScrollView>
+                                <View style={[styles.lineBox]} />
+                                <View style={[styles.easyBox, styles.btnMain]}>
+                                    <AppButton title="Cancel" style={styles.cancelBtn} textStyle={styles.cancelText} onPress={handleFilterClose} />
+                                    <AppButton title="Apply Filter" style={styles.applyFilterBox}
+                                        textStyle={styles.applyText} onPress={handleApplyFilter} />
+                                </View>
+                            </AppModal>
+                        </>
                     )}
-                    {loading === false && <TouchableOpacity style={styles.filterBtn} onPress={handleLabelStatus}>
-                        <Image source={Icons.filter} resizeMode="contain" style={styles.filteImg} />
-                    </TouchableOpacity>}
                 </View>
 
-                {/* <Text style={styles.paperText}>PaperListScreen component</Text> */}
-                <QuestionListComponent
-                    selectCheck={selectCheck}
-                    selectedMap={selectedMap}
-                    setSelectedMap={setSelectedMap}
-                    questionsData={questionsData?.result ?? []}
-                    currentPage={pagination?.page}
-                    limit={pagination.limit}
-                />
-                <AppModal visible={labelStatus} onClose={handleLabelClose}>
-                    <View style={styles.applyBox}>
-                        <Text style={styles.diffeicultText}>Apply Filter</Text>
-                        <TouchableOpacity onPress={handleClearFilter} style={{ padding: moderateScale(1) }}>
-                            <Text style={styles.clearAllText}>Clear all filters</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <ScrollView style={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
-                        <View style={styles.lineBox} />
-                        <Text style={styles.diffecultyText}>Difficulty level</Text>
-                        <View style={styles.easyBox}>
-                            <View style={styles.difficultMainBox}>
-                                {difficultyLabel?.map(item => (
-                                    <Pressable key={item?.dlevel_id} style={styles.checkBoxMain} onPress={() => handleCheckStatus(item?.dlevel_id)}>
-                                        <View style={[styles.checkBox, lebelCheck === item?.dlevel_id && { backgroundColor: Colors.primaryColor, borderWidth: 0 }]}>
-                                            {lebelCheck === item?.dlevel_id && <IconEntypo name='check' size={moderateScale(14.5)} color={Colors.white} />
-                                            }
-                                        </View>
-                                        <Text style={styles.easyText}>{item?.dlevel_name}</Text>
-                                    </Pressable>))}
-                            </View>
-                        </View>
-                        <Text style={[styles.diffecultyText, { marginTop: moderateScale(20) }]}>Question Type</Text>
-                        {questionType?.map(item => (
-                            <Pressable key={item?.qp_id} style={[styles.checkBoxMain, { justifyContent: "flex-start" }]} onPress={() => handleQuestionTypeSelect(item?.qp_id)}>
-                                <View style={[styles.checkBox, questionTypeSelect === item?.qp_id && { backgroundColor: Colors.primaryColor, borderWidth: 0 }]}>
-                                    {questionTypeSelect === item?.qp_id && <IconEntypo name='check' size={moderateScale(14.5)} color={Colors.white} />}                                </View>
-                                <Text style={styles.easyText}>{item?.qp_name}</Text>
-                            </Pressable>
-                        ))}
-
-                        <Text style={[styles.diffecultyText, { marginTop: moderateScale(20) }]}>Books</Text>
-                        {book?.map(item => (
-                            <Pressable key={item?.book_id} style={[styles.checkBoxMain, { justifyContent: "flex-start" }]} onPress={() => handleBookSelect(item?.book_id)}>
-                                <View style={[styles.checkBox, bookSelect === item?.book_id && { backgroundColor: Colors.primaryColor, borderWidth: 0 }]}>
-                                    {bookSelect === item?.book_id && <IconEntypo name='check' size={moderateScale(14.5)} color={Colors.white} />}                                </View>
-                                <Text style={styles.easyText}>{item?.book_name}</Text>
-                            </Pressable>
-                        ))}
-                    </ScrollView>
-                    <View style={[styles.lineBox]} />
-                    <View style={[styles.easyBox, styles.btnMain]}>
-                        <AppButton title="Cancel" style={styles.cancelBtn} textStyle={styles.cancelText} onPress={handleFilterClose} />
-                        <AppButton title="Apply Filter" style={styles.applyFilterBox}
-                            textStyle={styles.applyText} onPress={handleApplyFilter} />
-                    </View>
-                </AppModal>
             </SafeAreaView>
         </View>
     )
@@ -363,6 +521,38 @@ const styles = StyleSheet.create({
         height: moderateScale(20),
         width: moderateScale(20)
     },
+    diffeicultText: {
+        fontSize: moderateScale(20),
+        color: Colors.primaryColor,
+        fontFamily: Fonts.InstrumentSansSemiBold
+    },
+    clearAllText: {
+        fontSize: moderateScale(16),
+        color: Colors.red,
+        fontFamily: Fonts.InstrumentSansRegular
+    },
+    headerSafe: {
+        backgroundColor: Colors.lightThemeBlue,
+        paddingHorizontal: moderateScale(16),
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingBottom: moderateScale(10),
+        paddingTop: moderateScale(10),
+        // borderWidth:1/
+    },
+    arrowBox: {
+        paddingLeft: moderateScale(1),
+        width: moderateScale(28),
+        // borderWidth:1
+    },
+    qsBox: {
+        flexDirection: 'row',
+        // borderWidth: 1,
+        justifyContent: "space-between",
+        alignItems: "center",
+        flex: 1
+    },
     applyBox: {
         flexDirection: 'row',
         justifyContent: "space-between",
@@ -376,14 +566,14 @@ const styles = StyleSheet.create({
         // marginHorizontal:moderateScale(16)
     },
     diffecultyText: {
-        fontSize: moderateScale(16),
-        color: Colors.black,
-        fontFamily: Fonts.InstrumentSansRegular,
+        fontSize: moderateScale(15),
+        color: Colors.primaryColor,
+        fontFamily: Fonts.InstrumentSansMedium,
         marginLeft: moderateScale(16)
     },
     checkBox: {
-        height: moderateScale(18),
-        width: moderateScale(18),
+        height: moderateScale(16.5),
+        width: moderateScale(16.5),
         borderWidth: 1,
         borderRadius: moderateScale(3),
         alignItems: 'center',
@@ -397,7 +587,7 @@ const styles = StyleSheet.create({
     //   borderRadius: moderateScale(3)
     // },
     easyText: {
-        fontSize: moderateScale(14),
+        fontSize: moderateScale(13),
         color: Colors.black,
         fontFamily: Fonts.InstrumentSansMedium,
         marginLeft: moderateScale(11)
@@ -432,48 +622,16 @@ const styles = StyleSheet.create({
     cancelBtn: {
         width: '46%',
         backgroundColor: 'rgba(0,0,0,.2)',
-        paddingVertical: moderateScale(12.2)
+        paddingVertical: moderateScale(10)
     },
     applyFilterBox: {
         width: '46%',
-        paddingVertical: moderateScale(12.2)
+        paddingVertical: moderateScale(10)
 
     },
     btnMain: {
         justifyContent: "space-between",
         marginHorizontal: moderateScale(16.8),
-    },
-    diffeicultText: {
-        fontSize: moderateScale(20),
-        color: Colors.primaryColor,
-        fontFamily: Fonts.InstrumentSansSemiBold
-    },
-    clearAllText: {
-        fontSize: moderateScale(16),
-        color: Colors.red,
-        fontFamily: Fonts.InstrumentSansRegular
-    },
-    headerSafe: {
-        backgroundColor: Colors.lightThemeBlue,
-        paddingHorizontal: moderateScale(16),
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingBottom: moderateScale(10),
-        paddingTop: moderateScale(10),
-        // borderWidth:1/
-    },
-    arrowBox: {
-        paddingLeft: moderateScale(1),
-        width: moderateScale(24),
-        // borderWidth:1
-    },
-    qsBox: {
-        flexDirection: 'row',
-        // borderWidth: 1,
-        justifyContent: "space-between",
-        alignItems: "center",
-        flex: 1
     },
     backImg: {
         width: moderateScale(20),
@@ -486,6 +644,34 @@ const styles = StyleSheet.create({
         fontFamily: Fonts.InstrumentSansMedium,
         // flex: 1,
         textAlign: 'left',
-        // marginLeft: moderateScale(2)
+        width: moderateScale(270),
+        // borderWidth:1,
+        marginLeft: moderateScale(2)
     },
+
+    tabContainer: {
+        flexDirection: 'row',
+        backgroundColor: Colors.white,
+        borderBottomWidth: 1,
+        borderBottomColor: Colors.lightThemeBlue,
+    },
+    tab: {
+        flex: 1,
+        paddingVertical: moderateScale(12),
+        alignItems: 'center',
+    },
+    activeTab: {
+        borderBottomWidth: 1.2,
+        borderBottomColor: Colors.primaryColor,
+    },
+    tabText: {
+        fontSize: moderateScale(14),
+        fontFamily: Fonts.InterMedium,
+        color: Colors.primaryColor,
+    },
+    activeTabText: {
+        color: Colors.primaryColor,
+        fontFamily: Fonts.InterSemiBold,
+    },
+
 })

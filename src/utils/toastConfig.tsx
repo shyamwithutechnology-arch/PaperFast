@@ -30,11 +30,19 @@ export const toastConfig = {
   ),
   error: ({ text1, text2 }: ToastProps) => (
     <View style={[styles.toast, styles.error]}>
-      <ErrorIcon name="error-outline" size={moderateScale(22)} color={Colors.white} />
-      <View style={styles.successRightBox}>
-        <Text style={styles.text1}>{text1}</Text>
-        {text2 ? <Text style={styles.text2}>{text2}</Text> : null}
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <View style={[styles.checkIconBox, { backgroundColor: '#FB5758' }]}>
+          {/* <ErrorIcon name="error-outline" size={moderateScale(16)} color={Colors.white} /> */}
+          <CrossIcon name='cross' color={Colors.white} size={moderateScale(20)} />
+        </View>
+        <View style={styles.successRightBox}>
+          <Text style={[styles.text1, { color: Colors.red }]}>{text1}</Text>
+          {text2 ? <Text style={styles.text2}>{text2}</Text> : null}
+        </View>
       </View>
+      <Pressable style={styles.crossBox}>
+        <CrossIcon name='cross' color={Colors.black} size={moderateScale(20)} />
+      </Pressable>
     </View>
   ),
   info: ({ text1, text2 }: ToastProps) => (
@@ -61,29 +69,31 @@ const styles = StyleSheet.create({
     justifyContent: "space-between"
   },
   checkIconBox: {
-    backgroundColor: '#49DF70',
-    borderRadius: moderateScale(40),
-    height: moderateScale(25),
-    width: moderateScale(25),
+    backgroundColor: '#4FDD6B',
+    borderRadius: moderateScale(100),
+    height: moderateScale(30),
+    width: moderateScale(30),
     alignItems: 'center',
     justifyContent: "center"
   },
-  success: { backgroundColor: '#EFF9F5', flexDirection: 'row', alignItems: 'center', borderColor: '#C0DFC7', borderWidth: 2 },
-  successRightBox: { marginLeft: moderateScale(13) },
-  error: { backgroundColor: '#FF4444', flexDirection: 'row', alignItems: 'center' },
-  info: { backgroundColor: '#3498DB' },
+  success: { backgroundColor: '#F1F9F4', flexDirection: 'row', alignItems: 'center', borderColor: '#53CA75', borderWidth: 1.8 },
+  successRightBox: { marginLeft: moderateScale(13)},
+  // error: { backgroundColor: '#FF4444', flexDirection: 'row', alignItems: 'center' },
+  error: { backgroundColor: '#FCEFEA', flexDirection: 'row', alignItems: 'center', borderColor: '#E84C55', borderWidth: 1.5 },
+  info: { backgroundColor: '#EBBC3F' },
   // text1: { fontFamily: Fonts.InterBold, color: '#5A5F5C', fontSize: moderateScale(16), marginBottom: moderateScale(2) },
-  text1: { fontFamily: Fonts.InterBold, color: '#000', fontSize: moderateScale(16), marginBottom: moderateScale(2) },
-  text2: { color: '#B0B5B2', fontSize: moderateScale(13), marginTop: moderateScale(2), fontFamily: Fonts.InterMedium },
+  text1: { fontFamily: Fonts.InterBold, color: Colors.green, fontSize: moderateScale(16), marginBottom: moderateScale(2) },
+  // text1: { fontFamily: Fonts.InterBold, color: '#000', fontSize: moderateScale(16), marginBottom: moderateScale(2) },
+  text2: { color: '#68625D', fontSize: moderateScale(13), marginTop: moderateScale(2), fontFamily: Fonts.InterMedium },
   crossBox: {
     height: moderateScale(26),
     width: moderateScale(26),
     backgroundColor: Colors.white,
     // borderWidth: 1,
-    borderRadius: moderateScale(20),
+    borderRadius: moderateScale(4),
     alignItems: 'center',
     justifyContent: 'center',
-    elevation: 10,
+    // elevation: 10,
     shadowRadius: moderateScale(4),
     shadowColor: Colors.white
   }

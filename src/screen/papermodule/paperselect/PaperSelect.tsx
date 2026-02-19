@@ -98,7 +98,6 @@ const PaperSelect = () => {
     type PaperType = 'NCERT' | 'EXEMPLAR' | 'RD_SHARMA';
 
     const [selectedPaper, setSelectedPaper] = useState<PaperType>('NCERT');
-    console.log('selectedPaper', selectedPaper);
     const [paperHeader, setPaperHeader] = useState<PaperType>('Regular Paper');
 
     const handleSelectPaper = (id: string) => {

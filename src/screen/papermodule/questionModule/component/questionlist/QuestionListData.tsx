@@ -853,6 +853,7 @@ const QuestionListData: React.FC<Props> = ({
     },
     [selectedQuestions, selectedMap, setSelectedMap, setQuestionNumber, dispatch]
   );
+  
   const renderItem = useCallback(({ item, index }: { item: Question; index: number }) => {
     const currentChapter = questiondd?.find((chapter: any) =>
       chapter?.chapterId === getAllRute?.chapterId &&
@@ -907,14 +908,6 @@ const QuestionListData: React.FC<Props> = ({
           removeClippedSubviews={false}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.listContent}
-
-
-
-        // Add these props for infinite scrolling
-        onEndReached={handleEndReached}
-        onEndReachedThreshold={0.3} // Trigger when 30% from bottom
-        ListFooterComponent={renderFooter}
-        ListFooterComponentStyle={styles.footerContainer}
 
         // Optional: Add empty component
         ListEmptyComponent={
