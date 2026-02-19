@@ -190,26 +190,11 @@ export default DraftPaperList
 
 const styles = StyleSheet.create({
     draftContent: {
-        // height:moderateScale()
-        // paddingVertical: moderateScale(15),
-        // paddingHorizontal: moderateScale(15),
-        // borderWidth: 1,
-        // marginHorizontal: moderateScale(16),
-        // flexDirection: 'row',
-        // justifyContent: 'space-between',
-        // borderColor: Colors.InputStroke,
-        // marginTop: moderateScale(15),
-        // borderRadius: moderateScale(4),
-        // elevation: 40,
-        // shadowColor: 'rgba(0, 140, 227, .9)',
-        // height:moderateScale()
         paddingVertical: moderateScale(15),
         paddingHorizontal: moderateScale(15),
-        // borderWidth: 1,
         marginHorizontal: moderateScale(16),
         flexDirection: 'row',
         justifyContent: 'space-between',
-        // borderColor: Colors.InputStroke,
         marginTop: moderateScale(15),
         borderRadius: moderateScale(4),
         backgroundColor: Colors.white,

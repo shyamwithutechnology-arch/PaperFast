@@ -6102,6 +6102,11 @@ react-native-tab-view@^4.2.2:
   dependencies:
     use-latest-callback "^0.2.4"
 
+react-native-text-ticker@^1.15.0:
+  version "1.15.0"
+  resolved "https://registry.yarnpkg.com/react-native-text-ticker/-/react-native-text-ticker-1.15.0.tgz#983745a1819a4a2de7def9ce9c4fe45598b66a95"
+  integrity sha512-d/uK+PIOhsYMy1r8h825iq/nADiHsabz3WMbRJSnkpQYn+K9aykUAXRRhu8ZbTAzk4CgnUWajJEFxS5ZDygsdg==
+
 react-native-toast-message@^2.3.3:
   version "2.3.3"
   resolved "https://registry.npmjs.org/react-native-toast-message/-/react-native-toast-message-2.3.3.tgz"

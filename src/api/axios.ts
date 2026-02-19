@@ -7,12 +7,12 @@ const api = axios.create({
   // baseURL: 'https://www.papers.withupartners.in/api/',
   baseURL: 'https://www.paperfast.in/api/',
 
-  timeout: 20000,
+  timeout: 30000, // 20 second
   headers: {
     Accept: 'application/json',
     // 'Content-Type': 'application/json',
   },
-  withCredentials: true, 
+  withCredentials: true,
 });
 
 api.interceptors.request.use(
@@ -21,7 +21,7 @@ api.interceptors.request.use(
 
     if (!net.isConnected) {
       // toast.error('No internet connection', '');
-       showToast('error', 'Connection issue','No internet connection')
+      showToast('error', 'Connection issue', 'No internet connection')
       return Promise.reject({ offline: true });
     }
 

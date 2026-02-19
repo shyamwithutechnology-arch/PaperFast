@@ -44,11 +44,15 @@ export const storageKeys = {
   user_exist: 'user_exist',
   mobileNumber: 'mobileNumber',
   userId: 'userId',
-  selectedSubId:'selectedSubId',
-  selectedSubject:'selectedSubject',
-  selectedPaperType:'selectedPaperType',
-  boardIdMain :'boardIdMain',
-  boardId :'boardId',
+  selectedSubId: 'selectedSubId',
+  selectedSubject: 'selectedSubject',
+  selectedPaperType: 'selectedPaperType',
+  boardIdMain: 'boardIdMain',
+  boardId: 'boardId',
+
+  // ✅ New keys for bookmarks and drafts
+  bookmarkedQuestions: '@bookmarked_questions',
+  draftAnswers: '@draft_answers',
 };
 
 
@@ -74,7 +78,7 @@ export const localStorage = {
     });
   },
 
-   // Add clearAll method
+  // Add clearAll method
   clearAll: (): Promise<void> => {
     return new Promise((resolve) => {
       // Get all keys first

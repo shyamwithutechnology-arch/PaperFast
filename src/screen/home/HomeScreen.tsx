@@ -191,6 +191,7 @@ const HomeScreen = () => {
             }
 
         } catch (error: any) {
+            console.log('resss board', error);
             if (error?.offline) {
                 return;
             }
@@ -217,6 +218,8 @@ const HomeScreen = () => {
                 setMedium([])
             }
         } catch (error: any) {
+            console.log('resssmedum', error);
+
             if (error?.offline) {
                 return;
             }
@@ -248,8 +251,9 @@ const HomeScreen = () => {
             }
 
         } catch (error: any) {
+            console.log('ressssubject', error);
             if (error?.offline) {
-                return;
+                return; 
             }
             const errorMessage = error?.response?.data?.message ||
                 error?.message ||
@@ -277,6 +281,8 @@ const HomeScreen = () => {
             }
 
         } catch (error: any) {
+            console.log('ressssssssssstand', error);
+
             if (error?.offline) {
                 return;
             }
@@ -304,7 +310,7 @@ const HomeScreen = () => {
             }
 
         } catch (error: any) {
-            // console.log('resss', error);
+            console.log('resss', error);
 
             if (error?.offline) {
                 return;

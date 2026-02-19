@@ -53,18 +53,17 @@ const DraftModal = ({ activeDraft, onClose, questionId }: DraftModalProps) => {
                 showSnackbar('Please lenght then this text to 4 charactors or more', 'error')
                 return
             }
-
             const params = {
                 user_id: userId,
                 title: title,
                 question_id: JSON.stringify(questionId) || [],
-                role: userRole
+                role: userRodle
             }
             console.log('para3333', params);
 
             const response = await POST_FORM(ApiEndPoint.draftAdd, params)
             if (response.status === 200) {
-                showToast('success', response?.msg)
+                showToast('success', 'Success', response?.msg)
                 setTitle('')
                 onClose()
             }
@@ -76,8 +75,11 @@ const DraftModal = ({ activeDraft, onClose, questionId }: DraftModalProps) => {
                 error?.message ||
                 'Something went wrong. Please try again.';
             showToast('error', 'Error', errorMessage);
+            onClose()
         } finally {
             setLoading(false)
+            onClose()
+            setTitle('')
         }
     }
     const handleSubmit = () => {

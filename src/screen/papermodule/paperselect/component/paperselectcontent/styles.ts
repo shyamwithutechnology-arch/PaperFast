@@ -35,12 +35,12 @@ export const styles = StyleSheet.create({
   title: {
     fontFamily: Fonts.InstrumentSansBold,
     fontSize: moderateScale(13),
-    color: Colors.black,
+    color: '#4b4b4b',
   },
 
   chaptName: {
     fontFamily: Fonts.InstrumentSansMedium,
-    fontSize: moderateScale(12),
+    fontSize: moderateScale(11),
     color: Colors.ParagraphAndShortTexts,
   },
   arrow: {
