@@ -170,7 +170,7 @@ const HomeScreen = () => {
         // await localStorage.setItem(storageKeys.selectedSubId, subId);
         dispatch(setSelectedSubId(subId))
         await localStorage.setItem(storageKeys.selectedSubject, subName);
-        navigation.navigate('PaperTypeScreen')
+        navigation.navigate('PaperTypeScreen', {banners:''})
     }
 
     const handleBoardDataGet = async () => {
@@ -253,7 +253,7 @@ const HomeScreen = () => {
         } catch (error: any) {
             console.log('ressssubject', error);
             if (error?.offline) {
-                return; 
+                return;
             }
             const errorMessage = error?.response?.data?.message ||
                 error?.message ||
@@ -270,7 +270,7 @@ const HomeScreen = () => {
             let params = {
                 et_id: id
             }
-            const response = await POST_FORM(ApiEndPoint.Classes, params);
+            const response = await POST_FORM(ApiEndPoint.Classes, params);            
             if (response && response.status === 200) {
                 setStandard(response?.result)
             } else {
@@ -281,8 +281,6 @@ const HomeScreen = () => {
             }
 
         } catch (error: any) {
-            console.log('ressssssssssstand', error);
-
             if (error?.offline) {
                 return;
             }
@@ -310,8 +308,6 @@ const HomeScreen = () => {
             }
 
         } catch (error: any) {
-            console.log('resss', error);
-
             if (error?.offline) {
                 return;
             }

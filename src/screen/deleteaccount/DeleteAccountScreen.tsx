@@ -126,7 +126,7 @@ const DeleteAccountScreen = () => {
     //         };
 
     //         // Make the API call to delete account endpoint
-    //         const response = await POST_FORM(ApiEndPoint.DeleteAccount, params); // Make sure you have this endpoint
+    //         const response = await POST_FORM(ApiEndPoint.deleteAccount, params); // Make sure you have this endpoint
 
     //         if (response && response.status === 200) {
     //             // Show success toast message

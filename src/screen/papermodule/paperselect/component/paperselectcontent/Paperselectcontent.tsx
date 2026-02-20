@@ -62,9 +62,6 @@ const Paperselectcontent: React.FC<Props> = ({ data, handleNavigate, activeChapt
   const chapterData = useSelector((state: any) => state?.pdfQuestions);
   const userRole = useSelector((state: any) => state?.userRole?.role);
   const navigation = useNavigation()
-  console.log('data', data);
-
-  // const [activeId, setActiveId] = useState<number | null>(null);
   const [activeId, setActiveId] = useState<number | null>(activeChapterId);
 
   useEffect(() => {
@@ -76,11 +73,8 @@ const Paperselectcontent: React.FC<Props> = ({ data, handleNavigate, activeChapt
     setActiveId(prev => (prev === id ? null : id));
   };
 
-  // if (!data?.length) {
-  //   return () => EmptyComponent({ title: 'No draft found' })
-  // }
   if (!data?.length) {
-    return <EmptyComponent title='No data found' />  // ✅ Returns JSX
+    return <EmptyComponent title='No data found' />  
   }
   return (
     <ScrollView style={{ flex: 1, backgroundColor: Colors.white, marginTop: moderateScale(15) }}>
@@ -137,7 +131,7 @@ const Paperselectcontent: React.FC<Props> = ({ data, handleNavigate, activeChapt
               <View style={styles.contentBox}>
                 {item?.questions?.map((question, qIndex) => {
                   const isLast = qIndex === item?.questions?.length - 1;
-                  // console.log('maaaaaaaaa', question)
+                  console.log('maaaaaaaaa', question)
 
                   return (
                     <View key={question?.id}>
@@ -156,8 +150,10 @@ const Paperselectcontent: React.FC<Props> = ({ data, handleNavigate, activeChapt
                             chapterId: chapterIndex,
                             questionId: question?.id,
                             questionMarks: question?.questioncount,
+                            question_type:question?.question_type,
+                            question_chapter:item?.question_chapter,
                             label: question?.label,
-                            selectedQuestions: matchingChapter?.selectedQuestions || []
+                            selectedQuestions: matchingChapter?.selectedQuestions || [],
                           });
                         }}>
                         <Text style={styles.itemText}>

@@ -46,13 +46,17 @@ const QuestionScreen = () => {
         questionMarks,
         label,
         chapterTitle,
-        selectedQuestions
+        question_type,
+        selectedQuestions,
+        question_chapter
     } = route.params as {
         chapterId: number;
         questionId: string;
+        question_type:string;
         questionMarks: string;
         label: string;
         chapterTitle: string;
+        question_chapter:string,
         selectedQuestions: any[]
     };
     const selectedSubjectId = useSelector((state) => state?.selectedSubId?.selectedSubId)
@@ -71,7 +75,10 @@ const QuestionScreen = () => {
     const [difficultyLabel, setDifficultyLabel] = useState<Difficulty[]>([]);
     const [questionType, setQuestionType] = useState<QuestionType[]>([]);
     const [book, setBook] = useState<Book[]>([]);
-    const [subId, setSubId] = useState<string | null>('');
+    const [boardId, setBoardId] = useState<string | null>('');
+    const [standardId, setStandardId] = useState<string | null>('');
+    console.log('boardId',  boardId);
+    
     const [remarkVisibleModal, setRemarkVisibleModal] = useState<boolean>(false);
     const [pagination, setPagination] = useState({
         limit: 50,
@@ -99,7 +106,7 @@ console.log('paperType', paperType);
         
     //     try {
     //         // Fetch all data in parallel for better performance
-    //         await Promise.all([
+    //         await Promise.all([a
     //             handleFilterModal(),
     //             handleQuestionType(),
     //             handleBookFetch()
@@ -132,12 +139,26 @@ console.log('paperType', paperType);
         await fetchQuestions(pagination.page, pagination?.limit);
         setLabelStatus(false)
     }
+    // const handleClearFilter = async () => {
+    //     setLabelCheck(null),
+    //         setQuestionTypeSelect(null),
+    //         await fetchQuestions(pagination.page, pagination?.limit);
+    //     setLabelStatus(false)
+    // }
     const handleClearFilter = async () => {
-        setLabelCheck(null),
-            setQuestionTypeSelect(null),
-            await fetchQuestions(pagination.page, pagination?.limit);
-        setLabelStatus(false)
-    }
+    setLabelCheck(null);
+    setQuestionTypeSelect(null);
+    setPagination(prev => ({ ...prev, page: 1 }));
+    
+    await fetchQuestions(
+        boardId || '', 
+        standardId || '', 
+        1, 
+        pagination.limit, 
+        selectedSubjectId
+    );
+    setLabelStatus(false);
+};
     const handleCloseDraftModal = () => {
         setVisibleDraft(false)
     }
@@ -304,117 +325,180 @@ console.log('paperType', paperType);
             }
         });
     };
-    const fetchQuestions = async (page: number = 1, limit: number = pagination?.limit, subject?: string | null) => {
-        setLoading(true)
-        try {
-            let params = {
-                'subject_id': subject ?? selectedSubjectId,
-                'difficulty': lebelCheck || '3',
-                // 'easy': '3',
-                'page': page?.toString(),
-                'limit': limit?.toString()
-            }
-            const response = await POST_FORM('question', params)
-            if (response?.status === 200) {
-                setQuestionsData(response || {});
-                if (response?.pagination) {
-                    setPagination({
-                        limit: response.pagination.limit,
-                        page: response.pagination.page,
-                        pages: response.pagination.pages,
-                        total: response.pagination.total,
-                    });
-                }
-            }
-        } catch (error: any) {
-            if (error?.offline) {
-                return;
-            }
-            const errorMessage = error?.response?.data?.message ||
-                error?.message ||
-                'Something went wrong. Please try again.';
-            showToast('error', 'Error', errorMessage);
-        } finally {
-            setLoading(false)
-        }
-    };
+    // const fetchQuestions = async ( board_Id:string, standard_Id:string, page: number = 1, limit: number = pagination?.limit, subject?: string | null,) => {
+    //     setLoading(true)
+    //     try {
+    //         let params = {
+    //             'subject_id': subject ?? selectedSubjectId,
+    //             'difficulty': lebelCheck || '3',
+    //              'question_type':question_type,
+    //              'board_id':board_Id ?? boardId,
+    //              'question_chapter':question_chapter,
+    //              'class_id':standard_Id ?? standardId,
+    //             // 'easy': '3',
+    //             'page': page?.toString(),
+    //             'limit': limit?.toString()
+    //         }
+    //         console.log('raparams', params);
+            
+    //         const response = await POST_FORM('question', params)
+    //         if (response?.status === 200) {
+    //             setQuestionsData(response || {});
+    //             if (response?.pagination) {
+    //                 setPagination({
+    //                     limit: response.pagination.limit,
+    //                     page: response.pagination.page,
+    //                     pages: response.pagination.pages,
+    //                     total: response.pagination.total,
+    //                 });
+    //             }
+    //         }
+    //     } catch (error: any) {
+    //         if (error?.offline) {
+    //             return;
+    //         }
+    //         const errorMessage = error?.response?.data?.message ||
+    //             error?.message ||
+    //             'Something went wrong. Please try again.';
+    //         showToast('error', 'Error', errorMessage);
+    //     } finally {
+    //         setLoading(false)
+    //     }
+    // };
 
-    const handlePageChange = (newPage: number) => {
-        if (newPage >= 1 && newPage <= pagination.pages) {
-            fetchQuestions(newPage);
-        }
-    };
-
-    const handleLimitChange = (newLimit: number) => {
-        setPagination(prev => ({
-            ...prev,
-            limit: newLimit,
-            page: 1 // Reset to first page
-        }));
-
-        // Fetch data with new limit
-        fetchQuestions(1, newLimit);
-    };
-
-    const generatePDF = async () => {
-        // try {
-        //     const selectedQuestions = questionsData?.result?.filter(
-        //         q => selectedMap[q.question_id]
-        //     );
-
-        //     if (!selectedQuestions?.length) {
-        //         Alert.alert('No questions selected');
-        //         return;
-        //     }
-
-        //     const html = buildPDFHtml(selectedQuestions, selectCheck);
-
-        //     const file = await RNHTMLtoPDF.convert({
-        //         html,
-        //         fileName: 'Question_Paper',
-        //         directory: 'Documents',
-        //     });
-
-        //     if (!file?.filePath) {
-        //         throw new Error('PDF generation failed');
-        //     }
-
-        //     console.log('PDF saved at:', file);
-        //     Alert.alert('PDF Created', file.filePath);
-
-        // } catch (error) {
-        //     console.log('PDF ERROR:', error);
-        //     Alert.alert('Error', 'Failed to generate PDF');
-        // }
-    };
+    // const handlePageChange = (newPage: number) => {
+    //     if (newPage >= 1 && newPage <= pagination.pages) {
+    //         fetchQuestions(newPage);
+    //     }
+    // };
 
 
-    useFocusEffect(
-        useCallback(() => {
-            navigation.getParent()?.setOptions({
-                tabBarStyle: { display: 'none' },
-            });
-            return () => {
-                navigation.getParent()?.setOptions({
-                    tabBarStyle: { display: 'flex' },
+    const fetchQuestions = async (
+    board_Id: string, 
+    standard_Id: string, 
+    page: number = 1, 
+    limit: number = pagination?.limit, 
+    subject?: string | null
+) => {
+    setLoading(true);
+    try {
+        let params = {
+            'subject_id': subject ?? selectedSubjectId,
+            'difficulty': lebelCheck || '3',
+            'question_type': question_type,
+            'board_id': board_Id ?? boardId,
+            'question_chapter': question_chapter,
+            'class_id': standard_Id ?? standardId,
+            'page': page?.toString(),
+            'limit': limit?.toString()
+        };
+        
+        console.log('Fetch params:', params);
+        
+        const response = await POST_FORM('question', params);
+        if (response?.status === 200) {
+            setQuestionsData(response || {});
+            if (response?.pagination) {
+                setPagination({
+                    limit: response.pagination.limit,
+                    page: response.pagination.page,
+                    pages: response.pagination.pages,
+                    total: response.pagination.total,
                 });
-            };
-        }, []))
+            }
+        }
+    } catch (error: any) {
+        if (error?.offline) {
+            return;
+        }
+        const errorMessage = error?.response?.data?.message ||
+            error?.message ||
+            'Something went wrong. Please try again.';
+        showToast('error', 'Error', errorMessage);
+    } finally {
+        setLoading(false);
+    }
+};
+    const handlePageChange = (newPage: number) => {
+    if (newPage >= 1 && newPage <= pagination.pages) {
+        // Pass all required parameters
+        fetchQuestions(
+            boardId || '', 
+            standardId || '', 
+            newPage, 
+            pagination.limit, 
+            selectedSubjectId
+        );
+    }
+};
+    // const handleLimitChange = (newLimit: number) => {
+    //     setPagination(prev => ({
+    //         ...prev,
+    //         limit: newLimit,
+    //         page: 1 // Reset to first page
+    //     }));
+
+    //     // Fetch data with new limit
+    //     fetchQuestions(1, newLimit);
+    // };
+    const handleLimitChange = (newLimit: number) => {
+    setPagination(prev => ({
+        ...prev,
+        limit: newLimit,
+        page: 1
+    }));
+
+    // Fetch data with new limit and reset to page 1
+    fetchQuestions(
+        boardId || '', 
+        standardId || '', 
+        1, 
+        newLimit, 
+        selectedSubjectId
+    );
+};
+    // useEffect(() => {
+    //     // if()
+    //     const init = async () => {
+    //         const paperType = await localStorage.getItem(storageKeys?.selectedPaperType)
+    //         // const subjectId = await localStorage.getItem(storageKeys.selectedSubId);
+    //         const board_Id = await localStorage.getItem(storageKeys.boardId);
+    //         const standard_Id = await localStorage.getItem(storageKeys.selectedStandardId);
+    //         setBoardId(board_Id)
+    //         setStandardId(standard_Id)
+            
+    //         setPaperType(paperType || '')
+    //         if (selectedSubjectId && board_Id && standard_Id  ) {
+    //             console.log('subjectId', selectedSubjectId);
+    //             await fetchQuestions(board_Id,standard_Id,pagination.page, pagination?.limit, selectedSubjectId);
+    //         }
+    //     }
+    //     init()
+    // }, []);
 
     useEffect(() => {
-        // if()
-        const init = async () => {
-            const paperType = await localStorage.getItem(storageKeys?.selectedPaperType)
-            // const subjectId = await localStorage.getItem(storageKeys.selectedSubId);
-            // setSubId(subjectId)
-            setPaperType(paperType || '')
-            if (selectedSubjectId) {
-                console.log('subjectId', selectedSubjectId);
-                await fetchQuestions(pagination.page, pagination?.limit, selectedSubjectId);
-            }
+    const init = async () => {
+        const paperType = await localStorage.getItem(storageKeys?.selectedPaperType);
+        const board_Id = await localStorage.getItem(storageKeys.boardId);
+        const standard_Id = await localStorage.getItem(storageKeys.selectedStandardId);
+        
+        setBoardId(board_Id);
+        setStandardId(standard_Id);
+        setPaperType(paperType || '');
+        
+        if (selectedSubjectId && board_Id && standard_Id) {
+            console.log('Initial fetch with:', { board_Id, standard_Id, selectedSubjectId });
+            await fetchQuestions(
+                board_Id, 
+                standard_Id, 
+                pagination.page, 
+                pagination.limit, 
+                selectedSubjectId
+            );
         }
-        init()
-    }, []);
+    };
+    init();
+}, [selectedSubjectId]); // Add selectedSubjectId as dependency
 
     return (
         <View style={{ flex: 1, backgroundColor: Colors.white }}>

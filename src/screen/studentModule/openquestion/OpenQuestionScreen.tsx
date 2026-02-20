@@ -1167,33 +1167,17 @@ const OptionButton = ({
 };
 
 // Main Component
-const OpenQuestionScreen = () => {
-    const navigation = useNavigation();
+const OpenQuestionScreen = ({ navigation }) => {
+    // const navigation = useNavigation();
     const route = useRoute();
-    const scrollViewRef = useRef<ScrollView>(null);
-
-    useFocusEffect(
-        useCallback(() => {
-            navigation.getParent()?.setOptions({
-                tabBarStyle: { display: 'none' },
-            });
-
-            return () => {
-                navigation.getParent()?.setOptions({
-                    tabBarStyle: { display: 'flex' },
-                });
-            };
-        }, [navigation]));
-
     const {
         questions = [],
         currentIndex = 0,
         chapterName = 'Plant kingdom'
     } = route.params || {};
+    const scrollViewRef = useRef<ScrollView>(null);
 
     console.log('currentIndex', currentIndex);
-    
-
     // State variables
     const [currentQIndex, setCurrentQIndex] = useState(currentIndex);
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
@@ -1250,12 +1234,7 @@ const OpenQuestionScreen = () => {
         };
     }, [isTimerRunning]);
 
-    // Load saved data on mount
-    useEffect(() => {
-        loadSavedData();
-        getUserId();
-    }, []);
-
+ 
     const getUserId = async () => {
         let id = await localStorage.getItem(storageKeys.userId)
         setUserId(id)
@@ -1474,41 +1453,41 @@ const OpenQuestionScreen = () => {
     };
 
     // Save all drafts to server
-    const saveAllDraftsToServer = async () => {
-        if (!userId || !questions.length) return;
+    // const saveAllDraftsToServer = async () => {
+    //     if (!userId || !questions.length) return;
 
-        try {
-            const bookmarkedIds = Array.from(bookmarkedQuestions);
-            if (bookmarkedIds.length === 0) {
-                showSnackbar('No bookmarked questions to save', 'info');
-                return;
-            }
+    //     try {
+    //         const bookmarkedIds = Array.from(bookmarkedQuestions);
+    //         if (bookmarkedIds.length === 0) {
+    //             showSnackbar('No bookmarked questions to save', 'info');
+    //             return;
+    //         }
 
-            setLoading(true);
+    //         setLoading(true);
 
-            const params = {
-                user_id: userId,
-                title: 'My Practice Draft',
-                question_id: bookmarkedIds,
-                role: userRole
-            };
+    //         const params = {
+    //             user_id: userId,
+    //             title: 'My Practice Draft',
+    //             question_id: bookmarkedIds,
+    //             role: userRole
+    //         };
 
-            const response = await POST_FORM(ApiEndPoint.draftAdd, params);
-            if (response.status === 200) {
-                showToast('success', 'Success', response?.msg || 'Drafts saved successfully');
-            }
-        } catch (error: any) {
-            if (error?.offline) {
-                return;
-            }
-            const errorMessage = error?.response?.data?.message ||
-                error?.message ||
-                'Something went wrong. Please try again.';
-            showToast('error', 'Error', errorMessage);
-        } finally {
-            setLoading(false);
-        }
-    };
+    //         const response = await POST_FORM(ApiEndPoint.draftAdd, params);
+    //         if (response.status === 200) {
+    //             showToast('success', 'Success', response?.msg || 'Drafts saved successfully');
+    //         }
+    //     } catch (error: any) {
+    //         if (error?.offline) {
+    //             return;
+    //         }
+    //         const errorMessage = error?.response?.data?.message ||
+    //             error?.message ||
+    //             'Something went wrong. Please try again.';
+    //         showToast('error', 'Error', errorMessage);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
     const handleFinishTest = async () => {
         setIsTimerRunning(false);
@@ -1590,7 +1569,7 @@ const OpenQuestionScreen = () => {
     //     <body>${cleanQuestion}</body>
     //     </html>
     // `;
-    
+
 
     // In your render:
     // <View style={styles.questionCard}>
@@ -1622,32 +1601,32 @@ const OpenQuestionScreen = () => {
     // </View>
 
     // Extract question images
-const questionImages: string[] = [];
-const imgRegex = /<img[^>]+src="data:image\/[^;]+;base64,([^"]+)"[^>]*>/g;
-let cleanQuestion = currentQuestion.question_text || '';
-let match;
-while ((match = imgRegex.exec(cleanQuestion)) !== null) {
-    questionImages.push(match[1]);
-    cleanQuestion = cleanQuestion.replace(match[0], '');
-}
+    const questionImages: string[] = [];
+    const imgRegex = /<img[^>]+src="data:image\/[^;]+;base64,([^"]+)"[^>]*>/g;
+    let cleanQuestion = currentQuestion.question_text || '';
+    let match;
+    while ((match = imgRegex.exec(cleanQuestion)) !== null) {
+        questionImages.push(match[1]);
+        cleanQuestion = cleanQuestion.replace(match[0], '');
+    }
 
-// For MathJax - use the ORIGINAL HTML with images removed but other tags preserved
-const mathJaxHtml = currentQuestion.question_text
-    .replace(/<img[^>]*>/g, ''); // Only remove image tags, keep everything else
+    // For MathJax - use the ORIGINAL HTML with images removed but other tags preserved
+    const mathJaxHtml = currentQuestion.question_text
+        .replace(/<img[^>]*>/g, ''); // Only remove image tags, keep everything else
 
-// For plain text - clean version (remove all HTML)
-const cleanText = cleanQuestion
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&amp;/g, '&')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/<[^>]*>/g, '')
-    .trim();
+    // For plain text - clean version (remove all HTML)
+    const cleanText = cleanQuestion
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&amp;/g, '&')
+        .replace(/&nbsp;/g, ' ')
+        .replace(/<[^>]*>/g, '')
+        .trim();
 
-const questionHasMath = containsMath(cleanText);
+    const questionHasMath = containsMath(cleanText);
 
-// REMOVE the comment from the HTML string
-const questionHtml = `
+    // REMOVE the comment from the HTML string
+    const questionHtml = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -1686,35 +1665,35 @@ ${mathJaxHtml}
 </html>
 `; // No comment here!
 
-// In your render:
-<View style={styles.questionCard}>
-    {currentQuestion.question_text ? (
-        questionHasMath ? (
-            <MathJax
-                mathJaxOptions={mathJaxOptions}
-                html={questionHtml}
-                style={styles.questionMathJax}
-            />
-        ) : (
-            <Text style={styles.questionText}>{cleanText}</Text>
-        )
-    ) : null}
-    
-    {/* Images - render separately */}
-    {questionImages.length > 0 && (
-        <View style={styles.questionImages}>
-            {questionImages.map((base64, idx) => (
-                <Image
-                    key={`q-img-${idx}`}
-                    source={{ uri: `data:image/png;base64,${base64}` }}
-                    style={styles.questionImage}
-                    resizeMode="contain"
+    // In your render:
+    <View style={styles.questionCard}>
+        {currentQuestion.question_text ? (
+            questionHasMath ? (
+                <MathJax
+                    mathJaxOptions={mathJaxOptions}
+                    html={questionHtml}
+                    style={styles.questionMathJax}
                 />
-            ))}
-        </View>
-    )}
-</View>
-    
+            ) : (
+                <Text style={styles.questionText}>{cleanText}</Text>
+            )
+        ) : null}
+
+        {/* Images - render separately */}
+        {questionImages.length > 0 && (
+            <View style={styles.questionImages}>
+                {questionImages.map((base64, idx) => (
+                    <Image
+                        key={`q-img-${idx}`}
+                        source={{ uri: `data:image/png;base64,${base64}` }}
+                        style={styles.questionImage}
+                        resizeMode="contain"
+                    />
+                ))}
+            </View>
+        )}
+    </View>
+
     // Options
     const options = [
         { id: 'A', text: currentQuestion.option_a },
@@ -1723,11 +1702,26 @@ ${mathJaxHtml}
         { id: 'D', text: currentQuestion.option_d },
     ];
 
+    // useFocusEffect(
+    //     useCallback(() => {
+    //         console.log('Parent navigator:', navigation.getParent());
+    //         loadAnswerStats();
+    //     }, [])
+    // );
+
+
+    // Still use useFocusEffect for loading stats
     useFocusEffect(
         useCallback(() => {
             loadAnswerStats();
         }, [])
     );
+
+       // Load saved data on mount
+    useEffect(() => {
+        loadSavedData();
+        getUserId();
+    }, []);
 
     return (
         <View style={styles.container}>
@@ -1747,7 +1741,7 @@ ${mathJaxHtml}
                         <Text style={styles.counterText}>{formatTime(timer)}</Text>
                     </View>
 
-                    <TouchableOpacity onPress={saveAllDraftsToServer} disabled={loading}>
+                    <TouchableOpacity onPress={() => { }} disabled={loading}>
                         {loading ? (
                             // <ActivityIndicator size="small" color={Colors.primaryColor} //>
                             <Loader visible={loading} />
@@ -1771,11 +1765,6 @@ ${mathJaxHtml}
                             <Text style={styles.questionNumberText}>
                                 Ques. {questionNumber}
                             </Text>
-                            {draftAnswers[currentQuestion?.question_id] && (
-                                <View style={styles.draftIndicator}>
-                                    <Text style={styles.draftIndicatorText}>●</Text>
-                                </View>
-                            )}
                         </View>
 
                         <TouchableOpacity
@@ -1808,7 +1797,7 @@ ${mathJaxHtml}
                                 <MathJax
                                     mathJaxOptions={mathJaxOptions}
                                     html={questionHtml}
-                                    style={[styles.questionMathJax,  { margin: 0, padding: 0 }]}
+                                    style={[styles.questionMathJax, { margin: 0, padding: 0 }]}
                                 />
                             ) : (
                                 <Text style={[styles.questionText, { margin: 0, padding: 0 }]}>{cleanQuestion}</Text>
@@ -2023,7 +2012,7 @@ const styles = StyleSheet.create({
         color: Colors.black,
         borderWidth: 1,
         borderColor: '#000',
-           margin: 0,
+        margin: 0,
         padding: 0,
         lineHeight: moderateScale(20),
 
@@ -2155,7 +2144,7 @@ const styles = StyleSheet.create({
         borderRadius: moderateScale(16),
         borderWidth: 1.2,
         borderColor: Colors.primaryColor,
-        backgroundColor:Colors.white
+        backgroundColor: Colors.white
     },
     prevButton: {
         marginRight: moderateScale(4),

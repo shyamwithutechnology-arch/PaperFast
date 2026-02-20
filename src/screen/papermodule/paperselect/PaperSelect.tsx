@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, StatusBar, TouchableOpacity, Text, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "../../../theme";
@@ -7,7 +7,7 @@ import Paperselectcontent from "./component/paperselectcontent/Paperselectconten
 import { styles } from "./styles";
 import { moderateScale } from "react-native-size-matters";
 import Icon from "react-native-vector-icons/FontAwesome6";
-import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { localStorage, storageKeys } from "../../../storage/storage";
 import { showToast } from "../../../utils/toast";
 import { GET, POST_FORM } from "../../../api/request";
@@ -245,9 +245,10 @@ const PaperSelect = () => {
             const params = {
                 'board_id': data?.boardId,
                 'medium_id': data?.mediumId,
-                // 'class_id': data?.standardId,
-                'subject_id': data?.subjectId,
+                'class_id': data?.standardId,
+                'subject_id': data?.subjectId
             }
+
             const response = await POST_FORM(ApiEndPoint?.questionChapter, params);
             if (response?.status === 200) {
                 setChapterData(response?.result || [])
@@ -265,33 +266,6 @@ const PaperSelect = () => {
         }
     }
 
-
-    useFocusEffect(
-        useCallback(() => {
-            navigation.getParent()?.setOptions({
-                tabBarStyle: { display: 'none' },
-            })
-
-            return () => {
-                navigation.getParent()?.setOptions({
-                    tabBarStyle: { display: 'flex' },
-                });
-            };
-        }, []))
-
-    // useEffect(() => {
-    //     const handlePaperType = async () => {
-    //         const data = await localStorage.getItem(storageKeys.selectedPaperType);
-    //         const boardId = await localStorage.getItem(storageKeys.boardId);
-    //         const mediumId = await localStorage.getItem(storageKeys.selectedMediumId)
-    //         const standardId = await localStorage.getItem(storageKeys.selectedStandardId)
-    //         const subjectId = await localStorage.getItem(storageKeys.selectedSubject)
-    //         setPaperHeader(data || '');
-    //         await handleFetchBook();
-    //         await handleChapterFetch({boardId, mediumId,standardId,subjectId})
-    //     }
-    //     handlePaperType()
-    // }, [])
     useEffect(() => {
         let isMounted = true; // To prevent state updates on unmounted component
 

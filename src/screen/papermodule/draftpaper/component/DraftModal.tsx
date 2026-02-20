@@ -11,6 +11,7 @@ import {
     Platform,
     PermissionsAndroid,
     TouchableOpacity,
+    ActivityIndicator,
 } from 'react-native';
 import CloseIcon from 'react-native-vector-icons/EvilIcons';
 import { Colors, Fonts } from '../../../../theme';
@@ -24,6 +25,7 @@ import { localStorage, storageKeys } from '../../../../storage/storage';
 import { useDispatch, useSelector } from 'react-redux';
 import Snackbar from 'react-native-snackbar';
 import { showSnackbar } from '../../../../utils/showsnack';
+import Loader from '../../../../component/loader/Loader';
 
 
 export type DraftModalProps = {
@@ -32,7 +34,6 @@ export type DraftModalProps = {
     questionId: object
 }
 const DraftModal = ({ activeDraft, onClose, questionId }: DraftModalProps) => {
-    console.log('activeDraft, onClose ,questionId', activeDraft, onClose, questionId);
     const [userId, setUserId] = useState<string | null>('')
     const [title, setTitle] = useState<string | null>('')
     const [loading, setLoading] = useState(false)
@@ -53,13 +54,14 @@ const DraftModal = ({ activeDraft, onClose, questionId }: DraftModalProps) => {
                 showSnackbar('Please lenght then this text to 4 charactors or more', 'error')
                 return
             }
+
             const params = {
                 user_id: userId,
                 title: title,
                 question_id: JSON.stringify(questionId) || [],
-                role: userRodle
+                role: userRole
             }
-            console.log('para3333', params);
+            setLoading(true)
 
             const response = await POST_FORM(ApiEndPoint.draftAdd, params)
             if (response.status === 200) {
@@ -96,7 +98,12 @@ const DraftModal = ({ activeDraft, onClose, questionId }: DraftModalProps) => {
         <Modal visible={activeDraft} transparent animationType="fade">
             <View style={styles.overlay}>
                 <View style={styles.container}>
-
+                    <Loader visible={loading}/>
+                    {/* {
+                        loading && (
+                         <ActivityIndicator  size={'small'} color={Colors.primaryColor} />
+                        )
+                    } */}
                     {/* HEADER */}
                     <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
                         <CloseIcon name="close" size={26} color="#555" />
