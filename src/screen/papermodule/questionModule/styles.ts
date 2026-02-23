@@ -83,13 +83,14 @@ export const styles = StyleSheet.create({
   applyBox: {
     flexDirection: 'row',
     justifyContent: "space-between",
-    paddingHorizontal: moderateScale(16)
+    paddingHorizontal: moderateScale(16),
+    marginBottom:moderateScale(16)
   },
   lineBox: {
     height: .6,
     backgroundColor: Colors?.InputStroke,
     width: '100%',
-    marginVertical: moderateScale(16)
+    marginBottom: moderateScale(16)
     // marginHorizontal:moderateScale(16)
   },
   diffecultyText: {

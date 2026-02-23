@@ -36,12 +36,14 @@ const HomeScreen = () => {
     const [selectStandard, setSelectStandard] = useState<null | string>(null);
     const [boardData, setBoardData] = useState([]);
     const [medium, setMedium] = useState([]);
+    const [latestNew, setLatestNew] = useState([]);
     const [standard, setStandard] = useState([]);
     const [subData, setSubData] = useState([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [banners, setBanners] = useState([]);
     const selectedSubjectId = useSelector((state) => state?.selectedSubId?.selectedSubId)
     const userRole = useSelector((state) => state?.userRole?.role)
+    console.log('latestNewaaaaaaaa', latestNew);
 
     // board
     const handleBordOpenModal = async () => {
@@ -170,7 +172,7 @@ const HomeScreen = () => {
         // await localStorage.setItem(storageKeys.selectedSubId, subId);
         dispatch(setSelectedSubId(subId))
         await localStorage.setItem(storageKeys.selectedSubject, subName);
-        navigation.navigate('PaperTypeScreen')
+        navigation.navigate('PaperTypeScreen', { banners: '' })
     }
 
     const handleBoardDataGet = async () => {
@@ -231,6 +233,30 @@ const HomeScreen = () => {
             setLoading(false);
         }
     };
+    const handleLatestNew = async () => {
+        setLoading(true);
+        try {
+            const response = await GET(ApiEndPoint.latestNews);
+            if (response && response.status === '1' || 200) {
+                setLatestNew(response?.result)
+            } else {
+                const errorMessage = response?.msg ||
+                    'New data not fetch. Please try again.';
+                showToast('error', "Error", errorMessage);
+                setLatestNew([])
+            }
+        } catch (error: any) {
+            if (error?.offline) {
+                return;
+            }
+            const errorMessage = error?.response?.data?.msg ||
+                error?.msg ||
+                'Something went wrong. Please try again.';
+            showToast('error', "Error", errorMessage);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleSubFetch = async (id) => {
         setLoading(true);
@@ -253,7 +279,7 @@ const HomeScreen = () => {
         } catch (error: any) {
             console.log('ressssubject', error);
             if (error?.offline) {
-                return; 
+                return;
             }
             const errorMessage = error?.response?.data?.message ||
                 error?.message ||
@@ -281,8 +307,6 @@ const HomeScreen = () => {
             }
 
         } catch (error: any) {
-            console.log('ressssssssssstand', error);
-
             if (error?.offline) {
                 return;
             }
@@ -310,8 +334,6 @@ const HomeScreen = () => {
             }
 
         } catch (error: any) {
-            console.log('resss', error);
-
             if (error?.offline) {
                 return;
             }
@@ -356,6 +378,7 @@ const HomeScreen = () => {
 
     useEffect(() => {
         fetchBanners();
+        handleLatestNew()
         const subId = async () => {
             const boardId = await localStorage.getItem(storageKeys.boardIdMain)
             if (boardId) {
@@ -457,14 +480,14 @@ const HomeScreen = () => {
                                             marginTop: moderateScale(0), marginBottom: moderateScale(0), fontFamily: Fonts.InstrumentSansSemiBold, fontSize: moderateScale(14), marginLeft: moderateScale(15)
                                         }]}>Latest News</Text>
                                     </View>
-                                    {Notification.map((item, index) => {
-                                        const lastItem = index === Notification?.length - 1
+                                    {latestNew.map((item, index) => {
+                                        const lastItem = index === latestNew?.length - 1
                                         return (
                                             <>
-                                                <View style={[styles.boxNotification]} key={item?.id}>
+                                                <View style={[styles.boxNotification]} key={item?.new_id}>
                                                     {/* <Image source={Icons.notificationSpace} style={styles.notificationIcon} /> */}
                                                     {/* { borderBottomWidth: lastItem ? 0 : 1 } */}
-                                                    <Text style={styles.notificationdec}>{item?.label}</Text>
+                                                    <Text style={styles.notificationdec}>{item?.new_description}</Text>
                                                     <View style={{ backgroundColor: '#D9534F', paddingHorizontal: moderateScale(4), borderRadius: moderateScale(2), alignItems: "center", justifyContent: "center" }}>
                                                         <Text style={{ fontFamily: Fonts.InstrumentSansRegular, fontSize: moderateScale(8), color: Colors.white, }}>New</Text>
                                                     </View>

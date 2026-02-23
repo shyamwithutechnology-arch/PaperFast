@@ -6,7 +6,7 @@ import { Fonts } from '../../theme/fonts'
 export const styles = StyleSheet.create({
   headerImg: {
     width: '100%',
-    height: moderateScale(130),
+    height: moderateScale(125),
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: moderateScale(16),
@@ -21,7 +21,8 @@ export const styles = StyleSheet.create({
   centerBox: {
     flex: 1,
     alignItems: 'center',
-    // borderWidth:1
+    // borderWidth:1,
+    // marginBottom:moderateScale(25)
   },
 
   title: {

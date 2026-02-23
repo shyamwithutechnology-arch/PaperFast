@@ -90,16 +90,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import HeaderPaperModule from '../../component/headerpapermodule/Headerpapermodule';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Icons } from '../../assets/icons';
-
 export type scrollboardProps = {
-
 }
 
 const ScoreCardScreen = (props: scrollboardProps) => {
     const navigation = useNavigation()
     const route = useRoute()
     const { chapterName, results, totalQuestions, totalTimeSpent } = route?.params
-    // console.log('fffffffffffffffff', chapterName, results, totalQuestions, totalTimeSpent);
 
     // Calculate metrics
     let attempt = results.correct + results?.wrong
@@ -149,8 +146,7 @@ const ScoreCardScreen = (props: scrollboardProps) => {
                 <Text style={styles.yourPerformanceText1}>
                     In NEET > Biology > {chapterName || 'STD 11 - 3. Plant kingdom'}
                 </Text>
-
-                {/* <View></View> */}
+               
                 <>
                     {cardData.map(item => (
                         <View style={[styles.attemptBox, { backgroundColor: item?.color }]}>
@@ -165,47 +161,6 @@ const ScoreCardScreen = (props: scrollboardProps) => {
                     ))}
                 </>
 
-                {/* Accuracy Box */}
-                {/* <View style={[styles.attemptBox, { backgroundColor: '#E3EBFF' }]}>
-                        <View style={styles.attemptImgBox}>
-                            <Image source={Icons.accurency} style={styles.attemptImg} resizeMode='contain' />
-                        </View>
-                        <View>
-                            <Text style={styles.attemptText}>Accuracy</Text>
-                            <Text style={styles.attemptText1}>{accuracy}%</Text>
-                        </View>
-                    </View> */}
-                {/* </View> */}
-
-                {/* <View style={styles.mainBox}> */}
-                {/* Time Per Question Box */}
-                {/* <View style={[styles.attemptBox, { backgroundColor: '#D5FDCB' }]}>
-                        <View style={styles.attemptImgBox}>
-                            <Image source={Icons.time} style={styles.attemptImg} resizeMode='contain' />
-                        </View>
-                        <View>
-                            <Text style={styles.attemptText}>Time Per Ques</Text>
-                            <Text style={styles.attemptText1}>{avgTimePerQuestion} sec</Text>
-                        </View>
-                    </View> */}
-
-                {/* Unattempted Box */}
-                {/* <View style={[styles.attemptBox, { backgroundColor: '#FFF0F1' }]}>
-                        <View style={styles.attemptImgBox}>
-                            <Image source={Icons.accurency} style={styles.attemptImg} resizeMode='contain' />
-                        </View>
-                        <View>
-                            <Text style={styles.attemptText}>Unattempted</Text>
-                            <Text style={styles.attemptText1}>{unAttempt} Qs</Text>
-                        </View>
-                    </View> */}
-                {/* </View> */}
-
-                {/* Optional: Show total time taken */}
-                {/* <View style={styles.totalTimeContainer}>
-                    <Text style={styles.totalTimeLabel}>Total Time Taken:</Text>
-                    <Text style={styles.totalTimeValue}>{formatTime(totalTimeSpent || 0)}</Text>
-                </View> */}
             </SafeAreaView>
         </View>
     )

@@ -2,13 +2,11 @@ import React, { useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import { Text, View, StyleSheet, StatusBar, TouchableOpacity, Image, Pressable } from 'react-native';
 import { Colors, Fonts } from '../../theme';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import HeaderPaperModule from '../../component/headerpapermodule/Headerpapermodule';
 import { moderateScale } from '../../utils/responsiveSize';
 import QuestionListComponent from './component/questionlist/QuestionListComponent';
-import Loader from '../../component/loader/Loader';
 import { showToast } from '../../utils/toast';
 import { GET, POST_FORM } from '../../api/request';
-import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
+import { useFocusEffect, useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
 import Pagination from './component/Pagination';
 import { useSelector } from 'react-redux';
 import { Icons } from '../../assets/icons';
@@ -20,7 +18,6 @@ import AppButton from '../../component/button/AppButton';
 import BookMark from "react-native-vector-icons/Ionicons";
 import TextTicker from "react-native-text-ticker";
 import { localStorage } from '../../storage/storage';
-// import Pagination from '../papermodule/questionModule/component/Pagination';
 
 export type QuestionListScreenProps = {
 
@@ -38,40 +35,14 @@ interface Book {
     book_id: string,
     book_name: string
 }
-const QuestionListScreen = ({ navigation }) => {
-    // Keep this single useFocusEffect at the top level (after all useState calls)
-    // useFocusEffect(
-    //     useCallback(() => {
-    //         // Safety check for navigation parent
-    //         const parent = navigation.getParent();
-    //         if (parent) {
-    //             // Hide tab bar
-    //             parent.setOptions({
-    //                 tabBarStyle: { display: 'none' },
-    //             });
-    //         }
-
-    //         // Load answer stats
-    //         loadAnswerStats();
-
-    //         return () => {
-    //             // Safety check for navigation parent on cleanup
-    //             const parent = navigation.getParent();
-    //             if (parent) {
-    //                 // Show tab bar when leaving screen
-    //                 parent.setOptions({
-    //                     tabBarStyle: { display: 'flex' },
-    //                 });
-    //             }
-    //         };
-    //     }, [navigation])
-    // );
-    // const navigation = useNavigation()
-    const route = useRoute();
-    // const { chapterName  ?? ''} = route?.params
+const QuestionListScreen = () => {
+    // Use hooks instead of props
+    const navigation = useNavigation();
+    const route = useRoute();    // const { chapterName  ?? ''} = route?.params
     //     const { chapterName === '' ? '' : chapterName
     // } = route?.params || {};
     const { chapterName } = route?.params || {};
+    const isFocus = useIsFocused()
     const finalChapterName = chapterName === undefined ? 'Numeric' : chapterName;
     const [activeTab, setActiveTab] = useState('all');
     const selectedSubjectId = useSelector((state) => state?.selectedSubId?.selectedSubId)
@@ -113,10 +84,7 @@ const QuestionListScreen = ({ navigation }) => {
     // Handle page change
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= pagination.pages) {
-
             fetchQuestions(newPage);
-            // Optional: Scroll to top when page changes
-            // scrollViewRef.current?.scrollTo({ y: 0, animated: true });
         }
     };
 
@@ -215,8 +183,6 @@ const QuestionListScreen = ({ navigation }) => {
         setLoading(true);
         try {
             const response = await GET(ApiEndPoint?.bookFetch);
-            // console.log('resssssssbook', response);
-
             if (response?.status === 200) {
                 setBook(response?.result || []);
             } else {
@@ -264,27 +230,6 @@ const QuestionListScreen = ({ navigation }) => {
             await fetchQuestions(pagination.page, pagination?.limit);
         setLabelStatus(false)
     }
-
-// Use useLayoutEffect for immediate UI changes before paint
-    useLayoutEffect(() => {
-        const parent = navigation.getParent();
-        if (parent) {
-            parent.setOptions({
-                tabBarStyle: { display: 'none' },
-            });
-        }
-
-        // Cleanup: Show the tab bar again when leaving the screen
-        return () => {
-            if (parent) {
-                parent.setOptions({
-                    tabBarStyle: { display: 'flex' }, // Or your original style object
-                });
-            }
-        };
-    }, [navigation]);
-
-    // Keep useFocusEffect ONLY for data fetching/logic if needed
     useFocusEffect(
         useCallback(() => {
             loadAnswerStats();
@@ -319,7 +264,7 @@ const QuestionListScreen = ({ navigation }) => {
                 </View>
             </SafeAreaView>
             <SafeAreaView style={styles.homeContainer} edges={['left', 'right', 'bottom']}>
-                <Loader visible={loading} />
+                {/* <Loader visible={loading} /> */}
                 <View style={styles.tabContainer}>
                     <TouchableOpacity
                         style={[styles.tab, activeTab === 'all' && styles.activeTab]}
@@ -348,7 +293,7 @@ const QuestionListScreen = ({ navigation }) => {
                                         onLimitChange={handleLimitChange}
                                     />
                                 )}
-                                {loading === false && <TouchableOpacity style={styles.filterBtn} onPress={handleLabelStatus}>
+                                {<TouchableOpacity style={styles.filterBtn} onPress={handleLabelStatus} disabled={loading}>
                                     <Image source={Icons.filter} resizeMode="contain" style={styles.filteImg} />
                                 </TouchableOpacity>}
                             </View>
@@ -539,16 +484,13 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingBottom: moderateScale(10),
         paddingTop: moderateScale(10),
-        // borderWidth:1/
     },
     arrowBox: {
         paddingLeft: moderateScale(1),
         width: moderateScale(28),
-        // borderWidth:1
     },
     qsBox: {
         flexDirection: 'row',
-        // borderWidth: 1,
         justifyContent: "space-between",
         alignItems: "center",
         flex: 1
@@ -563,7 +505,6 @@ const styles = StyleSheet.create({
         backgroundColor: Colors?.InputStroke,
         width: '100%',
         marginVertical: moderateScale(16)
-        // marginHorizontal:moderateScale(16)
     },
     diffecultyText: {
         fontSize: moderateScale(15),
@@ -580,12 +521,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: Colors.white
     },
-    // innerBox: {
-    //   height: moderateScale(),
-    //   width: moderateScale(),
-    //   borderWidth: 1,
-    //   borderRadius: moderateScale(3)
-    // },
     easyText: {
         fontSize: moderateScale(13),
         color: Colors.black,
@@ -594,7 +529,6 @@ const styles = StyleSheet.create({
     },
     easyBox: {
         flexDirection: 'row',
-        // justifyContent:'center',
         alignItems: "center"
     },
     checkBoxMain: {
@@ -602,13 +536,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: "center",
         marginHorizontal: moderateScale(17),
-        // borderWidth:1,
         marginTop: moderateScale(8)
     },
     difficultMainBox: {
         flexDirection: "row",
         justifyContent: "center",
-        // alignItems: "center"
     },
     cancelText: {
         color: Colors?.InputText,
@@ -637,7 +569,6 @@ const styles = StyleSheet.create({
         width: moderateScale(20),
         height: moderateScale(20),
     },
-
     title: {
         fontSize: moderateScale(15),
         color: Colors.black,
@@ -648,7 +579,6 @@ const styles = StyleSheet.create({
         // borderWidth:1,
         marginLeft: moderateScale(2)
     },
-
     tabContainer: {
         flexDirection: 'row',
         backgroundColor: Colors.white,

@@ -53,12 +53,14 @@ const LoginScreen = () => {
                 'usr_phone': phoneInput
             }
             const response = await POST_FORM(ApiEndPoint.LoGINROlE, params)
-            console.log('responserrrrrrrr', response);
+            console.log('responserrrrrrrr2', response);
             if (response.status === 200) {
                 // console.log('response?.result?.usr_id',response?.result?.usr_id);
                 showToast('success', 'Success', 'Logged in successfully')
                 dispatch(setRole(response?.result?.usr_role))
                 await localStorage.setItem(storageKeys.userId, String(response?.result?.usr_id))
+                await localStorage.setItem(storageKeys.mobileNumber, response?.result?.usr_phone)
+                await localStorage.setItem(storageKeys.userName, String(response?.result?.usr_first_name))
                 await reduxStorage.setItem('token', '1234')
                 await dispatch(loginSuccess('1234'));
             } else {

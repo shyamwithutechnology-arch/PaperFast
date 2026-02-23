@@ -67,7 +67,8 @@ const styles = StyleSheet.create({
         marginRight: 5,
     },
     placeholderStyle: {
-        fontSize: 16,
+        fontSize: moderateScale(15),
+        color: Colors.ParagraphAndShortTexts
     },
     selectedTextStyle: {
         fontSize: moderateScale(14),
@@ -75,8 +76,8 @@ const styles = StyleSheet.create({
         color: Colors?.InputText
     },
     iconStyle: {
-        width: moderateScale(28),
-        height: moderateScale(28),
+        width: moderateScale(25),
+        height: moderateScale(25),
     },
     inputSearchStyle: {
         height: 40,

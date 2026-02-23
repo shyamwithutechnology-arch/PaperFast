@@ -69,9 +69,25 @@ import { ApiEndPoint } from "../../../api/endPoints";
 import HomeBannerSlider from "../../home/component/homebanner/HomeBannerSlider";
 import { localStorage, storageKeys } from "../../../storage/storage";
 import { showToast } from "../../../utils/toast";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+
+type RootStackParamList = {
+  AppDrawer: {
+    screen: 'MainTabs';
+    params: {
+      screen: 'HomeTab';
+      params: {
+        screen: 'HomeScreen';
+      };
+    };
+  };
+  PaperSelect: undefined;
+};
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const PaperTypeScreen = () => {
-  const navigation = useNavigation()
+  const navigation = useNavigation<NavigationProp>()
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedSubId, setSelectedSubId] = useState<string | null>(null);
   const [banners, setBanners] = useState([]);
@@ -81,9 +97,18 @@ const PaperTypeScreen = () => {
     navigation.navigate('PaperSelect')
     // navigation.navigate('PaperSelect', { 'paperType': payload })
   }
+
   const handleBack = () => {
-    navigation.navigate('HomeScreen')
-  }
+    navigation.navigate('AppDrawer', {
+      screen: 'MainTabs',
+      params: {
+        screen: 'HomeTab',
+        params: {
+          screen: 'HomeScreen'
+        }
+      }
+    });
+  };
 
   const handleRefreshBanners = async () => {
     await fetchBanners();
