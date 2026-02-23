@@ -44,6 +44,7 @@ export const storageKeys = {
   user_exist: 'user_exist',
   mobileNumber: 'mobileNumber',
   userId: 'userId',
+  userName: 'userName',
   selectedSubId: 'selectedSubId',
   selectedSubject: 'selectedSubject',
   selectedPaperType: 'selectedPaperType',

@@ -42,6 +42,8 @@ const CustomDrawer = ({ navigation }) => {
     const [selectRole, setSelectRole] = React.useState<'Teacher' | 'Student'>(userRole === 'tutor' ? 'Teacher' : 'Student');
     const [loading, setLoading] = useState<boolean>(false);
     const [userId, setUserId] = useState<number | string>('');
+    console.log('userIdsssssssssssss', userId);
+    
     // const navigation = useNavigation()
     // const handleLoggeOut = async () => {
     // Alert.alert('', 'Are You Sure You Want to LogOut')

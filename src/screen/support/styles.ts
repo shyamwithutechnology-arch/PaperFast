@@ -153,10 +153,39 @@
 // });
 
 import { StyleSheet } from "react-native";
-import { Colors } from "../../theme";
+import { Colors, Fonts } from "../../theme";
+import { moderateScale } from "../../utils/responsiveSize";
 export const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor:Colors.white
-    }
+        backgroundColor: Colors.white
+    },
+
+
+    prefix: {
+        fontSize: moderateScale(15),
+        fontFamily: Fonts.InterMedium,
+        color: Colors.InputText,
+        // marginLeft: moderateScale(10)
+    },
+    phoneInputBox: {
+        height: moderateScale(52),
+        borderWidth: 1,
+        borderColor: Colors.InputStroke,
+        borderRadius: moderateScale(8),
+        backgroundColor: Colors.white,
+        width: "90%",
+        alignSelf: 'center',
+        paddingLeft: moderateScale(10),
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    phoneInput: {
+        fontSize: moderateScale(15),
+        fontFamily: Fonts.InterMedium,
+        color: Colors.InputText,
+        flex: 1,
+        textAlignVertical: 'center',
+    },
+
 })

@@ -18,7 +18,8 @@ interface AppHeaderProps {
   leftIcon?: any
   rightIcon?: any
   onRightPress?: () => void,
-  leftIconStyle: Object
+  leftIconStyle: Object,
+  headerCenterText:Object
 }
 
 const STATUS_BAR_HEIGHT =
@@ -32,6 +33,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
   rightIcon,
   onRightPress,
   leftIconStyle,
+  headerCenterText
 }) => {
   return (
     <>
@@ -61,7 +63,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
         </View>
 
         {/* CENTER */}
-        <View style={styles.centerBox}>
+        <View style={[styles.centerBox, headerCenterText]}>
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.subHeaderText}>{discriptionText}</Text>
         </View>

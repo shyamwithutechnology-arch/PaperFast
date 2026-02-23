@@ -23,5 +23,7 @@ export const ApiEndPoint = {
     termCondition: 'term-condition',
     latestNews: 'latest-news',
     deleteAccount: 'delete-account',
-    support: 'support'
+    support: 'support',
+    question: 'question',
+    questionBucket: 'question-bucket',
 }

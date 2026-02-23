@@ -60,7 +60,6 @@ const PDFDetails = () => {
     const [borderImage, setBorderImage] = useState<string | null>(null);
     const [dropDownValue, setDropDownValue] = useState<string | null>(null);
 
-    console.log('dropDownValue', dropDownValue);
 
     // date picker
     const [date, setDate] = useState(new Date());
