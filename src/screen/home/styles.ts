@@ -11,9 +11,10 @@ export const styles = StyleSheet.create({
     innerMainContainer: {
         flex: 1,
         backgroundColor: Colors.white,
-        borderTopLeftRadius: moderateScale(20),
-        borderTopRightRadius: moderateScale(20),
-        paddingHorizontal: moderateScale(6)
+        borderTopLeftRadius: moderateScale(18),
+        borderTopRightRadius: moderateScale(18),
+        paddingHorizontal: moderateScale(6),
+        marginTop:moderateScale(-14),
         // borderWidth: 1,
     },
     ContantantRaper: {
@@ -24,9 +25,9 @@ export const styles = StyleSheet.create({
         fontSize: moderateScale(15),
         fontFamily: Fonts.InstrumentSansMedium,
         color: Colors.black,
-        marginTop: moderateScale(16),
+        marginTop: moderateScale(18),
         marginLeft: moderateScale(7),
-        marginBottom: moderateScale(8),
+        // marginBottom: moderateScale(4),
     },
     boardBox: {
         height: verticalScale(78),

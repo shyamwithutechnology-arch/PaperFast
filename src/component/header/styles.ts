@@ -7,8 +7,6 @@ export const styles = StyleSheet.create({
   headerImg: {
     width: '100%',
     height: moderateScale(125),
-    flexDirection: 'row',
-    alignItems: 'center',
     paddingHorizontal: moderateScale(16),
     paddingBottom: moderateScale(13.5),
     backgroundColor: Colors.primaryColor,

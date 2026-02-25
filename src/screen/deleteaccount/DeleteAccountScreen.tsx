@@ -270,7 +270,7 @@ const DeleteAccountScreen = () => {
                 width: moderateScale(20),
                 height: moderateScale(20)
             }}
-                headerCenterText={{ marginBottom: moderateScale(20) }}
+                headerStyle={{ marginBottom: moderateScale(20) }}
             />
             <View style={styles.innerMainContainer}>
                 <View style={styles.innerSecondMainContainer}>

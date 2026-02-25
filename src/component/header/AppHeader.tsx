@@ -19,7 +19,7 @@ interface AppHeaderProps {
   rightIcon?: any
   onRightPress?: () => void,
   leftIconStyle: Object,
-  headerCenterText:Object
+  headerStyle: Object
 }
 
 const STATUS_BAR_HEIGHT =
@@ -33,7 +33,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({
   rightIcon,
   onRightPress,
   leftIconStyle,
-  headerCenterText
+  headerStyle
 }) => {
   return (
     <>
@@ -49,37 +49,41 @@ const AppHeader: React.FC<AppHeaderProps> = ({
         source={require('../../assets/images/headerBg.png')}
         style={[styles.headerImg, { paddingTop: STATUS_BAR_HEIGHT }]}
         resizeMode="cover">
-          {/* <View style={{borderWidth:1}}> */}
-        {/* LEFT */}
-        <View style={styles.side}>
-          {onBackPress && leftIcon && (
-            <TouchableOpacity onPress={onBackPress}>
-              <Image
-                source={leftIcon}
-                style={[styles.leftImg, leftIconStyle]}
-              />
-            </TouchableOpacity>
-          )}
-        </View>
+        <View style={[{
+          // borderWidth: 1, 
+          flexDirection: 'row',
+          alignItems: 'center',
+        }, headerStyle]}>
+          {/* LEFT */}
+          <View style={styles.side}>
+            {onBackPress && leftIcon && (
+              <TouchableOpacity onPress={onBackPress}>
+                <Image
+                  source={leftIcon}
+                  style={[styles.leftImg, leftIconStyle]}
+                />
+              </TouchableOpacity>
+            )}
+          </View>
 
-        {/* CENTER */}
-        <View style={[styles.centerBox, headerCenterText]}>
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.subHeaderText}>{discriptionText}</Text>
-        </View>
+          {/* CENTER */}
+          <View style={[styles.centerBox,]}>
+            <Text style={styles.title}>{title}</Text>
+            <Text style={styles.subHeaderText}>{discriptionText}</Text>
+          </View>
 
-        {/* RIGHT */}
-        <View style={styles.side}>
-          {rightIcon && (
-            <TouchableOpacity onPress={onRightPress}>
-              <Image
-                source={rightIcon}
-                style={{ width: moderateScale(40), height: moderateScale(40) }}
-              />
-            </TouchableOpacity>
-          )}
+          {/* RIGHT */}
+          <View style={styles.side}>
+            {rightIcon && (
+              <TouchableOpacity onPress={onRightPress}>
+                <Image
+                  source={rightIcon}
+                  style={{ width: moderateScale(40), height: moderateScale(40) }}
+                />
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
-        {/* </View> */}
       </ImageBackground>
     </>
   )

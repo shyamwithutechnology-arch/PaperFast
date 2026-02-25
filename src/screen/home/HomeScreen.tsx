@@ -23,7 +23,6 @@ import { setSelectedSubId } from '../../redux/slices/selectedSubSlice';
 
 const HomeScreen = () => {
     // const [selectedSubjectId, setSelectedSubjectId] = useState<null | string>(null)
-    // console.log('seleeeeeeeeeee', selectedSubject);
     const dispatch = useDispatch()
     const IsFocus = useIsFocused()
     const navigation = useNavigation();
@@ -43,7 +42,6 @@ const HomeScreen = () => {
     const [banners, setBanners] = useState([]);
     const selectedSubjectId = useSelector((state) => state?.selectedSubId?.selectedSubId)
     const userRole = useSelector((state) => state?.userRole?.role)
-    console.log('latestNewaaaaaaaa', latestNew);
 
     // board
     const handleBordOpenModal = async () => {
@@ -423,7 +421,7 @@ const HomeScreen = () => {
             edges={['left', 'right', 'bottom']}>
             <Loader visible={loading} />
             {/* rightIcon={Icons.notification} onRightPress={() => navigation.navigate('NotificationScreen')} */}
-            <AppHeader title="Paper Fast" leftIcon={Icons.drawer} onBackPress={() => navigation?.openDrawer()} discriptionText={`(${userRole || 'User'})`} rightIcon={Icons.notification} onRightPress={() => navigation.navigate('NotificationScreen')}
+            <AppHeader  headerStyle={{borderWidth:0,marginTop:moderateScale(9)}} title="Paper Fast" leftIcon={Icons.drawer} onBackPress={() => navigation?.openDrawer()} discriptionText={`(${userRole || 'User'})`} rightIcon={Icons.notification} onRightPress={() => navigation.navigate('NotificationScreen')}
             />
             <View style={styles.innerMainContainer}>
                 <FlatList
