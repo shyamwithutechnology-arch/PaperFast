@@ -37,7 +37,7 @@ export const styles = StyleSheet.create({
     loginText: {
         fontSize: moderateScale(20),
         color: Colors.black,
-        marginTop: moderateScale(40),
+        marginTop: moderateScale(10),
         fontFamily: Fonts.InstrumentSansSemiBold,
         marginLeft: moderateScale(20),
     },

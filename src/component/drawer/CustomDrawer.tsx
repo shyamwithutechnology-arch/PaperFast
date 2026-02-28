@@ -20,14 +20,15 @@ import { ApiEndPoint } from '../../api/endPoints';
 import Loader from '../loader/Loader';
 import { setRole } from '../../redux/slices/userRole';
 import { removeSelectedSubId } from '../../redux/slices/selectedSubSlice';
+import { CommonActions } from '@react-navigation/native';
 
 const MENU = [
     { id: 1, title: 'My Profile', icon: Icons.profile, route: 'ProfileScreen' },
     { id: 2, title: 'Switch Role', icon: Icons.switchRole, route: 'ProfileScreen' },
     { id: 3, title: 'My Draft Paper', icon: Icons.draft, route: 'DraftPaperScreen' },
-    // { id: 4, title: 'My PDFs', icon: Icons.pdf, route: 'MyPdfScreen' },
-    { id: 4, title: 'My PDFs', icon: Icons.pdf, route: 'QuestionListScreen' },
-    // { id: 5, title: 'Subscription', icon: Icons.subscription, route: 'SubscriptionScreen' },
+    { id: 4, title: 'My PDFs', icon: Icons.pdf, route: 'MyPdfScreen' },
+    // { id: 4, title: 'My PDFs', icon: Icons.pdf, route: 'QuestionListScreen' },
+    { id: 5, title: 'Subscription', icon: Icons.subscription, route: 'SubscriptionScreen' },
     { id: 6, title: 'About Us', icon: Icons.about, route: 'AboutUsScreen' },
     { id: 7, title: 'Terms & Conditions', icon: Icons.termAndService, route: 'TermandconditionScreen' },
     { id: 8, title: 'Privacy Policy', icon: Icons.privacy, route: 'PrivacyPolicyScreen' },
@@ -43,7 +44,7 @@ const CustomDrawer = ({ navigation }) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [userId, setUserId] = useState<number | string>('');
     console.log('userIdsssssssssssss', userId);
-    
+
     // const navigation = useNavigation()
     // const handleLoggeOut = async () => {
     // Alert.alert('', 'Are You Sure You Want to LogOut')
@@ -77,33 +78,123 @@ const CustomDrawer = ({ navigation }) => {
         [selectRole]
     );
 
-    const handleLoggeOut = () => {
-        Alert.alert(
-            'Logout',
-            'Are you sure you want to log out?',
-            [
-                {
-                    text: 'Cancel',
-                    style: 'cancel',
-                },
-                {
-                    text: 'Logout',
-                    style: 'destructive',
-                    onPress: async () => {
-                        try {
-                            await reduxStorage.removeItem('token');
-                            await localStorage.clearAll();
-                            dispatch(logout());
-                        } catch (error) {
-                            console.log('Logout error:', error);
-                        }
-                    },
-                },
-            ],
-            { cancelable: true }
-        );
-    };
+    // const handleLoggeOut = () => {
+    //     Alert.alert(
+    //         'Logout',
+    //         'Are you sure you want to log out?',
+    //         [
+    //             {
+    //                 text: 'Cancel',
+    //                 style: 'cancel',
+    //             },
+    //             {
+    //                 text: 'Logout',
+    //                 style: 'destructive',
+    //                 onPress: async () => {
+    //                     try {
+    //                         await reduxStorage.removeItem('token');
+    //                         await localStorage.clearAll();
+    //                         dispatch(logout());
+    //                     } catch (error) {
+    //                         console.log('Logout error:', error);
+    //                     }
+    //                 },
+    //             },
+    //         ],
+    //         { cancelable: true }
+    //     );
+    // };
 
+    // const handleLoggeOut = () => {
+    //     Alert.alert(
+    //         'Logout',
+    //         'Are you sure you want to log out?',
+    //         [
+    //             {
+    //                 text: 'Cancel',
+    //                 style: 'cancel',
+    //             },
+    //             {
+    //                 text: 'Logout',
+    //                 style: 'destructive',
+    //                 onPress: async () => {
+    //                     try {
+    //                         // Show loading indicator (optional)
+    //                         // setLoading(true);
+
+    //                         // 1. Clear all storage
+    //                         await Promise.all([
+    //                             reduxStorage.removeItem('token'),
+    //                             reduxStorage.removeItem('userData'), // if you store user data
+    //                             localStorage.clearAll(),
+    //                             // Add any other storage keys you need to clear
+    //                         ]);
+
+    //                         // 2. Dispatch logout action to clear Redux state
+    //                         dispatch(logout());
+    //                         navigation.navigate('AuthStack')
+
+    //                         // 3. Reset navigation stack and navigate to login
+    //                         // navigation.dispatch(
+    //                         //     CommonActions.reset({
+    //                         //         index: 0,
+    //                         //         routes: [
+    //                         //             { name: 'Login' }, // Replace with your login screen name
+    //                         //         ],
+    //                         //     })
+    //                         // );
+
+    //                         // 4. Show success message (optional)
+    //                         showToast('success', 'Success', 'Logged out successfully');
+
+    //                     } catch (error) {
+    //                         console.log('Logout error:', error);
+    //                         showToast('error', 'Error', 'Failed to logout. Please try again.');
+    //                     } finally {
+    //                         // setLoading(false);
+    //                     }
+    //                 },
+    //             },
+    //         ],
+    //         { cancelable: true }
+    //     );
+    // };
+
+
+   const handleLoggeOut = () => {
+    Alert.alert(
+        'Logout',
+        'Are you sure you want to log out?',
+        [
+            { text: 'Cancel', style: 'cancel' },
+            {
+                text: 'Logout',
+                style: 'destructive',
+                onPress: async () => {
+                    try {
+                        // Clear storage
+                        await Promise.all([
+                            reduxStorage.removeItem('token'),
+                            reduxStorage.removeItem('userData'),
+                            localStorage.clearAll(),
+                        ]);
+
+                        // Dispatch logout - this will trigger RootStack to show AuthStack
+                        dispatch(logout());
+                        // No need for navigation.reset
+                        
+                        showToast('success', 'Success', 'Logged out successfully');
+
+                    } catch (error) {
+                        console.log('Logout error:', error);
+                        showToast('error', 'Error', 'Failed to logout. Please try again.');
+                    }
+                },
+            },
+        ],
+        { cancelable: true }
+    );
+};
     const handleChangeRole = async (role: string) => {
         setLoading(true);
         try {
@@ -114,7 +205,7 @@ const CustomDrawer = ({ navigation }) => {
             console.log('paraaa', params);
 
             const response = await POST_FORM(ApiEndPoint.updateRole, params);
-            console.log('resssssssssssss', response);
+            // console.log('resssssssssssss', response);
             if (response && response.status === 200) {
 
                 showToast('success', 'Success', response?.msg || 'Role Update Successfully')

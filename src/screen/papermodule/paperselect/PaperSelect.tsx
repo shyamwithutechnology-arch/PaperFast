@@ -73,7 +73,10 @@ const PaperSelect = () => {
                         onPress: async () => {
                             try {
                                 await dispatch(clearPDFQuestions());
-                                navigation.navigate('PaperTypeScreen');
+                                // navigation.navigate('HomeStack', {
+                                //     screen: 'PaperTypeScreen'
+                                // });
+                                navigation.navigate('PaperTypeScreen')
                             } catch (error) {
                                 console.log('Clear error:', error);
                             }

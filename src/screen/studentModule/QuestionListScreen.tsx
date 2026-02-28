@@ -49,7 +49,7 @@ const QuestionListScreen = () => {
     const [selectCheck, setSelectedCheck] = useState('Options')
     const [selectedMap, setSelectedMap] = useState<Record<string, boolean>>({});
     const [questionsData, setQuestionsData] = useState<any>({});
-    const [questionTypeSelect, setQuestionTypeSelect] = useState<string | null>(null);
+    const [questionTypeSelect, setQuestionTypeSelect] = useState<string | null>(null);    
     const [bookSelect, setBookSelect] = useState<string | null>(null);
     const [difficultyLabel, setDifficultyLabel] = useState<Difficulty[]>([]);
     const [questionType, setQuestionType] = useState<QuestionType[]>([]);

@@ -22,6 +22,7 @@ const HomeStack = () => {
     return (
         <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen name="HomeScreen" component={HomeScreen} />
+            {/* <Stack.Screen name="PaperTypeScreen" component={PaperTypeScreen} /> */}
             <Stack.Screen name="ChemistryData" component={ChemistryData} />
             {/* <Stack.Screen name="MyPdfScreen" component={MyPdfScreen} /> */}
             {/* <Stack.Screen name="PdfPreviewScreen" component={PdfPreviewScreen} /> */}
@@ -31,7 +32,6 @@ const HomeStack = () => {
                         options={{ title: 'PDF Viewer' }}
                     />             */}
             <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
-            <Stack.Screen name="BookMarkScreen" component={BookMarkScreen} />
             {/* <Stack.Screen name="HomeDetails" component={HomeDetails} /> */}
         </Stack.Navigator>
     );
