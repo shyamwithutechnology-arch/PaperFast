@@ -35,7 +35,7 @@ export type DropDownItem = {
     value: string
 }
 
-const PDFDetails = () => {
+const PDFDetailsScreen = () => {
     const navigation = useNavigation();
     const [loader, setLoader] = useState(false);
     const route = useRoute();
@@ -342,7 +342,7 @@ const PDFDetails = () => {
     //         navigation.navigate('PDFPreviewScreen')
     //     }, 1500);
     // };
-    // In PDFDetails.tsx - Update handlePreviewPdf function
+    // In PDFDetailsScreen.tsx - Update handlePreviewPdf function
     const handlePreviewPdf = () => {
         if (!logoUri) {
             showToast('error', 'Please upload institute logo first');
@@ -927,7 +927,7 @@ const styles = StyleSheet.create({
     }
 });
 
-export default PDFDetails;
+export default PDFDetailsScreen;
 
 
 // screens/PDFDetails.tsx
