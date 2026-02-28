@@ -36,8 +36,8 @@ export const toastConfig = {
           <CrossIcon name='cross' color={Colors.white} size={moderateScale(20)} />
         </View>
         <View style={styles.successRightBox}>
-          <Text style={[styles.text1, { color: Colors.red }]}>{text1}</Text>
-          {text2 ? <Text style={styles.text2}>{text2}</Text> : null}
+          <Text style={[styles.text1, { color: Colors.red }]} >{text1}</Text>
+          {text2 ? <Text style={styles.text2}  >{text2}</Text> : null}
         </View>
       </View>
       <Pressable style={styles.crossBox}>
@@ -77,14 +77,14 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   success: { backgroundColor: '#F1F9F4', flexDirection: 'row', alignItems: 'center', borderColor: '#53CA75', borderWidth: 1.8 },
-  successRightBox: { marginLeft: moderateScale(13)},
+  successRightBox: { marginLeft: moderateScale(13) },
   // error: { backgroundColor: '#FF4444', flexDirection: 'row', alignItems: 'center' },
   error: { backgroundColor: '#FCEFEA', flexDirection: 'row', alignItems: 'center', borderColor: '#E84C55', borderWidth: 1.5 },
   info: { backgroundColor: '#EBBC3F' },
   // text1: { fontFamily: Fonts.InterBold, color: '#5A5F5C', fontSize: moderateScale(16), marginBottom: moderateScale(2) },
   text1: { fontFamily: Fonts.InterBold, color: Colors.green, fontSize: moderateScale(16), marginBottom: moderateScale(2) },
   // text1: { fontFamily: Fonts.InterBold, color: '#000', fontSize: moderateScale(16), marginBottom: moderateScale(2) },
-  text2: { color: '#68625D', fontSize: moderateScale(13), marginTop: moderateScale(2), fontFamily: Fonts.InterMedium },
+  text2: { color: '#68625D', fontSize: moderateScale(13), marginTop: moderateScale(2), fontFamily: Fonts.InterMedium, width: moderateScale(250), },
   crossBox: {
     height: moderateScale(26),
     width: moderateScale(26),

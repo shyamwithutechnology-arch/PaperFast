@@ -23,6 +23,7 @@ const HtmlView = ({
   isLoading = false,
   baseFontSize = 16,
   padding = 10,
+  marginTop
 }) => {
   const { width } = useWindowDimensions();
   
@@ -113,6 +114,8 @@ const HtmlView = ({
       style={styles.container}
       contentContainerStyle={{
         padding: moderateScale(padding),
+        // borderWidth:1,
+        marginTop:moderateScale(marginTop)
       }}
       showsVerticalScrollIndicator={true}
     >

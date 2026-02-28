@@ -111,6 +111,7 @@ const PrivacyPolicyScreen = () => {
           isLoading={loading}
           baseFontSize={16}
           padding={16}
+          marginTop={-20}
         />
       </SafeAreaView>
     </View>

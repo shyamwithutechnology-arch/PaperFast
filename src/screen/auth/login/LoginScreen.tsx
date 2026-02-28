@@ -96,6 +96,8 @@ const LoginScreen = () => {
             }
 
             const response = await POST_FORM(ApiEndPoint?.LoGIN, params);
+            console.log('responseeeeeeeeeeeeeeeee', response);
+
             if (response?.status === 200) {
                 if (response?.user_exist === 1) {
                     await handleLoginVerify();
@@ -122,9 +124,7 @@ const LoginScreen = () => {
             style={styles.mainContainer}
             edges={['left', 'right', 'bottom']}>
             <Loader visible={loading} />
-            <AppHeader title="Paper Fast"
-                discriptionText='Paper Generate In Minute'
-                headerCenterText={{ marginBottom: moderateScale(24) }} />
+            <AppHeader title="Paper Fast" discriptionText='Paper Generate In Minute' />
             <View style={styles.innerMainContainer}>
                 <View style={styles.innerSecondMainContainer}>
                     <Text style={styles.loginText}>Login with Mobile Number</Text>

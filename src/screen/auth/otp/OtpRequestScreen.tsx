@@ -96,7 +96,7 @@ const OtpRequestScreen = ({ navigation }) => {
             style={styles.mainContainer}
             edges={['left', 'right', 'bottom']}
         >
-            <AppHeader title="Paper Fast" discriptionText='Paper Generate In Minute' />
+            <AppHeader title="Paper Fast" discriptionText='Paper Generate In Minute'  headerStyle={{marginTop:moderateScale(6)}} />
             <View style={styles.innerMainContainer}>
                 <View style={styles.innerSecondMainContainer}>
                     <Text style={styles.loginText}>OTP Request</Text>

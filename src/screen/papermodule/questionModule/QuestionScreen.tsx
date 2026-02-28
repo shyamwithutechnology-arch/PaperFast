@@ -332,23 +332,18 @@ const QuestionScreen = () => {
 
         if (!selectedQuestions.length) {
             // Alert.alert('No Selection', 'Please select at least one question');
-            showToast('error', 'Please select at least one question')
+            showToast('error', 'Error', 'Please select at least one question')
             return;
         }
         // SET: Store in Redux
         dispatch(addPDFQuestions(selectedQuestions));
         // Navigate
-        // navigation.navigate('MyPDF', {
-        //     screen: 'PDFDetailsScreen',
-        //     params: {
-        //         showSolutions: selectCheck === 'Solutions',
-        //         questionType: questionId
-        //     }
-        // });
         navigation.navigate('PDFDetailsScreen', {
             showSolutions: selectCheck === 'Solutions',
             questionType: questionId
-        })
+        }
+
+        );
     };
 
     const fetchQuestions = async (

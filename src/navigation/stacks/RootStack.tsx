@@ -15,6 +15,7 @@ import PaperTypeScreen from '../../screen/papermodule/papertype/PaperTypeScreen'
 import DraftPaperScreen from '../../screen/papermodule/draftpaper/DraftPaperScreen';
 import PDFDetailsScreen from '../../screen/mypdf/pdfdetails/PDFDetailsScreen';
 import PDFPreviewScreen from '../../screen/mypdf/pdfpreview/PDFPreviewScreen';
+import BookMarkScreen from '../../screen/studentModule/bookmark/BookMarkScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -36,31 +37,64 @@ const RootStack = () => {
     return <SplashScreen />;
   }
 
-  return (
+  // return (
+  //   <Stack.Navigator screenOptions={{ headerShown: false }}>
+  //     {isLogin ? (
+  //       <Stack.Screen name="AppDrawer" component={AppDrawer} />
+  //     ) : (
+  //       <Stack.Screen name="AuthStack" component={AuthStack} />
+  //     )}
+
+  //     <Stack.Screen name="PaperTypeScreen" component={PaperTypeScreen} />
+  //     <Stack.Screen name="PaperSelect" component={PaperSelect} />
+  //     <Stack.Screen name="QuestionScreen" component={QuestionScreen} />
+  //     <Stack.Screen name="DraftPaperScreen" component={DraftPaperScreen} />
+
+
+  //     <Stack.Screen name="ScoreCardScreen" component={ScoreCardScreen} />
+  //     <Stack.Screen name="QuestionListScreen" component={QuestionListScreen} />
+  //     <Stack.Screen name="OpenQuestionScreen" component={OpenQuestionScreen} />
+  //     <Stack.Screen name="PDFDetailsScreen" component={PDFDetailsScreen} />
+  //     <Stack.Screen name="PDFPreviewScreen" component={PDFPreviewScreen} />
+  //     <Stack.Screen name="BookMarkScreen" component={BookMarkScreen} />
+
+  //     <Stack.Screen name='PrivacyPolicyScreen' component={PrivacyPolicyScreen} />
+  //     <Stack.Screen name='TermandconditionScreen' component={TermandconditionScreen} />
+
+
+  //   </Stack.Navigator>
+  // );
+// RootStack.tsx
+return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {isLogin ? (
-        <Stack.Screen name="AppDrawer" component={AppDrawer} />
+        // Logged in - show AppDrawer and all app screens
+        <>
+          <Stack.Screen name="AppDrawer" component={AppDrawer} />
+          <Stack.Screen name="PaperTypeScreen" component={PaperTypeScreen} />
+          <Stack.Screen name="PaperSelect" component={PaperSelect} />
+          <Stack.Screen name="QuestionScreen" component={QuestionScreen} />
+          <Stack.Screen name="DraftPaperScreen" component={DraftPaperScreen} />
+          <Stack.Screen name="ScoreCardScreen" component={ScoreCardScreen} />
+          <Stack.Screen name="QuestionListScreen" component={QuestionListScreen} />
+          <Stack.Screen name="OpenQuestionScreen" component={OpenQuestionScreen} />
+          <Stack.Screen name="PDFDetailsScreen" component={PDFDetailsScreen} />
+          <Stack.Screen name="PDFPreviewScreen" component={PDFPreviewScreen} />
+          <Stack.Screen name="BookMarkScreen" component={BookMarkScreen} />
+        </>
       ) : (
-        <Stack.Screen name="AuthStack" component={AuthStack} />
+        // Not logged in - show AuthStack only
+        <>
+          <Stack.Screen name="AuthStack" component={AuthStack} />
+          {/* Don't include any app screens here */}
+        </>
       )}
 
+      {/* Public screens - always available */}
       <Stack.Screen name='PrivacyPolicyScreen' component={PrivacyPolicyScreen} />
       <Stack.Screen name='TermandconditionScreen' component={TermandconditionScreen} />
-
-      {/*  these screen not show bottom */}
-      <Stack.Screen name="PaperTypeScreen" component={PaperTypeScreen} />
-      <Stack.Screen name="PaperSelect" component={PaperSelect} />
-      <Stack.Screen name="QuestionScreen" component={QuestionScreen} />
-      <Stack.Screen name="DraftPaperScreen" component={DraftPaperScreen} />
-      <Stack.Screen name="PDFDetailsScreen" component={PDFDetailsScreen} />
-      <Stack.Screen name="PDFPreviewScreen" component={PDFPreviewScreen} />
-
-
-      <Stack.Screen name="ScoreCardScreen" component={ScoreCardScreen} />
-      <Stack.Screen name="QuestionListScreen" component={QuestionListScreen} />
-      <Stack.Screen name="OpenQuestionScreen" component={OpenQuestionScreen} />
     </Stack.Navigator>
-  );
+);
 };
 
 export default RootStack;
