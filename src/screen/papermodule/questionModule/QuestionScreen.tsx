@@ -367,10 +367,10 @@ const QuestionScreen = () => {
                 'limit': limit?.toString()
             };
 
-            // console.log('Fetch params:', params);
+            console.log('Fetch params:', params);
 
             const response = await POST_FORM(ApiEndPoint.question, params);
-            // console.log('ressssssssssss', response);
+            console.log('ressssssssssss', response);
 
             if (response?.status === 200) {
                 setQuestionsData(response || {});

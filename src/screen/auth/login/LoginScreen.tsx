@@ -26,13 +26,6 @@ const LoginScreen = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [errors, setErrors] = useState({});
     const navigation = useNavigation()
-    // Get role from userRole slice
-    const userRole = useSelector((state: any) => state.userRole?.role);
-    // OR get the entire userRole slice
-    const roleState = useSelector((state: any) => state);
-
-    console.log('User role:', userRole);
-    console.log('Role state:', roleState);
 
     const handlePhoneChange = (text: string) => {
         const digitsOnly = text.replace(/\D/g, '');
@@ -53,9 +46,7 @@ const LoginScreen = () => {
                 'usr_phone': phoneInput
             }
             const response = await POST_FORM(ApiEndPoint.LoGINROlE, params)
-            console.log('responserrrrrrrr2', response);
             if (response.status === 200) {
-                // console.log('response?.result?.usr_id',response?.result?.usr_id);
                 showToast('success', 'Success', 'Logged in successfully')
                 dispatch(setRole(response?.result?.usr_role))
                 await localStorage.setItem(storageKeys.userId, String(response?.result?.usr_id))
@@ -133,7 +124,7 @@ const LoginScreen = () => {
             style={styles.mainContainer}
             edges={['left', 'right', 'bottom']}>
             <Loader visible={loading} />
-            <AppHeader title="Paper Fast" discriptionText='Paper Generate In Minute' headerStyle={{ marginTop: moderateScale(6) }} />
+            <AppHeader title="Paper Fast" discriptionText='Paper Generate In Minute' />
             <View style={styles.innerMainContainer}>
                 <View style={styles.innerSecondMainContainer}>
                     <Text style={styles.loginText}>Login with Mobile Number</Text>
