@@ -1495,23 +1495,29 @@ const MathRenderer = forwardRef<WebView, MathRendererProps>((props, ref) => {
   font-style: normal;
 }
 
-    body { 
-      font-size: 16px; padding: 0; background: #f9fafb; color: #000; 
-      font-family: -apple-system, sans-serif; margin: 0; 
-    }
+body { 
+        background-color: #ffffff ; 
+        color: white; 
+        font-family: 'Inter', sans-serif;
+      }
     .card {
-      background: #fff; padding: 5px; display: flex; flex-direction: row;
+      background-color: #fff !important;; 
+      padding: 5px; 
+      display: flex; 
+      flex-direction: row;
       position: relative; margin: 4px 2px;
-      box-shadow: 0 4px 12px rgba(0, 140, 227, 0.15); 
+      box-shadow: 0 0 15px 5px rgba(0, 0, 0, 0.1);
       transition: background-color 0.2s;
+      margin: 8px 8px !important;
+      border-radius:${moderateScale(15)}px
     }
-    
-
+  
     /* check box functionality */
 .questionnptext {
  font-family: 'Inter';
     font-size: 15px;
 font-weight: 600;
+color:#000
 }    
     /* Selection Highlight */
     .card.selected { background-color: #e3f2fd !important; }
@@ -1540,7 +1546,8 @@ font-weight: 600;
     /* Custom Scrollbar */
     .content-container::-webkit-scrollbar { height: 4px; }
     .content-container::-webkit-scrollbar-thumb {
-      background-color: ${Colors.primaryColor}; border-radius: 10px;
+      background-color: ${Colors.primaryColor};
+       border-radius: 10px;
     }
 
     .question { 
@@ -1558,6 +1565,7 @@ font-weight: 600;
   font-size: ${moderateScale(14)}px;
   font-family: 'Inter' !important;
   font-weight: 400 !important;
+  color:#000;
   /* Line-height should usually be 1.2x to 1.5x the font size */
   line-height: ${moderateScale(20)}px !important; 
   text-align: justify;
@@ -1567,19 +1575,26 @@ font-weight: 600;
   flex-direction: row;
   align-items: center;
    gap: ${moderateScale(10)}px;  /* BEST way for equal space */
-  margin-bottom: ${moderateScale(6)}px;
+  margin-bottom: ${moderateScale(10)}px;
+  padding-top : ${moderateScale(6)}px;
+    padding-bottom : ${moderateScale(6)}px;
+       background-color:${Colors.blackGray} ;
+       border-radius: ${moderateScale(5)}px;
+       border : 1px solid #d9dadb;
+       padding-left:${moderateScale(10)}px;
+       margin-right: ${moderateScale(10)}px
 }
    .option-text-container {
   height: ${moderateScale(25)}px;
   width: ${moderateScale(25)}px;
   min-width: ${moderateScale(25)}px; /* VERY IMPORTANT */
-  
   display: flex;
   align-items: center;
   justify-content: center;
 
   border-radius: 50%;
-  boder : 1px 
+  boder : 1px;
+  background-color:#6c798e
 }
 .option-text {
   font-size: ${moderateScale(13)}px;
@@ -1595,23 +1610,46 @@ font-weight: 600;
   color: ${Colors.black} !important;
   align-self: 'flex-start',
 }
-     .option-number-test{
-  font-size:${moderateScale(11)}px;
-     font-weight: 500; 
+.option-number-test,
+.option-number-test.katex,
+.option-number-test.katex * {
+   font-size:${moderateScale(12)}px;
+     font-weight: 800;
      font-family:'Inter';
-     color:${Colors.black};
-     }
+     color:${Colors.white};
+}
+.qs-option-test * {
+   font-size: inherit !important;
+   font-weight: inherit !important;
+   font-family: inherit !important;
+   color: inherit !important; /* This ensures your red/green logic works */
+}
+    
     .options { margin: 1px 0; }
     .answer-key {
     font-size:${moderateScale(13)}px;
     color:${Colors.green};
     font-family: '${Fonts.InterRegular}', sans-serif;
     }
-    .lebal-test{
+    .lebal-test {
     font-size :${moderateScale(13)}px;
-       font-weight:500;
-  font-family:'Inter'
+    font-weight:500;
+  font-family:'Inter';
+  color: #5f5f5f !important;
     }
+  /* When the status is 'correct' */
+.qs-option-text[style*="color"] * {
+    color: inherit !important;
+}
+/* Ensure the label has consistent spacing */
+.lebal-test {
+    margin-right: 5px;
+    font-family: 'Inter';
+}
+/* When the status is 'incorrect' */
+.qs-option-text[data-status="incorrect"] {
+  color: #e74c3c !important; /* Red */
+}
     .answer-key {
   display: flex;
   flex-direction: row; 
@@ -1664,11 +1702,15 @@ font-family: '${Fonts.InterSemiBold}', sans-serif;
 }
 .solution-content {
   font-size: ${moderateScale(13)}px;
-  line-height: 10px;
+  line-height: ${moderateScale(14)}px;
   color: #334155;
   font-family: 'Inter' !important;
  font-weight:400;
- margin-top:${moderateScale(10)}px
+ margin-top:${moderateScale(10)}px;
+ background-color: #e8e8e8;
+ border-radius:${moderateScale(10)}px;
+ padding:${moderateScale(10)}px;
+ margin-right:${moderateScale(10)}px;
 }
 
 /* --- Adjusted Answer Key (Footer) --- */
@@ -1735,7 +1777,7 @@ function toggleCard(id, questionNum) {
       ref={ref}
       originWhitelist={['*']}
       source={{ html }}
-      style={{ width, height, backgroundColor: '#f9fafb' }}
+      style={{ width, height, backgroundColor: Colors.white }}
       // onMessage={(event) => onToggleSelection(event.nativeEvent.data)}
       //     onMessage={(event) => {
       //   const data = event.nativeEvent.data;

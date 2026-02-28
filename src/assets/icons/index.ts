@@ -37,10 +37,10 @@ export const Icons = {
     fileUpload: require('./fileUpload.png'),
     date: require('./date.png'),
     dashBoardImg1: require('./dashBoardImg1.png'),
-    randompaper: require('./randomPaper.png'),
+    randompaper: require('./randompaper.png'),
     regularpaper: require('./regularpaper.png'),
     draftpaper: require('./draftpaper.png'),
-    custompaper: require('./customPaper.png'),
+    custompaper: require('./custompaper.png'),
     latestNew: require('./latestNew.png'),
     // boardlogoImg:require('./boardlogoImg.png'), //
     boardImg: require('./boardImg.png'),

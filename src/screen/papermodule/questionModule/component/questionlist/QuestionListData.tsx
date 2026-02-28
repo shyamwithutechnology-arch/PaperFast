@@ -1062,13 +1062,35 @@ const QuestionListData: React.FC<Props> = ({
         return Colors.black;
       };
 
-      const getOptionBg = (optionLetter: string, correctOption: string): string => {
-        if (optionLetter === correctOption) {
-          return Colors.green; // correct color
-        }
-        return Colors.lightThemeBlue; // default background
+      // const getOptionStatus = (optionLetter: string, correctOption: string): string => {
+      //   if (optionLetter === correctOption) {
+      //     console.log('Correct option color:', Colors.green); // Debug line
+      //     return Colors.green; // correct color
+      //   }
+      //   console.log('Incorrect option color: red'); // Debug line
+      //   return '#444444'; // default background
+      // };
+      const getOptionTextStyle = (optionLetter: string, correctOption: string): string => {
+        const isCorrect = optionLetter === correctOption;
+        const color = isCorrect ? Colors.green : '#444444';
+        const fontWeight = isCorrect ? '500' : '400';
+
+        // Add font-family here
+        return `color: ${color} !important; font-weight: ${fontWeight} !important; font-size : ${moderateScale(13)}px !important; font-family: 'Inter' !important;`;
       };
-      // correct_option
+
+      const getOptionContainerBg = (optionLetter: string, correctOption: string): string => {
+        if (optionLetter === correctOption) {
+          return '#dceedc'; // correct color
+        }
+        return `${Colors.blackGray}`; // default background
+      };
+      // ${selectCheck === 'Solutions' ? `style="color: ${item?.correct_option === 'A' ? Colors.white : Colors.white}"` : ''}
+      // ${selectCheck === 'Solutions' ? `style="color: ${item?.correct_option === 'B' ? Colors.white : Colors.white}"` : ''}
+      //  ${selectCheck === 'Solutions' ? `style="color: ${item?.correct_option === 'C' ? Colors.white : Colors.white}"` : ''} 
+      // ${selectCheck === 'Solutions' ? `style="color: ${item?.correct_option === 'D' ? Colors.white : Colors.white}"` : ''}
+      // Inside your .map() function
+
       return `
       <div id="card-${item.question_id}" class="card ${isSelected ? 'selected' : ''}"
       onclick="toggleCard('${item.question_id}', ${questionNumber})">
@@ -1084,32 +1106,38 @@ const QuestionListData: React.FC<Props> = ({
           </div>
           
           <div class="options">
-            <div class="option-inner">
-     <div class="option-text-container"  ${selectCheck === 'Solutions' ? `style="background-color:${getOptionBg('A', item.correct_option)}"` : ''}>
-            <strong class="option-number-test" ${selectCheck === 'Solutions' ? `style="color: ${item?.correct_option === 'A' ? Colors.white : Colors.black}"` : ''}>A</strong></div> 
-  <span class="qs-option-text">
-  ${cleanLatex(item.option_a)}
+            <div class="option-inner"  ${selectCheck === 'Solutions' ? `style="background-color:${getOptionContainerBg('A', item.correct_option)}"` : ''}>
+     <div class="option-text-container"  >
+     <strong class="option-number-test">A</strong>            </div> 
+<span class="qs-option-test" style="${selectCheck === 'Solutions' ?
+          getOptionTextStyle('A', item.correct_option)
+          : `color: #444444 !important; font-size : ${moderateScale(13)}px !important; font-family: 'Inter' !important;`}"> 
+ ${cleanLatex(item.option_a)}
 </span>
             </div>
-            <div class="option-inner">
-          <div class="option-text-container"  ${selectCheck === 'Solutions' ? `style="background-color:${getOptionBg('B', item.correct_option)}"` : ''}>
-            <strong class="option-number-test" ${selectCheck === 'Solutions' ? `style="color: ${item?.correct_option === 'B' ? Colors.white : Colors.black}"` : ''}>B</strong></div> 
-           <span class="qs-option-text">
+            <div class="option-inner"  ${selectCheck === 'Solutions' ? `style="background-color:${getOptionContainerBg('B', item.correct_option)}"` : ''}>
+          <div class="option-text-container" >
+            <strong class="option-number-test" >B</strong></div> 
+<span class="qs-option-test" style="${selectCheck === 'Solutions' ? getOptionTextStyle('B', item.correct_option) : `color: #444444 !important; font-size : ${moderateScale(13)}px !important; font-family: 'Inter' !important;`}"> 
   ${cleanLatex(item.option_b)}
 </span>
             </div>
-            <div class="option-inner">
-            <div class="option-text-container"  ${selectCheck === 'Solutions' ? `style="background-color:${getOptionBg('C', item.correct_option)}"` : ''}>
-            <strong class="option-number-test" ${selectCheck === 'Solutions' ? `style="color: ${item?.correct_option === 'C' ? Colors.white : Colors.black}"` : ''}>C</strong></div> 
-          <span class="qs-option-text">
+            <div class="option-inner"  ${selectCheck === 'Solutions' ? `style="background-color:${getOptionContainerBg('C', item.correct_option)}"` : ''}>
+            <div class="option-text-container" >
+            <strong class="option-number-test" >C</strong></div> 
+<span class="qs-option-test" style="${selectCheck === 'Solutions'
+          ? getOptionTextStyle('C', item.correct_option)
+          : `color: #444444 !important; font-size : ${moderateScale(13)}px !important; font-family: 'Inter' !important;`}"> 
   ${cleanLatex(item.option_c)}
-</span></div>
-            <div class="option-inner">
-              <div class="option-text-container"  ${selectCheck === 'Solutions' ? `style="background-color:${getOptionBg('D', item.correct_option)}"` : ''}>
-            <strong class="option-number-test" ${selectCheck === 'Solutions' ? `style="color: ${item?.correct_option === 'D' ? Colors.white : Colors.black}"` : ''}>D</strong></div> 
-            <span class="qs-option-text">
+</span>
+</div>
+            <div class="option-inner"  ${selectCheck === 'Solutions' ? `style="background-color:${getOptionContainerBg('D', item.correct_option)}"` : ''}>
+              <div class="option-text-container"  >
+            <strong class="option-number-test" >D</strong></div> 
+<span class="qs-option-test" style="${selectCheck === 'Solutions' ? getOptionTextStyle('D', item.correct_option) : `color: #444444 !important; font-size : ${moderateScale(13)}px !important; font-family: 'Inter' !important;`}">  
   ${cleanLatex(item.option_d)}
-</span></div>
+</span>
+            </div>
            
           </div>
 
@@ -1194,7 +1222,7 @@ export default memo(QuestionListData);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9fafb',
+    backgroundColor: Colors.white,
   },
   shimmerCard: {
     backgroundColor: '#ffffff',
