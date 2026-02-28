@@ -25,3 +25,51 @@ export const Colors = {
     questionSelect:'#08AA26'
 }
 
+
+
+
+//           <div class="options">
+//             <div class="option-inner">
+//             <div class="option-text-container">
+//             <strong class="option-number-test" >A</strong></div> 
+//   <span class="qs-option-text">
+//   ${cleanLatex(item.option_a)}
+// </span>
+//             </div>
+//             <div class="option-inner">
+//             <div class="option-text-container">
+//             <strong class="option-number-test">B</strong></div> 
+//            <span class="qs-option-text">
+//   ${cleanLatex(item.option_b)}
+// </span>
+//             </div>
+//             <div class="option-inner">
+//             <div class="option-text-container"  ${selectCheck === 'Solutions' ? `style="background-color:${getOptionBg('C', item.correct_option)}"` : ''}>
+//             <strong class="option-number-test" ${selectCheck === 'Solutions' ? `style="color: ${item?.correct_option === 'C' ? Colors.white : Colors.black}"` : '' }>C</strong></div> 
+//           <span class="qs-option-text">
+//   ${cleanLatex(item.option_c)}
+// </span></div>
+//             <div class="option-inner">
+//             <div class="option-text-container">
+//             <strong class="option-number-test">D</strong></div> 
+//             <span class="qs-option-text">
+//   ${cleanLatex(item.option_d)}
+// </span></div>
+           
+//           </div>
+
+//           <span class="lebal-test">Lebel:</span>
+// <strong style="color:${labelColorStatus(item?.dlevel_name)};font-size:${moderateScale(13)}px; font-family:'Inter'">
+//   ${item?.dlevel_name}
+// </strong>
+//       ${selectCheck === 'Solutions' ? `
+//     <div class="solution">
+//     <div class="solution-header"> 
+//      <span class="solution-label">Solution:</span>
+// </div>
+//    <div class="solution-content">
+//     ${item.explanation
+//             ? cleanLatex(item.explanation)
+//             : `<span class="solution-label">Solution:</span> No explanation available.`
+//           }
+//   </div>
