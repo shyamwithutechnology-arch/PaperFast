@@ -163,16 +163,23 @@ const HomeScreen = () => {
         await fetchBanners();
     };
 
+    // const handleSelect = async ({ subId, subName }: payload) => {
+    //     // setSelectedSubjectId(subId);
+
+    //     // Save to localStorage
+    //     // await localStorage.setItem(storageKeys.selectedSubId, subId);
+    //     dispatch(setSelectedSubId(subId))
+    //     await localStorage.setItem(storageKeys.selectedSubject, subName);
+    //     navigation.navigate('RootStack', { screen: 'PaperTypeScreen' })
+    // }
+
     const handleSelect = async ({ subId, subName }: payload) => {
-        // setSelectedSubjectId(subId);
-
-        // Save to localStorage
-        // await localStorage.setItem(storageKeys.selectedSubId, subId);
-        dispatch(setSelectedSubId(subId))
-        await localStorage.setItem(storageKeys.selectedSubject, subName);
-        navigation.navigate('PaperTypeScreen', { banners: '' })
-    }
-
+    dispatch(setSelectedSubId(subId))
+    await localStorage.setItem(storageKeys.selectedSubject, subName);
+    
+    // Navigate directly to PaperTypeScreen (which is in RootStack)
+    navigation.navigate('PaperTypeScreen');
+}
     const handleBoardDataGet = async () => {
         setLoading(true);
         try {
@@ -421,7 +428,7 @@ const HomeScreen = () => {
             edges={['left', 'right', 'bottom']}>
             <Loader visible={loading} />
             {/* rightIcon={Icons.notification} onRightPress={() => navigation.navigate('NotificationScreen')} */}
-            <AppHeader  headerStyle={{borderWidth:0,marginTop:moderateScale(9)}} title="Paper Fast" leftIcon={Icons.drawer} onBackPress={() => navigation?.openDrawer()} discriptionText={`(${userRole || 'User'})`} rightIcon={Icons.notification} onRightPress={() => navigation.navigate('NotificationScreen')}
+            <AppHeader headerStyle={{ borderWidth: 0, marginTop: moderateScale(13) }} title="Paper Fast" leftIcon={Icons.drawer} onBackPress={() => navigation?.openDrawer()} discriptionText={`(${userRole || 'User'})`} rightIcon={Icons.notification} onRightPress={() => navigation.navigate('NotificationScreen')}
             />
             <View style={styles.innerMainContainer}>
                 <FlatList

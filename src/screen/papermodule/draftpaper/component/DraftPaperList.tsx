@@ -115,9 +115,9 @@ const DraftPaperList = (props: DraftPaperListProps) => {
         setOpenDraft(false)
     }
 
-    const handleRendamItem = ({ item }) => {
+    const handleRendamItem = ({ item, index }) => {
         return (
-            <Pressable style={styles.draftContent} onPress={() =>
+            <Pressable style={[styles.draftContent, index === 0 && { marginTop: moderateScale(20) }]} onPress={() =>
                 navigation.navigate('HomeTab', {
                     screen: 'QuestionScreen',
                     params: {  // ⚠️ IMPORTANT: Wrap screen params in 'params' object
@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
         marginHorizontal: moderateScale(16),
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginTop: moderateScale(15),
+        marginTop: moderateScale(10),
         borderRadius: moderateScale(4),
         backgroundColor: Colors.white,
         // elevation: 30,

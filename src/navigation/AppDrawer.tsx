@@ -35,7 +35,7 @@ const AppDrawer = () => {
       <Drawer.Screen name='AboutUsScreen' component={AboutUsScreen} />
       <Drawer.Screen name='DraftPaperScreen' component={DraftPaperScreen} />
       <Drawer.Screen name='MyPdfScreen' component={MyPdfScreen} />
-      {/* <Drawer.Screen name='SubscriptionScreen' component={SubscriptionScreen} /> */}
+      <Drawer.Screen name='SubscriptionScreen' component={SubscriptionScreen} />
       <Drawer.Screen name='SupportScreen' component={SupportScreen} />
       <Drawer.Screen name="QuestionListScreen" component={QuestionListScreen} />
     </Drawer.Navigator>

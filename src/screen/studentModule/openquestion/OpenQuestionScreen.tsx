@@ -1181,13 +1181,18 @@ const OpenQuestionScreen = ({ navigation }) => {
     // State variables
     const [currentQIndex, setCurrentQIndex] = useState(currentIndex);
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
+    console.log('selectedOption', selectedOption);
+
     const [showSolution, setShowSolution] = useState(false);
+    console.log('showSolution', showSolution);
+
     const [answers, setAnswers] = useState<Record<string, string>>({});
     const [timer, setTimer] = useState(0);
     const [isTimerRunning, setIsTimerRunning] = useState(true);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
     const [userId, setUserId] = useState<string | null>('')
     const [title, setTitle] = useState<string | null>('')
+    const [subjectName, setSubjectName] = useState<string | null>('')
     const [loading, setLoading] = useState(false)
 
     // Bookmark and Draft states
@@ -1234,7 +1239,7 @@ const OpenQuestionScreen = ({ navigation }) => {
         };
     }, [isTimerRunning]);
 
- 
+
     const getUserId = async () => {
         let id = await localStorage.getItem(storageKeys.userId)
         setUserId(id)
@@ -1717,11 +1722,22 @@ ${mathJaxHtml}
         }, [])
     );
 
-       // Load saved data on mount
+    // Load saved data on mount
     useEffect(() => {
         loadSavedData();
         getUserId();
     }, []);
+
+
+    useEffect(() => {
+        const userData = async () => {
+            const subjectName = await localStorage.getItem(storageKeys.selectedSubject);
+            setSubjectName(subjectName)
+            // setSubjectName(subjectName)     
+        }
+        userData()
+    }, [])
+
 
     return (
         <View style={styles.container}>
@@ -1733,7 +1749,7 @@ ${mathJaxHtml}
                             <Image source={Icons?.back} style={styles.backImg} resizeMode="contain" />
                         </TouchableOpacity>
                         <Text style={[styles.title]} numberOfLines={1}>
-                            Qs {questionNumber} of {totalQuestions}
+                            Qs {questionNumber} of {totalQuestions} ({subjectName})
                         </Text>
                     </View>
                     <View style={styles.counderBox}>
@@ -1741,7 +1757,7 @@ ${mathJaxHtml}
                         <Text style={styles.counterText}>{formatTime(timer)}</Text>
                     </View>
 
-                    <TouchableOpacity onPress={() => { }} disabled={loading}>
+                    <TouchableOpacity onPress={() => showToast('success', 'Warning', 'Comming soon')} disabled={loading}>
                         {loading ? (
                             // <ActivityIndicator size="small" color={Colors.primaryColor} //>
                             <Loader visible={loading} />
@@ -1886,6 +1902,51 @@ ${mathJaxHtml}
                         ]}>Previous</Text>
                     </TouchableOpacity>
 
+                    {/* {!isLastQuestion ? (
+                        <>
+                            <TouchableOpacity
+                                style={[styles.bottomButton, { borderWidth: 0 }, selectedOption !== null ? styles.checkButton : { backgroundColor: '#C7C7C7' }]}
+                                onPress={handleCheckAnswer}
+                                disabled={selectedOption === null}>
+                                <Text style={[styles.checkButtonText, selectedOption !== null && { color: Colors.white }]}>
+                                    Check Answer
+                                </Text>
+                            </TouchableOpacity>
+
+                            
+                            <TouchableOpacity
+                                style={[
+                                    styles.bottomButton,
+                                    styles.nextButton,
+                                    showSolution ? styles.checkButton1 : { backgroundColor: '#C7C7C7', borderWidth: 0 }
+                                ]}
+                                onPress={handleNext}
+                                disabled={!showSolution}>  
+                                <Text style={[
+                                    styles.buttonText,
+                                    showSolution ? { color: Colors.primaryColor } : { color: Colors.white }
+                                ]}>
+                                    Next
+                                </Text>
+                            </TouchableOpacity>
+                        </>
+                    ) : (
+                        <>
+                            <TouchableOpacity
+                                style={[styles.bottomButton, { borderWidth: 0 }, selectedOption !== null ? styles.checkButton : { backgroundColor: '#C7C7C7' }]}
+                                onPress={handleCheckAnswer}
+                                disabled={selectedOption === null}>
+                                <Text style={[styles.checkButtonText, selectedOption !== null && { color: Colors.white }]}>
+                                    Check Answer
+                                </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.bottomButton, styles.finishButton]}
+                                onPress={handleFinishTest}>
+                                <Text style={styles.finishButtonText}>Finish Test</Text>
+                            </TouchableOpacity>
+                        </>
+                    )} */}
                     {!isLastQuestion ? (
                         <>
                             <TouchableOpacity
@@ -1898,10 +1959,20 @@ ${mathJaxHtml}
                             </TouchableOpacity>
 
                             <TouchableOpacity
-                                style={[styles.bottomButton, styles.nextButton]}
-                                onPress={handleNext}>
-                                <Text style={styles.buttonText}>Next</Text>
-                                {/* <Icon name="chevron-right" size={20} color={Colors.primaryColor} /> */}
+                                style={[
+                                    styles.bottomButton,
+                                    styles.nextButton,
+                                    // Disable when option is selected AND solution not shown
+                                    (selectedOption !== null && !showSolution) ? { backgroundColor: '#C7C7C7', borderWidth: 0 } : styles.checkButton1
+                                ]}
+                                onPress={handleNext}
+                                disabled={selectedOption !== null && !showSolution}>  {/* Disable only when option selected AND solution not shown */}
+                                <Text style={[
+                                    styles.buttonText,
+                                    (selectedOption !== null && !showSolution) ? { color: Colors.white } : { color: Colors.primaryColor }
+                                ]}>
+                                    Next
+                                </Text>
                             </TouchableOpacity>
                         </>
                     ) : (
@@ -2131,7 +2202,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.lightThemeBlue,
         borderTopWidth: 1,
         borderTopColor: '#E0E0E0',
-        paddingVertical: moderateScale(16),
+        paddingVertical: moderateScale(18),
         paddingHorizontal: moderateScale(16),
         elevation: 50,
     },
@@ -2152,6 +2223,12 @@ const styles = StyleSheet.create({
     checkButton: {
         backgroundColor: Colors.primaryColor,
         marginHorizontal: moderateScale(4),
+    },
+    checkButton1: {
+        backgroundColor: Colors.white,
+        marginHorizontal: moderateScale(4),
+        borderWidth: 1,
+        borderColor: Colors.primaryColor
     },
     nextButton: {
         marginLeft: moderateScale(4),

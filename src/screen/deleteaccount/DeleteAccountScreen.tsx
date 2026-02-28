@@ -6,7 +6,7 @@ import AppHeader from "../../component/header/AppHeader";
 import { Icons } from "../../assets/icons";
 import { moderateScale } from "react-native-size-matters";
 import AppButton from "../../component/button/AppButton";
-import { Colors } from "../../theme";
+import { Colors, Fonts } from "../../theme";
 import AppTextInput from "../../component/apptextinput/AppTextInput";
 import Loader from "../../component/loader/Loader";
 import { useNavigation } from '@react-navigation/native';
@@ -20,216 +20,45 @@ const DeleteAccountScreen = () => {
     const navigation = useNavigation()
     const [comment, setComment] = useState("")
     const [authData, setAuthData] = useState({ name: '', mobileNumber: '', userId: '' })
-    console.log('authDatamobileNumber', authData);
-
     const [loading, setLoading] = useState<boolean>(false);
+    const [errors, setErrors] = useState({
+        comment: ''
+    })
 
-    // Validation function
-    // const validateForm = () => {
-    //     let newErrors = {};
-
-    //     // Validate name
-    //     if (!input.name.trim()) {
-    //         newErrors.name = 'Name is required';
-    //     } else if (input.name.trim().length < 2) {
-    //         newErrors.name = 'Name must be at least 2 characters';
-    //     }
-
-    //     // Validate phone
-    //     if (!input.phoneInput.trim()) {
-    //         newErrors.phoneInput = 'Phone number is required';
-    //     } else if (input.phoneInput.length !== 10) {
-    //         newErrors.phoneInput = 'Phone number must be 10 digits';
-    //     } else if (!/^[0-9]{10}$/.test(input.phoneInput)) {
-    //         newErrors.phoneInput = 'Please enter a valid phone number';
-    //     }
-
-    //     // Validate comment
-    //     if (!comment.trim()) {
-    //         newErrors.comment = 'Please provide a reason for deleting your account';
-    //     } else if (comment.trim().length < 10) {
-    //         newErrors.comment = 'Please provide at least 10 characters for the reason';
-    //     }
-
-    //     setErrors(newErrors);
-    //     return Object.keys(newErrors).length === 0;
-    // };
-
-    // const handlePhoneChange = (text: string) => {
-    //     const digitsOnly = text.replace(/\D/g, '');
-
-    // };
-
-    // const handleFirstNameChange = (text) => {
-    //     setInput(prev => ({ ...prev, name: text }));
-    //     if (errors.name) {
-    //         setErrors(prev => ({ ...prev, name: '' }));
-    //     }
-    // };
-
-    // const handleLastNameChange = (text) => {
-    //     setInput(prev => ({ ...prev, lastName: text }));
-    //     if (errors.lastName) {
-    //         setErrors(prev => ({ ...prev, lastName: '' }));
-    //     }
-    // };
-
-    // const handleDobChange = (text) => {
-    //     setInput(prev => ({ ...prev, dob: text }));
-    //     if (errors.dob) {
-    //         setErrors(prev => ({ ...prev, dob: '' }));
-    //     }
-    // };
-
-    // const handleEmailChange = (text) => {
-    //     setInput(prev => ({ ...prev, email: text }));
-    //     if (errors.email) {
-    //         setErrors(prev => ({ ...prev, email: '' }));
-    //     }
-    // };
-
-    // // Handle comment change
     const handleCommentChange = (text) => {
         setComment(text);
-        // if (errors.comment) {
-        //     setErrors(prev => ({ ...prev, comment: '' }));
-        // }
+        if (errors.comment) {
+            setErrors(prev => ({ ...prev, comment: '' }));
+        }
     };
 
-    // API call for deleting account
-    // const handleDeleteAccount = async () => {
-    //     // Validate form first
-    //     if (!validateForm()) {
-    //         return;
-    //     }
-
-    //     setLoading(true);
-    //     try {
-    //         let params = {
-    //             name: input.name,
-    //             phone: input.phoneInput,
-    //             reason: comment,
-    //             // Add any other parameters your API requires
-    //         };
-
-    //         // Make the API call to delete account endpoint
-    //         const response = await POST_FORM(ApiEndPoint.deleteAccount, params); // Make sure you have this endpoint
-
-    //         if (response && response.status === 200) {
-    //             // Show success toast message
-    //             // Toast.show({
-    //             //     type: 'success',
-    //             //     text1: 'Success',
-    //             //     text2: 'Your account has been deleted successfully',
-    //             //     position: 'top',
-    //             //     visibilityTime: 4000,
-    //             // });
-    //             showToast('success', 'Success', 'Your account has been deleted successfully')
-    //             setTimeout(() => {
-    //                 navigation.goBack();
-    //             }, 2000);
-
-    //             // Clear form
-    //             setInput({
-    //                 name: '',
-    //                 lastName: '',
-    //                 phoneInput: '',
-    //                 dob: "",
-    //                 email: ''
-    //             });
-    //             setComment('');
-
-    //             // Navigate to login or home screen after 2 seconds
-    //             // setTimeout(() => {
-    //             //     navigation.navigate('Login'); // or whatever your login screen is named
-    //             // }, 2000);
-
-    //         } else {
-    //             // Show error toast
-    //             const errorMessage = response?.msg || 'Failed to delete account. Please try again.';
-    //             // Toast.show({
-    //             //     type: 'error',
-    //             //     text1: 'Error',
-    //             //     text2: errorMessage,
-    //             //     position: 'top',
-    //             //     visibilityTime: 4000,
-    //             // });
-    //             showToast('error', 'Error', errorMessage)
-    //             setTimeout(() => {
-    //                 navigation.goBack();
-    //             }, 2000);
-    //         }
-
-    //     } catch (error: any) {
-    //         if (error?.offline) {
-    //             return;
-    //         }
-
-    //         const errorMessage = error?.response?.data?.msg ||
-    //             error?.msg ||
-    //             'Something went wrong. Please try again.';
-    //         showToast('error', 'Error', errorMessage)
-
-    //         // Toast.show({
-    //         //     type: 'error',
-    //         //     text1: 'Error',
-    //         //     text2: errorMessage,
-    //         //     position: 'top',
-    //         //     visibilityTime: 4000,
-    //         // });
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-
-    // For demo/static purposes - use this if you want static response without actual API
-    // const handleStaticDeleteAccount = () => {
-    //     // Validate form first
-    //     if (!validateForm()) {
-    //         return;
-    //     }
-
-    //     setLoading(true);
-
-    //     // Simulate API call
-    //     let timer = setTimeout(() => {
-    //         setLoading(false);
-
-    //         // Show success toast message
-    //         // Toast.show({
-    //         //     type: 'success',
-    //         //     text1: 'Success',
-    //         //     text2: 'Your account has been deleted successfully',
-    //         //     position: 'top',
-    //         //     visibilityTime: 4000,
-    //         // });
-    //         showToast('success', 'Success', 'Your account has been deleted successfully',)
-
-
-    //         setComment('');
-
-    //         // Navigate to login screen after 2 seconds
-    //         setTimeout(() => {
-    //             navigation.goBack()
-    //         }, 2000);
-
-    //     }, 1500); // Simulate network delay
-
-    //     return () => clearTimeout(timer)
-    // };
     const handleBack = () => {
         navigation.goBack()
+    }
+
+    const validateForm = () => {
+        const error: Record<string, string> = {}
+        if (!comment.trim()) {
+            error.comment = "Please enter message"
+        }
+        return error
     }
     const handleStaticDeleteAccount = async () => {
         try {
 
-
+            const validationErrors = validateForm();
+            if (Object.keys(validationErrors).length > 0) {
+                setErrors(validationErrors);
+                return;
+            }
             const params = {
                 'usr_id': authData?.userId,
-                'usr_name': authData?.name,
+                'usr_name': authData?.name.trim(),
                 'usr_phone': authData?.mobileNumber,
                 'usr_comment': comment
             }
+            console.log('praaaaaaaaa', params);
+
             setLoading(true)
             const response = await POST_FORM(ApiEndPoint.deleteAccount, params)
             if (response.status === 200 || '1') {
@@ -239,6 +68,8 @@ const DeleteAccountScreen = () => {
             }
 
         } catch (error) {
+            console.log('errrrrrrr', error);
+
             if (error.offline) {
                 return true
             }
@@ -270,7 +101,10 @@ const DeleteAccountScreen = () => {
                 width: moderateScale(20),
                 height: moderateScale(20)
             }}
-                headerStyle={{ marginBottom: moderateScale(20) }}
+                headerStyle={{
+                    marginTop: moderateScale(5.5), 
+                    borderColor: '#000'
+                }}
             />
             <View style={styles.innerMainContainer}>
                 <View style={styles.innerSecondMainContainer}>
@@ -298,7 +132,7 @@ const DeleteAccountScreen = () => {
                                 </View>
 
                                 <View style={{
-                                    marginVertical: moderateScale(14),
+                                    marginVertical: moderateScale(12),
                                 }}>
                                     <View style={styles.phoneInputBox}>
                                         <Image source={Icons.country} style={styles.countryImgStyle} />
@@ -317,7 +151,7 @@ const DeleteAccountScreen = () => {
                                         </View>
                                     </View>
                                 </View>
-                                <View style={{ borderWidth: 1, height: moderateScale(100), marginHorizontal: moderateScale(18), marginVertical: moderateScale(4), paddingLeft: moderateScale(8), borderRadius: moderateScale(4), borderColor: Colors.InputStroke }}>
+                                <View style={{ borderWidth: 1, height: moderateScale(100), marginHorizontal: moderateScale(18), marginVertical: moderateScale(2.5), paddingLeft: moderateScale(8), borderRadius: moderateScale(4), borderColor: Colors.InputStroke }}>
                                     <TextInput
                                         style={[styles.phoneInput, {
                                             textAlignVertical: 'top',
@@ -331,6 +165,18 @@ const DeleteAccountScreen = () => {
                                 </View>
                                 {/* {errors?.comment && <Text style={{ fontSize: moderateScale(12), color: Colors.red, marginLeft: moderateScale(20), marginTop: moderateScale(2) }}>{errors?.comment}</Text>} */}
                             </View>
+                            {errors?.comment && (
+                                <Text style={{
+                                    fontSize: moderateScale(12),
+                                    color: Colors.red,
+                                    fontFamily: Fonts.InterMedium,
+                                    marginLeft: moderateScale(17),
+                                    marginTop: moderateScale(-3),
+                                    marginBottom: moderateScale(8)
+                                }}>
+                                    {errors?.comment}
+                                </Text>
+                            )}
 
                             <AppButton
                                 title="Submit"

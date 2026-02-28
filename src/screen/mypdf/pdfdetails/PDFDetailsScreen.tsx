@@ -35,7 +35,7 @@ export type DropDownItem = {
     value: string
 }
 
-const PDFDetails = () => {
+const PDFDetailsScreen = () => {
     const navigation = useNavigation();
     const [loader, setLoader] = useState(false);
     const route = useRoute();
@@ -342,34 +342,34 @@ const PDFDetails = () => {
     //         navigation.navigate('PDFPreviewScreen')
     //     }, 1500);
     // };
-    // In PDFDetails.tsx - Update handlePreviewPdf function
+    // In PDFDetailsScreen.tsx - Update handlePreviewPdf function
     const handlePreviewPdf = () => {
         if (!logoUri) {
-            showToast('error', 'Please upload institute logo first');
+            showToast('error', 'Error', 'Please upload institute logo first');
             return;
         }
 
         if (pdfQuestions.length === 0) {
-            Alert.alert('No Questions', 'Please select questions first');
+            showToast('error', 'Error', 'Please select questions first');
             return;
         }
         if (instituteName.trim() === '' || !instituteName.trim()) {
-            showToast('error', 'Please enter institute name');
+            showToast('error', 'Error', 'Please enter institute name');
             return;
         }
         if (testName.trim() === '' || !testName.trim()) {
-            showToast('error', 'Please enter test name');
+            showToast('error', 'Error', 'Please enter test name');
             return;
         }
 
         if (time.trim() === '' || !time.trim()) {
-            showToast('error', 'Please enter time');
+            showToast('error', 'Error', 'Please enter time');
             return false
         }
         {
             if (waterMarkType === '1') {
                 if (!waterMarkLogo && !waterMarkText) {
-                    showToast('error', 'Please upload water mark logo');
+                    showToast('error', 'Error', 'Please upload water mark logo');
                     return;
                 }
             }
@@ -377,13 +377,13 @@ const PDFDetails = () => {
 
         if (waterMarkType === '2') {
             if (!waterMarkText && !waterMarkLogo) {
-                showToast('error', 'Please enter water mark text');
+                showToast('error', 'Error', 'Please enter water mark text');
                 return;
             }
         }
 
         if (!dropDownValue || dropDownValue === '') {
-            showToast('error', 'Please select test number');
+            showToast('error', 'Error', 'Please select test number');
             return;
         }
 
@@ -422,7 +422,7 @@ const PDFDetails = () => {
                 { text: 'No', style: 'cancel' },
                 { text: 'Yes', onPress: () => navigation.goBack() }
             ]
-        );
+        );s
     };
 
     //   const selectedQuestoin = useSelector((state: any) => state?.pdfQuestions);
@@ -563,7 +563,6 @@ const PDFDetails = () => {
                                 </View>
                                 <Text style={styles.optionText}>Text</Text>
                             </TouchableOpacity>
-
                         </View>
 
                         {waterMarkType === '1' ? (
@@ -608,7 +607,7 @@ const PDFDetails = () => {
                     <View style={styles.section}>
                         <Text style={styles.title}>Border</Text>
 
-                        <View style={styles.optionRow}>
+                        <View style={[styles.optionRow, { marginBottom: moderateScale(2) }]}>
                             <TouchableOpacity
                                 style={styles.optionItem}
                                 onPress={() => setBorderType('1')}
@@ -731,7 +730,7 @@ const styles = StyleSheet.create({
         //  width: moderateScale(120),
         // height: moderateScale(100),
         // flex: 1,
-        height: moderateScale(120)
+        height: moderateScale(100)
         // flexWrap:"wrap"
     },
     logoImage: {
@@ -830,6 +829,7 @@ const styles = StyleSheet.create({
     optionRow: {
         flexDirection: 'row',
         marginBottom: moderateScale(15),
+        // borderWidth:1
     },
     optionItem: {
         flexDirection: 'row',
@@ -927,7 +927,7 @@ const styles = StyleSheet.create({
     }
 });
 
-export default PDFDetails;
+export default PDFDetailsScreen;
 
 
 // screens/PDFDetails.tsx

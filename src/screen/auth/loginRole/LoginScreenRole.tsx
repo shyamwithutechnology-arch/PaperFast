@@ -32,7 +32,7 @@ const LoginScreenRole = () => {
     });
     const [loading, setLoading] = useState<boolean>(false);
     const [errors, setErrors] = useState<NameFormErrors>({});
-    
+
     const [selectedRole, setSelectedRole] = useState('')
     const handleRoleSelect = async (status) => {
         setSelectedRole(status)
@@ -93,12 +93,15 @@ const LoginScreenRole = () => {
                 usr_last_name: input?.lastName,
                 usr_phone: mobileNumber,
                 usr_role: selectedRole === 'Teacher' ? 'tutor' : 'student',
-                usr_device_token: 'fdsaagdfhghjk'
+                usr_device_token: 'fR6oYxK2T3mN8pL5vQ9wXzC7bV4nM1jK9sD2fG6hJ3kL8pO1iU4yT7rE5wQ9'
             };
             const response = await POST_FORM(ApiEndPoint.LoGINROlE, payload);
             if (response && response.status === 200) {
-                dispatch(setRole(response?.result?.usr_role))
+                console.log('ressssssssssss', response?.result);
+                
                 showToast('success', 'Success', 'Registration Successful');
+                dispatch(setRole(response?.result?.usr_role))
+                await localStorage.setItem(storageKeys.userName, String(response?.result?.usr_first_name))
                 await localStorage.setItem(storageKeys.userId, String(response?.result?.usr_id))
                 await reduxStorage.setItem('token', '1234')
                 dispatch(loginSuccess('1234'));
@@ -150,7 +153,7 @@ const LoginScreenRole = () => {
         >
             <Loader visible={loading} />
             <>
-                <AppHeader title="Paper Fast" discriptionText='Paper Generate In Minute' />
+                <AppHeader title="Paper Fast" discriptionText='Paper Generate In Minute' headerStyle={{ marginTop: moderateScale(6) }} />
                 <View style={styles.innerMainContainer}>
                     <View style={styles.innerSecondMainContainer}>
                         <Text style={styles.loginText}>Login your Account As</Text>

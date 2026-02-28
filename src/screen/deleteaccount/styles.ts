@@ -10,14 +10,15 @@ export const styles = StyleSheet.create({
     innerMainContainer: {
         flex: 1,
         backgroundColor: Colors.frameBgColor,
-        borderTopLeftRadius: moderateScale(30),
-        borderTopRightRadius: moderateScale(30),
+        borderTopLeftRadius: moderateScale(20),
+        borderTopRightRadius: moderateScale(20),
         marginTop: moderateScale(-28),
+     
     },
     innerSecondMainContainer: {
         flex: 1,
-        borderTopLeftRadius: moderateScale(30),
-        borderTopRightRadius: moderateScale(30),
+        borderTopLeftRadius: moderateScale(20),
+        borderTopRightRadius: moderateScale(20),
         backgroundColor: Colors.white,
         marginTop: moderateScale(20),
         // marginHorizontal:moderateScale(10)
@@ -37,7 +38,7 @@ export const styles = StyleSheet.create({
     loginText: {
         fontSize: moderateScale(20),
         color: Colors.black,
-        marginTop: moderateScale(40),
+        marginTop: moderateScale(10),
         fontFamily: Fonts.InstrumentSansSemiBold,
         marginLeft: moderateScale(20),
     },

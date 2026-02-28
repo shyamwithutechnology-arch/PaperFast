@@ -54,7 +54,7 @@
 
 
 import React, { useEffect, useState } from "react";
-import { View, StatusBar, Text, Image } from "react-native";
+import { View, StatusBar, Text, Image, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors, Fonts } from "../../../theme";
 import CustomPaperCard from "../component/CustomPaperCard/CustomPaperCard";
@@ -62,7 +62,7 @@ import HeaderPaperModule from "../../../component/headerpapermodule/Headerpaperm
 import { styles } from "./styles";
 import { Icons } from "../../../assets/icons";
 import { moderateScale } from "../../../utils/responsiveSize";
-import { useNavigation } from "@react-navigation/native";
+import { CommonActions, useNavigation } from "@react-navigation/native";
 import Loader from "../../../component/loader/Loader";
 import { GET } from "../../../api/request";
 import { ApiEndPoint } from "../../../api/endPoints";
@@ -108,7 +108,28 @@ const PaperTypeScreen = () => {
         }
       }
     });
+    // navigation.navigate('HomeScreen')
   };
+// const handleBack = () => {
+//     const state = navigation.getState();
+//     console.log('Current navigation state:', JSON.stringify(state, null, 2));
+    
+//     // Try this after seeing the state
+//     navigation.navigate('AppDrawer');
+// };
+
+  // const handleBack = () => {
+  //     navigation.dispatch(
+  //         CommonActions.reset({
+  //             index: 0,
+  //             routes: [
+  //                 { 
+  //                     name: 'AppDrawer'
+  //                 }
+  //             ],
+  //         })
+  //     );
+  // };
 
   const handleRefreshBanners = async () => {
     await fetchBanners();

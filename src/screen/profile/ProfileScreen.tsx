@@ -339,6 +339,8 @@ const ProfileScreen = () => {
                     width: moderateScale(20),
                     height: moderateScale(20)
                 }}
+
+            headerStyle={{marginTop:moderateScale(6)}}
             />
             <View style={styles.innerMainContainer}>
                 <View style={styles.innerSecondMainContainer}>

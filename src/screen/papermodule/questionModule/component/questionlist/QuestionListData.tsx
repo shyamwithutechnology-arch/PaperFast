@@ -890,11 +890,8 @@ const QuestionListData: React.FC<Props> = ({
     length: questionsData.length,
   }), [selectedMap, selectCheck, questionsData.length]);
 
-
-
   // Shimmer key extractor
   const shimmerKeyExtractor = useCallback((_: any, index: number) => `shimmer-${index}`, []);
-
   if (isLoading) {
     return (
       <View style={styles.container}>
@@ -908,7 +905,6 @@ const QuestionListData: React.FC<Props> = ({
           removeClippedSubviews={false}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.listContent}
-
         // Optional: Add empty component
         ListEmptyComponent={
           !isLoading && questionsData.length === 0 ? (

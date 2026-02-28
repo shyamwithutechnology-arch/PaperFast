@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     questionBox: {
         paddingHorizontal: moderateScale(6),
         width: '32%',
-        paddingVertical: moderateScale(6),
+        paddingVertical: moderateScale(5),
         marginHorizontal: moderateScale(2),
         borderWidth: 1,
         flexDirection: 'row',
