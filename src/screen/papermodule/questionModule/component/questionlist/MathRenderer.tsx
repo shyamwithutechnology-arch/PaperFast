@@ -1400,7 +1400,7 @@
 // export default MathRenderer;
 
 import React, { forwardRef, useMemo } from 'react';
-import { useWindowDimensions } from 'react-native';
+import { ActivityIndicator, useWindowDimensions, View } from 'react-native';
 import WebView from 'react-native-webview';
 import { Colors, Fonts } from '../../../../../theme';
 import { moderateScale } from '../../../../../utils/responsiveSize';
@@ -1410,10 +1410,14 @@ interface MathRendererProps {
   content: string;
   onToggleSelection: (id: string, questionNum: number) => void;
   onInfoPress?: () => void;
+  webViewRef: any;
+  isLoading: boolean;
+  onEndReached: () => void;
+  onScrollDirection?: (direction: "up" | "down") => void;
 }
 
 const MathRenderer = forwardRef<WebView, MathRendererProps>((props, ref) => {
-  const { content, onToggleSelection } = props;
+  const { content, onToggleSelection, isLoading, webViewRef, onEndReached, onScrollDirection } = props;
   const { width, height } = useWindowDimensions();
 
   const html = useMemo(() => `
@@ -1499,6 +1503,8 @@ body {
         background-color: #ffffff ; 
         color: white; 
         font-family: 'Inter', sans-serif;
+          margin: 0;
+    padding: 0;
       }
     .card {
       background-color: #fff !important;; 
@@ -1731,6 +1737,218 @@ font-family: '${Fonts.InterSemiBold}', sans-serif;
   <div id="render-area">${content}</div>
 
   <script>
+  window.updateCardUI = function(id, isSelected) {
+    const el = document.getElementById('card-' + id);
+    if (el) {
+      if (isSelected) el.classList.add('selected');
+      else el.classList.remove('selected');
+    }
+  };
+
+  function toggleCard(id, questionNum) { 
+    window.ReactNativeWebView.postMessage(
+      JSON.stringify({
+        type: 'toggle',
+        id: id,
+        questionNum: questionNum
+      })
+    );
+  }
+
+  function updateLayout() {
+    renderMathInElement(document.getElementById('render-area'), {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '\\\\[', right: '\\\\]', display: true},
+        {left: '\\\\\\(', right: '\\\\\\)', display: false},
+        {left: '\\\\(', right: '\\\\)', display: false},
+        {left: '$', right: '$', display: false}
+      ],
+      throwOnError: false
+    });
+  }
+
+  /* ✅ Single Scroll Listener */
+  let lastScrollY = 0;
+
+window.addEventListener("scroll", function () {
+  const currentScrollY = window.scrollY;
+
+  if (currentScrollY > lastScrollY) {
+    window.ReactNativeWebView.postMessage("SCROLL_DOWN");
+  } else {
+    window.ReactNativeWebView.postMessage("SCROLL_UP");
+  }
+
+  lastScrollY = currentScrollY;
+
+  if ((window.innerHeight + currentScrollY) >= document.body.offsetHeight - 10) {
+    window.ReactNativeWebView.postMessage("END_REACHED");
+  }
+});
+  window.onload = updateLayout;
+  setTimeout(updateLayout, 500);
+</script>
+</body>
+</html>
+  `, [content]);
+
+  return (
+    <View style={{ flex: 1 }}>
+      <WebView
+        ref={ref}
+        originWhitelist={['*']}
+        source={{ html }}
+        style={{ flex: 1, backgroundColor: Colors.white }}
+        // onMessage={(event) => onToggleSelection(event.nativeEvent.data)}
+        //     onMessage={(event) => {
+        //   const data = event.nativeEvent.data;
+
+        //   // Check if it's the toggle message or the picker message
+        //   if (data.startsWith('toggle_')) {
+        //     const id = data.replace('toggle_', '');
+        //     props.onToggleSelection(id);
+        //   } else if (data === 'openMediaPicker') {
+        //     // Create a new prop called 'onInfoPress' in MathRenderer
+        //     if (props.onInfoPress) {
+        //       props.onInfoPress();
+        //     }
+        //   }
+        // }}
+
+        // onMessage={(event) => {
+        //   const data = event.nativeEvent.data;
+        //   if (data.startsWith('toggle_')) {
+        //     const id = data.replace('toggle_', '');
+        //     props.onToggleSelection(id); // This will now work!
+        //   } else if (data === 'openMediaPicker') {
+        //     props.onInfoPress?.();
+        //   }
+        // }}
+        /// this is current 
+        // onMessage={(event) => {
+        //   try {
+
+        //     if (event.nativeEvent.data === "END_REACHED") {
+        //       if (onEndReached && !isLoading) {
+        //         onEndReached();
+        //       }
+        //     }
+
+        //     const data = JSON.parse(event.nativeEvent.data);
+        //     if (data === "END_REACHED") {
+        //       props.onEndReached?.();
+        //       return;
+        //     }
+
+        //     if (data === "SCROLL_DOWN") {
+        //       props.onScrollDirection?.("down");
+        //       return;
+        //     }
+
+        //     if (data === "SCROLL_UP") {
+        //       props.onScrollDirection?.("up");
+        //       return;
+        //     }
+        //     if (data.type === 'toggle') {
+        //       props.onToggleSelection(data.id, data.questionNum);
+        //       return;
+        //     }
+        //   } catch (e) {
+        //     // Not JSON → handle old messages
+        //     const raw = event.nativeEvent.data;
+
+        //     if (raw === 'openMediaPicker') {
+        //       props.onInfoPress?.();
+        //     }
+        //   }
+        // }}
+        
+        onMessage={(event) => {
+          const message = event.nativeEvent.data;
+
+          // 🔹 Scroll Direction
+          if (message === "SCROLL_DOWN") {
+            props.onScrollDirection?.("down");
+            return;
+          }
+
+          if (message === "SCROLL_UP") {
+            props.onScrollDirection?.("up");
+            return;
+          }
+
+          // 🔹 Pagination
+          if (message === "END_REACHED") {
+            props.onEndReached?.();
+            return;
+          }
+
+          // 🔹 Info button
+          if (message === "openMediaPicker") {
+            props.onInfoPress?.();
+            return;
+          }
+
+          // 🔹 Toggle selection (JSON message)
+          try {
+            const data = JSON.parse(message);
+            if (data?.type === "toggle") {
+              props.onToggleSelection?.(data.id, data.questionNum);
+            }
+          } catch (e) {
+            // ignore invalid JSON
+          }
+        }}
+        // onMessage={(event) => {
+        //   const message = event.nativeEvent.data;
+
+        //   // Handle END_REACHED first
+        //   if (message === "END_REACHED") {
+        //     if (onEndReached && !isLoading) {
+        //       onEndReached();
+        //     }
+        //     return;
+        //   }
+
+        //   // Try parsing JSON
+        //   try {
+        //     const data = JSON.parse(message);
+
+        //     if (data.type === 'toggle') {
+        //       props.onToggleSelection(data.id, data.questionNum);
+        //     }
+        //   } catch (e) {
+        //     if (message === 'openMediaPicker') {
+        //       props.onInfoPress?.();
+        //     }
+        //   }
+        // }}
+        javaScriptEnabled
+        domStorageEnabled
+        androidLayerType="hardware"
+        showsVerticalScrollIndicator={false}
+      />
+      {isLoading && (
+        <ActivityIndicator
+          size="large"
+          style={{ position: "absolute", bottom: 20, alignSelf: "center" }}
+        />
+      )}
+    </View>
+  );
+});
+
+export default MathRenderer;
+
+//  function toggleCard(id) {
+//       window.ReactNativeWebView.postMessage(id);
+//     }
+
+//  window.onload = updateLayout;
+//     setTimeout(updateLayout, 500);
+
+/* <script>
     // Essential for the "No Jump" selection
     window.updateCardUI = function(id, isSelected) {
       const el = document.getElementById('card-' + id);
@@ -1740,10 +1958,10 @@ font-family: '${Fonts.InterSemiBold}', sans-serif;
       }
     };
 
-   
+
 
     // Updated to match your new onMessage logic
-function toggleCard(id, questionNum) { 
+ function toggleCard(id, questionNum) {
   window.ReactNativeWebView.postMessage(
     JSON.stringify({
       type: 'toggle',
@@ -1764,71 +1982,14 @@ function toggleCard(id, questionNum) {
         throwOnError: false
       });
     }
-
-    window.onload = updateLayout;
-    setTimeout(updateLayout, 500); 
-  </script>
-</body>
-</html>
-  `, [content]);
-
-  return (
-    <WebView
-      ref={ref}
-      originWhitelist={['*']}
-      source={{ html }}
-      style={{ width, height, backgroundColor: Colors.white }}
-      // onMessage={(event) => onToggleSelection(event.nativeEvent.data)}
-      //     onMessage={(event) => {
-      //   const data = event.nativeEvent.data;
-
-      //   // Check if it's the toggle message or the picker message
-      //   if (data.startsWith('toggle_')) {
-      //     const id = data.replace('toggle_', '');
-      //     props.onToggleSelection(id);
-      //   } else if (data === 'openMediaPicker') {
-      //     // Create a new prop called 'onInfoPress' in MathRenderer
-      //     if (props.onInfoPress) {
-      //       props.onInfoPress();
-      //     }
-      //   }
-      // }}
-
-      // onMessage={(event) => {
-      //   const data = event.nativeEvent.data;
-      //   if (data.startsWith('toggle_')) {
-      //     const id = data.replace('toggle_', '');
-      //     props.onToggleSelection(id); // This will now work!
-      //   } else if (data === 'openMediaPicker') {
-      //     props.onInfoPress?.();
-      //   }
-      // }}
-      onMessage={(event) => {
-        try {
-          const data = JSON.parse(event.nativeEvent.data);
-
-          if (data.type === 'toggle') {
-            props.onToggleSelection(data.id, data.questionNum);
-            return;
-          }
-        } catch (e) {
-          // Not JSON → handle old messages
-          const raw = event.nativeEvent.data;
-
-          if (raw === 'openMediaPicker') {
-            props.onInfoPress?.();
-          }
-        }
-      }}
-      javaScriptEnabled={true}
-      domStorageEnabled={true}
-      androidLayerType="hardware"
-    />
-  );
-});
-
-export default MathRenderer;
-
-//  function toggleCard(id) {
-//       window.ReactNativeWebView.postMessage(id);
+      /* scroll end api call */
+//   window.onscroll = function () {
+//     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 10) {
+//       window.ReactNativeWebView.postMessage("END_REACHED");
 //     }
+//   };
+//   /* scroll end api call */
+//   window.onload = updateLayout;
+//   setTimeout(updateLayout, 500);
+//   </script > */
+// }
