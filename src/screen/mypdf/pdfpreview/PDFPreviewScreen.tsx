@@ -40,8 +40,9 @@ const PDFPreviewScreen = () => {
   // );
   const questions = useSelector((state: any) => state.pdfQuestions?.allQuestions
   );
-  const questionsee = useSelector((state: any) => state.pdfQuestions
-  );
+  // console.log('sdfghqqqqqqqqq', questions);
+  
+  // const questions = useSelector((state: any) => state.pdfQuestions);
 
 
   /* ---------------- PINCH ZOOM ---------------- */
@@ -166,7 +167,7 @@ const animatedStyle = useAnimatedStyle(() => {
               {/* </View> */}
 
               {/* ---------------- QUESTIONS ---------------- */}
-              <PDFPreviewListComponent
+              {/* <PDFPreviewListComponent
                 selectCheck="Options"
                 selectedMap={selectedMap}
                 setSelectedMap={setSelectedMap}
@@ -177,7 +178,35 @@ const animatedStyle = useAnimatedStyle(() => {
                 limit={questions?.length}
                 hideContant={true}
                 questionType={previewData?.questionType}
-              />
+              /> */}
+             <PDFPreviewListComponent
+                                                 questionsData={questions}
+                                                 selectCheck={'Options'}
+                                                 selectedMap={selectedMap}
+                                                 setSelectedMap={setSelectedMap}
+                                                 questionNumber={questionNumber}
+                                                 setQuestionNumber={setQuestionNumber}
+                                                 currentPage={1}
+                                                 limit={questions.limit}  
+                                                 //  selectedQuestions={selectedQuestions}
+                                                //  getAllRute={route?.params}
+                                                //  onEndReached={() => {
+                                                //      if (pagination.page < pagination.pages) {
+                                                //          fetchQuestions(
+                                                //              boardId,
+                                                //              standardId,
+                                                //              pagination.page + 1,
+                                                //              pagination.limit,
+                                                //              selectedSubjectId
+                                                //          );
+                                                //      }
+                                                //  }}
+             
+                                                //  onScrollDirection={(dir) => {
+                                                //      if (dir === "down") hideHeader();
+                                                //      else showHeader();
+                                                //  }}
+                                             /> 
               {/* ---------------- FOOTER ---------------- */}
               <Text style={styles.footer}>
                 {previewData?.wishText || 'Wish you all the best!'}

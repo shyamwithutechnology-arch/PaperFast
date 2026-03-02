@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { View, StatusBar, TouchableOpacity, Text, Image, Pressable, Alert } from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { View, StatusBar, TouchableOpacity, Text, Image, Pressable, Alert, Animated } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors, Fonts } from "../../../theme";
 import HeaderPaperModule from "../../../component/headerpapermodule/Headerpapermodule";
@@ -23,7 +23,8 @@ import { launchImageLibrary } from "react-native-image-picker";
 import { useDispatch, useSelector } from "react-redux";
 import { addChapterQuestions, addPDFQuestions, SelectedQuestion } from "../../../redux/slices/pdfQuestionsSlice";
 import DraftModal from "../draftpaper/component/DraftModal";
-// import { buildPDFHtml } from "../../mypdf/component/buildPDFHtml";
+
+// animated
 interface Difficulty {
     dlevel_id: string,
     dlevel_name: string
@@ -37,9 +38,14 @@ interface Book {
     book_id: string,
     book_name: string
 }
+
+
 const QuestionScreen = () => {
     const navigation = useNavigation()
     const route = useRoute();
+    const [headerHeight, setHeaderHeight] = useState(0);
+    const headerAnim = useRef(new Animated.Value(0)).current;
+    const headerVisible = useRef(true);
     const {
         chapterId,
         questionId,
@@ -77,9 +83,10 @@ const QuestionScreen = () => {
     const [bucketData, setBucketData] = useState<any>([]);
     const [questionType, setQuestionType] = useState<QuestionType[]>([]);
     const [book, setBook] = useState<Book[]>([]);
-    const [boardId, setBoardId] = useState<string | null>('');
-    const [standardId, setStandardId] = useState<string | null>('');
+    const [boardId, setBoardId] = useState<string>('');
+    const [standardId, setStandardId] = useState<string>('');
     // console.log('questionTypeSelect', questionTypeSelect);
+    console.log('question_bucket', typeof bucketSelect);
 
     const [remarkVisibleModal, setRemarkVisibleModal] = useState<boolean>(false);
     const [pagination, setPagination] = useState({
@@ -142,7 +149,7 @@ const QuestionScreen = () => {
     }
     const handleApplyFilter = async () => {
         setLoading(true)
-        await fetchQuestions(pagination.page, pagination?.limit);
+        await fetchQuestions(boardId, standardId, pagination.page, pagination?.limit, selectedSubjectId);
         setLabelStatus(false)
     }
     const handleClearFilter = async () => {
@@ -167,6 +174,29 @@ const QuestionScreen = () => {
     const handleOpenDraftModal = () => {
         setVisibleDraft(true)
     }
+
+    // animation 
+
+    const hideHeader = () => {
+        if (!headerVisible.current) return;
+        headerVisible.current = false;
+
+        Animated.timing(headerAnim, {
+            toValue: -headerHeight,
+            duration: 250,
+            useNativeDriver: true,
+        }).start();
+    };
+
+    const showHeader = () => {
+        if (headerVisible.current) return;
+        headerVisible.current = true;
+        Animated.timing(headerAnim, {
+            toValue: 0,
+            duration: 250,
+            useNativeDriver: true,
+        }).start();
+    };
     // const handleBack = async () => {
     //     const selectedQuestions = questionsData?.result?.filter(
     //         q => selectedMap[q.question_id]
@@ -225,7 +255,6 @@ const QuestionScreen = () => {
             (response) => {
                 if (response.didCancel) return;
                 if (response.errorCode) return;
-                // console.log('rrrrrrrrrrrrr', response.assets?.[0]);
                 if (response.assets?.length) {
                     console.log('eeeeeeeeeeeeeee', response.assets[0].uri);
                 }
@@ -364,12 +393,14 @@ const QuestionScreen = () => {
                 'question_chapter': question_chapter,
                 'class_id': standard_Id ?? standardId,
                 'page': page?.toString(),
-                'limit': limit?.toString()
+                'limit': limit?.toString(),
+                'question_bucket': bucketSelect,
+                'book_id': bookSelect
             };
 
-            console.log('Fetch params:', params);
+            console.log('Fetch params:latest', params);
             const response = await POST_FORM(ApiEndPoint.question, params);
-            console.log('ressssssssssss', response);
+            // console.log('ressssssssssss', response);
 
             if (response?.status === 200) {
                 setQuestionsData(response || {});
@@ -450,7 +481,7 @@ const QuestionScreen = () => {
             <StatusBar
                 backgroundColor={Colors.lightThemeBlue}
                 barStyle="dark-content" />
-            <SafeAreaView edges={["top"]} style={{ backgroundColor: Colors.lightThemeBlue }}>
+            <SafeAreaView edges={["top"]} style={{ backgroundColor: Colors.lightThemeBlue, zIndex: 1000, }} >
                 <HeaderPaperModule
                     title={paperType || ''}
                     rightPress={handleOpenDraftModal}
@@ -463,89 +494,117 @@ const QuestionScreen = () => {
 
             {/* MAIN CONTENT */}
             <SafeAreaView
-                style={{ flex: 1, backgroundColor: Colors.white }}
+                style={{
+                    flex: 1, backgroundColor: Colors.white,
+                }}
                 edges={["left", "right", "bottom"]}>
-                <View style={styles.tabContainer}>
-                    <TouchableOpacity
-                        style={[styles.tab, activeTab === 'all' && styles.activeTab]}
-                        onPress={() => setActiveTab('all')}>
-                        <Text style={[styles.tabText, activeTab === 'all' && styles.activeTabText]}>
-                            All Questions
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[styles.tab, activeTab === 'topic' && styles.activeTab]}
-                        onPress={() => setActiveTab('topic')}>
-                        <Text style={[styles.tabText, activeTab === 'topic' && styles.activeTabText]}>
-                            Topic Wise
-                        </Text>
-                    </TouchableOpacity>
-                </View>
+                <Animated.View
+                    onLayout={(e) => {
+                        const h = e.nativeEvent.layout.height;
+                        setHeaderHeight(h);
+                    }}
+                    style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        zIndex: 1000,
+                        backgroundColor: Colors.white,
+                        transform: [{ translateY: headerAnim }],
+                    }}
+                >
+                    <View style={styles.tabContainer}>
+                        <TouchableOpacity
+                            style={[styles.tab, activeTab === 'all' && styles.activeTab]}
+                            onPress={() => setActiveTab('all')}>
+                            <Text style={[styles.tabText, activeTab === 'all' && styles.activeTabText]}>
+                                All Questions
+                            </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[styles.tab, activeTab === 'topic' && styles.activeTab]}
+                            onPress={() => setActiveTab('topic')}>
+                            <Text style={[styles.tabText, activeTab === 'topic' && styles.activeTabText]}>
+                                Topic Wise
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.optionsSectBox}>
+                        <View style={{
+                            flexDirection: 'row', alignItems: 'center'
+                        }}>
+                            <TouchableOpacity
+                                style={{ flexDirection: 'row', alignItems: 'center' }}
+                                onPress={() => handleCheck('Options')}
+                                activeOpacity={0.7}>
+                                <View
+                                    style={[
+                                        styles.chackBox,
+                                        {
+                                            backgroundColor:
+                                                selectCheck === 'Options' ? '#4292FA' : Colors.white
+                                        }]}>
+                                    {selectCheck === 'Options' && (
+                                        <Icon name="check" size={moderateScale(14)} color={Colors.white} />
+                                    )}
+                                </View>
+                                <Text style={styles.optionsText}>Options</Text>
+                            </TouchableOpacity>
 
-                <View style={{ flex: 1 }}>
+                            <TouchableOpacity
+                                style={styles.solutionMainBox}
+                                onPress={() => handleCheck('Solutions')}
+                                activeOpacity={0.7}>
+                                <View
+                                    style={[
+                                        styles.chackBox,
+                                        {
+                                            backgroundColor:
+                                                selectCheck === 'Solutions' ? '#4292FA' : Colors.white
+                                        }]}>
+                                    {selectCheck === 'Solutions' && (
+                                        <Icon name="check" size={moderateScale(14)} color={Colors.white} />
+                                    )}
+                                </View>
+                                <Text style={styles.optionsText}>Solutions</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        <View style={styles.filteMain} >
+                            <Text style={styles.questionSelected} onPress={() => { }}>
+                                {Object.keys(selectedMap).map(Number).length ?? 0} Ques Selected
+                            </Text>
+                            <TouchableOpacity style={styles.filterBtn} onPress={handleLabelStatus}>
+                                <Image source={Icons.filter} resizeMode="contain" style={styles.filteImg} />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+
+                    {/* Pagination*/}
+                    {pagination.pages > 1 && (
+                        <Pagination
+                            paginationData={pagination}
+                            onPageChange={handlePageChange}
+                            onLimitChange={handleLimitChange}
+                        />)}
+                </Animated.View>
+                <Animated.View
+                    style={{
+                        flex: 1,
+                        transform: [
+                            {
+                                translateY: headerAnim.interpolate({
+                                    inputRange: [-headerHeight, 0],
+                                    outputRange: [0, headerHeight],
+                                    extrapolate: "clamp",
+                                }),
+                            },
+                        ],
+                    }}
+                >
                     {activeTab === 'all' ? (
                         <>
-                            <View style={styles.optionsSectBox}>
-                                <View style={{
-                                    flexDirection: 'row', alignItems: 'center'
-                                }}>
-                                    <TouchableOpacity
-                                        style={{ flexDirection: 'row', alignItems: 'center' }}
-                                        onPress={() => handleCheck('Options')}
-                                        activeOpacity={0.7}>
-                                        <View
-                                            style={[
-                                                styles.chackBox,
-                                                {
-                                                    backgroundColor:
-                                                        selectCheck === 'Options' ? '#4292FA' : Colors.white
-                                                }]}>
-                                            {selectCheck === 'Options' && (
-                                                <Icon name="check" size={moderateScale(14)} color={Colors.white} />
-                                            )}
-                                        </View>
-                                        <Text style={styles.optionsText}>Options</Text>
-                                    </TouchableOpacity>
-
-                                    <TouchableOpacity
-                                        style={styles.solutionMainBox}
-                                        onPress={() => handleCheck('Solutions')}
-                                        activeOpacity={0.7}>
-                                        <View
-                                            style={[
-                                                styles.chackBox,
-                                                {
-                                                    backgroundColor:
-                                                        selectCheck === 'Solutions' ? '#4292FA' : Colors.white
-                                                }]}>
-                                            {selectCheck === 'Solutions' && (
-                                                <Icon name="check" size={moderateScale(14)} color={Colors.white} />
-                                            )}
-                                        </View>
-                                        <Text style={styles.optionsText}>Solutions</Text>
-                                    </TouchableOpacity>
-                                </View>
-
-                                <View style={styles.filteMain} >
-                                    <Text style={styles.questionSelected} onPress={() => { }}>
-                                        {Object.keys(selectedMap).map(Number).length ?? 0} Ques Selected
-                                    </Text>
-                                    <TouchableOpacity style={styles.filterBtn} onPress={handleLabelStatus}>
-                                        <Image source={Icons.filter} resizeMode="contain" style={styles.filteImg} />
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-
-                            {/* Pagination*/}
-                            {pagination.pages > 1 && (
-                                <Pagination
-                                    paginationData={pagination}
-                                    onPageChange={handlePageChange}
-                                    onLimitChange={handleLimitChange}
-                                />)}
-
                             {!labelStatus && (
-
                                 <QuestionListData
                                     selectCheck={selectCheck}
                                     selectedMap={selectedMap}
@@ -558,7 +617,40 @@ const QuestionScreen = () => {
                                     isLoading={loading}
                                     selectedQuestions={selectedQuestions}
                                     getAllRute={route?.params}
+                                    onEndReached={() => {
+                                        if (pagination.page < pagination.pages) {
+                                            fetchQuestions(
+                                                boardId,
+                                                standardId,
+                                                pagination.page + 1,
+                                                pagination.limit,
+                                                selectedSubjectId
+                                            );
+                                        }
+                                    }}
+
+                                    onScrollDirection={(dir) => {
+                                        if (dir === "down") hideHeader();
+                                        else showHeader();
+                                    }}
                                 />
+                                // <QuestionListData
+                                //     questionsData={questionsData?.result ?? []}
+                                //     currentPage={pagination.page}
+                                //     limit={pagination.limit}
+                                //     isLoading={loading}
+                                // onEndReached={() => {
+                                //     if (pagination.page < pagination.pages) {
+                                //         fetchQuestions(
+                                //             boardId,
+                                //             standardId,
+                                //             pagination.page + 1,
+                                //             pagination.limit,
+                                //             selectedSubjectId
+                                //         );
+                                //     }
+                                // }}
+                                // />
                             )}
                             <AppModal visible={labelStatus} onClose={handleLabelClose}>
                                 <View style={styles.applyBox}>
@@ -643,88 +735,139 @@ const QuestionScreen = () => {
                             <DraftModal activeDraft={visibleDraft} onClose={handleCloseDraftModal} questionId={Object.keys(selectedMap)} />
                         </>
                     ) : (
-                        <>
-                            <View style={styles.optionsSectBox}>
-                                <View style={{
-                                    flexDirection: 'row', alignItems: 'center'
-                                }}>
-                                    <TouchableOpacity
-                                        style={{ flexDirection: 'row', alignItems: 'center' }}
-                                        onPress={() => handleCheck('Options')}
-                                        activeOpacity={0.7}>
-                                        <View
-                                            style={[
-                                                styles.chackBox,
-                                                {
-                                                    backgroundColor:
-                                                        selectCheck === 'Options' ? '#4292FA' : Colors.white
-                                                }]}>
-                                            {selectCheck === 'Options' && (
-                                                <Icon name="check" size={moderateScale(14)} color={Colors.white} />
-                                            )}
-                                        </View>
-                                        <Text style={styles.optionsText}>Options</Text>
-                                    </TouchableOpacity>
+                       <>
+                            {!labelStatus && (
+                                <QuestionListData
+                                    selectCheck={selectCheck}
+                                    selectedMap={selectedMap}
+                                    setSelectedMap={setSelectedMap}
+                                    questionsData={questionsData?.result ?? []}
+                                    currentPage={pagination?.page}
+                                    limit={pagination.limit}
+                                    questionNumber={questionNumber}
+                                    setQuestionNumber={setQuestionNumber}
+                                    isLoading={loading}
+                                    selectedQuestions={selectedQuestions}
+                                    getAllRute={route?.params}
+                                    onEndReached={() => {
+                                        if (pagination.page < pagination.pages) {
+                                            fetchQuestions(
+                                                boardId,
+                                                standardId,
+                                                pagination.page + 1,
+                                                pagination.limit,
+                                                selectedSubjectId
+                                            );
+                                        }
+                                    }}
 
-                                    <TouchableOpacity
-                                        style={styles.solutionMainBox}
-                                        onPress={() => handleCheck('Solutions')}
-                                        activeOpacity={0.7}>
-                                        <View
-                                            style={[
-                                                styles.chackBox,
-                                                {
-                                                    backgroundColor:
-                                                        selectCheck === 'Solutions' ? '#4292FA' : Colors.white
-                                                }]}>
-                                            {selectCheck === 'Solutions' && (
-                                                <Icon name="check" size={moderateScale(14)} color={Colors.white} />
-                                            )}
-                                        </View>
-                                        <Text style={styles.optionsText}>Solutions</Text>
+                                    onScrollDirection={(dir) => {
+                                        if (dir === "down") hideHeader();
+                                        else showHeader();
+                                    }}
+                                />
+                                // <QuestionListData
+                                //     questionsData={questionsData?.result ?? []}
+                                //     currentPage={pagination.page}
+                                //     limit={pagination.limit}
+                                //     isLoading={loading}
+                                // onEndReached={() => {
+                                //     if (pagination.page < pagination.pages) {
+                                //         fetchQuestions(
+                                //             boardId,
+                                //             standardId,
+                                //             pagination.page + 1,
+                                //             pagination.limit,
+                                //             selectedSubjectId
+                                //         );
+                                //     }
+                                // }}
+                                // />
+                            )}
+                            <AppModal visible={labelStatus} onClose={handleLabelClose}>
+                                <View style={styles.applyBox}>
+                                    <Text style={styles.diffeicultText}>Apply Filter</Text>
+                                    <TouchableOpacity onPress={handleClearFilter} style={{ padding: moderateScale(1) }}>
+                                        <Text style={styles.clearAllText}>Clear all filters</Text>
                                     </TouchableOpacity>
                                 </View>
 
-                                <View style={styles.filteMain} >
-                                    <Text style={styles.questionSelected} onPress={() => { }}>
-                                        {Object.keys(selectedMap).map(Number).length ?? 0} Ques Selected
-                                    </Text>
-                                    <TouchableOpacity style={styles.filterBtn} onPress={handleLabelStatus}>
-                                        <Image source={Icons.filter} resizeMode="contain" style={styles.filteImg} />
-                                    </TouchableOpacity>
+                                <ScrollView style={{
+                                    maxHeight: moderateScale(470),
+                                    height: moderateScale(470),
+                                    flexGrow: 1, // Important: prevents ScrollView from expanding
+                                }} showsVerticalScrollIndicator={true} bounces={true}>
+                                    <View style={styles.lineBox} />
+
+                                    <Text style={styles.diffecultyText}>Difficulty level</Text>
+                                    <View style={styles.easyBox}>
+                                        <View style={styles.difficultMainBox}>
+                                            {difficultyLabel?.map(item => (
+                                                <Pressable key={item?.dlevel_id} style={styles.checkBoxMain} onPress={() => handleCheckStatus(item?.dlevel_id)}>
+                                                    <View style={[styles.checkBox, lebelCheck === item?.dlevel_id && { backgroundColor: Colors.primaryColor, borderWidth: 0 }]}>
+                                                        {lebelCheck === item?.dlevel_id && (
+                                                            <IconEntypo name='check' size={moderateScale(14)} color={Colors.white} />
+                                                        )}
+                                                    </View>
+                                                    <Text style={styles.easyText}>{item?.dlevel_name}</Text>
+                                                </Pressable>
+                                            ))}
+                                        </View>
+                                    </View>
+
+                                    <Text style={[styles.diffecultyText, { marginTop: moderateScale(20) }]}>Question Type</Text>
+                                    {questionType?.map(item => (
+                                        <Pressable key={item?.qp_id} style={[styles.checkBoxMain, { justifyContent: "flex-start" }]} onPress={() => handleQuestionTypeSelect(item?.qp_id)}>
+                                            <View style={[styles.checkBox, questionTypeSelect === item?.qp_id && { backgroundColor: Colors.primaryColor, borderWidth: 0 }]}>
+                                                {questionTypeSelect === item?.qp_id && (
+                                                    <IconEntypo name='check' size={moderateScale(14)} color={Colors.white} />
+                                                )}
+                                            </View>
+                                            <Text style={styles.easyText}>{item?.qp_name}</Text>
+                                        </Pressable>
+                                    ))}
+
+                                    <Text style={[styles.diffecultyText, { marginTop: moderateScale(20) }]}>Books</Text>
+                                    {book?.map(item => (
+                                        <Pressable key={item?.book_id} style={[styles.checkBoxMain, { justifyContent: "flex-start" }]} onPress={() => handleBookSelect(item?.book_id)}>
+                                            <View style={[styles.checkBox, bookSelect === item?.book_id && { backgroundColor: Colors.primaryColor, borderWidth: 0 }]}>
+                                                {bookSelect === item?.book_id && (
+                                                    <IconEntypo name='check' size={moderateScale(14)} color={Colors.white} />
+                                                )}
+                                            </View>
+                                            <Text style={styles.easyText}>{item?.book_name}</Text>
+                                        </Pressable>
+                                    ))}
+
+                                    <Text style={[styles.diffecultyText, { marginTop: moderateScale(20) }]}>Bucket</Text>
+                                    {bucketData?.map(item => (
+                                        <Pressable key={item?.bt_id} style={[styles.checkBoxMain, { justifyContent: "flex-start" }]} onPress={() => handleBucketSelect(item?.bt_id)}>
+                                            <View style={[styles.checkBox, bucketSelect === item?.bt_id && { backgroundColor: Colors.primaryColor, borderWidth: 0 }]}>
+                                                {bucketSelect === item?.bt_id && (
+                                                    <IconEntypo name='check' size={moderateScale(14)} color={Colors.white} />
+                                                )}
+                                            </View>
+                                            <Text style={styles.easyText}>{item?.bt_name}</Text>
+                                        </Pressable>
+                                    ))}
+                                </ScrollView>
+                                <View style={[styles.lineBox, { marginTop: moderateScale(16), marginBottom: moderateScale(8) }]} />
+
+                                <View style={[styles.easyBox, styles.btnMain]}>
+                                    <AppButton title="Cancel" style={styles.cancelBtn} textStyle={styles.cancelText} onPress={handleFilterClose} />
+                                    <AppButton title="Apply Filter" style={styles.applyFilterBox} textStyle={styles.applyText} onPress={handleApplyFilter} />
                                 </View>
-                            </View>
-
-                            {/* Pagination*/}
-                            {pagination.pages > 1 && (
-                                <Pagination
-                                    paginationData={pagination}
-                                    onPageChange={handlePageChange}
-                                    onLimitChange={handleLimitChange}
-                                />)}
-
-                            <QuestionListData
-                                selectCheck={selectCheck}
-                                selectedMap={selectedMap}
-                                setSelectedMap={setSelectedMap}
-                                questionsData={questionsData?.result ?? []}
-                                currentPage={pagination?.page}
-                                limit={pagination.limit}
-                                questionNumber={questionNumber}
-                                setQuestionNumber={setQuestionNumber}
-                                isLoading={loading}
-                                selectedQuestions={selectedQuestions}
-                                getAllRute={route?.params}
-                            />
+                            </AppModal>
 
                             <AppModal visible={remarkVisibleModal} onClose={hanldeRemarkCloseModal}>
                                 <Pressable onPress={openGallery}>
                                     <Text>Upload photo</Text>
                                 </Pressable>
                             </AppModal>
+                            <DraftModal activeDraft={visibleDraft} onClose={handleCloseDraftModal} questionId={Object.keys(selectedMap)} />
                         </>
                     )}
-                </View>
+                </Animated.View>
 
             </SafeAreaView>
         </View>
