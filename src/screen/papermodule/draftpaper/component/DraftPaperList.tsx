@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
     },
 
     cancleIcon: {
-        width: moderateScale(12),
-        height: moderateScale(12),
+        width: moderateScale(11),
+        height: moderateScale(11),
     },
 })

@@ -20,6 +20,7 @@ interface AppTextInputProps {
   style: object,
   placeHolderText: string
   keyboardTypeText: string
+  editable: boolean
 }
 const AppTextInput: React.FC<AppTextInputProps> = ({
   containerStyle,
@@ -30,6 +31,7 @@ const AppTextInput: React.FC<AppTextInputProps> = ({
   placeHolderText,
   onChangeText,
   keyboardTypeText,
+  editable = true,
   ...rest
 
 }) => {
@@ -45,6 +47,7 @@ const AppTextInput: React.FC<AppTextInputProps> = ({
         onChangeText={onChangeText}
         placeholder={placeHolderText}
         keyboardType={keyboardTypeText}
+        editable={editable}
       // keyboardType='email-address'
       />
 

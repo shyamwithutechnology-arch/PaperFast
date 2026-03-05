@@ -39,7 +39,7 @@ const DeleteAccountScreen = () => {
     const validateForm = () => {
         const error: Record<string, string> = {}
         if (!comment.trim()) {
-            error.comment = "Please enter message"
+            error.comment = "Please enter a message"
         }
         return error
     }
@@ -57,7 +57,6 @@ const DeleteAccountScreen = () => {
                 'usr_phone': authData?.mobileNumber,
                 'usr_comment': comment
             }
-            console.log('praaaaaaaaa', params);
 
             setLoading(true)
             const response = await POST_FORM(ApiEndPoint.deleteAccount, params)
@@ -102,8 +101,9 @@ const DeleteAccountScreen = () => {
                 height: moderateScale(20)
             }}
                 headerStyle={{
-                    marginTop: moderateScale(5.5), 
-                    borderColor: '#000'
+                    marginTop: moderateScale(7.5),
+                    borderColor: '#000',
+                    // borderWidth: 1
                 }}
             />
             <View style={styles.innerMainContainer}>
@@ -128,6 +128,7 @@ const DeleteAccountScreen = () => {
                                     <AppTextInput
                                         placeHolderText={'Enter Name'}
                                         value={authData?.name}
+                                        editable={false}
                                     />
                                 </View>
 
@@ -161,6 +162,7 @@ const DeleteAccountScreen = () => {
                                         value={comment}
                                         onChangeText={handleCommentChange}
                                         multiline={true}
+
                                     />
                                 </View>
                                 {/* {errors?.comment && <Text style={{ fontSize: moderateScale(12), color: Colors.red, marginLeft: moderateScale(20), marginTop: moderateScale(2) }}>{errors?.comment}</Text>} */}
