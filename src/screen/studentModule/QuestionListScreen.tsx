@@ -90,7 +90,7 @@ const QuestionListScreen = () => {
     });
 
     console.log('answerStats.correct', answerStats.correct);
-    
+
 
     const [headerHeight, setHeaderHeight] = useState(0);
     const headerAnim = useRef(new Animated.Value(0)).current;
@@ -142,7 +142,13 @@ const QuestionListScreen = () => {
     // Handle page change
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= pagination.pages) {
-            fetchQuestions(newPage);
+            fetchQuestions(
+                boardId || '',
+                standardId || '',
+                newPage,
+                pagination.limit,
+                selectedSubjectId
+            );
         }
     };
 
@@ -154,7 +160,14 @@ const QuestionListScreen = () => {
             page: 1 // Reset to first page
         }));
         // Fetch data with new limit
-        fetchQuestions(1, newLimit);
+
+        fetchQuestions(
+            boardId || '',
+            standardId || '',
+            1,
+            newLimit,
+            selectedSubjectId
+        );
     };
     // const fetchQuestions = async (page: number = 1, limit: number = pagination?.limit, subject?: string | null) => {
     //     setLoading(true)
@@ -315,7 +328,7 @@ const QuestionListScreen = () => {
     //     setLabelStatus(true)
     // }
     const handleLabelStatus = async () => {
-        setLoading(true)
+        // setLoading(true)
         await handleFilterModal()
         await handleQuestionType()
         await handleBookFetch(),
@@ -484,13 +497,19 @@ const QuestionListScreen = () => {
                         </TouchableOpacity>
                     </View>
 
-                    {/* Pagination*/}
-                    {pagination.pages > 1 && (
-                        <Pagination
-                            paginationData={pagination}
-                            onPageChange={handlePageChange}
-                            onLimitChange={handleLimitChange}
-                        />)}
+                    <View style={{ flexDirection: "row", alignItems: 'center' }}>
+                        {/* Pagination*/}
+                        {pagination.pages > 1 && (
+                            <Pagination
+                                paginationData={pagination}
+                                onPageChange={handlePageChange}
+                                onLimitChange={handleLimitChange}
+                            />)}
+
+                        {!loading && <TouchableOpacity style={styles.filterBtn} onPress={handleLabelStatus}>
+                            <Image source={Icons.filter} resizeMode="contain" style={styles.filteImg} />
+                        </TouchableOpacity>}
+                    </View>
                 </Animated.View>
                 <Animated.View
                     style={{
@@ -508,19 +527,6 @@ const QuestionListScreen = () => {
                 >
                     {activeTab === 'all' ? (
                         <>
-                            <View style={{ borderColor: '#000', marginVertical: moderateScale(20), flexDirection: 'row', alignItems: "center" }}>
-                                {pagination.pages > 1 && (
-                                    <Pagination
-                                        paginationData={pagination}
-                                        onPageChange={handlePageChange}
-                                        onLimitChange={handleLimitChange}
-                                    />
-                                )}
-                                {<TouchableOpacity style={styles.filterBtn} onPress={handleLabelStatus} disabled={loading}>
-                                    <Image source={Icons.filter} resizeMode="contain" style={styles.filteImg} />
-                                </TouchableOpacity>}
-                            </View>
-
                             {/* <QuestionListComponent
                                 selectCheck={selectCheck}
                                 selectedMap={selectedMap}
@@ -532,54 +538,38 @@ const QuestionListScreen = () => {
                                 incorrectAnswers={answerStats.incorrect}
                                 isLoading={loading}
                             /> */}
-                            {/* <AppModal visible={labelStatus} onClose={handleLabelClose}>
-                                <View style={styles.applyBox}>
-                                    <Text style={styles.diffeicultText}>Apply Filter</Text>
-                                    <TouchableOpacity onPress={handleClearFilter} style={{ padding: moderateScale(1) }}>
-                                        <Text style={styles.clearAllText}>Clear all filters</Text>
-                                    </TouchableOpacity>
-                                </View>
-                                <ScrollView style={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
-                                    <View style={styles.lineBox} />
-                                    <Text style={styles.diffecultyText}>Difficulty level</Text>
-                                    <View style={styles.easyBox}>
-                                        <View style={styles.difficultMainBox}>
-                                            {difficultyLabel?.map(item => (
-                                                <Pressable key={item?.dlevel_id} style={styles.checkBoxMain} onPress={() => handleCheckStatus(item?.dlevel_id)}>
-                                                    <View style={[styles.checkBox, lebelCheck === item?.dlevel_id && { backgroundColor: Colors.primaryColor, borderWidth: 0 }]}>
-                                                        {lebelCheck === item?.dlevel_id && <IconEntypo name='check' size={moderateScale(14.5)} color={Colors.white} />
-                                                        }
-                                                    </View>
-                                                    <Text style={styles.easyText}>{item?.dlevel_name}</Text>
-                                                </Pressable>))}
-                                        </View>
-                                    </View>
-                                    <Text style={[styles.diffecultyText, { marginTop: moderateScale(20) }]}>Question Type</Text>
-                                    {questionType?.map(item => (
-                                        <Pressable key={item?.qp_id} style={[styles.checkBoxMain, { justifyContent: "flex-start" }]} onPress={() => handleQuestionTypeSelect(item?.qp_id)}>
-                                            <View style={[styles.checkBox, questionTypeSelect === item?.qp_id && { backgroundColor: Colors.primaryColor, borderWidth: 0 }]}>
-                                                {questionTypeSelect === item?.qp_id && <IconEntypo name='check' size={moderateScale(14.5)} color={Colors.white} />}                                </View>
-                                            <Text style={styles.easyText}>{item?.qp_name}</Text>
-                                        </Pressable>
-                                    ))}
+                            <QuestionListData
+                                selectCheck={'Options'}
+                                selectedMap={selectedMap}
+                                setSelectedMap={setSelectedMap}
+                                questionsData={questionsData?.result ?? []}
+                                currentPage={pagination?.page}
+                                limit={pagination.limit}
+                                questionNumber={questionNumber}
+                                setQuestionNumber={setQuestionNumber}
+                                isLoading={loading}
+                                selectedQuestions={selectedQuestions}
+                                getAllRute={route?.params} 
+                                onEndReached={() => {
+                                    if (pagination.page < pagination.pages) { 
+                                        fetchQuestions(
+                                            boardId,
+                                            standardId,
+                                            pagination.page + 1,
+                                            pagination.limit,
+                                            selectedSubjectId
+                                        );
+                                    }
+                                }}
 
-                                    <Text style={[styles.diffecultyText, { marginTop: moderateScale(20) }]}>Books</Text>
-                                    {book?.map(item => (
-                                        <Pressable key={item?.book_id} style={[styles.checkBoxMain, { justifyContent: "flex-start" }]} onPress={() => handleBookSelect(item?.book_id)}>
-                                            <View style={[styles.checkBox, bookSelect === item?.book_id && { backgroundColor: Colors.primaryColor, borderWidth: 0 }]}>
-                                                {bookSelect === item?.book_id && <IconEntypo name='check' size={moderateScale(14.5)} color={Colors.white} />}                                </View>
-                                            <Text style={styles.easyText}>{item?.book_name}</Text>
-                                        </Pressable>
-                                    ))}
-                                </ScrollView>
-                                <View style={[styles.lineBox]} />
-                                <View style={[styles.easyBox, styles.btnMain]}>
-                                    <AppButton title="Cancel" style={styles.cancelBtn} textStyle={styles.cancelText} onPress={handleFilterClose} />
-                                    <AppButton title="Apply Filter" style={styles.applyFilterBox}
-                                        textStyle={styles.applyText} onPress={handleApplyFilter} />
-                                </View>
-                            </AppModal> */}
-                            <Text>sdafdasf</Text>
+                                onScrollDirection={(dir) => {
+                                    if (dir === "down") hideHeader();
+                                    else showHeader();
+                                }}
+
+                                correctAnswers={answerStats.correct}
+                                incorrectAnswers={answerStats.incorrect}
+                            />
                         </>
                     ) : (
                         <>
@@ -623,7 +613,7 @@ const QuestionListScreen = () => {
                                     else showHeader();
                                 }}
 
-                                   correctAnswers={answerStats.correct}
+                                correctAnswers={answerStats.correct}
                                 incorrectAnswers={answerStats.incorrect}
                             />
                         </>

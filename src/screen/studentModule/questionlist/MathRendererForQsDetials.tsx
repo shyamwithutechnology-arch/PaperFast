@@ -1,12 +1,12 @@
+
 import React, { forwardRef, useMemo } from 'react';
-import { ActivityIndicator, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { ActivityIndicator, useWindowDimensions, View } from 'react-native';
 import WebView from 'react-native-webview';
 import { Colors, Fonts } from '../../../theme';
 import { moderateScale } from '../../../utils/responsiveSize';
-import IconIonicons from 'react-native-vector-icons/Ionicons';
 
 // Fixed the Ref signature and types
-interface MathRendererProps {
+interface MathRendererForQsDetialsProps {
   content: string;
   onToggleSelection: (id: string, questionNum: number) => void;
   onInfoPress?: () => void;
@@ -14,13 +14,14 @@ interface MathRendererProps {
   isLoading: boolean;
   onEndReached: () => void;
   onScrollDirection?: (direction: "up" | "down") => void;
-
-  answerStatus?: 'correct' | 'incorrect' | 'unanswered';
+  bgColor: string;
+  onMessage: () => void
 }
 
-const MathRenderer = forwardRef<WebView, MathRendererProps>((props, ref) => {
-  const { content, onToggleSelection, isLoading, webViewRef, onEndReached, onScrollDirection, answerStatus } = props;
+const MathRendererForQsDetials = forwardRef<WebView, MathRendererForQsDetialsProps>((props, ref) => {
+  const { content, onToggleSelection, isLoading, webViewRef, onEndReached, onScrollDirection, bgColor } = props;
   const { width, height } = useWindowDimensions();
+
   const html = useMemo(() => `
 <!DOCTYPE html>
 <html>
@@ -101,15 +102,15 @@ const MathRenderer = forwardRef<WebView, MathRendererProps>((props, ref) => {
 }
 
 body { 
-        background-color: #ffffff ; 
+        background-color: ${bgColor} !important;
         color: white; 
         font-family: 'Inter', sans-serif;
-          margin: 0;
-    padding: 0;
+    margin: 0;
+  padding: 6.5px 0;   /* small vertical space */
       }
     .card {
-      background-color: #fff !important;; 
-      padding: 5px; 
+background-color: ${bgColor} !important;   
+   padding: 5px; 
       display: flex; 
       flex-direction: row;
       position: relative; margin: 4px 2px;
@@ -126,11 +127,27 @@ body {
 font-weight: 600;
 color:#000
 }    
+    /* Selection Highlight */
+    .card.selected { background-color: #e3f2fd !important; }
 
       .checkbox-container {
         margin-right: 4px; display: flex; align-items: center; padding-top: 4px;
      flex-direction: column;
       }
+      
+    .custom-checkbox {
+      width: 15px; height: 15px; border: 2px solid #cbd5e1; border-radius: 4px;
+      display: flex; align-items: center; justify-content: center; background: white;
+    }
+
+    .selected .custom-checkbox {
+      background-color: ${Colors.primaryColor};
+      border-color: ${Colors.primaryColor};
+    }
+
+    .selected .custom-checkbox::after {
+      content: '✓'; color: white; font-size: 14px;
+    }
 
     .content-container { flex: 1; overflow-x: auto; }
 
@@ -182,10 +199,9 @@ color:#000
   display: flex;
   align-items: center;
   justify-content: center;
-
   border-radius: 50%;
   boder : 1px;
-  background-color:#6c798e
+  background-color:${Colors.blackThird}
 }
 .option-text {
   font-size: ${moderateScale(13)}px;
@@ -241,56 +257,6 @@ color:#000
 .qs-option-text[data-status="incorrect"] {
   color: #e74c3c !important; /* Red */
 }
-
-
-/* Inside MathRenderer's <style> block */
-
-.card {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start; /* Ensures top alignment */
-  padding: 12px;
-  background-color: #fff;
-  border-radius: 12px;
-  margin-bottom: 10px;
-}
-
-.checkbox-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-right: ${moderateScale(0.5)}px;
-  min-width: 30px;
-}
-
-.status-icon-badge {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 6px;
-  color: white;
-  font-size: 11px;
-  font-weight: bold;
-}
-
-.correct-bg { background-color: #4CAF50 !important; }
-.incorrect-bg { background-color: #F44336 !important; }
-
-.questionnptext {
-  font-size: 15px;
-  color: #000;
-}
-
-.qs-text {
-  font-size: 14px;
-  color: #333;
-  line-height: 1.5;
-}
-
-/*above*/
     .answer-key {
   display: flex;
   flex-direction: row; 
@@ -429,75 +395,18 @@ window.addEventListener("scroll", function () {
   `, [content]);
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{
+      flex: 1, backgroundColor: bgColor
+
+    }}>
       <WebView
         ref={ref}
         originWhitelist={['*']}
         source={{ html }}
-        style={{ flex: 1, backgroundColor: Colors.white }}
-        // onMessage={(event) => onToggleSelection(event.nativeEvent.data)}
-        //     onMessage={(event) => {
-        //   const data = event.nativeEvent.data;
+        opaque={false}      // Add this for Android
+        style={{ flex: 1, backgroundColor: bgColor }}
+        containerStyle={{ backgroundColor: bgColor }}
 
-        //   // Check if it's the toggle message or the picker message
-        //   if (data.startsWith('toggle_')) {
-        //     const id = data.replace('toggle_', '');
-        //     props.onToggleSelection(id);
-        //   } else if (data === 'openMediaPicker') {
-        //     // Create a new prop called 'onInfoPress' in MathRenderer
-        //     if (props.onInfoPress) {
-        //       props.onInfoPress();
-        //     }
-        //   }
-        // }}
-
-        // onMessage={(event) => {
-        //   const data = event.nativeEvent.data;
-        //   if (data.startsWith('toggle_')) {
-        //     const id = data.replace('toggle_', '');
-        //     props.onToggleSelection(id); // This will now work!
-        //   } else if (data === 'openMediaPicker') {
-        //     props.onInfoPress?.();
-        //   }
-        // }}
-        /// this is current 
-        // onMessage={(event) => {
-        //   try {
-
-        //     if (event.nativeEvent.data === "END_REACHED") {
-        //       if (onEndReached && !isLoading) {
-        //         onEndReached();
-        //       }
-        //     }
-
-        //     const data = JSON.parse(event.nativeEvent.data);
-        //     if (data === "END_REACHED") {
-        //       props.onEndReached?.();
-        //       return;
-        //     }
-
-        //     if (data === "SCROLL_DOWN") {
-        //       props.onScrollDirection?.("down");
-        //       return;
-        //     }
-
-        //     if (data === "SCROLL_UP") {
-        //       props.onScrollDirection?.("up");
-        //       return;
-        //     }
-        //     if (data.type === 'toggle') {
-        //       props.onToggleSelection(data.id, data.questionNum);
-        //       return;
-        //     }
-        //   } catch (e) {
-        //     // Not JSON → handle old messages
-        //     const raw = event.nativeEvent.data;
-
-        //     if (raw === 'openMediaPicker') {
-        //       props.onInfoPress?.();
-        //     }
-        //   }
-        // }}
 
         onMessage={(event) => {
           const message = event.nativeEvent.data;
@@ -535,30 +444,7 @@ window.addEventListener("scroll", function () {
             // ignore invalid JSON
           }
         }}
-        // onMessage={(event) => {
-        //   const message = event.nativeEvent.data;
 
-        //   // Handle END_REACHED first
-        //   if (message === "END_REACHED") {
-        //     if (onEndReached && !isLoading) {
-        //       onEndReached();
-        //     }
-        //     return;
-        //   }
-
-        //   // Try parsing JSON
-        //   try {
-        //     const data = JSON.parse(message);
-
-        //     if (data.type === 'toggle') {
-        //       props.onToggleSelection(data.id, data.questionNum);
-        //     }
-        //   } catch (e) {
-        //     if (message === 'openMediaPicker') {
-        //       props.onInfoPress?.();
-        //     }
-        //   }
-        // }}
         javaScriptEnabled
         domStorageEnabled
         androidLayerType="hardware"
@@ -574,73 +460,4 @@ window.addEventListener("scroll", function () {
   );
 });
 
-export default MathRenderer;
-
-const styles = StyleSheet.create({
-  statusIcon: {
-    width: moderateScale(20),
-    height: moderateScale(20),
-    borderRadius: moderateScale(10),
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: moderateScale(2),
-  },
-  correctIcon: {
-    backgroundColor: '#4CAF50',
-  },
-  incorrectIcon: {
-    backgroundColor: '#F44336',
-  },
-})
-//  function toggleCard(id) {
-//       window.ReactNativeWebView.postMessage(id);
-//     }
-
-//  window.onload = updateLayout;
-//     setTimeout(updateLayout, 500);
-
-/* <script>
-    // Essential for the "No Jump" selection
-    window.updateCardUI = function(id, isSelected) {
-      const el = document.getElementById('card-' + id);
-      if (el) {
-        if (isSelected) el.classList.add('selected');
-        else el.classList.remove('selected');
-      }
-    };
-
-
-
-    // Updated to match your new onMessage logic
- function toggleCard(id, questionNum) {
-  window.ReactNativeWebView.postMessage(
-    JSON.stringify({
-      type: 'toggle',
-      id: id,
-      questionNum: questionNum
-    })
-  );
-}
-    function updateLayout() {
-      renderMathInElement(document.getElementById('render-area'), {
-        delimiters: [
-          {left: '$$', right: '$$', display: true},
-          {left: '\\\\[', right: '\\\\]', display: true},
-          {left: '\\\\\\(', right: '\\\\\\)', display: false},
-          {left: '\\\\(', right: '\\\\)', display: false},
-          {left: '$', right: '$', display: false}
-        ],
-        throwOnError: false
-      });
-    }
-      /* scroll end api call */
-//   window.onscroll = function () {
-//     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 10) {
-//       window.ReactNativeWebView.postMessage("END_REACHED");
-//     }
-//   };
-//   /* scroll end api call */
-//   window.onload = updateLayout;
-//   setTimeout(updateLayout, 500);
-//   </script > */
-// }
+export default MathRendererForQsDetials;
