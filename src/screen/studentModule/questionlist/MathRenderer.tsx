@@ -1400,10 +1400,11 @@
 // export default MathRenderer;
 
 import React, { forwardRef, useMemo } from 'react';
-import { ActivityIndicator, useWindowDimensions, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, useWindowDimensions, View } from 'react-native';
 import WebView from 'react-native-webview';
-import { Colors, Fonts } from '../../../../../theme';
-import { moderateScale } from '../../../../../utils/responsiveSize';
+import { Colors, Fonts } from '../../../theme';
+import { moderateScale } from '../../../utils/responsiveSize';
+import IconIonicons from 'react-native-vector-icons/Ionicons';
 
 // Fixed the Ref signature and types
 interface MathRendererProps {
@@ -1414,13 +1415,13 @@ interface MathRendererProps {
   isLoading: boolean;
   onEndReached: () => void;
   onScrollDirection?: (direction: "up" | "down") => void;
-  bgColor: string
+
+  answerStatus?: 'correct' | 'incorrect' | 'unanswered';
 }
 
 const MathRenderer = forwardRef<WebView, MathRendererProps>((props, ref) => {
-  const { content, onToggleSelection, isLoading, webViewRef, onEndReached, onScrollDirection, bgColor } = props;
+  const { content, onToggleSelection, isLoading, webViewRef, onEndReached, onScrollDirection, answerStatus } = props;
   const { width, height } = useWindowDimensions();
-
   const html = useMemo(() => `
 <!DOCTYPE html>
 <html>
@@ -1501,15 +1502,15 @@ const MathRenderer = forwardRef<WebView, MathRendererProps>((props, ref) => {
 }
 
 body { 
-        background-color: ${bgColor} !important;
+        background-color: #ffffff ; 
         color: white; 
         font-family: 'Inter', sans-serif;
-        margin: 0;
-       padding: 0;
+          margin: 0;
+    padding: 0;
       }
     .card {
-background-color: ${bgColor} !important;   
-   padding: 5px; 
+      background-color: #fff !important;; 
+      padding: 5px; 
       display: flex; 
       flex-direction: row;
       position: relative; margin: 4px 2px;
@@ -1526,27 +1527,11 @@ background-color: ${bgColor} !important;
 font-weight: 600;
 color:#000
 }    
-    /* Selection Highlight */
-    .card.selected { background-color: #e3f2fd !important; }
 
       .checkbox-container {
         margin-right: 4px; display: flex; align-items: center; padding-top: 4px;
      flex-direction: column;
       }
-      
-    .custom-checkbox {
-      width: 15px; height: 15px; border: 2px solid #cbd5e1; border-radius: 4px;
-      display: flex; align-items: center; justify-content: center; background: white;
-    }
-
-    .selected .custom-checkbox {
-      background-color: ${Colors.primaryColor};
-      border-color: ${Colors.primaryColor};
-    }
-
-    .selected .custom-checkbox::after {
-      content: '✓'; color: white; font-size: 14px;
-    }
 
     .content-container { flex: 1; overflow-x: auto; }
 
@@ -1598,9 +1583,10 @@ color:#000
   display: flex;
   align-items: center;
   justify-content: center;
+
   border-radius: 50%;
   boder : 1px;
-  background-color:${Colors.blackThird}
+  background-color:#6c798e
 }
 .option-text {
   font-size: ${moderateScale(13)}px;
@@ -1656,6 +1642,56 @@ color:#000
 .qs-option-text[data-status="incorrect"] {
   color: #e74c3c !important; /* Red */
 }
+
+
+/* Inside MathRenderer's <style> block */
+
+.card {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start; /* Ensures top alignment */
+  padding: 12px;
+  background-color: #fff;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+
+.checkbox-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 12px;
+  min-width: 30px;
+}
+
+.status-icon-badge {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 6px;
+  color: white;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.correct-bg { background-color: #4CAF50 !important; }
+.incorrect-bg { background-color: #F44336 !important; }
+
+.questionnptext {
+  font-size: 15px;
+  color: #000;
+}
+
+.qs-text {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.5;
+}
+
+/*above*/
     .answer-key {
   display: flex;
   flex-direction: row; 
@@ -1794,17 +1830,12 @@ window.addEventListener("scroll", function () {
   `, [content]);
 
   return (
-    <View style={{
-      flex: 1, backgroundColor: bgColor
-
-    }}>
+    <View style={{ flex: 1 }}>
       <WebView
         ref={ref}
         originWhitelist={['*']}
         source={{ html }}
-        opaque={false}      // Add this for Android
-        style={{ flex: 1, backgroundColor: bgColor }}
-        containerStyle={{ backgroundColor: bgColor }}
+        style={{ flex: 1, backgroundColor: Colors.white }}
         // onMessage={(event) => onToggleSelection(event.nativeEvent.data)}
         //     onMessage={(event) => {
         //   const data = event.nativeEvent.data;
@@ -1929,8 +1960,6 @@ window.addEventListener("scroll", function () {
         //     }
         //   }
         // }}
-
-
         javaScriptEnabled
         domStorageEnabled
         androidLayerType="hardware"
@@ -1948,6 +1977,22 @@ window.addEventListener("scroll", function () {
 
 export default MathRenderer;
 
+const styles = StyleSheet.create({
+  statusIcon: {
+    width: moderateScale(20),
+    height: moderateScale(20),
+    borderRadius: moderateScale(10),
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: moderateScale(2),
+  },
+  correctIcon: {
+    backgroundColor: '#4CAF50',
+  },
+  incorrectIcon: {
+    backgroundColor: '#F44336',
+  },
+})
 //  function toggleCard(id) {
 //       window.ReactNativeWebView.postMessage(id);
 //     }

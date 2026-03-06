@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     },
     cancelBtn: {
         width: scale(120),
-        height: verticalScale(42),
+        height: verticalScale(39),
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: moderateScale(4),

@@ -1004,831 +1004,831 @@
 // export default memo(QuestionListComponent);
 
 
-// import React, { memo, useCallback, useMemo, useState, useEffect } from 'react';
-// import {
-//   View,
-//   Text,
-//   FlatList,
-//   StyleSheet,
-//   Image,
-//   Dimensions,
-//   Pressable,
-// } from 'react-native';
-// import Icon from 'react-native-vector-icons/MaterialIcons';
-// import IconIonicons from 'react-native-vector-icons/Ionicons';
-// import MathJax from 'react-native-mathjax';
-// import { Colors, Fonts } from '../../../../theme';
-// import { moderateScale, verticalScale } from '../../../../utils/responsiveSize';
-// import { useNavigation, useFocusEffect } from '@react-navigation/native';
-// import { localStorage } from '../../../../storage/storage';
-
-// // MathJax configuration
-// const mathJaxOptions = {
-//   messageStyle: 'none',
-//   extensions: ['tex2jax.js'],
-//   jax: ['input/TeX', 'output/HTML-CSS'],
-//   tex2jax: {
-//     inlineMath: [['$', '$'], ['\\(', '\\)']],
-//     displayMath: [['$$', '$$'], ['\\[', '\\]']],
-//     processEscapes: true,
-//   },
-//   'HTML-CSS': {
-//     scale: 100,
-//     linebreaks: { automatic: true }
-//   },
-//   TeX: {
-//     extensions: ['AMSmath.js', 'AMSsymbols.js', 'noErrors.js', 'noUndefined.js']
-//   }
-// }
-
-// export type Question = {
-//   question_id: string;
-//   question_text: string;
-//   question_type: string;
-//   option_a: string;
-//   option_b: string;
-//   option_c: string;
-//   option_d: string;
-//   correct_option: string;
-//   explanation: string;
-//   board_name: string;
-//   class_name: string;
-//   subject_name: string;
-//   book_title: string | null;
-//   dlevel_name: string;
-//   medium_name: string;
-//   question_marks: number | null;
-//   question_chapter: string;
-//   question_practice: string;
-//   question_subtopic: string | null;
-// };
-
-// type Props = {
-//   selectCheck: 'Options' | 'Solutions';
-//   selectedMap: Record<string, boolean>;
-//   setSelectedMap: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
-//   questionsData: Question[];
-//   currentPage: number,
-//   limit: number;
-
-//   correctAnswers?: string[];
-//   incorrectAnswers?: string[];
-// };
-
-// // Helper to check if text contains math expressions
-// const containsMath = (text: string): boolean => {
-//   if (!text) return false;
-//   return /(\$|\\\(|\\\[|\\frac|\\sqrt|\^|_)/.test(text);
-// };
-
-// // Helper to extract base64 images from HTML
-// const extractImagesFromHtml = (html: string): { text: string; images: string[] } => {
-//   if (!html) return { text: html || '', images: [] };
-
-//   const imgRegex = /<img[^>]+src="data:image\/[^;]+;base64,([^"]+)"[^>]*>/g;
-//   const images: string[] = [];
-//   let text = html;
-//   let match;
-
-//   while ((match = imgRegex.exec(html)) !== null) {
-//     images.push(match[1]);
-//     text = text.replace(match[0], '');
-//   }
-
-//   text = text
-//     .replace(/<br\s*\/?>\s*<br\s*\/?>/gi, '\n\n')
-//     .replace(/<br\s*\/?>/gi, ' ')
-//     .replace(/&lt;/g, '<')
-//     .replace(/&gt;/g, '>')
-//     .replace(/&amp;/g, '&')
-//     .replace(/&nbsp;/g, ' ')
-//     .replace(/<[^>]*>/g, '')
-//     .trim();
-
-//   return { text, images };
-// };
-
-// // Memoized Question Content Component
-// export const QuestionContent = memo(({
-//   text,
-//   images,
-//   isSelected
-// }: {
-//   text: string;
-//   images: string[];
-//   isSelected: boolean;
-// }) => {
-//   const cleanText = useMemo(() => {
-//     return (text || '')
-//       .replace(/&lt;/g, '<')
-//       .replace(/&gt;/g, '>')
-//       .replace(/&amp;/g, '&')
-//       .replace(/&nbsp;/g, ' ')
-//       .replace(/<[^>]*>/g, '');
-//   }, [text]);
-
-//   const hasMath = containsMath(cleanText);
-//   const hasText = cleanText.trim().length > 0;
-//   const hasImages = images.length > 0;
-
-//   const htmlContent = `
-// <!DOCTYPE html>
-// <html>
-// <head>
-// <meta name="viewport" content="width=device-width, initial-scale=1.0">
-// <style>
-//   body {
-//     margin: 0 !important;
-//     padding: 0 !important;
-//     font-size: ${moderateScale(12)}px;
-//     color: #000;
-//     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-//     line-height: ${moderateScale(18)}px;
-//   }
-//   p, div {
-//     margin: 0 !important;
-//     padding: 0 !important;
-//   }
-//   .MathJax_Display {
-//     margin: 0 !important;
-//   }
-// </style>
-// </head>
-// <body>
-// ${cleanText}
-// </body>
-// </html>
-// `
-//   return (
-//     <View style={styles.questionContent}>
-//       {hasText && (
-//         <View style={styles.mathJaxWrapper}>
-//           {hasMath ? (
-//             <MathJax
-//               mathJaxOptions={mathJaxOptions}
-//               html={htmlContent}
-//               style={[styles.questionMathJax, isSelected && styles.selectedText, {
-//                 marginTop: 0, paddingVertical: 0,
-//               }]}
-//             />
-//           ) : (
-//             <Text style={[styles.questionText, isSelected && styles.selectedText]}>
-//               {cleanText}
-//             </Text>
-//           )}
-//         </View>
-//       )}
-
-//       {hasImages && (
-//         <View style={[
-//           styles.imagesContainer,
-//           hasText && styles.imagesWithText,
-//           isSelected && { backgroundColor: '#EBF6FF' }
-//         ]}>
-//           {images.map((base64, index) => (
-//             <Image
-//               key={`question-img-${index}`}
-//               source={{ uri: `data:image/png;base64,${base64}` }}
-//               style={styles.questionImage}
-//               resizeMode="contain"
-//             />
-//           ))}
-//         </View>
-//       )}
-//     </View>
-//   );
-// });
-
-// QuestionContent.displayName = 'QuestionContent';
-
-// const QuestionItem = memo(({
-//   item,
-//   index,
-//   isSelected,
-//   selectCheck,
-//   onToggle,
-//   extractImages,
-//   listottomLineHide,
-//   currentPage,
-//   limit,
-//   answerStatus,
-// }: {
-//   item: Question;
-//   index: number;
-//   isSelected: boolean;
-//   selectCheck: 'Options' | 'Solutions';
-//   onToggle: (id: string) => void;
-//   extractImages: (html: string) => string[];
-//   listottomLineHide: any,
-//   currentPage: number;
-//   limit: number;
-//   answerStatus?: 'correct' | 'incorrect' | 'unanswered';
-// }) => {
-//   const images = extractImages(item.question_text);
-//   const questionTextWithoutImages = (item.question_text || '').replace(/<img[^>]*>/g, '');
-//   const questionNumber = (currentPage - 1) * limit + index + 1;
-
-//   // Render status icon based on answer status
-//   const renderStatusIcon = () => {
-//     if (answerStatus === 'correct') {
-//       return (
-//         <View style={[styles.statusIcon, styles.correctIcon]}>
-//           <IconIonicons name="checkmark" size={moderateScale(12)} color={Colors.white} />
-//         </View>
-//       );
-//     } else if (answerStatus === 'incorrect') {
-//       return (
-//         <View style={[styles.statusIcon, styles.incorrectIcon]}>
-//           <IconIonicons name="close" size={moderateScale(12)} color={Colors.white} />
-//         </View>
-//       );
-//     }
-//     return null;
-//   };
-
-//   return (
-//     <Pressable
-//       style={[
-//         styles.cardMainBox,
-//         isSelected && styles.cardSelected,
-//         { flexDirection: "row", paddingLeft: moderateScale(3) }
-//       ]}
-//       onPress={() => onToggle(item.question_id)}
-//     >
-//       <View style={styles.questionNumberContainer}>
-//         <Text style={styles.questionNumber}>
-//           {questionNumber}.
-//         </Text>
-//         {renderStatusIcon()}
-//       </View>
-//       <View style={[styles.card, isSelected && styles.cardSelected]}>
-//         <QuestionContent
-//           text={questionTextWithoutImages}
-//           images={images}
-//           isSelected={isSelected}
-//         />
-//       </View>
-//     </Pressable>
-//   );
-// });
-
-// // Main Component
-// const QuestionListComponent: React.FC<Props> = ({
-//   selectCheck,
-//   selectedMap,
-//   setSelectedMap,
-//   questionsData,
-//   currentPage,
-//   limit,
-//   correctAnswers = [],  // Add with default
-//   incorrectAnswers = [], // Add with default
-// }) => {
-//   const navigation = useNavigation();
-//   const [answerStats, setAnswerStats] = useState({
-//     correct: [] as string[],
-//     incorrect: [] as string[]
-//   });
-
-//   // Load answer stats from localStorage when screen focuses
-//   useFocusEffect(
-//     useCallback(() => {
-//       loadAnswerStats();
-//     }, [])
-//   );
-
-//   const loadAnswerStats = async () => {
-//     try {
-//       const saved = await localStorage.getItem('answerStats');
-//       if (saved) {
-//         setAnswerStats(JSON.parse(saved));
-//       }
-//     } catch (error) {
-//       console.error('Error loading answer stats:', error);
-//     }
-//   };
-
-//   const extractBase64Images = useCallback((html: string): string[] => {
-//     const imgRegex = /<img[^>]+src="data:image\/[^;]+;base64,([^"]+)"[^>]*>/g;
-//     const images: string[] = [];
-//     let match;
-//     while ((match = imgRegex.exec(html || '')) !== null) {
-//       images.push(match[1]);
-//     }
-//     return images;
-//   }, []);
-
-//   // const getQuestionStatus = useCallback((questionId: string): 'correct' | 'incorrect' | 'unanswered' => {
-//   //   if (answerStats.correct.includes(questionId)) return 'correct';
-//   //   if (answerStats.incorrect.includes(questionId)) return 'incorrect';
-//   //   return 'unanswered';
-//   // }, [answerStats]);
-
-//   // Determine status for each question
-//   const getQuestionStatus = useCallback((questionId: string) => {
-//     if (correctAnswers.includes(questionId)) return 'correct';
-//     if (incorrectAnswers.includes(questionId)) return 'incorrect';
-//     return 'unanswered';
-//   }, [correctAnswers, incorrectAnswers]);
-
-
-// // Render icons in QuestionItem
-// const renderStatusIcon = () => {
-//     if (answerStatus === 'correct') {
-//         return (
-//             <View style={[styles.statusIcon, styles.correctIcon]}>
-//                 <IconIonicons name="checkmark" size={12} color={Colors.white} />
-//             </View>
-//         );
-//     } else if (answerStatus === 'incorrect') {
-//         return (
-//             <View style={[styles.statusIcon, styles.incorrectIcon]}>
-//                 <IconIonicons name="close" size={12} color={Colors.white} />
-//             </View>
-//         );
-//     }
-//     return null;
-// };
-//   const toggleSelect = useCallback((id: string) => {
-//     setSelectedMap(prev => {
-//       const newMap = {};
-//       if (!prev[id]) {
-//         newMap[id] = true;
-//       }
-//       return newMap;
-//     });
-
-//     navigation.navigate('OpenQuestionScreen', {
-//       questions: questionsData,
-//       currentIndex: questionsData.findIndex(q => q.question_id === id),
-//       chapterName: 'Questions',
-//     });
-//   }, [setSelectedMap, navigation, questionsData]);
-
-//   // Determine status for each question
-//   // const getQuestionStatus = useCallback((questionId: string) => {
-//   //   if (correctAnswers.includes(questionId)) return 'correct';
-//   //   if (incorrectAnswers.includes(questionId)) return 'incorrect';
-//   //   return 'unanswered';
-//   // }, [correctAnswers, incorrectAnswers]);
-
-//   const renderItem = useCallback(({ item, index }: { item: Question; index: number }) => {
-//     const isSelected = !!selectedMap[item.question_id];
-//     const status = getQuestionStatus(item.question_id);
-//     let langthList = index === questionsData?.length - 1;
-
-//     return (
-//       <QuestionItem
-//         item={item}
-//         index={index}
-//         isSelected={isSelected}
-//         selectCheck={selectCheck}
-//         onToggle={toggleSelect}
-//         extractImages={extractBase64Images}
-//         listottomLineHide={langthList}
-//         currentPage={currentPage}
-//         limit={limit}
-//         answerStatus={status}
-//       />
-//     );
-//   }, [selectedMap, selectCheck, toggleSelect, extractBase64Images, currentPage, limit, getQuestionStatus, questionsData]);
-
-//   const keyExtractor = useCallback((item: Question) => item.question_id, []);
-
-//   const extraData = useMemo(() => ({
-//     selectedMap,
-//     selectCheck,
-//     answerStats
-//   }), [selectedMap, selectCheck, answerStats]);
-
-//   if (!questionsData || questionsData.length === 0) {
-//     return (
-//       <View style={styles.emptyContainer}>
-//         <Text style={styles.emptyText}>No questions available</Text>
-//       </View>
-//     );
-//   }
-
-//   return (
-//     <View style={styles.container}>
-//       <FlatList
-//         data={questionsData}
-//         keyExtractor={keyExtractor}
-//         renderItem={renderItem}
-//         extraData={extraData}
-//         initialNumToRender={3}
-//         maxToRenderPerBatch={6}
-//         windowSize={21}
-//         removeClippedSubviews={false}
-//         showsVerticalScrollIndicator={false}
-//         contentContainerStyle={styles.listContent}
-//       />
-//     </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#f9fafb',
-//     marginHorizontal: 0,
-//   },
-//   emptyContainer: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     paddingVertical: moderateScale(100),
-//   },
-//   emptyText: {
-//     fontSize: moderateScale(16),
-//     fontFamily: Fonts.InstrumentSansMedium,
-//     color: Colors.gray,
-//   },
-//   listContent: {
-//     paddingVertical: moderateScale(8),
-//   },
-//   card: {
-//     backgroundColor: '#f9fafb',
-//     flex: 1,
-//     paddingBottom: moderateScale(6),
-//     paddingTop: moderateScale(6),
-//     paddingHorizontal: moderateScale(12),
-//   },
-//   cardSelected: {
-//     backgroundColor: '#EBF6FF'
-//   },
-//   questionNumber: {
-//     fontSize: moderateScale(12),
-//     fontFamily: Fonts.InstrumentSansMedium,
-//     color: Colors.black,
-//   },
-//   questionContent: {
-//     flex: 1,
-//     marginBottom: moderateScale(10),
-//   },
-//   mathJaxWrapper: {
-//     paddingVertical: moderateScale(1),
-//     marginBottom: moderateScale(8)
-//   },
-//   questionText: {
-//     fontSize: moderateScale(14),
-//     fontFamily: Fonts.InstrumentSansMedium,
-//     color: Colors.black,
-//     marginTop: moderateScale(1),
-//   },
-//   questionMathJax: {
-//     fontSize: moderateScale(12),
-//     fontFamily: Fonts.InstrumentSansMedium,
-//     color: Colors.black,
-//     alignSelf: 'stretch',
-//     minHeight: moderateScale(20),
-//   },
-//   selectedText: {
-//     backgroundColor: 'transparent',
-//   },
-//   imagesWithText: {},
-//   questionImage: {
-//     width: '100%',
-//     height: moderateScale(98),
-//     maxHeight: verticalScale(250),
-//     borderRadius: moderateScale(2),
-//     backgroundColor: Colors?.white,
-//     alignSelf: 'center',
-//     resizeMode: "contain",
-//   },
-//   cardMainBox: {
-//     elevation: 30,
-//     marginVertical: moderateScale(1),
-//     shadowColor: 'rgba(0, 140, 227, 1)',
-//     backgroundColor: '#f9fafb'
-//   },
-//   questionNumberContainer: {
-//     alignItems: 'center',
-//     flexDirection: "column",
-//     marginTop: moderateScale(12),
-//     paddingLeft: moderateScale(4),
-//     width: moderateScale(40),
-//   },
-//   statusIcon: {
-//     width: moderateScale(20),
-//     height: moderateScale(20),
-//     borderRadius: moderateScale(10),
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     marginTop: moderateScale(2),
-//   },
-//   correctIcon: {
-//     backgroundColor: '#4CAF50',
-//   },
-//   incorrectIcon: {
-//     backgroundColor: '#F44336',
-//   },
-//   // Keep all your existing styles below...
-//   // I've omitted them for brevity but keep them all
-//   optionContent: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     borderRadius: moderateScale(4),
-//     paddingHorizontal: moderateScale(8),
-//     paddingVertical: moderateScale(1),
-//   },
-//   optionLabelContainer: {
-//     width: moderateScale(26),
-//     height: moderateScale(26),
-//     borderRadius: moderateScale(16),
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//     backgroundColor: Colors?.lightThemeBlue,
-//   },
-//   optionImagesContainer: {
-//     flex: 1,
-//     flexDirection: 'row',
-//     flexWrap: 'wrap',
-//     marginLeft: moderateScale(10),
-//   },
-//   optionImage: {
-//     width: moderateScale(130),
-//     height: moderateScale(90),
-//     borderRadius: moderateScale(6),
-//   },
-//   // ... rest of your styles remain exactly the same
-
-
-// });
-
-// export default memo(QuestionListComponent);
-
-import React, { memo, useCallback, useMemo } from "react";
+import React, { memo, useCallback, useMemo, useState, useEffect } from 'react';
 import {
   View,
   Text,
   FlatList,
-  Pressable,
   StyleSheet,
+  Image,
   Dimensions,
-} from "react-native";
-import RenderHTML from "react-native-render-html";
-import FastImage from "react-native-fast-image";
-import { useWindowDimensions } from "react-native";
+  Pressable,
+} from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import IconIonicons from 'react-native-vector-icons/Ionicons';
+import MathJax from 'react-native-mathjax';
+import { Colors, Fonts } from '../../../../theme';
+import { moderateScale, verticalScale } from '../../../../utils/responsiveSize';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { localStorage } from '../../../../storage/storage';
 
-const { width } = Dimensions.get("window");
+// MathJax configuration
+const mathJaxOptions = {
+  messageStyle: 'none',
+  extensions: ['tex2jax.js'],
+  jax: ['input/TeX', 'output/HTML-CSS'],
+  tex2jax: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true,
+  },
+  'HTML-CSS': {
+    scale: 100,
+    linebreaks: { automatic: true }
+  },
+  TeX: {
+    extensions: ['AMSmath.js', 'AMSsymbols.js', 'noErrors.js', 'noUndefined.js']
+  }
+}
 
-const QuestionScreen = ({ data }: any) => {
-  
-  const renderItem = useCallback(({ item, index }: any) => {
-    return (
-      <View style={styles.card}>
-        <Text style={styles.questionNumber}>
-          Q{index + 1}.
-        </Text>
+export type Question = {
+  question_id: string;
+  question_text: string;
+  question_type: string;
+  option_a: string;
+  option_b: string;
+  option_c: string;
+  option_d: string;
+  correct_option: string;
+  explanation: string;
+  board_name: string;
+  class_name: string;
+  subject_name: string;
+  book_title: string | null;
+  dlevel_name: string;
+  medium_name: string;
+  question_marks: number | null;
+  question_chapter: string;
+  question_practice: string;
+  question_subtopic: string | null;
+};
 
-        <QuestionContent
-          text={item.questionText}
-          images={item.questionImages}
-        />
+type Props = {
+  selectCheck: 'Options' | 'Solutions';
+  selectedMap: Record<string, boolean>;
+  setSelectedMap: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+  questionsData: Question[];
+  currentPage: number,
+  limit: number;
 
-        {item.options?.map((opt: any, i: number) => (
-          <OptionItem
-            key={i}
-            optionText={opt.text}
-            images={opt.images}
-            label={String.fromCharCode(65 + i)}
-          />
-        ))}
+  correctAnswers?: string[];
+  incorrectAnswers?: string[];
+};
 
-        {item.solution && (
-          <SolutionView
-            explanation={item.solution}
-            correctOption={item.correctOption}
-          />
-        )}
-      </View>
-    );
-  }, []);
+// Helper to check if text contains math expressions
+const containsMath = (text: string): boolean => {
+  if (!text) return false;
+  return /(\$|\\\(|\\\[|\\frac|\\sqrt|\^|_)/.test(text);
+};
+
+// Helper to extract base64 images from HTML
+const extractImagesFromHtml = (html: string): { text: string; images: string[] } => {
+  if (!html) return { text: html || '', images: [] };
+
+  const imgRegex = /<img[^>]+src="data:image\/[^;]+;base64,([^"]+)"[^>]*>/g;
+  const images: string[] = [];
+  let text = html;
+  let match;
+
+  while ((match = imgRegex.exec(html)) !== null) {
+    images.push(match[1]);
+    text = text.replace(match[0], '');
+  }
+
+  text = text
+    .replace(/<br\s*\/?>\s*<br\s*\/?>/gi, '\n\n')
+    .replace(/<br\s*\/?>/gi, ' ')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/<[^>]*>/g, '')
+    .trim();
+
+  return { text, images };
+};
+
+// Memoized Question Content Component
+export const QuestionContent = memo(({
+  text,
+  images,
+  isSelected
+}: {
+  text: string;
+  images: string[];
+  isSelected: boolean;
+}) => {
+  const cleanText = useMemo(() => {
+    return (text || '')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&amp;/g, '&')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/<[^>]*>/g, '');
+  }, [text]);
+
+  const hasMath = containsMath(cleanText);
+  const hasText = cleanText.trim().length > 0;
+  const hasImages = images.length > 0;
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: ${moderateScale(12)}px;
+    color: #000;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: ${moderateScale(18)}px;
+  }
+  p, div {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .MathJax_Display {
+    margin: 0 !important;
+  }
+</style>
+</head>
+<body>
+${cleanText}
+</body>
+</html>
+`
+  return (
+    <View style={styles.questionContent}>
+      {hasText && (
+        <View style={styles.mathJaxWrapper}>
+          {hasMath ? (
+            <MathJax
+              mathJaxOptions={mathJaxOptions}
+              html={htmlContent}
+              style={[styles.questionMathJax, isSelected && styles.selectedText, {
+                marginTop: 0, paddingVertical: 0,
+              }]}
+            />
+          ) : (
+            <Text style={[styles.questionText, isSelected && styles.selectedText]}>
+              {cleanText}
+            </Text>
+          )}
+        </View>
+      )}
+
+      {hasImages && (
+        <View style={[
+          styles.imagesContainer,
+          hasText && styles.imagesWithText,
+          isSelected && { backgroundColor: '#EBF6FF' }
+        ]}>
+          {images.map((base64, index) => (
+            <Image
+              key={`question-img-${index}`}
+              source={{ uri: `data:image/png;base64,${base64}` }}
+              style={styles.questionImage}
+              resizeMode="contain"
+            />
+          ))}
+        </View>
+      )}
+    </View>
+  );
+});
+
+QuestionContent.displayName = 'QuestionContent';
+
+const QuestionItem = memo(({
+  item,
+  index,
+  isSelected,
+  selectCheck,
+  onToggle,
+  extractImages,
+  listottomLineHide,
+  currentPage,
+  limit,
+  answerStatus,
+}: {
+  item: Question;
+  index: number;
+  isSelected: boolean;
+  selectCheck: 'Options' | 'Solutions';
+  onToggle: (id: string) => void;
+  extractImages: (html: string) => string[];
+  listottomLineHide: any,
+  currentPage: number;
+  limit: number;
+  answerStatus?: 'correct' | 'incorrect' | 'unanswered';
+}) => {
+  const images = extractImages(item.question_text);
+  const questionTextWithoutImages = (item.question_text || '').replace(/<img[^>]*>/g, '');
+  const questionNumber = (currentPage - 1) * limit + index + 1;
+
+  // Render status icon based on answer status
+  const renderStatusIcon = () => {
+    if (answerStatus === 'correct') {
+      return (
+        <View style={[styles.statusIcon, styles.correctIcon]}>
+          <IconIonicons name="checkmark" size={moderateScale(12)} color={Colors.white} />
+        </View>
+      );
+    } else if (answerStatus === 'incorrect') {
+      return (
+        <View style={[styles.statusIcon, styles.incorrectIcon]}>
+          <IconIonicons name="close" size={moderateScale(12)} color={Colors.white} />
+        </View>
+      );
+    }
+    return null;
+  };
 
   return (
-    <FlatList
-      data={data}
-      keyExtractor={(_, index) => index.toString()}
-      renderItem={renderItem}
-      initialNumToRender={5}
-      maxToRenderPerBatch={5}
-      windowSize={7}
-      removeClippedSubviews
-    />
+    <Pressable
+      style={[
+        styles.cardMainBox,
+        isSelected && styles.cardSelected,
+        { flexDirection: "row", paddingLeft: moderateScale(3) }
+      ]}
+      onPress={() => onToggle(item.question_id)}
+    >
+      <View style={styles.questionNumberContainer}>
+        <Text style={styles.questionNumber}>
+          {questionNumber}.
+        </Text>
+        {renderStatusIcon()}
+      </View>
+      <View style={[styles.card, isSelected && styles.cardSelected]}>
+        <QuestionContent
+          text={questionTextWithoutImages}
+          images={images}
+          isSelected={isSelected}
+        />
+      </View>
+    </Pressable>
+  );
+});
+
+// Main Component
+const QuestionListComponent: React.FC<Props> = ({
+  selectCheck,
+  selectedMap,
+  setSelectedMap,
+  questionsData,
+  currentPage,
+  limit,
+  correctAnswers = [],  // Add with default
+  incorrectAnswers = [], // Add with default
+}) => {
+  const navigation = useNavigation();
+  const [answerStats, setAnswerStats] = useState({
+    correct: [] as string[],
+    incorrect: [] as string[]
+  });
+
+  // Load answer stats from localStorage when screen focuses
+  useFocusEffect(
+    useCallback(() => {
+      loadAnswerStats();
+    }, [])
+  );
+
+  const loadAnswerStats = async () => {
+    try {
+      const saved = await localStorage.getItem('answerStats');
+      if (saved) {
+        setAnswerStats(JSON.parse(saved));
+      }
+    } catch (error) {
+      console.error('Error loading answer stats:', error);
+    }
+  };
+
+  const extractBase64Images = useCallback((html: string): string[] => {
+    const imgRegex = /<img[^>]+src="data:image\/[^;]+;base64,([^"]+)"[^>]*>/g;
+    const images: string[] = [];
+    let match;
+    while ((match = imgRegex.exec(html || '')) !== null) {
+      images.push(match[1]);
+    }
+    return images;
+  }, []);
+
+  // const getQuestionStatus = useCallback((questionId: string): 'correct' | 'incorrect' | 'unanswered' => {
+  //   if (answerStats.correct.includes(questionId)) return 'correct';
+  //   if (answerStats.incorrect.includes(questionId)) return 'incorrect';
+  //   return 'unanswered';
+  // }, [answerStats]);
+
+  // Determine status for each question
+  const getQuestionStatus = useCallback((questionId: string) => {
+    if (correctAnswers.includes(questionId)) return 'correct';
+    if (incorrectAnswers.includes(questionId)) return 'incorrect';
+    return 'unanswered';
+  }, [correctAnswers, incorrectAnswers]);
+
+
+// Render icons in QuestionItem
+const renderStatusIcon = () => {
+    if (answerStatus === 'correct') {
+        return (
+            <View style={[styles.statusIcon, styles.correctIcon]}>
+                <IconIonicons name="checkmark" size={12} color={Colors.white} />
+            </View>
+        );
+    } else if (answerStatus === 'incorrect') {
+        return (
+            <View style={[styles.statusIcon, styles.incorrectIcon]}>
+                <IconIonicons name="close" size={12} color={Colors.white} />
+            </View>
+        );
+    }
+    return null;
+};
+  const toggleSelect = useCallback((id: string) => {
+    setSelectedMap(prev => {
+      const newMap = {};
+      if (!prev[id]) {
+        newMap[id] = true;
+      }
+      return newMap;
+    });
+
+    navigation.navigate('OpenQuestionScreen', {
+      questions: questionsData,
+      currentIndex: questionsData.findIndex(q => q.question_id === id),
+      chapterName: 'Questions',
+    });
+  }, [setSelectedMap, navigation, questionsData]);
+
+  // Determine status for each question
+  // const getQuestionStatus = useCallback((questionId: string) => {
+  //   if (correctAnswers.includes(questionId)) return 'correct';
+  //   if (incorrectAnswers.includes(questionId)) return 'incorrect';
+  //   return 'unanswered';
+  // }, [correctAnswers, incorrectAnswers]);
+
+  const renderItem = useCallback(({ item, index }: { item: Question; index: number }) => {
+    const isSelected = !!selectedMap[item.question_id];
+    const status = getQuestionStatus(item.question_id);
+    let langthList = index === questionsData?.length - 1;
+
+    return (
+      <QuestionItem
+        item={item}
+        index={index}
+        isSelected={isSelected}
+        selectCheck={selectCheck}
+        onToggle={toggleSelect}
+        extractImages={extractBase64Images}
+        listottomLineHide={langthList}
+        currentPage={currentPage}
+        limit={limit}
+        answerStatus={status}
+      />
+    );
+  }, [selectedMap, selectCheck, toggleSelect, extractBase64Images, currentPage, limit, getQuestionStatus, questionsData]);
+
+  const keyExtractor = useCallback((item: Question) => item.question_id, []);
+
+  const extraData = useMemo(() => ({
+    selectedMap,
+    selectCheck,
+    answerStats
+  }), [selectedMap, selectCheck, answerStats]);
+
+  if (!questionsData || questionsData.length === 0) {
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyText}>No questions available</Text>
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.container}>
+      <FlatList
+        data={questionsData}
+        keyExtractor={keyExtractor}
+        renderItem={renderItem}
+        extraData={extraData}
+        initialNumToRender={3}
+        maxToRenderPerBatch={6}
+        windowSize={21}
+        removeClippedSubviews={false}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.listContent}
+      />
+    </View>
   );
 };
 
-export default QuestionScreen;
-
-
-
-
-
-/* =========================
-   QUESTION CONTENT
-========================= */
-
-const QuestionContent = memo(
-  ({ text, images }: { text: string; images: string[] }) => {
-    const { width } = useWindowDimensions();
-
-    const htmlSource = useMemo(
-      () => ({
-        html: `
-          <div style="font-size:15px; line-height:22px;">
-            ${text}
-          </div>
-        `,
-      }),
-      [text]
-    );
-
-    return (
-      <View style={styles.questionContent}>
-        <RenderHTML
-          contentWidth={width}
-          source={htmlSource}
-        />
-
-        {images?.length > 0 && (
-          <View style={styles.imageContainer}>
-            {images.map((img, index) => (
-              <FastImage
-                key={index}
-                source={{ uri: `data:image/png;base64,${img}` }}
-                style={styles.image}
-                resizeMode={FastImage.resizeMode.contain}
-              />
-            ))}
-          </View>
-        )}
-      </View>
-    );
-  }
-);
-
-
-
-
-
-/* =========================
-   OPTION ITEM
-========================= */
-
-const OptionItem = memo(
-  ({
-    optionText,
-    images,
-    label,
-  }: {
-    optionText: string;
-    images: string[];
-    label: string;
-  }) => {
-    const htmlSource = useMemo(
-      () => ({
-        html: `
-          <div style="font-size:14px;">
-            ${optionText}
-          </div>
-        `,
-      }),
-      [optionText]
-    );
-
-    return (
-      <View style={styles.optionRow}>
-        <Text style={styles.optionLabel}>{label}.</Text>
-
-        <View style={styles.optionContent}>
-          <RenderHTML
-            contentWidth={width - 60}
-            source={htmlSource}
-          />
-
-          {images?.length > 0 &&
-            images.map((img, index) => (
-              <FastImage
-                key={index}
-                source={{ uri: `data:image/png;base64,${img}` }}
-                style={styles.optionImage}
-                resizeMode={FastImage.resizeMode.contain}
-              />
-            ))}
-        </View>
-      </View>
-    );
-  }
-);
-
-
-
-
-
-/* =========================
-   SOLUTION VIEW
-========================= */
-
-const SolutionView = memo(
-  ({
-    explanation,
-    correctOption,
-  }: {
-    explanation: string;
-    correctOption: string;
-  }) => {
-    const { width } = useWindowDimensions();
-
-    const htmlSource = useMemo(
-      () => ({
-        html: `
-          <div style="font-size:14px;">
-            ${explanation}
-          </div>
-        `,
-      }),
-      [explanation]
-    );
-
-    return (
-      <View style={styles.solutionBox}>
-        <Text style={styles.solutionTitle}>Solution :</Text>
-
-        <RenderHTML
-          contentWidth={width}
-          source={htmlSource}
-        />
-
-        <Text style={styles.answerText}>
-          <Text style={styles.answerLabel}>Answer: </Text>
-          Option {correctOption}
-        </Text>
-      </View>
-    );
-  }
-);
-
-
-
-
-
-/* =========================
-   STYLES
-========================= */
-
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f9fafb',
+    marginHorizontal: 0,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: moderateScale(100),
+  },
+  emptyText: {
+    fontSize: moderateScale(16),
+    fontFamily: Fonts.InstrumentSansMedium,
+    color: Colors.gray,
+  },
+  listContent: {
+    paddingVertical: moderateScale(8),
+  },
   card: {
-    padding: 15,
-    margin: 10,
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    elevation: 3,
+    backgroundColor: '#f9fafb',
+    flex: 1,
+    paddingBottom: moderateScale(6),
+    paddingTop: moderateScale(6),
+    paddingHorizontal: moderateScale(12),
+  },
+  cardSelected: {
+    backgroundColor: '#EBF6FF'
   },
   questionNumber: {
-    fontWeight: "bold",
-    marginBottom: 6,
+    fontSize: moderateScale(12),
+    fontFamily: Fonts.InstrumentSansMedium,
+    color: Colors.black,
   },
   questionContent: {
-    marginBottom: 10,
-  },
-  imageContainer: {
-    marginTop: 8,
-  },
-  image: {
-    width: "100%",
-    height: 150,
-    marginVertical: 5,
-  },
-  optionRow: {
-    flexDirection: "row",
-    marginVertical: 6,
-  },
-  optionLabel: {
-    fontWeight: "bold",
-    marginRight: 6,
-  },
-  optionContent: {
     flex: 1,
+    marginBottom: moderateScale(10),
+  },
+  mathJaxWrapper: {
+    paddingVertical: moderateScale(1),
+    marginBottom: moderateScale(8)
+  },
+  questionText: {
+    fontSize: moderateScale(14),
+    fontFamily: Fonts.InstrumentSansMedium,
+    color: Colors.black,
+    marginTop: moderateScale(1),
+  },
+  questionMathJax: {
+    fontSize: moderateScale(12),
+    fontFamily: Fonts.InstrumentSansMedium,
+    color: Colors.black,
+    alignSelf: 'stretch',
+    minHeight: moderateScale(20),
+  },
+  selectedText: {
+    backgroundColor: 'transparent',
+  },
+  imagesWithText: {},
+  questionImage: {
+    width: '100%',
+    height: moderateScale(98),
+    maxHeight: verticalScale(250),
+    borderRadius: moderateScale(2),
+    backgroundColor: Colors?.white,
+    alignSelf: 'center',
+    resizeMode: "contain",
+  },
+  cardMainBox: {
+    elevation: 30,
+    marginVertical: moderateScale(1),
+    shadowColor: 'rgba(0, 140, 227, 1)',
+    backgroundColor: '#f9fafb'
+  },
+  questionNumberContainer: {
+    alignItems: 'center',
+    flexDirection: "column",
+    marginTop: moderateScale(12),
+    paddingLeft: moderateScale(4),
+    width: moderateScale(40),
+  },
+  statusIcon: {
+    width: moderateScale(20),
+    height: moderateScale(20),
+    borderRadius: moderateScale(10),
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: moderateScale(2),
+  },
+  correctIcon: {
+    backgroundColor: '#4CAF50',
+  },
+  incorrectIcon: {
+    backgroundColor: '#F44336',
+  },
+  // Keep all your existing styles below...
+  // I've omitted them for brevity but keep them all
+  optionContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: moderateScale(4),
+    paddingHorizontal: moderateScale(8),
+    paddingVertical: moderateScale(1),
+  },
+  optionLabelContainer: {
+    width: moderateScale(26),
+    height: moderateScale(26),
+    borderRadius: moderateScale(16),
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors?.lightThemeBlue,
+  },
+  optionImagesContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginLeft: moderateScale(10),
   },
   optionImage: {
-    width: "100%",
-    height: 120,
-    marginTop: 5,
+    width: moderateScale(130),
+    height: moderateScale(90),
+    borderRadius: moderateScale(6),
   },
-  solutionBox: {
-    marginTop: 15,
-    padding: 10,
-    backgroundColor: "#f5f5f5",
-    borderRadius: 6,
-  },
-  solutionTitle: {
-    fontWeight: "bold",
-    marginBottom: 6,
-  },
-  answerText: {
-    marginTop: 8,
-  },
-  answerLabel: {
-    fontWeight: "bold",
-  },
+  // ... rest of your styles remain exactly the same
+
+
 });
+
+export default memo(QuestionListComponent);
+
+// import React, { memo, useCallback, useMemo } from "react";
+// import {
+//   View,
+//   Text,
+//   FlatList,
+//   Pressable,
+//   StyleSheet,
+//   Dimensions,
+// } from "react-native";
+// import RenderHTML from "react-native-render-html";
+// import FastImage from "react-native-fast-image";
+// import { useWindowDimensions } from "react-native";
+
+// const { width } = Dimensions.get("window");
+
+// const QuestionScreen = ({ data }: any) => {
+  
+//   const renderItem = useCallback(({ item, index }: any) => {
+//     return (
+//       <View style={styles.card}>
+//         <Text style={styles.questionNumber}>
+//           Q{index + 1}.
+//         </Text>
+
+//         <QuestionContent
+//           text={item.questionText}
+//           images={item.questionImages}
+//         />
+
+//         {item.options?.map((opt: any, i: number) => (
+//           <OptionItem
+//             key={i}
+//             optionText={opt.text}
+//             images={opt.images}
+//             label={String.fromCharCode(65 + i)}
+//           />
+//         ))}
+
+//         {item.solution && (
+//           <SolutionView
+//             explanation={item.solution}
+//             correctOption={item.correctOption}
+//           />
+//         )}
+//       </View>
+//     );
+//   }, []);
+
+//   return (
+//     <FlatList
+//       data={data}
+//       keyExtractor={(_, index) => index.toString()}
+//       renderItem={renderItem}
+//       initialNumToRender={5}
+//       maxToRenderPerBatch={5}
+//       windowSize={7}
+//       removeClippedSubviews
+//     />
+//   );
+// };
+
+// export default QuestionScreen;
+
+
+
+
+
+// /* =========================
+//    QUESTION CONTENT
+// ========================= */
+
+// const QuestionContent = memo(
+//   ({ text, images }: { text: string; images: string[] }) => {
+//     const { width } = useWindowDimensions();
+
+//     const htmlSource = useMemo(
+//       () => ({
+//         html: `
+//           <div style="font-size:15px; line-height:22px;">
+//             ${text}
+//           </div>
+//         `,
+//       }),
+//       [text]
+//     );
+
+//     return (
+//       <View style={styles.questionContent}>
+//         <RenderHTML
+//           contentWidth={width}
+//           source={htmlSource}
+//         />
+
+//         {images?.length > 0 && (
+//           <View style={styles.imageContainer}>
+//             {images.map((img, index) => (
+//               <FastImage
+//                 key={index}
+//                 source={{ uri: `data:image/png;base64,${img}` }}
+//                 style={styles.image}
+//                 resizeMode={FastImage.resizeMode.contain}
+//               />
+//             ))}
+//           </View>
+//         )}
+//       </View>
+//     );
+//   }
+// );
+
+
+
+
+
+// /* =========================
+//    OPTION ITEM
+// ========================= */
+
+// const OptionItem = memo(
+//   ({
+//     optionText,
+//     images,
+//     label,
+//   }: {
+//     optionText: string;
+//     images: string[];
+//     label: string;
+//   }) => {
+//     const htmlSource = useMemo(
+//       () => ({
+//         html: `
+//           <div style="font-size:14px;">
+//             ${optionText}
+//           </div>
+//         `,
+//       }),
+//       [optionText]
+//     );
+
+//     return (
+//       <View style={styles.optionRow}>
+//         <Text style={styles.optionLabel}>{label}.</Text>
+
+//         <View style={styles.optionContent}>
+//           <RenderHTML
+//             contentWidth={width - 60}
+//             source={htmlSource}
+//           />
+
+//           {images?.length > 0 &&
+//             images.map((img, index) => (
+//               <FastImage
+//                 key={index}
+//                 source={{ uri: `data:image/png;base64,${img}` }}
+//                 style={styles.optionImage}
+//                 resizeMode={FastImage.resizeMode.contain}
+//               />
+//             ))}
+//         </View>
+//       </View>
+//     );
+//   }
+// );
+
+
+
+
+
+// /* =========================
+//    SOLUTION VIEW
+// ========================= */
+
+// const SolutionView = memo(
+//   ({
+//     explanation,
+//     correctOption,
+//   }: {
+//     explanation: string;
+//     correctOption: string;
+//   }) => {
+//     const { width } = useWindowDimensions();
+
+//     const htmlSource = useMemo(
+//       () => ({
+//         html: `
+//           <div style="font-size:14px;">
+//             ${explanation}
+//           </div>
+//         `,
+//       }),
+//       [explanation]
+//     );
+
+//     return (
+//       <View style={styles.solutionBox}>
+//         <Text style={styles.solutionTitle}>Solution :</Text>
+
+//         <RenderHTML
+//           contentWidth={width}
+//           source={htmlSource}
+//         />
+
+//         <Text style={styles.answerText}>
+//           <Text style={styles.answerLabel}>Answer: </Text>
+//           Option {correctOption}
+//         </Text>
+//       </View>
+//     );
+//   }
+// );
+
+
+
+
+
+// /* =========================
+//    STYLES
+// ========================= */
+
+// const styles = StyleSheet.create({
+//   card: {
+//     padding: 15,
+//     margin: 10,
+//     backgroundColor: "#fff",
+//     borderRadius: 8,
+//     elevation: 3,
+//   },
+//   questionNumber: {
+//     fontWeight: "bold",
+//     marginBottom: 6,
+//   },
+//   questionContent: {
+//     marginBottom: 10,
+//   },
+//   imageContainer: {
+//     marginTop: 8,
+//   },
+//   image: {
+//     width: "100%",
+//     height: 150,
+//     marginVertical: 5,
+//   },
+//   optionRow: {
+//     flexDirection: "row",
+//     marginVertical: 6,
+//   },
+//   optionLabel: {
+//     fontWeight: "bold",
+//     marginRight: 6,
+//   },
+//   optionContent: {
+//     flex: 1,
+//   },
+//   optionImage: {
+//     width: "100%",
+//     height: 120,
+//     marginTop: 5,
+//   },
+//   solutionBox: {
+//     marginTop: 15,
+//     padding: 10,
+//     backgroundColor: "#f5f5f5",
+//     borderRadius: 6,
+//   },
+//   solutionTitle: {
+//     fontWeight: "bold",
+//     marginBottom: 6,
+//   },
+//   answerText: {
+//     marginTop: 8,
+//   },
+//   answerLabel: {
+//     fontWeight: "bold",
+//   },
+// });
