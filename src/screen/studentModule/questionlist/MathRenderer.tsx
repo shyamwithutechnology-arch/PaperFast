@@ -259,7 +259,7 @@ color:#000
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-right: 12px;
+  margin-right: ${moderateScale(0.5)}px;
   min-width: 30px;
 }
 

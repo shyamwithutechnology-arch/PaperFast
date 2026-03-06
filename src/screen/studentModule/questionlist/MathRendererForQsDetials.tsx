@@ -105,8 +105,8 @@ body {
         background-color: ${bgColor} !important;
         color: white; 
         font-family: 'Inter', sans-serif;
-        margin: 0;
-       padding: 0;
+    margin: 0;
+  padding: 6.5px 0;   /* small vertical space */
       }
     .card {
 background-color: ${bgColor} !important;   

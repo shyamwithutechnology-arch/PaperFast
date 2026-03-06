@@ -341,8 +341,7 @@ const QuestionListData: React.FC<Props> = ({
   </div>
 ` : ''}
         </div>
-      </div>  
-    `;
+      </div> `;
     }).join('');
   }, [questionsData, selectCheck, currentPage, limit]); // Removed selectedIds to prevent jumping
   // --- REPLACE YOUR LOADER WITH THIS ---
@@ -360,7 +359,6 @@ const QuestionListData: React.FC<Props> = ({
         onEndReached={onEndReached}
         onScrollDirection={onScrollDirection}
       />
-
       <UploadErrorModal
         visible={openPicker}
         onClose={handleCloseModal}
@@ -514,8 +512,6 @@ const QuestionListData: React.FC<Props> = ({
 //     </View>
 //   );
 // };
-
-
 export default memo(QuestionListData);
 const styles = StyleSheet.create({
   container: {
@@ -621,4 +617,3 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   }
 });
-

@@ -3823,12 +3823,12 @@ const OptionButton = ({
     return (
         <TouchableOpacity
             style={[styles.optionButton, { backgroundColor: bgColor, borderColor },
-            showResult && isSelected && !isCorrect && {
-                borderWidth: 0
-            },
-            showResult && isCorrect && {
-                borderWidth: 1
-            }
+                showResult && isSelected && !isCorrect && {
+                    borderWidth: 0
+                },
+                showResult && isCorrect && {
+                    borderWidth: 1
+                }
             ]}
             onPress={onPress}
             disabled={showResult}
@@ -4400,7 +4400,7 @@ const OpenQuestionScreen = ({ navigation }) => {
                             body { 
                                 margin: 0; 
                                 padding: 5px; 
-                                font-size: ${moderateScale(13)}px; 
+                                font-size: ${moderateScale(12)}px; 
                                 font-family: 'Inter', sans-serif; 
                                 color: #000; 
                                 line-height: 1.5;
@@ -4413,6 +4413,13 @@ const OpenQuestionScreen = ({ navigation }) => {
                             #content-wrapper {
                                 overflow: hidden;
                             }
+                                img {
+                            max-width: 100%;
+                            height: auto;
+                            display: block;
+                            margin: 12px auto; /* vertical space */
+                            margin-bottom:0px
+                             }
                         </style>
                     </head>
                     <body>
@@ -4995,6 +5002,7 @@ const styles = StyleSheet.create({
     },
     optionsContainer: {
         marginHorizontal: moderateScale(16),
+        // borderWidth: 1
     },
     optionButton: {
         flexDirection: 'row',
@@ -5052,7 +5060,9 @@ const styles = StyleSheet.create({
     optionMathContainer: {
         minHeight: moderateScale(29.5),
         width: '100%',
-        // borderWidth:1
+        // borderWidth: 1,
+        // justifyContent: 'center',   // vertical center
+        // alignItems: 'center',
     },
     optionImages: {
         marginBottom: moderateScale(8),
